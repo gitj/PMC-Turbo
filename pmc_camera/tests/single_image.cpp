@@ -34,12 +34,10 @@ PV_INIT_SIGNAL_HANDLER();
 /// Function Prototypes
 ///
 const PvDeviceInfo *SelectDevice( PvSystem *aPvSystem );
-PvDevice *ConnectToDevice( const PvDeviceInfo *aDeviceInfo );
 
 PvDevice *BjornsSelectDevice( const PvString & aInfo );
 PvStream *BjornsOpenStream( const PvString & aInfo );
 
-PvStream *OpenStream( const PvDeviceInfo *aDeviceInfo );
 void ConfigureStream( PvDevice *aDevice, PvStream *aStream );
 void CreateStreamBuffers( PvDevice *aDevice, PvStream *aStream, BufferList *aBufferList );
 void AcquireImages( PvDevice *aDevice, PvStream *aStream );
@@ -58,12 +56,6 @@ int main()
     PV_SAMPLE_INIT();
 
     PvSystem *lPvSystem = new PvSystem;
-//    lDeviceInfo = SelectDevice( lPvSystem );
-
-//    if ( NULL != lDeviceInfo )
-//    {
-        //lDevice = ConnectToDevice( lDeviceInfo );
-        //PvString bjornsstring = PvString::PvString("10.0.0.2");
         lDevice = BjornsSelectDevice("10.0.0.2");
         if ( NULL != lDevice )
         {
@@ -86,7 +78,6 @@ int main()
             lDevice->Disconnect();
             PvDevice::Free( lDevice );
         }
-//    }
 
     cout << endl;
 
@@ -99,20 +90,6 @@ int main()
     PV_SAMPLE_TERMINATE();
 
     return 0;
-}
-
-const PvDeviceInfo *SelectDevice( PvSystem *aPvSystem )
-{
-    const PvDeviceInfo *lDeviceInfo = NULL;
-    PvResult lResult;
-
-    if (NULL != aPvSystem)
-    {
-        // Get the selected device information.
-        lDeviceInfo = PvSelectDevice( *aPvSystem );
-    }
-
-    return lDeviceInfo;
 }
 
 
@@ -130,6 +107,7 @@ PvDevice *BjornsSelectDevice( const PvString & aInfo )
     return myDevice;
 }
 
+
 PvStream *BjornsOpenStream( const PvString & aInfo)
 {
     PvStream *lStream;
@@ -145,38 +123,6 @@ PvStream *BjornsOpenStream( const PvString & aInfo)
     return lStream;
 }
 
-
-PvDevice *ConnectToDevice( const PvDeviceInfo *aDeviceInfo )
-{
-    PvDevice *lDevice;
-    PvResult lResult;
-
-    // Connect to the GigE Vision or USB3 Vision device
-    cout << "Connecting to " << aDeviceInfo->GetDisplayID().GetAscii() << "." << endl;
-    lDevice = PvDevice::CreateAndConnect( aDeviceInfo, &lResult );
-    if ( lDevice == NULL )
-    {
-        cout << "Unable to connect to " << aDeviceInfo->GetDisplayID().GetAscii() << "." << endl;
-    }
-
-    return lDevice;
-}
-
-PvStream *OpenStream( const PvDeviceInfo *aDeviceInfo )
-{
-    PvStream *lStream;
-    PvResult lResult;
-
-    // Open stream to the GigE Vision or USB3 Vision device
-    cout << "Opening stream to device." << endl;
-    lStream = PvStream::CreateAndOpen( aDeviceInfo->GetConnectionID(), &lResult );
-    if ( lStream == NULL )
-    {
-        cout << "Unable to stream from " << aDeviceInfo->GetDisplayID().GetAscii() << "." << endl;
-    }
-
-    return lStream;
-}
 
 void ConfigureStream( PvDevice *aDevice, PvStream *aStream )
 {
@@ -266,20 +212,20 @@ void AcquireImages( PvDevice *aDevice, PvStream *aStream )
                 //timeinfo = localtime (&rawtime);
                 int millisec;
                 
-                gettimeofday(&tv, NULL);
-                timeinfo = localtime(&tv.tv_sec);
+                //gettimeofday(&tv, NULL);
+                //timeinfo = localtime(&tv.tv_sec);
+                //strftime(buffer, 80, "%Y-%m-%d--%H-%M-%S", timeinfo);
+                //dateNameStream << buffer;
+                //std::ostringstream dirNameStream("");
+                //dirNameStream << "/data1/" << dateNameStream.str();
+                //std::string dirName = dirNameStream.str();
+                //std::ostringstream commandStream("");
+                //commandStream << "mkdir -p -m 777 " << dirName;
+                //std::string command = commandStream.str();
+                //const int dir_err = system(command.c_str());
 
-                strftime(buffer, 80, "%Y-%m-%d--%H-%M-%S", timeinfo);
-                dateNameStream << buffer;
-
-                std::ostringstream dirNameStream("");
-                dirNameStream << "/data1/" << dateNameStream.str();
-                std::string dirName = dirNameStream.str();
-
-                std::ostringstream commandStream("");
-                commandStream << "mkdir -p -m 777 " << dirName;
-                std::string command = commandStream.str();
-                const int dir_err = system(command.c_str());
+                // Don't need a directory for a single image.
+                // Leaving code in but commented out in case we do want it in a discrete directory.
 
 
     // Acquire images until the user instructs us to stop.
@@ -320,11 +266,9 @@ void AcquireImages( PvDevice *aDevice, PvStream *aStream )
                 imageDateNameStream << buffer << millisec;
 
                 std::ostringstream fileNameStream("");
-                fileNameStream << dirName << "/" << imageDateNameStream.str() << ".raw";
-                // Need to figure out how to add milliseconds in imageDateNameStream since we
-                // have more than one image per second.
+                //fileNameStream << dirName << "/" << imageDateNameStream.str() << ".raw";
+                fileNameStream << "/data1/" << imageDateNameStream.str() << ".raw";
 
-                //fileNameStream << dirName << "/image_" << iters << ".raw";
                 std::string fileName = fileNameStream.str();
                 lWriter.Store( lBuffer, fileName.c_str(),PvBufferFormatRaw );
                 iters++;
