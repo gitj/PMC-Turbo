@@ -21,8 +21,8 @@ CXX                 ?= g++
 PUREGEV_ROOT        ?= ../../..
 PV_LIBRARY_PATH      =$(PUREGEV_ROOT)/lib
 
-CFLAGS              += -I$(PUREGEV_ROOT)/include -I.
-CPPFLAGS            += -I$(PUREGEV_ROOT)/include -I. -fPIC
+CFLAGS              += -I$(PUREGEV_ROOT)/include -I. -I/usr/include/python
+CPPFLAGS            += -I$(PUREGEV_ROOT)/include -I. -fPIC -I/usr/include/python2.7
 ifdef _DEBUG
     CFLAGS    += -g -D_DEBUG
     CPPFLAGS  += -g -D_DEBUG
@@ -73,11 +73,15 @@ OBJS      += $(SRC_CS:%.c=%.o)
 
 all: $(EXEC) lib
 
-lib: GigECamera.so
+lib: pycamera.so
 
 clean:
-	rm -rf $(OBJS) $(EXEC) 
+	rm -rf $(OBJS) $(EXEC) pycamera.cpp pycamera.o *.so
 
+.SECONDARY:
+
+pycamera.cpp: pycamera.pyx
+	cython --cplus -o $@ $^
 
 %.o: %.cxx
 	$(CXX) -c $(CPPFLAGS) -o $@ $<
@@ -88,10 +92,10 @@ clean:
 %.o: %.c
 	$(CC) -c $(CFLAGS) -o $@ $<
 
-%.so: %.o
-	$(CXX) -shared -fPIC $(CPPFLAGS) -o $@ $^ 
+%.so: $(OBJS) pycamera.o
+	$(CXX) -shared -fPIC $(LDFLAGS) -o $@ $(OBJS) pycamera.o
 
 $(EXEC): $(OBJS)
 	$(CXX) $(OBJS) -o $@ $(LDFLAGS) 
 
-.PHONY: all clean
+.PHONY: all lib clean

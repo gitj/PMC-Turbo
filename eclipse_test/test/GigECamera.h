@@ -21,6 +21,8 @@ public:
 	~GigECamera();
 	void Connect(const char *ip_string);
 	vector<string> GetParameterNames();
+	uint32_t SetParameterFromString(const char *name, const char *value);
+	const char *GetParameter(const char *name);
 private:
 	PvDevice *device;
 	PvGenParameterArray *parameters;
