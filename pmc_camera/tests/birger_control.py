@@ -10,19 +10,22 @@ class birger():
         self.s.timeout = 0.5
         self.s.bytesize = 8
         self.stopbits = 1
+        set_birger_protocol = self.sendget('rm0,1')
+        print set_birger_protocol
+        # Sendget reads birger protocol in the rm0,1 mode.
+        # We should write something that flushes the serial buffer.
+        # And do error checking to make sure the protocol is as expected.
 
-    def sendget(self, msg, wait=2):
+    def sendget(self, msg, wait=0.5, terminator='\r'):
         self.s.open()	
-        self.s.write(msg)
+        self.s.write(msg+terminator)
         tic = time.time()
         resp = self.s.read()
-#        while self.s.inWaiting()>0:
-#             resp += self.s.read(1)
         while resp and (time.time()-tic < wait):
             last = self.s.read()
             resp += last
-        #    time.sleep(0.001)
-        # Tried using a timeout - also didn't work
-        print resp
+            if len(resp) > 1:
+                if resp[-1] == terminator:
+                    break
         self.s.close()
         return resp
