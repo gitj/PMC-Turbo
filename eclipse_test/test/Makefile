@@ -92,7 +92,7 @@ pycamera.cpp: pycamera.pyx
 %.o: %.c
 	$(CC) -c $(CFLAGS) -o $@ $<
 
-%.so: %.o
+%.so: $(OBJS) %.o
 	$(CXX) -shared -fPIC $(LDFLAGS) -o $@ $(OBJS) pycamera.o
 
 $(EXEC): $(OBJS)
