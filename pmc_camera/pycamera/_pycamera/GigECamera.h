@@ -20,7 +20,7 @@ class GigECamera {
 public:
 	GigECamera();
 	~GigECamera();
-	void Connect(const char *ip_string);
+	void Connect(const char *ip_string, const uint32_t num_buffers);
 	vector<string> GetParameterNames();
 	uint32_t SetParameterFromString(const char *name, const char *value);
 	const char *GetParameter(const char *name);

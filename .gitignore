@@ -7,6 +7,12 @@ __pycache__/
 *.so
 *.o
 
+.cproject
+.project
+.pydevproject
+
+_pycamera.cpp
+
 # Distribution / packaging
 .Python
 env/

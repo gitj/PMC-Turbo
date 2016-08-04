@@ -68,7 +68,7 @@ cdef class PyPvBuffer:
 cdef extern from "GigECamera.h":
     cdef cppclass GigECamera:
         GigECamera() except +
-        void Connect(char *ip)
+        void Connect(char *ip, uint32_t num_buffers)
         vector[string] GetParameterNames()
         int SetParameterFromString(char *name, char *value)
         char *GetParameter(char *name)
@@ -78,8 +78,8 @@ cdef extern from "GigECamera.h":
 
 cdef class PyCamera:
     cdef GigECamera c_camera
-    def __cinit__(self, bytes ip):
-        self.c_camera.Connect(ip)
+    def __cinit__(self, bytes ip, int num_buffers):
+        self.c_camera.Connect(ip, num_buffers)
     def get_parameter_names(self):
         return self.c_camera.GetParameterNames()
     def set_parameter_from_string(self,bytes name,bytes value):

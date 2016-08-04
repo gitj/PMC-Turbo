@@ -28,7 +28,7 @@ GigECamera::GigECamera() {
 	buffer_size = 0;
 }
 
-void GigECamera::Connect(const char *ip_string) {
+void GigECamera::Connect(const char *ip_string, const uint32_t num_buffers) {
 	PvResult result = PvResult();
 	device = PvDevice::CreateAndConnect(ip_string, &result);
 
@@ -53,7 +53,7 @@ void GigECamera::Connect(const char *ip_string) {
         uint32_t lSize = device->GetPayloadSize();
 
         // Set the Buffer count and the Buffer size
-        pipeline->SetBufferCount( BUFFER_COUNT );
+        pipeline->SetBufferCount( num_buffers );
         pipeline->SetBufferSize( lSize );
         buffer_size = lSize;
     }
@@ -88,19 +88,19 @@ uint32_t GigECamera::GetImage(uint8_t *data, const bool unpack){
     PvBuffer *output = NULL;
     uint32_t actual_size = 0;
     PvResult lOperationResult;
-    cout << "in getimage" <<endl;
+//    cout << "in getimage" <<endl;
 	PvResult lResult = pipeline->RetrieveNextBuffer( &lBuffer, 1000, &lOperationResult );
-	cout << "Got buffer" << endl;
+//	cout << "Got buffer" << endl;
 	if ( lResult.IsOK() ) {
-		cout << "result ok" <<endl;
+//		cout << "result ok" <<endl;
 		if ( lOperationResult.IsOK() ) {
-			cout << "operation ok" <<endl;
+//			cout << "operation ok" <<endl;
 			if (lBuffer->GetPayloadType() == PvPayloadTypeImage){
-				cout << "is image" << endl;
+//				cout << "is image" << endl;
                 PvImage *lImage = lBuffer->GetImage();
-                cout << "got image interface" <<  endl;
+//                cout << "got image interface" <<  endl;
 				if (unpack) {
-					cout << "unpacking to 16 bits"<<endl;
+//					cout << "unpacking to 16 bits"<<endl;
 					PvBuffer* outbuf = new PvBuffer;
 					output = outbuf;
 	                PvImage *image = output->GetImage();
@@ -111,14 +111,14 @@ uint32_t GigECamera::GetImage(uint8_t *data, const bool unpack){
 
 				}
                 actual_size = lImage->GetImageSize();
-                cout << "actual size " << actual_size << endl;
+//                cout << "actual size " << actual_size << endl;
                 memcpy(data,lImage->GetDataPointer(),actual_size);
-                cout << "memcopy ok" << endl;
+//                cout << "memcopy ok" << endl;
 
 			}
 		}
 		pipeline->ReleaseBuffer(lBuffer);
-		cout << "released buffer";
+//		cout << "released buffer";
 	}
 	return actual_size;
 
