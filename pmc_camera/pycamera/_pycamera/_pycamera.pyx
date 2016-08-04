@@ -2,9 +2,13 @@ from libcpp.string cimport string
 from libcpp.vector cimport vector
 from libc.stdint cimport uint8_t,uint32_t,uint64_t
 from libcpp cimport bool as cbool
+from libc.stdlib cimport malloc
 import numpy as np
 cimport numpy as np
 np.import_array()
+
+cdef extern from "numpy/arrayobject.h":
+    void PyArray_ENABLEFLAGS(np.ndarray arr, int flags)
 
 cdef extern from "PvBuffer.h":
     cdef enum PvPayloadType:
@@ -91,8 +95,11 @@ cdef class PyCamera:
         nbytes =  self.c_camera.buffer_size
         if unpack:
             nbytes = nbytes*16//12
-        cdef np.ndarray[np.uint8_t, ndim=1, mode="c"] data = np.empty((nbytes,),dtype='uint8')
-        size = self.c_camera.GetImage(&data[0], unpack)
+        cdef uint8_t *buffer = <uint8_t *>malloc(nbytes)
+        size = self.c_camera.GetImage(buffer, unpack)
+        cdef np.npy_intp *dims = [nbytes,]
+        cdef np.ndarray[np.uint8_t, ndim=1, mode="c"] data = np.PyArray_SimpleNewFromData(1,dims,np.NPY_UINT8,buffer)
+        PyArray_ENABLEFLAGS(data, np.NPY_OWNDATA)
         return size,data
     def get_buffer(self):
         output = PyPvBuffer()

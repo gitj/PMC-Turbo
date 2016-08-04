@@ -98,10 +98,11 @@ uint32_t GigECamera::GetImage(uint8_t *data, const bool unpack){
 			if (lBuffer->GetPayloadType() == PvPayloadTypeImage){
 //				cout << "is image" << endl;
                 PvImage *lImage = lBuffer->GetImage();
+                PvBuffer* outbuf = new PvBuffer;
 //                cout << "got image interface" <<  endl;
 				if (unpack) {
 //					cout << "unpacking to 16 bits"<<endl;
-					PvBuffer* outbuf = new PvBuffer;
+
 					output = outbuf;
 	                PvImage *image = output->GetImage();
 	                image->Alloc(lImage->GetWidth(),lImage->GetHeight(),PvPixelMono16);
@@ -114,6 +115,7 @@ uint32_t GigECamera::GetImage(uint8_t *data, const bool unpack){
 //                cout << "actual size " << actual_size << endl;
                 memcpy(data,lImage->GetDataPointer(),actual_size);
 //                cout << "memcopy ok" << endl;
+                delete outbuf;
 
 			}
 		}
