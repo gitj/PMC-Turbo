@@ -4,17 +4,18 @@ import time
 class birger():
 
     def __init__(self, port='/dev/ttyUSB0'):
+        self.initialize(port)
+
+    def initialize(self, port):
         self.s = serial.Serial()
         self.s.port = port
         self.s.baudrate = 115200
         self.s.timeout = 0.5
         self.s.bytesize = 8
         self.stopbits = 1
-        set_birger_protocol = self.sendget('rm0,1')
-        print set_birger_protocol
-        # Sendget reads birger protocol in the rm0,1 mode.
-        # We should write something that flushes the serial buffer.
-        # And do error checking to make sure the protocol is as expected.
+        self.state_dict = {'focus', 'aperature'}
+        self.flush_buffer()
+        self.set_protocol
 
     def sendget(self, msg, wait=0.5, terminator='\r'):
         self.s.open()	
@@ -29,3 +30,31 @@ class birger():
                     break
         self.s.close()
         return resp
+
+    def flush_buffer(self):
+        self.s.open()
+        self.s.timeout = 0
+        char_read = True
+        while char_read:
+            char_read = self.s.read() 
+            print char_read
+        self.s.close()
+        self.s.timeout = 0.5
+        return
+
+    def set_protocol(self):
+        # This should raise an error after n tries.
+        set_birger_protocol = self.sendget('rm0,1')
+        if set_birger_protocol != 'OK\r':
+            self.flush_buffer()
+            self.set_protocol()
+        return
+
+    def set_aperature(self, aperature):
+        return
+
+    def set_focus(self, focus):
+        return
+
+    def learn_focus(self, focus):
+        return
