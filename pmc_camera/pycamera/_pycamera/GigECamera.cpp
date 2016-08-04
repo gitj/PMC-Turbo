@@ -14,6 +14,7 @@
 #include <PvStreamGEV.h>
 #include <PvPipeline.h>
 #include <PvBuffer.h>
+#include <PvBufferConverter.h>
 #include <iostream>
 #include <cstring>
 
@@ -82,8 +83,9 @@ GigECamera::~GigECamera() {
 
 }
 
-uint32_t GigECamera::GetImage(uint8_t *data){
+uint32_t GigECamera::GetImage(uint8_t *data, const bool unpack){
     PvBuffer *lBuffer = NULL;
+    PvBuffer *output = NULL;
     uint32_t actual_size = 0;
     PvResult lOperationResult;
     cout << "in getimage" <<endl;
@@ -97,9 +99,20 @@ uint32_t GigECamera::GetImage(uint8_t *data){
 				cout << "is image" << endl;
                 PvImage *lImage = lBuffer->GetImage();
                 cout << "got image interface" <<  endl;
+				if (unpack) {
+					cout << "unpacking to 16 bits"<<endl;
+					PvBuffer* outbuf = new PvBuffer;
+					output = outbuf;
+	                PvImage *image = output->GetImage();
+	                image->Alloc(lImage->GetWidth(),lImage->GetHeight(),PvPixelMono16);
+	                PvBufferConverter converter(0);
+	                converter.Convert(lBuffer,output);
+	                lImage = image;
+
+				}
                 actual_size = lImage->GetImageSize();
                 cout << "actual size " << actual_size << endl;
-                memcpy(data,lImage->GetDataPointer(),buffer_size);
+                memcpy(data,lImage->GetDataPointer(),actual_size);
                 cout << "memcopy ok" << endl;
 
 			}
@@ -109,6 +122,32 @@ uint32_t GigECamera::GetImage(uint8_t *data){
 	}
 	return actual_size;
 
+}
+
+void GigECamera::GetBuffer(PvBuffer *output){
+    PvBuffer *lBuffer = NULL;
+    uint32_t actual_size = 0;
+    PvResult lOperationResult;
+    cout << "in getimage" <<endl;
+	PvResult lResult = pipeline->RetrieveNextBuffer( &lBuffer, 1000, &lOperationResult );
+	cout << "Got buffer" << endl;
+	if ( lResult.IsOK() ) {
+		cout << "result ok" <<endl;
+		if ( lOperationResult.IsOK() ) {
+			cout << "operation ok" <<endl;
+			if (lBuffer->GetPayloadType() == PvPayloadTypeImage){
+				cout << "is image" << endl;
+                PvImage *lImage = lBuffer->GetImage();
+                PvImage *image = output->GetImage();
+                image->Alloc(lImage->GetWidth(),lImage->GetHeight(),PvPixelMono16);
+                PvBufferConverter converter(0);
+                converter.Convert(lBuffer,output);
+
+			}
+		}
+		pipeline->ReleaseBuffer(lBuffer);
+		cout << "released buffer";
+	}
 }
 
 vector<string> GigECamera::GetParameterNames(void) {

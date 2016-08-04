@@ -73,14 +73,14 @@ OBJS      += $(SRC_CS:%.c=%.o)
 
 all: $(EXEC) lib
 
-lib: pycamera.so
+lib: _pycamera.so
 
 clean:
-	rm -rf $(OBJS) $(EXEC) pycamera.cpp pycamera.o *.so
+	rm -rf $(OBJS) $(EXEC) _pycamera.cpp _pycamera.o *.so
 
 .SECONDARY:
 
-pycamera.cpp: pycamera.pyx
+_pycamera.cpp: _pycamera.pyx
 	cython --cplus -o $@ $^
 
 %.o: %.cxx
@@ -93,7 +93,7 @@ pycamera.cpp: pycamera.pyx
 	$(CC) -c $(CFLAGS) -o $@ $<
 
 %.so: $(OBJS) %.o
-	$(CXX) -shared -fPIC $(LDFLAGS) -o $@ $(OBJS) pycamera.o
+	$(CXX) -shared -fPIC $(LDFLAGS) -o $@ $(OBJS) _pycamera.o
 
 $(EXEC): $(OBJS)
 	$(CXX) $(OBJS) -o $@ $(LDFLAGS) 

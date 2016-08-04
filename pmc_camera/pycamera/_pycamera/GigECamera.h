@@ -24,7 +24,8 @@ public:
 	vector<string> GetParameterNames();
 	uint32_t SetParameterFromString(const char *name, const char *value);
 	const char *GetParameter(const char *name);
-	uint32_t GetImage(uint8_t *data);
+	uint32_t GetImage(uint8_t *data,const bool unpack);
+	void GetBuffer(PvBuffer * output);
 	uint32_t buffer_size;
 private:
 	PvDevice *device;
