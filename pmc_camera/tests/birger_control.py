@@ -14,14 +14,18 @@ class birger():
         self.s.timeout = 0.5
         self.s.bytesize = 8
         self.stopbits = 1
-        self.state_dict = {'focus', 'aperture'}
         check = self.flush_buffer()
         check = self.set_protocol
         self.initialize_aperture()
-        self.ap_min, self.ap_max = (0, self.find_aperture_range())
-        self.ap_pos = int(self.ap_max)
-        # When we find the ap_range we set the ap_pos to max (fully closed)
-        self.fmin, self.fmax, self.f_pos = self.find_focus_and_range() 
+        self.apmin, self.apmax = (0, self.find_aperture_range())
+        self.appos = int(self.apmax)
+        # When we find the aprange we set the appos to max (fully closed)
+        self.fmin, self.fmax, self.fpos = self.find_focus_and_range() 
+
+    @property
+    def state_dict(self):
+        return dict(apmin=self.apmin, apmax=self.apmax, appos=self.appos,
+                    fmin=self.fmin, fmax=self.fmax, fpos=self.fpos)
 
     def sendget(self, msg, wait=0.5, terminator='\r'):
         self.s.open()	
@@ -72,7 +76,7 @@ class birger():
         # This should return something for reaching limit.
         response = self.sendget('mn' + str(steps))
         steps_taken = int(response.split(',')[0].strip('DONE'))
-        self.ap_pos += steps_taken
+        self.appos += steps_taken
         return
 
     def find_focus_and_range(self):
@@ -90,10 +94,10 @@ class birger():
     def move_focus(self, steps):
         response = self.sendget('mf'+str(steps))
         steps_taken = int(response.split(',')[0].strip('DONE'))
-        self.f_pos += steps_taken
+        self.fpos += steps_taken
         return
 
     def print_status(self):
-        print 'Ap min: %d, Ap max: %d, Current ap: %d' % (self.ap_min, self.ap_max, self.ap_pos)
-        print 'f min: %d, f max: %d, Current f: %d' % (self.fmin, self.fmax, self.f_pos)
+        print 'Ap min: %d, Ap max: %d, Current ap: %d' % (self.apmin, self.apmax, self.appos)
+        print 'f min: %d, f max: %d, Current f: %d' % (self.fmin, self.fmax, self.fpos)
     
