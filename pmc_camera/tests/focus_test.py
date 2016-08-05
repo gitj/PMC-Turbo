@@ -11,7 +11,8 @@ if __name__=="__main__":
     bc.aperture_full_open()
     bc.focus_infinity()
     bc.move_focus(-40)
-    pc.set_exposure_counts(10000)
+    pc.simple_exposure_adjust(verbose=True)
+    #pc.set_exposure_counts(10000)
 
     output_dir = '/data1/2016-08-04'
     if not os.path.exists(output_dir):
@@ -20,6 +21,7 @@ if __name__=="__main__":
     for focus_step in range(60):
         print focus_step,
         sys.stdout.flush()
+        d = pc.get_image()
         d = pc.get_image()
         d = pc.get_image()
         state = bc.state_dict
