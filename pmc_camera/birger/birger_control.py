@@ -1,7 +1,7 @@
 import serial
 import time
 
-class birger():
+class Birger(object):
 
     def __init__(self, port='/dev/ttyUSB0'):
         self.initialize(port)
@@ -20,6 +20,9 @@ class birger():
         self.apmin, self.apmax = (0, self.find_aperture_range())
         self.appos = int(self.apmax)
         # When we find the aprange we set the appos to max (fully closed)
+        self.update_focus()
+
+    def update_focus(self):
         self.fmin, self.fmax, self.fpos = self.find_focus_and_range() 
 
     @property
@@ -78,6 +81,23 @@ class birger():
         steps_taken = int(response.split(',')[0].strip('DONE'))
         self.appos += steps_taken
         return
+
+    def aperture_full_open(self):
+        response = self.sendget("mo")
+        self.appos = 0
+
+    def aperture_full_close(self):
+        response = self.sendget("mc")
+        self.appos = self.apmax
+
+    def focus_infinity(self):
+        response = self.sendget("mi")
+        self.update_focus()
+
+    def focus_zero(self):
+        response = self.sendget("mz")
+        self.update_focus()
+
 
     def find_focus_and_range(self):
         #self.s.timeout = 3

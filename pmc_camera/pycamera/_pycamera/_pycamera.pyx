@@ -67,6 +67,12 @@ cdef class PyPvBuffer:
     def get_data(self):
         cdef uint8_t[:] bufview = <uint8_t[:self.c_pvbuffer.GetSize()]> self.c_pvbuffer.GetDataPointer()
         return np.asarray(bufview)
+    def get_block_id(self):
+        return self.c_pvbuffer.GetBlockID()
+    def get_timestamp(self):
+        return self.c_pvbuffer.GetTimestamp()
+    def get_reception_time(self):
+        return self.c_pvbuffer.GetReceptionTime()
 
 
 cdef extern from "GigECamera.h":
