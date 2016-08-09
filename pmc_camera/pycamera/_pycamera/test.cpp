@@ -20,6 +20,6 @@ int main(void) {
 	gec->Connect("10.0.0.2",16);
 	cout << "buffersize " << gec->buffer_size <<endl;
 	uint8_t *data = new uint8_t[gec->buffer_size];
-	cout << gec->GetImage(data,true);
+	cout << gec->GetImageSimple(data,true);
 	return EXIT_SUCCESS;
 }

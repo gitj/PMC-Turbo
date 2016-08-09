@@ -83,7 +83,51 @@ GigECamera::~GigECamera() {
 
 }
 
-uint32_t GigECamera::GetImage(uint8_t *data, const bool unpack){
+uint32_t GigECamera::GetImage(uint8_t *data, uint64_t &block_id,
+			uint64_t &buffer_id, uint64_t &reception_time,
+			uint64_t &timestamp){
+
+	PvBuffer *lBuffer = NULL;
+	PvBuffer *output = NULL;
+	uint32_t actual_size = 0;
+	PvResult lOperationResult;
+//    cout << "in getimage" <<endl;
+	PvResult lResult = pipeline->RetrieveNextBuffer( &lBuffer, 1000, &lOperationResult );
+//	cout << "Got buffer" << endl;
+	if ( lResult.IsOK() ) {
+//		cout << "result ok" <<endl;
+		if ( lOperationResult.IsOK() ) {
+//			cout << "operation ok" <<endl;
+			if (lBuffer->GetPayloadType() == PvPayloadTypeImage){
+//				cout << "is image" << endl;
+				PvImage *lImage = lBuffer->GetImage();
+				PvBuffer* outbuf = new PvBuffer;
+//                cout << "got image interface" <<  endl;
+
+				output = outbuf;
+				PvImage *image = output->GetImage();
+				image->Alloc(lImage->GetWidth(),lImage->GetHeight(),PvPixelMono16);
+				PvBufferConverter converter(0);
+				converter.Convert(lBuffer,output);
+				lImage = image;
+				actual_size = lImage->GetImageSize();
+//                cout << "actual size " << actual_size << endl;
+				memcpy(data,lImage->GetDataPointer(),actual_size);
+//                cout << "memcopy ok" << endl;
+				delete outbuf;
+				block_id = lBuffer->GetBlockID();
+				buffer_id = lBuffer->GetID();
+				reception_time = lBuffer->GetReceptionTime();
+				timestamp = lBuffer->GetTimestamp();
+			}
+		}
+		pipeline->ReleaseBuffer(lBuffer);
+//		cout << "released buffer";
+	}
+	return actual_size;
+}
+
+uint32_t GigECamera::GetImageSimple(uint8_t *data, const bool unpack){
     PvBuffer *lBuffer = NULL;
     PvBuffer *output = NULL;
     uint32_t actual_size = 0;
@@ -123,7 +167,6 @@ uint32_t GigECamera::GetImage(uint8_t *data, const bool unpack){
 //		cout << "released buffer";
 	}
 	return actual_size;
-
 }
 
 void GigECamera::GetBuffer(PvBuffer *output){
