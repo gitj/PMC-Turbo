@@ -36,6 +36,10 @@ class PyCamera():
         data = data.view('uint16').reshape(dimensions)
         return info,data
 
+    def get_image_into_buffer(self,npy_array):
+        npy_array.shape = (np.product(npy_array.shape),)
+        return self._pc.get_image_into_buffer(npy_array.view('uint8'))
+
     def set_exposure_time(self,milliseconds):
         exposure_counts = int(np.round(milliseconds/100.0))
         if exposure_counts > (2**16-1):

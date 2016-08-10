@@ -27,7 +27,8 @@ public:
 	uint32_t GetImageSimple(uint8_t *data,const bool unpack);
 	uint32_t GetImage(uint8_t *data, uint64_t &block_id,
 			uint64_t &buffer_id, uint64_t &reception_time,
-			uint64_t &timestamp);
+			uint64_t &timestamp, uint32_t &result_code,
+			uint32_t &operation_code);
 	void GetBuffer(PvBuffer * output);
 	uint32_t buffer_size;
 private:

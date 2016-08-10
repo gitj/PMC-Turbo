@@ -85,7 +85,8 @@ GigECamera::~GigECamera() {
 
 uint32_t GigECamera::GetImage(uint8_t *data, uint64_t &block_id,
 			uint64_t &buffer_id, uint64_t &reception_time,
-			uint64_t &timestamp){
+			uint64_t &timestamp, uint32_t &result_code,
+			uint32_t &operation_code){
 
 	PvBuffer *lBuffer = NULL;
 	PvBuffer *output = NULL;
@@ -93,6 +94,8 @@ uint32_t GigECamera::GetImage(uint8_t *data, uint64_t &block_id,
 	PvResult lOperationResult;
 //    cout << "in getimage" <<endl;
 	PvResult lResult = pipeline->RetrieveNextBuffer( &lBuffer, 1000, &lOperationResult );
+	result_code = lResult.GetCode();
+	operation_code = lOperationResult.GetCode();
 //	cout << "Got buffer" << endl;
 	if ( lResult.IsOK() ) {
 //		cout << "result ok" <<endl;

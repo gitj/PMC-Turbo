@@ -85,7 +85,8 @@ cdef extern from "GigECamera.h":
         uint32_t GetImageSimple(uint8_t *data, cbool unpack)
         uint32_t GetImage(uint8_t *data, uint64_t &block_id,
 			uint64_t &buffer_id, uint64_t &reception_time,
-			uint64_t &timestamp)
+			uint64_t &timestamp, uint32_t &result_code,
+			uint32_t &operation_code)
         uint32_t buffer_size
         void GetBuffer(PvBuffer *output)
 
@@ -105,13 +106,25 @@ cdef class PyCamera:
 
         cdef uint8_t *buffer = <uint8_t *>malloc(nbytes)
         cdef uint64_t block_id, buffer_id, reception_time, timestamp
-        size = self.c_camera.GetImage(buffer, block_id, buffer_id, reception_time, timestamp)
+        cdef uint32_t result_code, operation_code
+        size = self.c_camera.GetImage(buffer, block_id, buffer_id, reception_time, timestamp, result_code,
+        operation_code)
         cdef np.npy_intp *dims = [nbytes,]
         cdef np.ndarray[np.uint8_t, ndim=1, mode="c"] data = np.PyArray_SimpleNewFromData(1,dims,np.NPY_UINT8,buffer)
         PyArray_ENABLEFLAGS(data, np.NPY_OWNDATA)
         info = dict(size=size,block_id=block_id, buffer_id=buffer_id, reception_time=reception_time,
-                    timestamp=timestamp)
+                    timestamp=timestamp,result_code=result_code,operation_code=operation_code)
         return info, data
+
+    def get_image_into_buffer(self, np.ndarray[np.uint8_t] data):
+        cdef uint8_t *buffer = <uint8_t *> data.data
+        cdef uint64_t block_id, buffer_id, reception_time, timestamp
+        cdef uint32_t result_code, operation_code
+        size = self.c_camera.GetImage(buffer, block_id, buffer_id, reception_time, timestamp, result_code,
+        operation_code)
+        info = dict(size=size,block_id=block_id, buffer_id=buffer_id, reception_time=reception_time,
+                    timestamp=timestamp, result_code=result_code, operation_code=operation_code)
+        return info
     def get_buffer(self):
         output = PyPvBuffer()
         self.c_camera.GetBuffer(&output.c_pvbuffer)
