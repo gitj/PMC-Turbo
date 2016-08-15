@@ -4,7 +4,7 @@ import time
 class Birger(object):
 
     def __init__(self, port='/dev/ttyUSB0'):
-        self.initialize(port)
+        #self.initialize(port)
         return
 
     def initialize(self, port):
@@ -15,7 +15,7 @@ class Birger(object):
         self.s.bytesize = 8
         self.stopbits = 1
         check = self.flush_buffer()
-        check = self.set_protocol
+        check = self.set_protocol()
         self.initialize_aperture()
         self.apmin, self.apmax = (0, self.find_aperture_range())
         self.appos = int(self.apmax)
@@ -71,7 +71,7 @@ class Birger(object):
         # Closes aperture fully, gets info to find what absolute step it is at.
         # Slices string and returns max.
         response = self.sendget('mc')
-        return int(self.sendget('pa').split(',')[0])
+        return int(self.sendget('pa').split(',')[0].strip('DONE'))
 
     def move_aperture(self, steps):
         # Moves aperture incremental steps.
