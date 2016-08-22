@@ -35,6 +35,10 @@ class Birger(object):
     def setup_regex(self):
         self.aperture_response = re.compile('DONE-*[0-9]*,f[0-9]*')
         self.focus_response = re.compile('DONE-*[0-9]*,[0-9]*')
+        self.pa_response = re.compile('-*[0-9]*,f[0-9]*')
+        self.focus_range_response = re.compile('fmin:-*[0-9]*  fmax:-*[0-9]*  current:-*[0-9]*')
+        self.in_response = re.compile('DONE')
+        self.protocol_response = re.compile('OK')
 
     def update_focus(self):
         self.fmin, self.fmax, self.fpos = self.find_focus_and_range() 
@@ -77,7 +81,7 @@ class Birger(object):
         # This should raise an error after n tries.
         tries += 1
         response = self.sendget('rm0,1')
-        if response != 'OK\r':
+        if not self.protocol_response.match(response):
             if tries > 3:
             # Try 3 times before it gives up.
                 return False
@@ -88,7 +92,7 @@ class Birger(object):
     def initialize_aperture(self):
         # Required when the aperature hasn't been initialized.
         response = self.sendget('in')
-        if response != 'DONE\r':
+        if not self.in_response.match(response):
             return False
         return True
 
@@ -96,16 +100,24 @@ class Birger(object):
         # Closes aperture fully, gets info to find what absolute step it is at.
         # Slices string and returns max.
         response = self.sendget('mc')
-        return int(self.sendget('pa').split(',')[0].strip('DONE'))
+        if not self.aperture_response.match(response):
+            return False
+        response = self.sendget('pa')
+        if not self.pa_response.match(response):
+            return False
+        return int(response.split(',')[0].strip('DONE'))
+        # Should clean this up
 
     def move_aperture(self, steps):
         # Moves aperture incremental steps.
         # Negative for open, positive for close.
         # This should return something for reaching limit.
         response = self.sendget('mn' + str(steps))
+        if not self.aperture_response.match(response):
+            return False
         steps_taken = int(response.split(',')[0].strip('DONE'))
         self.appos += steps_taken
-        return
+        return True
 
     def aperture_full_open(self):
         response = self.sendget("mo")
@@ -145,6 +157,8 @@ class Birger(object):
         #response = self.sendget('la0')
         #self.s.timeout = 0.5
         focus_range_string = self.sendget('fp')
+        if not self.focus_range_response.match(focus_range_string):
+            return False
         raw = focus_range_string.split(':')
         return (int(raw[1].strip('fmax')), int(raw[2].strip('current')), int(raw[3].strip('\r')))
         # min, max, current
@@ -153,9 +167,11 @@ class Birger(object):
 
     def move_focus(self, steps):
         response = self.sendget('mf'+str(steps))
+        if not self.focus_response.match(response):
+            return False
         steps_taken = int(response.split(',')[0].strip('DONE'))
         self.fpos += steps_taken
-        return
+        return True
 
     def print_status(self):
         print 'Ap min: %d, Ap max: %d, Current ap: %d' % (self.apmin, self.apmax, self.appos)
