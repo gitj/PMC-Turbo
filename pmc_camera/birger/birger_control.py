@@ -26,11 +26,17 @@ class Birger(object):
         if not initialize_check:
             print "Initialization error."
             return
-        self.apmin, self.apmax = (0, self.find_aperture_range())
-        self.appos = int(self.apmax)
-        # When we find the aprange we set the appos to max (fully closed)
-        self.update_focus()
-
+        apmax = self.find_aperture_range()
+        if not apmax:
+            print 'Error finding aperture'
+            return
+        self.apmin, self.apmax = (0, apmax)
+        self.appos = apmax
+        focus_check = self.update_focus()
+        if not focus_check:
+            print 'Error updating focus'
+            return False
+        return True
 
     def setup_regex(self):
         self.aperture_response = re.compile('DONE-*[0-9]*,f[0-9]*')
@@ -41,7 +47,11 @@ class Birger(object):
         self.protocol_response = re.compile('OK')
 
     def update_focus(self):
-        self.fmin, self.fmax, self.fpos = self.find_focus_and_range() 
+        focus_range = self.find_focus_and_range()
+        if not focus_range:
+            return False
+        self.fmin, self.fmax, self.fpos = focus_range
+        return True
 
     @property
     def state_dict(self):
