@@ -1,10 +1,12 @@
 import serial
 import time
+import re
 
 class Birger(object):
 
-    def __init__(self, port='/dev/ttyUSB0'):
-        #self.initialize(port)
+    def __init__(self, port='/dev/ttyUSB0', debug=False):
+        self.debug = debug
+        self.initialize(port)
         return
 
     def initialize(self, port):
@@ -14,13 +16,25 @@ class Birger(object):
         self.s.timeout = 0.5
         self.s.bytesize = 8
         self.stopbits = 1
+        self.setup_regex()
         check = self.flush_buffer()
-        check = self.set_protocol()
-        self.initialize_aperture()
+        protocol_check = self.set_protocol()
+        if not protocol_check:
+            print "Protocol set error. Cannot procede."
+            return
+        initialize_check = self.initialize_aperture()
+        if not initialize_check:
+            print "Initialization error."
+            return
         self.apmin, self.apmax = (0, self.find_aperture_range())
         self.appos = int(self.apmax)
         # When we find the aprange we set the appos to max (fully closed)
         self.update_focus()
+
+
+    def setup_regex(self):
+        self.aperture_response = re.compile('DONE-*[0-9]*,f[0-9]*')
+        self.focus_response = re.compile('DONE-*[0-9]*,[0-9]*')
 
     def update_focus(self):
         self.fmin, self.fmax, self.fpos = self.find_focus_and_range() 
@@ -39,9 +53,13 @@ class Birger(object):
             last = self.s.read()
             resp += last
             if len(resp) > 1:
-                if resp[-1] == terminator:
-                    break
+                if not self.debug:
+                    if resp[-1] == terminator:
+                        break
         self.s.close()
+        if self.debug:
+            print 'Message: %s' % (msg)
+            print 'Response: %s' % (resp)
         return resp
 
     def flush_buffer(self):
@@ -55,17 +73,24 @@ class Birger(object):
         self.s.timeout = 0.5
         return
 
-    def set_protocol(self):
+    def set_protocol(self, tries=0):
         # This should raise an error after n tries.
-        set_birger_protocol = self.sendget('rm0,1')
-        if set_birger_protocol != 'OK\r':
+        tries += 1
+        response = self.sendget('rm0,1')
+        if response != 'OK\r':
+            if tries > 3:
+            # Try 3 times before it gives up.
+                return False
             self.flush_buffer()
-            self.set_protocol()
-        return
+            self.set_protocol(tries)
+        return True
 
     def initialize_aperture(self):
         # Required when the aperature hasn't been initialized.
-        return self.sendget('in')
+        response = self.sendget('in')
+        if response != 'DONE\r':
+            return False
+        return True
 
     def find_aperture_range(self):
         # Closes aperture fully, gets info to find what absolute step it is at.
@@ -84,19 +109,34 @@ class Birger(object):
 
     def aperture_full_open(self):
         response = self.sendget("mo")
+        if not self.aperture_response.match(response):
+            return False
         self.appos = 0
+        return True
 
     def aperture_full_close(self):
         response = self.sendget("mc")
+        if not self.aperture_response.match(response):
+            return False
         self.appos = self.apmax
+        return True
 
     def focus_infinity(self):
+        # Problem: the sendget command returns an empty string when moving from infinity to zero.
+        # This even happens with a really large timeout - something is up in sendget or birger.
+        # After sending this command once, a second call will properly operate.
         response = self.sendget("mi")
+        if not self.focus_response.match(response):
+            return False
         self.update_focus()
+        return True
 
     def focus_zero(self):
         response = self.sendget("mz")
+        if not self.focus_response.match(response):
+            return False
         self.update_focus()
+        return True
 
 
     def find_focus_and_range(self):
@@ -120,4 +160,3 @@ class Birger(object):
     def print_status(self):
         print 'Ap min: %d, Ap max: %d, Current ap: %d' % (self.apmin, self.apmax, self.appos)
         print 'f min: %d, f max: %d, Current f: %d' % (self.fmin, self.fmax, self.fpos)
-    
