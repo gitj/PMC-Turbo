@@ -10,10 +10,11 @@ class Birger(object):
         return
 
     def initialize(self, port):
+        self.logger = BirgerLogger()
         self.s = serial.Serial()
         self.s.port = port
         self.s.baudrate = 115200
-        self.s.timeout = 0.5
+        self.s.timeout = 0.0
         self.s.bytesize = 8
         self.stopbits = 1
         self.setup_regex()
@@ -60,6 +61,7 @@ class Birger(object):
 
     def sendget(self, msg, wait=0.5, terminator='\r'):
         self.s.open()	
+        start = time.time()
         self.s.write(msg+terminator)
         tic = time.time()
         resp = self.s.read()
@@ -70,38 +72,31 @@ class Birger(object):
                 if not self.debug:
                     if resp[-1] == terminator:
                         break
+        end = time.time()
         self.s.close()
         if self.debug:
             print 'Message: %s' % (msg)
             print 'Response: %s' % (resp)
+        self.logger.store_entry(start, end, msg, resp)
         return resp
 
     def general_command(self, command, expected_response):
-        try:
-            response = self.sendget(command)
-        except serial.SerialException:
-            # This gets thrown when we can't connect to port.
-            print "Serial Exception encountered."
-            return False
+        response = self.sendget(command)
         if not expected_response.match(response):
             print "Reponse not matched expectation."
             return False
         return response
 
     def flush_buffer(self):
-        try:
-            self.s.open()
-            self.s.timeout = 0
-            char_read = True
-            while char_read:
-                char_read = self.s.read() 
-                print char_read
-            self.s.close()
-            self.s.timeout = 0.5
-            return
-        except serial.SerialException:
-            print "Serial exception in flush buffer."
-            return False
+        self.s.open()
+        self.s.timeout = 0
+        char_read = True
+        while char_read:
+            char_read = self.s.read() 
+            print char_read
+        self.s.close()
+        self.s.timeout = 0.5
+        return
 
     def set_protocol(self, tries=0):
         # This should raise an error after n tries.
@@ -199,4 +194,9 @@ class Birger(object):
         print 'Ap min: %d, Ap max: %d, Current ap: %d' % (self.apmin, self.apmax, self.appos)
         print 'f min: %d, f max: %d, Current f: %d' % (self.fmin, self.fmax, self.fpos)
 
+class BirgerLogger(object):
+    def __init__(self):
+        self.log = []
 
+    def store_entry(self, start, end, command, response):
+        self.log.append(dict(start=start, end=end, command=command, response=response))
