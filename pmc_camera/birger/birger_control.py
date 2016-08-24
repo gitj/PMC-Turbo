@@ -76,69 +76,81 @@ class Birger(object):
             print 'Response: %s' % (resp)
         return resp
 
+    def general_command(self, command, expected_response):
+        try:
+            response = self.sendget(command)
+        except serial.SerialException:
+            # This gets thrown when we can't connect to port.
+            print "Serial Exception encountered."
+            return False
+        if not expected_response.match(response):
+            print "Reponse not matched expectation."
+            return False
+        return response
+
     def flush_buffer(self):
-        self.s.open()
-        self.s.timeout = 0
-        char_read = True
-        while char_read:
-            char_read = self.s.read() 
-            print char_read
-        self.s.close()
-        self.s.timeout = 0.5
-        return
+        try:
+            self.s.open()
+            self.s.timeout = 0
+            char_read = True
+            while char_read:
+                char_read = self.s.read() 
+                print char_read
+            self.s.close()
+            self.s.timeout = 0.5
+            return
+        except serial.SerialException:
+            print "Serial exception in flush buffer."
+            return False
 
     def set_protocol(self, tries=0):
         # This should raise an error after n tries.
         tries += 1
-        response = self.sendget('rm0,1')
-        if not self.protocol_response.match(response):
+        response = self.general_command('rm0,1', self.protocol_response)
+        if not response:
             if tries > 3:
             # Try 3 times before it gives up.
                 return False
             self.flush_buffer()
             self.set_protocol(tries)
-        return True
+        return response
 
     def initialize_aperture(self):
         # Required when the aperature hasn't been initialized.
-        response = self.sendget('in')
-        if not self.in_response.match(response):
+        response = self.general_command('in', self.in_response)
+        if not response:
             return False
         return True
 
     def find_aperture_range(self):
-        # Closes aperture fully, gets info to find what absolute step it is at.
-        # Slices string and returns max.
-        response = self.sendget('mc')
-        if not self.aperture_response.match(response):
+        response = self.general_command('mc', self.aperture_response)
+        if not response:
             return False
-        response = self.sendget('pa')
-        if not self.pa_response.match(response):
-            return False
+        response = self.general_command('pa', self.pa_response)
+        if not response:
+            return True
         return int(response.split(',')[0].strip('DONE'))
-        # Should clean this up
 
     def move_aperture(self, steps):
-        # Moves aperture incremental steps.
-        # Negative for open, positive for close.
-        # This should return something for reaching limit.
-        response = self.sendget('mn' + str(steps))
-        if not self.aperture_response.match(response):
+        command = 'mn' + str(steps)
+        response = self.general_command(command, self.aperture_response)
+        if not response:
             return False
         steps_taken = int(response.split(',')[0].strip('DONE'))
         self.appos += steps_taken
         return True
 
     def aperture_full_open(self):
-        response = self.sendget("mo")
-        if not self.aperture_response.match(response):
+        response = self.general_command('mo', self.aperture_response)
+        if not response:
             return False
         self.appos = 0
         return True
 
+
     def aperture_full_close(self):
-        response = self.sendget("mc")
-        if not self.aperture_response.match(response):
+        response = self.general_command('mc', self.aperture_response)
+        if not response:
             return False
         self.appos = self.apmax
         return True
@@ -147,42 +159,44 @@ class Birger(object):
         # Problem: the sendget command returns an empty string when moving from infinity to zero.
         # This even happens with a really large timeout - something is up in sendget or birger.
         # After sending this command once, a second call will properly operate.
-        response = self.sendget("mi")
-        if not self.focus_response.match(response):
+        response = self.general_command('mi', self.focus_response)
+        if not response:
             return False
-        self.update_focus()
+        response = self.update_focus()
+        if not response:
+            return False
         return True
+
 
     def focus_zero(self):
-        response = self.sendget("mz")
-        if not self.focus_response.match(response):
+        response = self.general_command('mz', self.focus_response)
+        if not response:
             return False
-        self.update_focus()
+        response = self.update_focus()
+        if not response:
+            return False
         return True
 
-
     def find_focus_and_range(self):
-        #self.s.timeout = 3
-        # la takes some time
-        #response = self.sendget('la0')
-        #self.s.timeout = 0.5
-        focus_range_string = self.sendget('fp')
-        if not self.focus_range_response.match(focus_range_string):
+        response = self.general_command('fp', self.focus_range_response)
+        if not response:
             return False
-        raw = focus_range_string.split(':')
+        raw = response.split(':')
         return (int(raw[1].strip('fmax')), int(raw[2].strip('current')), int(raw[3].strip('\r')))
-        # min, max, current
-        # We should discuss how often to redo the la command.
-        # Seems like we shouldn't do it every time, however.
+
 
     def move_focus(self, steps):
-        response = self.sendget('mf'+str(steps))
-        if not self.focus_response.match(response):
+        command = 'mf'+str(steps)
+        response = self.general_command(command, self.focus_response)
+        if not response:
             return False
         steps_taken = int(response.split(',')[0].strip('DONE'))
         self.fpos += steps_taken
         return True
+        
 
     def print_status(self):
         print 'Ap min: %d, Ap max: %d, Current ap: %d' % (self.apmin, self.apmax, self.appos)
         print 'f min: %d, f max: %d, Current f: %d' % (self.fmin, self.fmax, self.fpos)
+
+
