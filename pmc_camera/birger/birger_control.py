@@ -10,7 +10,7 @@ class Birger(object):
         return
 
     def initialize(self, port):
-        self.logger = BirgerLogger()
+        self.log = self.setup_log()
         self.s = serial.Serial()
         self.s.port = port
         self.s.baudrate = 115200
@@ -47,17 +47,27 @@ class Birger(object):
         self.in_response = re.compile('DONE')
         self.protocol_response = re.compile('OK')
 
-    def update_focus(self):
-        focus_range = self.find_focus_and_range()
-        if not focus_range:
-            return False
-        self.fmin, self.fmax, self.fpos = focus_range
-        return True
+    def setup_log(self):
+        # Creates dictionary of lists
+        return dict(start=[], end=[], cmd=[], resp=[],
+                    fmin=[], fmax=[], fnow=[],
+                    apmin=[], apmax=[], apnow=[])
+
+    def update_log(self, param_dict):
+        # Updates all keys with new info, copies entries which have not changed.
+        for key in self.log.keys():
+            if key in param_dict.keys():
+                a[key].append(b[key])
+            else:
+                a[key].append(a[key][-1])
 
     @property
     def state_dict(self):
-        return dict(apmin=self.apmin, apmax=self.apmax, appos=self.appos,
-                    fmin=self.fmin, fmax=self.fmax, fpos=self.fpos)
+        # Returns dictionary of last entries in log.
+        state_dict = dict()
+        for key in self.log.keys():
+            state_dict[key]=log[key][-1]
+        return state_dict
 
     def sendget(self, msg, wait=0.5, terminator='\r'):
         self.s.open()	
@@ -77,14 +87,12 @@ class Birger(object):
         if self.debug:
             print 'Message: %s' % (msg)
             print 'Response: %s' % (resp)
-        self.logger.store_entry(start, end, msg, resp)
-        return resp
+        return dict(start=start, end=end, cmd=msg, resp=resp)
 
     def general_command(self, command, expected_response):
         response = self.sendget(command)
-        if not expected_response.match(response):
-            print "Reponse not matched expectation."
-            return False
+        if not expected_response.match(response['resp']):
+            raise RuntimeError("Response doesn't match expected response")
         return response
 
     def flush_buffer(self):
@@ -108,13 +116,13 @@ class Birger(object):
                 return False
             self.flush_buffer()
             self.set_protocol(tries)
+        self.update_log(response)
         return response
 
     def initialize_aperture(self):
         # Required when the aperature hasn't been initialized.
         response = self.general_command('in', self.in_response)
-        if not response:
-            return False
+        self.update_log(response)
         return True
 
     def find_aperture_range(self):
@@ -193,10 +201,3 @@ class Birger(object):
     def print_status(self):
         print 'Ap min: %d, Ap max: %d, Current ap: %d' % (self.apmin, self.apmax, self.appos)
         print 'f min: %d, f max: %d, Current f: %d' % (self.fmin, self.fmax, self.fpos)
-
-class BirgerLogger(object):
-    def __init__(self):
-        self.log = []
-
-    def store_entry(self, start, end, command, response):
-        self.log.append(dict(start=start, end=end, command=command, response=response))
