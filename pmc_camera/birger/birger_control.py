@@ -126,21 +126,20 @@ class Birger(object):
         return True
 
     def find_aperture_range(self):
+        # There must be a better way to do this.
         response = self.general_command('mc', self.aperture_response)
-        if not response:
-            return False
+        self.update_log(response)
         response = self.general_command('pa', self.pa_response)
-        if not response:
-            return True
+        self.update_log(response)
         return int(response.split(',')[0].strip('DONE'))
 
     def move_aperture(self, steps):
         command = 'mn' + str(steps)
         response = self.general_command(command, self.aperture_response)
-        if not response:
-            return False
         steps_taken = int(response.split(',')[0].strip('DONE'))
         self.appos += steps_taken
+        response['apnow'] = self.state_dict['apnow'] + steps_taken
+        self.update_log(response)
         return True
 
     def aperture_full_open(self):
