@@ -31,8 +31,6 @@ class Birger(object):
         if not apmax:
             print 'Error finding aperture'
             return
-        self.apmin, self.apmax = (0, apmax)
-        self.appos = apmax
         focus_check = self.update_focus()
         if not focus_check:
             print 'Error updating focus'
@@ -46,6 +44,7 @@ class Birger(object):
         self.focus_range_response = re.compile('fmin:-*[0-9]*  fmax:-*[0-9]*  current:-*[0-9]*')
         self.in_response = re.compile('DONE')
         self.protocol_response = re.compile('OK')
+        self.integers = re.compile('-*[0-9]+')
 
     def setup_log(self):
         # Creates dictionary of lists
@@ -96,6 +95,7 @@ class Birger(object):
         return response
 
     def flush_buffer(self):
+        # Add logging to this.
         self.s.open()
         self.s.timeout = 0
         char_read = True
@@ -128,10 +128,14 @@ class Birger(object):
     def find_aperture_range(self):
         # There must be a better way to do this.
         response = self.general_command('mc', self.aperture_response)
+        response['apmax'] = 'pending'
+        response['apmin'] = 0
         self.update_log(response)
         response = self.general_command('pa', self.pa_response)
+        response['apmax'] = int(self.integers.findall(response['resp'][0]))
+        # Gets steps taken - that is the apmax.
+        response['apnow'] = response['apmax']
         self.update_log(response)
-        return int(response.split(',')[0].strip('DONE'))
 
     def move_aperture(self, steps):
         command = 'mn' + str(steps)
@@ -144,17 +148,15 @@ class Birger(object):
 
     def aperture_full_open(self):
         response = self.general_command('mo', self.aperture_response)
-        if not response:
-            return False
-        self.appos = 0
+        response['apnow'] = 0
+        self.update_log(response)
         return True
 
 
     def aperture_full_close(self):
         response = self.general_command('mc', self.aperture_response)
-        if not response:
-            return False
-        self.appos = self.apmax
+        response['apnow'] = self.state_dict['apmax']
+        self.update_log(response)
         return True
 
     def focus_infinity(self):
@@ -162,41 +164,29 @@ class Birger(object):
         # This even happens with a really large timeout - something is up in sendget or birger.
         # After sending this command once, a second call will properly operate.
         response = self.general_command('mi', self.focus_response)
-        if not response:
-            return False
-        response = self.update_focus()
-        if not response:
-            return False
+        self.fnow = 'pending'
+        self.update_log(response)
+        self.update_focus()
         return True
 
 
     def focus_zero(self):
         response = self.general_command('mz', self.focus_response)
-        if not response:
-            return False
-        response = self.update_focus()
-        if not response:
-            return False
+        self.fnow = 'pending'
+        self.update_log(response)
+        self.update_focus()
         return True
 
-    def find_focus_and_range(self):
+    def update_focus(self):
         response = self.general_command('fp', self.focus_range_response)
-        if not response:
-            return False
-        raw = response.split(':')
-        return (int(raw[1].strip('fmax')), int(raw[2].strip('current')), int(raw[3].strip('\r')))
+        response['fmin'], response['fmax'], response['fnow'] = self.integers.findall(response['resp'])
+        return
 
 
     def move_focus(self, steps):
         command = 'mf'+str(steps)
         response = self.general_command(command, self.focus_response)
-        if not response:
-            return False
-        steps_taken = int(response.split(',')[0].strip('DONE'))
-        self.fpos += steps_taken
+        steps_taken = int(self.integers.findall(response['resp'])[0])
+        response['fnow'] = self.state_dict['fnow'] + steps_taken
+        self.update_log(response)
         return True
-        
-
-    def print_status(self):
-        print 'Ap min: %d, Ap max: %d, Current ap: %d' % (self.apmin, self.apmax, self.appos)
-        print 'f min: %d, f max: %d, Current f: %d' % (self.fmin, self.fmax, self.fpos)
