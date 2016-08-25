@@ -27,10 +27,7 @@ class Birger(object):
         if not initialize_check:
             print "Initialization error."
             return
-        apmax = self.find_aperture_range()
-        if not apmax:
-            print 'Error finding aperture'
-            return
+        ap_check = self.find_aperture_range()
         focus_check = self.update_focus()
         if not focus_check:
             print 'Error updating focus'
@@ -56,9 +53,12 @@ class Birger(object):
         # Updates all keys with new info, copies entries which have not changed.
         for key in self.log.keys():
             if key in param_dict.keys():
-                a[key].append(b[key])
+                self.log[key].append(param_dict[key])
             else:
-                a[key].append(a[key][-1])
+                if len(self.log[key]) > 0:
+                    self.log[key].append(self.log[key][-1])
+                else:
+                    self.log[key].append(0)
 
     @property
     def state_dict(self):
@@ -132,7 +132,7 @@ class Birger(object):
         response['apmin'] = 0
         self.update_log(response)
         response = self.general_command('pa', self.pa_response)
-        response['apmax'] = int(self.integers.findall(response['resp'][0]))
+        response['apmax'] = int(self.integers.findall(response['resp'])[0])
         # Gets steps taken - that is the apmax.
         response['apnow'] = response['apmax']
         self.update_log(response)
@@ -180,6 +180,7 @@ class Birger(object):
     def update_focus(self):
         response = self.general_command('fp', self.focus_range_response)
         response['fmin'], response['fmax'], response['fnow'] = self.integers.findall(response['resp'])
+        self.update_log(response)
         return
 
 
