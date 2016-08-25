@@ -1,6 +1,7 @@
 import serial
 import time
 import re
+import json
 
 class Birger(object):
 
@@ -19,20 +20,22 @@ class Birger(object):
         self.stopbits = 1
         self.setup_regex()
         check = self.flush_buffer()
-        protocol_check = self.set_protocol()
-        if not protocol_check:
-            print "Protocol set error. Cannot procede."
-            return
-        initialize_check = self.initialize_aperture()
-        if not initialize_check:
-            print "Initialization error."
-            return
-        ap_check = self.find_aperture_range()
-        focus_check = self.update_focus()
-        if not focus_check:
-            print 'Error updating focus'
-            return False
-        return True
+
+        if not self.debug:
+            protocol_check = self.set_protocol()
+            if not protocol_check:
+                print "Protocol set error. Cannot procede."
+                return
+            initialize_check = self.initialize_aperture()
+            if not initialize_check:
+                print "Initialization error."
+                return
+            ap_check = self.find_aperture_range()
+            focus_check = self.update_focus()
+            if not focus_check:
+                print 'Error updating focus'
+                return False
+            return True
 
     def setup_regex(self):
         self.aperture_response = re.compile('DONE-*[0-9]*,f[0-9]*')
@@ -86,13 +89,20 @@ class Birger(object):
         if self.debug:
             print 'Message: %s' % (msg)
             print 'Response: %s' % (resp)
-        return dict(start=start, end=end, cmd=msg, resp=resp)
+        mydict = dict(start=start, end=end, cmd=msg, resp=resp)
+        if self.debug:
+            self.update_log(mydict)
+        return mydict
 
     def general_command(self, command, expected_response):
         response = self.sendget(command)
         if not expected_response.match(response['resp']):
             raise RuntimeError("Response doesn't match expected response")
         return response
+
+    def save_log(self):
+        with open('birger_log', 'w') as f:
+            json.dump(self.log, f)
 
     def flush_buffer(self):
         # Add logging to this.
