@@ -34,6 +34,7 @@ info_dtype = np.dtype([('block_id', 'uint64'),
                        ('reception_time', 'uint64'),
                        ('timestamp', 'uint64'),
                        ('size', 'uint32'),
+                       ('acquisition_start_time', 'float64')
                        ])
 class BasicPipeline:
     def __init__(self, dimensions=(3232,4864), num_data_buffers=16,
@@ -133,6 +134,7 @@ class AcquireImagesProcess:
     def run(self):
         # Setup
         self.pc = pmc_camera.PyCamera("10.0.0.2")
+        self.acquisition_start_time = time.time()
         # Run loop
         while True:
             info = None
@@ -166,6 +168,7 @@ class AcquireImagesProcess:
                     #and load the info into the appropriate location
                     for k,v in info.items():
                         npy_info_buffer[process_me][k] = v
+                    npy_info_buffer[process_me]['acquisition_start_time'] = self.acquisition_start_time
                 # now we are done with the buffer so we pass it on to the next thread
                 self.output_queue.put(process_me)
         #if we get here, we were kindly asked to exit
@@ -213,7 +216,7 @@ class WriteImageProcess(object):
                     npy_info_buffer = np.frombuffer(self.info_buffer.get_obj(),dtype=info_dtype)
                     info = dict([(k,npy_info_buffer[process_me][k]) for k in info_dtype.fields.keys()])
                     ts = time.strftime("%Y-%m-%d_%H%M%S")
-                    info_str = '_'.join([('%s=%d' % (k,v)) for (k,v) in info.items()])
+                    info_str = '_'.join([('%s=%r' % (k,v)) for (k,v) in info.items()])
                     ts = ts + '_' + info_str
                     fname = os.path.join(self.output_dirs[self.disk_to_use],ts)
                     #np.savez(fname,info=info,image=image_buffer) # too slow

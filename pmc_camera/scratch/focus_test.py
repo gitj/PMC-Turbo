@@ -8,9 +8,10 @@ if __name__=="__main__":
     bc = pmc_camera.Birger()
     pc = pmc_camera.PyCamera(num_buffers=2)
 
+#    bc.initialize()
     bc.aperture_full_open()
 
-    output_dir = '/data1/2016-08-08_morning_with_ND_filter'
+    output_dir = '/data1/2016-08-24_50mm_star_focus_test_100ms'
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
     start_at = time.mktime((2016,8,8,4,0,0,0,0,1))
@@ -21,12 +22,12 @@ if __name__=="__main__":
         sys.stdout.flush()
         time.sleep(60)
     start = time.time()
-    while (time.time() - start) < 2.5*3600:
-        pc.simple_exposure_adjust(verbose=True,max=10000)
-        #pc.set_exposure_counts(10000)
+    while (time.time() - start) < 9*3600:
+        #pc.simple_exposure_adjust(verbose=True,max=10000)
+        pc.set_exposure_counts(10000)
         bc.focus_infinity()
-        bc.move_focus(-60)
-        for focus_step in range(20):
+        bc.move_focus(-153)
+        for focus_step in range(10):
             print focus_step,
             sys.stdout.flush()
             d = pc.get_image()
@@ -37,6 +38,7 @@ if __name__=="__main__":
             state['exposure_counts'] = pc.exposure_counts
             timestamp = time.strftime('%Y-%m-%d_%H%M%S')
             fn = '%s_focus_step_%04d.npz' % (timestamp,focus_step)
-            np.savez(os.path.join(output_dir,fn),image=d,
+            np.savez(os.path.join(output_dir,fn),
+                     image=d,
                      state=state)
             bc.move_focus(-1)
