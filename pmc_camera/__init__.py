@@ -1,5 +1,4 @@
 import warnings as _warnings
-from birger import Birger
 try:
     from pycamera.pycamera import PyCamera
 except ImportError:

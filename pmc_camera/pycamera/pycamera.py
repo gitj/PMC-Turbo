@@ -1,6 +1,6 @@
 import numpy as np
 
-from _pycamera._pycamera import PyCamera as _PyCamera
+from _pyvimba._pyvimba import PyCamera as _PyCamera
 
 class PyCamera():
     def __init__(self,ip="10.0.0.2",num_buffers=16):
@@ -112,5 +112,3 @@ class PyCamera():
         return last_exposure
 
 
-
-        pass
