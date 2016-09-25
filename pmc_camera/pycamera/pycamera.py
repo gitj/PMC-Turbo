@@ -40,19 +40,22 @@ class PyCamera():
         npy_array.shape = (np.product(npy_array.shape),)
         return self._pc.get_image_into_buffer(npy_array.view('uint8'))
 
-    def set_exposure_time(self,milliseconds):
-        exposure_counts = int(np.round(milliseconds/100.0))
-        if exposure_counts > (2**16-1):
-            exposure_counts = 2**16-1
-        if exposure_counts < 1:
-            exposure_counts = 1
-        return exposure_counts/100.0
-
-    def set_exposure_counts(self, counts):
-        result = self._pc.set_parameter_from_string("FreerunExposureTime", str(counts))
+    def set_exposure_milliseconds(self,milliseconds):
+        microseconds = int(np.round(milliseconds*1000.0))
+        result = self._pc.set_parameter_from_string("ExposureTimeAbs",str(microseconds))
         if result != 0:
-            raise Exception("Camera returned error code %d when trying to set exposure value to %d." % (result,counts))
-        self.exposure_counts = counts
+            raise Exception("Camera returned error code %d when trying to set exposure value to %d us." % (result,
+                                                                                                          microseconds))
+
+    def get_focus_max(self):
+        return int(self._pc.get_parameter("EFLensFocusMax"))
+
+    def set_focus(self,focus_steps):
+        result = self._pc.set_parameter_from_string("EFLensFocusCurrent",("%d" % focus_steps))
+        if result != 0:
+            raise Exception("Camera returned error code %d when trying to set focus value to %d steps." % (result,
+                                                                                                          focus_steps))
+
 
     def simple_exposure_adjust(self,goal=4000,percentile=99.9,step_factor=1.5,downsample=16,
                                start_fresh=False,verbose=False,max=65535):
