@@ -38,8 +38,6 @@ cdef class PyCamera:
     def get_image(self):
         cdef uint32_t nybtes 
         nbytes =  self.c_camera.buffer_size
-        if nbytes == 0:
-            nbytes = 3232*4864*2 # TODO: HACK!
 
         cdef uint8_t *buffer = <uint8_t *>malloc(nbytes)
         cdef uint64_t frame_id, buffer_id, reception_time, timestamp

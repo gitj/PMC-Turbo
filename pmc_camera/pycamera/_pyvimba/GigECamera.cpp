@@ -55,7 +55,7 @@ uint32_t GigECamera::Connect(const char *ip_string, const uint32_t num_buffers) 
 
 	cout <<"done adjust" <<endl;
 	FeaturePtr FormatFeature;
-	// Set pixel format. For the sake of simplicity we only support Mono and BGR in this example.
+	// Set pixel format.
 	result = m_pCamera->GetFeatureByName( "PixelFormat", FormatFeature );
 	if ( result != VmbErrorSuccess)
 	{
@@ -67,7 +67,9 @@ uint32_t GigECamera::Connect(const char *ip_string, const uint32_t num_buffers) 
 	{
 		return result;
 	}
-	cout <<"set format" << endl;
+
+	buffer_size = 3232*4864*2; // TODO: This shouldn't need to be hard coded
+	cout <<"image size: " << buffer_size << endl;
 	FeaturePtrVector features;
 	m_pCamera->GetFeatures(features);
 	int n = features.size();

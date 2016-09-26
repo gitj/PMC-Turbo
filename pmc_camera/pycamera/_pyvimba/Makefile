@@ -27,13 +27,8 @@ VIMBA_LIBRARY_PATH      =$(VIMBA_ROOT)/lib
 VIMBAC_CFLAGS   = -I$(VIMBA_ROOT)
 
 #Linker options needed for VimbaC
-VIMBAC_LIBS     = -L. -lVimbaCPP -lVimbaC
+VIMBAC_LIBS     = -L. -L$(VIMBA_ROOT)/VimbaCPP/DynamicLib/x86_64bit -lVimbaCPP -lVimbaC
 
-#By default we copy libVimbaC.so next to the binary
-libVimbaC.so: 
-	cp $(VIMBA_ROOT)/VimbaC/DynamicLib/x86_64bit/libVimbaC.so .
-libVimbaCPP.so: 
-	cp $(VIMBA_ROOT)/VimbaCPP/DynamicLib/x86_64bit/libVimbaCPP.so .
 
 CFLAGS              += $(VIMBAC_CFLAGS) -I. -I/usr/include/python
 CPPFLAGS            += $(VIMBAC_CFLAGS) -I. -fPIC -I/usr/include/python2.7
@@ -52,9 +47,9 @@ LDFLAGS             += $(VIMBAC_LIBS)
 OBJS      += $(SRC_CPPS:%.cpp=%.o)
 OBJS      += $(SRC_CS:%.c=%.o)
 
-all: $(EXEC)# lib
+all: $(EXEC) lib
 
-lib: libVimbaCPP.so libVimbaC.so _pyvimba.so 
+lib: _pyvimba.so  
 
 clean:
 	rm -rf $(OBJS) $(EXEC) _pyvimba.cpp _pyvimba.o *.so
@@ -76,7 +71,7 @@ _pyvimba.cpp: _pyvimba.pyx
 %.so: $(OBJS) %.o
 	$(CXX) -shared -fPIC $(LDFLAGS) -o $@ $(OBJS) _pyvimba.o
 
-$(EXEC): $(OBJS) libVimbaCPP.so libVimbaC.so
+$(EXEC): $(OBJS)
 	$(CXX) $(OBJS) -o $@ $(LDFLAGS) 
 
 .PHONY: all lib clean
