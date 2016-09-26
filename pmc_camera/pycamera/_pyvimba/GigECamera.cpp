@@ -77,13 +77,9 @@ uint32_t GigECamera::Connect(const char *ip_string, const uint32_t num_buffers) 
 	for (int k = 0; k < n; k++) {
 		FeaturePtr p = features.at(k);
 		string *name = new string;
-//		cout << k <<endl;
 		p->GetName(*name);
-//		cout << "got name" << endl;
 		parameter_names.push_back(name->c_str());
-//		cout << *name << endl;
 		delete name;
-		//cout << p->GetName().GetAscii() << endl;
 	}
 	return VmbErrorSuccess;
 
@@ -94,13 +90,6 @@ GigECamera::~GigECamera() {
 	m_system.Shutdown();
 
 }
-/*
-uint32_t GigECamera::GetImage(uint8_t *data, uint64_t &block_id,
-			uint64_t &buffer_id, uint64_t &reception_time,
-			uint64_t &timestamp, uint32_t &result_code,
-			uint32_t &operation_code){
-}
-*/
 
 uint32_t GigECamera::GetImageSimple(uint8_t *data){
 
@@ -223,8 +212,4 @@ const char *GigECamera::GetParameter(const char *name){
 }
 
 
-//
-//int GigECamera::SetParameterInt(const char *name, int value) {
-//	PvGenParameter *param = parameters->Get(name);
-//	param->FromString()
-//}
+
