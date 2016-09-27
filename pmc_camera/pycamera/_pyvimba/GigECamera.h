@@ -27,7 +27,7 @@ public:
 	const char *GetParameter(const char *name);
 	uint32_t GetImageSimple(uint8_t *data);
 	uint32_t GetImage(uint8_t *data, uint64_t &frame_id,
-			uint64_t &timestamp);
+			uint64_t &timestamp, uint32_t &frame_status);
 /*	uint32_t GetImage(uint8_t *data, uint64_t &block_id,
 			uint64_t &buffer_id, uint64_t &reception_time,
 			uint64_t &timestamp, uint32_t &result_code,

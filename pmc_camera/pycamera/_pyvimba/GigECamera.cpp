@@ -109,7 +109,7 @@ uint32_t GigECamera::GetImageSimple(uint8_t *data){
 }
 
 uint32_t GigECamera::GetImage(uint8_t *data, uint64_t &frame_id,
-		uint64_t &timestamp){
+		uint64_t &timestamp, uint32_t &frame_status){
 
 	uint32_t result;
 	FramePtr Frame;
@@ -126,8 +126,11 @@ uint32_t GigECamera::GetImage(uint8_t *data, uint64_t &frame_id,
 	memcpy(data,image,buffer_size);
 	Frame->GetFrameID(v_frame_id);
 	Frame->GetTimestamp(v_timestamp);
+	VmbFrameStatusType v_status;
+	Frame->GetReceiveStatus(v_status);
 	frame_id = v_frame_id;
 	timestamp = v_timestamp;
+	frame_status = v_status;
 	return buffer_size;
 
 }

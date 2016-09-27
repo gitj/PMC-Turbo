@@ -33,12 +33,17 @@ class PyCamera():
 
         """
         info, data = self._pc.get_image()
+        if info['size'] > 2**31:
+            raise RuntimeError("Image acquisition failed with error code %d" % (info['size']-2**32))
         data = data.view('uint16').reshape(dimensions)
         return info,data
 
     def get_image_into_buffer(self,npy_array):
         npy_array.shape = (np.product(npy_array.shape),)
-        return self._pc.get_image_into_buffer(npy_array.view('uint8'))
+        info = self._pc.get_image_into_buffer(npy_array.view('uint8'))
+        if info['size'] > 2**31:
+            raise RuntimeError("Image acquisition failed with error code %d\n %r" % ((info['size']-2**32),info))
+        return info
 
     def set_exposure_milliseconds(self,milliseconds):
         microseconds = int(np.round(milliseconds*1000.0))
