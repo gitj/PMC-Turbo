@@ -17,7 +17,7 @@ cdef extern from "GigECamera.h":
         vector[string] GetParameterNames()
         int SetParameterFromString(char *name, char *value)
         int RunFeatureCommand(char *name)
-        char *GetParameter(char *name)
+        string GetParameter(char *name)
         uint32_t GetImageSimple(uint8_t *data)
         uint32_t GetImage(uint8_t *data, uint64_t &frame_id, uint64_t &timestamp, uint32_t &frame_status)
         uint32_t buffer_size

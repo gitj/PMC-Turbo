@@ -32,9 +32,10 @@ VIMBAC_LIBS     = -L. -L$(VIMBA_ROOT)/VimbaCPP/DynamicLib/x86_64bit -lVimbaCPP -
 
 CFLAGS              += $(VIMBAC_CFLAGS) -I. -I/usr/include/python
 CPPFLAGS            += $(VIMBAC_CFLAGS) -I. -fPIC -I/usr/include/python2.7
+#_DEBUG		= yes
 ifdef _DEBUG
-    CFLAGS    += -g -D_DEBUG
-    CPPFLAGS  += -g -D_DEBUG
+    CFLAGS    += -g -O0 -D_DEBUG
+    CPPFLAGS  += -g -O0 -D_DEBUG
 else
     CFLAGS    += -O3
     CPPFLAGS  += -O3

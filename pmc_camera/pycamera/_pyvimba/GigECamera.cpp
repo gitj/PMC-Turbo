@@ -112,6 +112,7 @@ uint32_t GigECamera::GetImage(uint8_t *data, uint64_t &frame_id,
 		uint64_t &timestamp, uint32_t &frame_status){
 
 	uint32_t result;
+	uint32_t this_buffer_size;
 	FramePtr Frame;
 	uint8_t *image;
 	VmbUint64_t v_frame_id;
@@ -121,7 +122,10 @@ uint32_t GigECamera::GetImage(uint8_t *data, uint64_t &frame_id,
 	{
 		return result;
 	}
-	Frame->GetImageSize(buffer_size);
+	Frame->GetImageSize(this_buffer_size);
+//	if(this_buffer_size != buffer_size){
+//		cout << "This buffer size is " << this_buffer_size << " not " << buffer_size << endl;
+//	}
 	Frame->GetImage(image);
 	memcpy(data,image,buffer_size);
 	Frame->GetFrameID(v_frame_id);
@@ -131,7 +135,7 @@ uint32_t GigECamera::GetImage(uint8_t *data, uint64_t &frame_id,
 	frame_id = v_frame_id;
 	timestamp = v_timestamp;
 	frame_status = v_status;
-	return buffer_size;
+	return this_buffer_size;
 
 }
 
@@ -149,7 +153,7 @@ uint32_t GigECamera::SetParameterFromString(const char *name, const char *value)
 	feature->GetDataType(datatype);
 	if ((datatype == VmbFeatureDataString)||
 			(datatype == VmbFeatureDataEnum)) {
-		feature->SetValue(value);
+		return feature->SetValue(value);
 	} else if ((datatype == VmbFeatureDataInt)){
 		long long int intval;
 		intval = strtol(value,NULL,10);
@@ -181,7 +185,7 @@ uint32_t GigECamera::RunFeatureCommand(const char *name){
 }
 
 
-const char *GigECamera::GetParameter(const char *name){
+string GigECamera::GetParameter(const char *name){
 	FeaturePtr feature;
 	string value;
 	ostringstream ss;
@@ -189,7 +193,7 @@ const char *GigECamera::GetParameter(const char *name){
 	uint32_t result = m_pCamera->GetFeatureByName(name,feature);
 	if (result != VmbErrorSuccess) {
 		value = string("Error No Such Feature");
-		return value.c_str();
+		return value;
 	}
 	feature->GetDataType(datatype);
 	if ((datatype == VmbFeatureDataString)||
@@ -211,7 +215,7 @@ const char *GigECamera::GetParameter(const char *name){
 		cout << "unsupported type: " << datatype << endl;
 	}
 	cout << name << ":" << value << endl;
-	return value.c_str();
+	return value;
 }
 
 

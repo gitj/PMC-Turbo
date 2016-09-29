@@ -24,7 +24,7 @@ public:
 	vector<string> GetParameterNames();
 	uint32_t SetParameterFromString(const char *name, const char *value);
 	uint32_t RunFeatureCommand(const char *name);
-	const char *GetParameter(const char *name);
+	string GetParameter(const char *name);
 	uint32_t GetImageSimple(uint8_t *data);
 	uint32_t GetImage(uint8_t *data, uint64_t &frame_id,
 			uint64_t &timestamp, uint32_t &frame_status);
