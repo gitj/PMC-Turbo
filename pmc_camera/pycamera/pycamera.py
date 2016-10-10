@@ -1,6 +1,8 @@
 import numpy as np
-
-from _pyvimba._pyvimba import PyCamera as _PyCamera
+try:
+    from _pyvimba._pyvimba import PyCamera as _PyCamera
+except ImportError:
+    print "couldn't import _pyvimba"
 
 class PyCamera():
     def __init__(self,ip="10.0.0.2",num_buffers=16):
