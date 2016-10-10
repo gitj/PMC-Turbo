@@ -13,6 +13,8 @@ install:
   - conda create -q -n test-environment python=2.7 numpy scipy matplotlib nose cython numexpr pyzmq pyserial
   - source activate test-environment
   #- pip install -r requirements.txt
-  #- pip install codecov
+  - pip install codecov
+after_success:
+  - codecov
 
 script: nosetests -v --with-coverage --cover-erase --cover-xml --cover-inclusive --cover-package=pmc_camera
