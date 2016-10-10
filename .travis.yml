@@ -10,9 +10,9 @@ install:
   - conda update -q conda
   # Useful for debugging any issues with conda
   - conda info -a
-  - conda create -q -n test-environment python=2.7 numpy scipy matplotlib nose cython numexpr pyzmq
+  - conda create -q -n test-environment python=2.7 numpy scipy matplotlib nose cython numexpr pyzmq pyserial
   - source activate test-environment
   #- pip install -r requirements.txt
   #- pip install codecov
 
-script: nosetests -v
+script: nosetests -v --with-coverage --cover-erase --cover-xml --cover-inclusive --cover-package=pmc_camera
