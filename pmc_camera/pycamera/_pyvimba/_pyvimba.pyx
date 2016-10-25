@@ -21,7 +21,15 @@ cdef extern from "GigECamera.h":
         uint32_t GetImageSimple(uint8_t *data)
         uint32_t GetImage(uint8_t *data, uint64_t &frame_id, uint64_t &timestamp, uint32_t &frame_status)
         uint32_t buffer_size
+        uint32_t QueueFrameFromBuffer(uint8_t *data, frame_info *p_info)
+        uint32_t StartCapture()
+        uint32_t EndCapture()
 #        void GetBuffer(PvBuffer *output)
+    cdef packed struct frame_info:
+        uint64_t frame_id
+        uint64_t timestamp
+        uint32_t frame_status
+        uint32_t is_filled
 
 cdef class PyCamera:
     cdef GigECamera c_camera
@@ -29,6 +37,10 @@ cdef class PyCamera:
         self.c_camera.Connect(ip, num_buffers)
     def get_parameter_names(self):
         return self.c_camera.GetParameterNames()
+    def start_capture(self):
+        return self.c_camera.StartCapture()
+    def end_capture(self):
+        return self.c_camera.EndCapture()
     def set_parameter_from_string(self,bytes name,bytes value):
         return self.c_camera.SetParameterFromString(name,value)
     def get_parameter(self,bytes name):
@@ -58,3 +70,7 @@ cdef class PyCamera:
         info = dict(size=size,frame_id=frame_id,
                     timestamp=timestamp, frame_status=frame_status)
         return info
+    def queue_buffer(self, np.ndarray[np.uint8_t] data, np.ndarray[frame_info] info):
+        cdef uint8_t *buffer = <uint8_t *> data.data
+        result = self.c_camera.QueueFrameFromBuffer(buffer, <frame_info *>info.data)
+        return result

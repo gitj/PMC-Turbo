@@ -4,6 +4,9 @@ try:
 except ImportError:
     print "couldn't import _pyvimba"
 
+frame_info_dtype = np.dtype([('frame_id',np.uint64),('timestamp',np.uint64),
+                             ('frame_status',np.uint32), ('is_filled', np.uint32)])
+
 class PyCamera():
     def __init__(self,ip="10.0.0.2",num_buffers=16):
         self._pc = _PyCamera(ip=ip,num_buffers=num_buffers)

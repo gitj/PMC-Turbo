@@ -81,6 +81,8 @@ uint32_t GigECamera::Connect(const char *ip_string, const uint32_t num_buffers) 
 		parameter_names.push_back(name->c_str());
 		delete name;
 	}
+	IFrameObserverPtr pObserver(new FrameObserver(m_pCamera));
+	frame_observer = pObserver;
 	return VmbErrorSuccess;
 
 
@@ -89,6 +91,14 @@ uint32_t GigECamera::Connect(const char *ip_string, const uint32_t num_buffers) 
 GigECamera::~GigECamera() {
 	m_system.Shutdown();
 
+}
+
+uint32_t GigECamera::StartCapture() {
+	return m_pCamera->StartCapture();
+}
+
+uint32_t GigECamera::EndCapture() {
+	return m_pCamera->EndCapture();
 }
 
 uint32_t GigECamera::GetImageSimple(uint8_t *data){
@@ -106,6 +116,14 @@ uint32_t GigECamera::GetImageSimple(uint8_t *data){
 	memcpy(data,image,buffer_size);
 	return buffer_size;
 
+}
+
+
+uint32_t GigECamera::QueueFrameFromBuffer(uint8_t *data, frame_info *p_info){
+	FramePtr frame(new CustomFrame(data,buffer_size,p_info));
+	frame->RegisterObserver(frame_observer);
+	//m_pCamera->AnnounceFrame(frame);
+	m_pCamera->QueueFrame(frame);
 }
 
 uint32_t GigECamera::GetImage(uint8_t *data, uint64_t &frame_id,
@@ -218,5 +236,31 @@ string GigECamera::GetParameter(const char *name){
 	return value;
 }
 
+FrameObserver::FrameObserver(CameraPtr pCamera) : IFrameObserver(pCamera)
+{
+	cout << "Hi from frame observer" << endl;
+}
+void FrameObserver::FrameReceived(const FramePtr pFrame)
+{
+	VmbUint64_t frame_id;
+	pFrame->GetFrameID(frame_id);
+	VmbUint64_t timestamp;
+	pFrame->GetTimestamp(timestamp);
+	CustomFrame *cframe = static_cast<CustomFrame *>(SP_ACCESS(pFrame));
+	cframe->info->frame_id = frame_id;
+	cframe->info->timestamp = timestamp;
+	VmbFrameStatusType frame_status;
+	pFrame->GetReceiveStatus(frame_status);
+	cframe->info->frame_status = frame_status;
+	cframe->info->is_filled = 1;
+	cout << "got frame " << frame_id << " ts: " << timestamp << " id: " << cframe->info->frame_id<< endl;
+	//m_pCamera->QueueFrame(pFrame);
+	delete pFrame.get();
+}
 
+CustomFrame::CustomFrame(VmbUchar_t *pBuffer, VmbInt64_t bufferSize , frame_info *p_info) : Frame(pBuffer, bufferSize)
+{
+	info = p_info;
+	info->is_filled = 0;
+}
 

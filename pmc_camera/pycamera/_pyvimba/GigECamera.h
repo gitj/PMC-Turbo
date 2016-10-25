@@ -16,11 +16,20 @@
 using namespace std;
 using namespace AVT::VmbAPI;
 
-class GigECamera {
+struct frame_info {
+	uint64_t frame_id;
+	uint64_t timestamp;
+	uint32_t frame_status;
+	uint32_t is_filled;
+} __attribute__((packed));
+
+class GigECamera{
 public:
 	GigECamera();
 	~GigECamera();
 	uint32_t Connect(const char *ip_string, const uint32_t num_buffers);
+	uint32_t StartCapture();
+	uint32_t EndCapture();
 	vector<string> GetParameterNames();
 	uint32_t SetParameterFromString(const char *name, const char *value);
 	uint32_t RunFeatureCommand(const char *name);
@@ -28,20 +37,31 @@ public:
 	uint32_t GetImageSimple(uint8_t *data);
 	uint32_t GetImage(uint8_t *data, uint64_t &frame_id,
 			uint64_t &timestamp, uint32_t &frame_status);
-/*	uint32_t GetImage(uint8_t *data, uint64_t &block_id,
-			uint64_t &buffer_id, uint64_t &reception_time,
-			uint64_t &timestamp, uint32_t &result_code,
-			uint32_t &operation_code);
-	//void GetBuffer(PvBuffer * output);
-	 */
+	uint32_t QueueFrameFromBuffer(uint8_t *data, frame_info *p_info);
 	uint32_t buffer_size;
 private:
 	// A reference to the Vimba singleton
 	VimbaSystem &m_system;
     CameraPtr m_pCamera;
 	vector<string> parameter_names;
+	IFrameObserverPtr frame_observer;
+};
+
+class FrameObserver : public IFrameObserver
+{
+public:
+	FrameObserver(CameraPtr pCamera);
+	void FrameReceived( const FramePtr pFrame );
 };
 
 
+class CustomFrame : public Frame
+{
+public:
+	CustomFrame(VmbUchar_t *pBuffer, VmbInt64_t bufferSize, frame_info *p_info );
+	frame_info *info;
+};
+
 #endif /* GIGECAMERA_H_ */
+
 
