@@ -6,6 +6,8 @@ __pycache__/
 # C extensions
 *.so
 *.o
+*.swp
+*.swo
 
 #cython generated files
 _pyvimba.cpp
