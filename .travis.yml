@@ -2,6 +2,9 @@ language: python
 python:
   - "2.7"
 install:
+  - curl -L -O https://cdn.alliedvision.com/fileadmin/content/software/software/Vimba/Vimba_v2.0_Linux.tgz
+  - tar -xf Vimba_v2.0_Linux.tgz
+  - export VIMBA_ROOT="$PWD/Vimba_2_0"
   - wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
   - bash miniconda.sh -b -p $HOME/miniconda
   - export PATH="$HOME/miniconda/bin:$PATH"
@@ -19,4 +22,8 @@ install:
 after_success:
   - codecov
 
-script: nosetests -v --with-coverage --cover-erase --cover-xml --cover-inclusive --cover-package=pmc_camera
+script: 
+  - cd pmc_camera/pycamera/_pyvimba
+  - make
+  - cd ../../..
+  - nosetests -v --with-coverage --cover-erase --cover-xml --cover-inclusive --cover-package=pmc_camera
