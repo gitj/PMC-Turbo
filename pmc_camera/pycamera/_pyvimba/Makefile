@@ -29,9 +29,10 @@ VIMBAC_CFLAGS   = -I$(VIMBA_ROOT)
 #Linker options needed for VimbaC
 VIMBAC_LIBS     = -L. -L$(VIMBA_ROOT)/VimbaCPP/DynamicLib/x86_64bit -lVimbaCPP -lVimbaC
 
+NUMPY_INCLUDE = $(shell python -c "import numpy; print numpy.get_include()")
 
 CFLAGS              += $(VIMBAC_CFLAGS) -I. -I/usr/include/python
-CPPFLAGS            += $(VIMBAC_CFLAGS) -I. -fPIC -I/usr/include/python2.7
+CPPFLAGS            += $(VIMBAC_CFLAGS) -I. -fPIC -I/usr/include/python2.7 -I$(NUMPY_INCLUDE)
 #_DEBUG		= yes
 ifdef _DEBUG
     CFLAGS    += -g -O0 -D_DEBUG
