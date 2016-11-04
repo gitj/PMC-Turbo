@@ -1,8 +1,8 @@
-from pmc_camera.communication import generate_bad_packets, udp_receiver
+from pmc_camera.communication import generate_bad_packets, sip_packet_decoder
 
 
 def simple_test():
-    u = udp_receiver.UDPReceiver(ip='localhost', port=4001)
+    u = sip_packet_decoder.SIPPacketDecoder()
     u.put_bytes_in_buffer('\x10\x13\x03')
     u.process_buffer()
     assert (u.buffer == '\x10\x13\x03')
@@ -10,7 +10,7 @@ def simple_test():
 
 
 def junk_before_test():
-    u = udp_receiver.UDPReceiver(ip='localhost', port=4001)
+    u = sip_packet_decoder.SIPPacketDecoder()
     bytes = generate_bad_packets.generate_random_bytes(100) + '\x10\x13\x03'
     u.put_bytes_in_buffer(bytes)
     u.process_buffer()
@@ -19,7 +19,7 @@ def junk_before_test():
 
 
 def junk_after_test():
-    u = udp_receiver.UDPReceiver(ip='localhost', port=4001)
+    u = sip_packet_decoder.SIPPacketDecoder()
     bytes = '\x10\x13\x03' + generate_bad_packets.generate_random_bytes(100)
     u.put_bytes_in_buffer(bytes)
     u.process_buffer()
@@ -28,7 +28,7 @@ def junk_after_test():
 
 
 def two_packets_test():
-    u = udp_receiver.UDPReceiver(ip='localhost', port=4001)
+    u = sip_packet_decoder.SIPPacketDecoder()
     bytes = '\x10\x13\x03' + '\x10\x13\x03'
     u.put_bytes_in_buffer(bytes)
     u.process_buffer()

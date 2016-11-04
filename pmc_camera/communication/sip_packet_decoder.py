@@ -1,31 +1,13 @@
-import socket
-import time
 import science_communication
 
 
-class UDPReceiver():
-    def __init__(self, max_buffer_len=260, ip='192.168.1.137', port=4001):
+class SIPPacketDecoder():
+    def __init__(self, max_buffer_len=260):
+        # Currently use ip='192.168.1.137', port=4001
         self.buffer = ''
         self.max_buffer_len = max_buffer_len
         self.candidate_packets = []
         self.confirmed_packets = []
-        self.setup_socket(ip=ip, port=port)
-
-    def __del__(self):
-        self.socket.close()
-
-    def setup_socket(self, ip, port):
-        socket_ = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        socket_.bind((ip, port))
-        socket.timeout = 0
-        self.socket = socket_
-
-    def get_bytes_from_socket(self):
-        start = time.time()
-        self.socket.timeout = 0
-        while data is not None:
-            data = self.socket.recv(1024)
-            self.buffer.append(data)
 
     def find_interesting_byte(self, buffer, byte_of_interest):
         idxs = []
