@@ -4,12 +4,12 @@ import science_communication
 
 
 class UDPReceiver():
-    def __init__(self, max_buffer_len=260):
+    def __init__(self, max_buffer_len=260, ip='192.168.1.137', port=4001):
         self.buffer = ''
         self.max_buffer_len = max_buffer_len
         self.candidate_packets = []
         self.confirmed_packets = []
-        self.setup_socket(ip='192.168.1.137', port=4001)
+        self.setup_socket(ip=ip, port=port)
 
     def __del__(self):
         self.socket.close()
