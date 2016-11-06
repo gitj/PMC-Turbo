@@ -93,7 +93,7 @@ class BlobFinder(object):
         nc = (imlev.shape[1]//cell_size)*cell_size
         # leveled is the filtered image that is an even multiple of the cell_size
         self.leveled = imlev[:nr,:nc]
-        cells = imlev.reshape((imlev.shape[0]//cell_size,cell_size,
+        cells = self.leveled.reshape((imlev.shape[0]//cell_size,cell_size,
                                         imlev.shape[1]//cell_size,cell_size))
         #calculate noise
         noise = np.median(cells.std(axis=(1,3)))

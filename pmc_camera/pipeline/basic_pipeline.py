@@ -34,8 +34,8 @@ class BasicPipeline:
         self.num_data_buffers = num_data_buffers
         self.raw_image_buffers = [mp.Array(ctypes.c_uint8, image_size_bytes) for b in range(num_data_buffers)]
         # We save the buffer info in a custom datatype array, which is a bit ugly, but it works and isn't too bad.
-        self.info_buffer = [mp.Array(ctypes.c_uint8, frame_info_dtype.itemsize) for b in range(
-            num_data_buffers)]
+        self.info_buffer = [mp.Array(ctypes.c_uint8, frame_info_dtype.itemsize)
+                            for b in range(num_data_buffers)]
 
         # The input queue holds indexes for the buffers that have already been emptied (processed) and are ready to
         # recieve new images. The acquire thread grabs an index from the input queue, fills the corresponding buffer,
@@ -136,7 +136,7 @@ class AcquireImagesProcess:
         self.pc._pc.set_parameter_from_string('AcquisitionMode',"MultiFrame")
         self.pc._pc.set_parameter_from_string('AcquisitionFrameRateAbs',"6.25")
         self.pc._pc.set_parameter_from_string('TriggerSource','FixedRate')
-        self.pc._pc.set_parameter_from_string('ExposureTimeAbs',"100000")
+        self.pc._pc.set_parameter_from_string('ExposureTimeAbs',"500")
 
         last_trigger = int(time.time()+1)
         buffers_on_camera = set()
@@ -168,6 +168,7 @@ class AcquireImagesProcess:
                 self.status.value = "arming camera"
                 start_time = int(time.time()+1)
                 self.pc._pc.set_parameter_from_string('PtpAcquisitionGateTime',str(int(start_time*1e9)))
+                time.sleep(0.1)
                 self.pc._pc.run_feature_command("AcquisitionStart")
                 last_trigger = start_time
 

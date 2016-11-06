@@ -51,7 +51,7 @@ class FrameObserver : public IFrameObserver
 {
 public:
 	FrameObserver(CameraPtr pCamera);
-	void FrameReceived( const FramePtr pFrame );
+	void FrameReceived(FramePtr pFrame );
 };
 
 

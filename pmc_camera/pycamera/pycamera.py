@@ -18,7 +18,7 @@ class PyCamera():
         """
         get the image data from the next waiting buffer
 
-        There is no guarentee this image is fresh, it could have been sitting in the buffer for an arbitrary amount
+        There is no guarantee this image is fresh, it could have been sitting in the buffer for an arbitrary amount
         of time.
 
         Parameters

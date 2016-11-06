@@ -240,7 +240,7 @@ FrameObserver::FrameObserver(CameraPtr pCamera) : IFrameObserver(pCamera)
 {
 	cout << "Hi from frame observer" << endl;
 }
-void FrameObserver::FrameReceived(const FramePtr pFrame)
+void FrameObserver::FrameReceived(FramePtr pFrame)
 {
 	VmbUint64_t frame_id;
 	pFrame->GetFrameID(frame_id);
@@ -256,6 +256,7 @@ void FrameObserver::FrameReceived(const FramePtr pFrame)
 	cout << "got frame " << frame_id << " ts: " << timestamp << " id: " << cframe->info->frame_id<< endl;
 	//m_pCamera->QueueFrame(pFrame);
 	delete pFrame.get();
+	pFrame.reset();
 }
 
 CustomFrame::CustomFrame(VmbUchar_t *pBuffer, VmbInt64_t bufferSize , frame_info *p_info) : Frame(pBuffer, bufferSize)
