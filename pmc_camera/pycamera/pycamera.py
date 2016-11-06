@@ -1,14 +1,12 @@
 import numpy as np
-try:
-    from _pyvimba._pyvimba import PyCamera as _PyCamera
-except ImportError:
-    print "couldn't import _pyvimba"
-
-frame_info_dtype = np.dtype([('frame_id',np.uint64),('timestamp',np.uint64),
-                             ('frame_status',np.uint32), ('is_filled', np.uint32)])
 
 class PyCamera():
-    def __init__(self,ip="10.0.0.2",num_buffers=16):
+    def __init__(self,ip="10.0.0.2",num_buffers=0,use_simulated_camera=False):
+        if use_simulated_camera:
+            from _pyvimba._pyvimba_simulator import BasicPyCameraSimulator as _PyCamera
+        else:
+            from _pyvimba._pyvimba import PyCamera as _PyCamera
+
         self._pc = _PyCamera(ip=ip,num_buffers=num_buffers)
         self._num_buffers = num_buffers
         self.exposure_counts = 0

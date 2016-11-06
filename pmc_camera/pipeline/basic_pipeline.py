@@ -25,11 +25,13 @@ import os
 import ctypes
 from Queue import Empty as EmptyException
 
-from pmc_camera.pycamera.pycamera import frame_info_dtype
+from pmc_camera.pycamera.dtypes import frame_info_dtype
+
 
 class BasicPipeline:
     def __init__(self, dimensions=(3232,4864), num_data_buffers=16,
-                 disks_to_use = ['/data1','/data2','/data3','/data4']):
+                 disks_to_use = ['/data1','/data2','/data3','/data4'],
+                 use_simulated_camera=False):
         image_size_bytes = dimensions[0]*dimensions[1]*2
         self.num_data_buffers = num_data_buffers
         self.raw_image_buffers = [mp.Array(ctypes.c_uint8, image_size_bytes) for b in range(num_data_buffers)]
@@ -80,7 +82,7 @@ class BasicPipeline:
                                                               acquire_image_output_queue=self.acquire_image_output_queue,
                                                               acquire_image_input_queue=self.acquire_image_input_queue,
                                                               info_buffer=self.info_buffer,dimensions=dimensions,
-                                                   status=self.acquire_status)
+                                                   status=self.acquire_status, use_simulated_camera=use_simulated_camera)
 
 
 
@@ -115,11 +117,12 @@ class BasicPipeline:
 
 class AcquireImagesProcess:
     def __init__(self, raw_image_buffers, acquire_image_output_queue, acquire_image_input_queue, info_buffer,
-                 dimensions,status):
+                 dimensions,status,use_simulated_camera):
         self.data_buffers = raw_image_buffers
         self.input_queue = acquire_image_input_queue
         self.output_queue = acquire_image_output_queue
         self.info_buffer = info_buffer
+        self.use_simulated_camera = use_simulated_camera
         self.status = status
         self.status.value="starting"
         self.child = mp.Process(target=self.run)
@@ -130,7 +133,7 @@ class AcquireImagesProcess:
         frame_number = 0
         import pmc_camera
         self.status.value = "initializing camera"
-        self.pc = pmc_camera.PyCamera("10.0.0.2")
+        self.pc = pmc_camera.PyCamera("10.0.0.2",use_simulated_camera=self.use_simulated_camera)
         self.pc._pc.start_capture()
         self.pc._pc.set_parameter_from_string("AcquisitionFrameCount","2")
         self.pc._pc.set_parameter_from_string('AcquisitionMode',"MultiFrame")
