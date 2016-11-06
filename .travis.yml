@@ -21,6 +21,7 @@ install:
   - conda install opencv
   #- pip install -r requirements.txt
   - pip install codecov
+  - pip install coverage
   - pip install blosc
   - nosetests --plugins
 after_success:
