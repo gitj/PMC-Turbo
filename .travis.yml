@@ -17,10 +17,11 @@ install:
   - conda info -a
   - conda create -q -n test-environment python=2.7 numpy scipy matplotlib nose cython numexpr pyzmq pyserial netCDF4
   - source activate test-environment
-  - conda install -c blosc python-blosc
+  #- conda install -c blosc python-blosc
   - conda install opencv
   #- pip install -r requirements.txt
   - pip install codecov
+  - pip install blosc
   - nosetests --plugins
 after_success:
   - codecov
