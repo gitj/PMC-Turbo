@@ -45,7 +45,7 @@ index_file_header = ",".join(['file_index',
 class BasicPipeline:
     def __init__(self, dimensions=(3232,4864), num_data_buffers=16,
                  disks_to_use = ['/data1','/data2','/data3','/data4'],
-                 use_simulated_camera=False):
+                 use_simulated_camera=False, default_write_enable=1):
         image_size_bytes = 31440952 # dimensions[0]*dimensions[1]*2  # Need to figure out how to not hard code this
         self.num_data_buffers = num_data_buffers
         self.raw_image_buffers = [mp.Array(ctypes.c_uint8, image_size_bytes) for b in range(num_data_buffers)]
@@ -75,6 +75,10 @@ class BasicPipeline:
         self.disk_statuses = [mp.Array(ctypes.c_char,32) for disk in disks_to_use]
         num_writers = len(disks_to_use)
 
+        self.disk_write_enables = [mp.Value(int) for disk in disks_to_use]
+        for enable in self.disk_write_enables:
+            enable.value=int(default_write_enable)
+
         # we prime the input queue to indicate that all buffers are ready to be filled
         for i in range(num_data_buffers):
             self.acquire_image_input_queue.put(i)
@@ -89,7 +93,8 @@ class BasicPipeline:
                                               info_buffer=self.info_buffer,dimensions=dimensions,
                                               status = self.disk_statuses[k],
                                           output_dir=output_dir,
-                                          available_disks=[disks_to_use[k]])
+                                          available_disks=[disks_to_use[k]],
+                                          write_enable=self.disk_write_enables[k])
                         for k in range(num_writers)]
 
         self.acquire_images = AcquireImagesProcess(raw_image_buffers=self.raw_image_buffers,
@@ -211,13 +216,14 @@ class AcquireImagesProcess:
 
 class WriteImageProcess(object):
     def __init__(self,input_buffers, input_queue, output_queue, info_buffer, dimensions, status, output_dir,
-                 available_disks = ['/data1', '/data2', '/data3', '/data4']):
+                 available_disks, write_enable):
         self.data_buffers = input_buffers
         self.input_queue = input_queue
         self.output_queue = output_queue
         self.info_buffer = info_buffer
         self.available_disks = available_disks
         self.dimensions=dimensions
+        self.write_enable = write_enable
         self.output_dirs = [os.path.join(rpath,output_dir) for rpath in available_disks]
         for dname in self.output_dirs:
             try:
@@ -264,27 +270,24 @@ class WriteImageProcess(object):
                     # focus_step,aperture_stop,exposure_us,gain_db,focal_length_mm,filename'
                     lens_status = chunk_data['lens_status_focus'] >> 10
                     focus_step = chunk_data['lens_status_focus'] & 0x3FF
-                    with open(os.path.join(dirname,index_file_name),'a') as fh:
-                        fh.write('%d,%f,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%s\n' %
-                                 (frame_indexes[dirname],
-                                  time.time(),
-                                  info['timestamp'],
-                                  info['frame_status'],
-                                  info['frame_id'],
-                                  chunk_data['acquisition_count'],
-                                  lens_status,
-                                  focus_step,
-                                  chunk_data['lens_aperture'],
-                                  chunk_data['exposure_us'],
-                                  chunk_data['gain_db'],
-                                  chunk_data['lens_focal_length'],
-                                  fname
-                                  ))
-                    #np.savez(fname,info=info,image=image_buffer) # too slow
-                    #image_buffer.tofile(fname) # very fast but just raw binary, no compression, no metadata
-                    #write_image_to_netcdf(fname,image_buffer) # works nicely, but compression is not quite as good as
-                    # blosc. May be preferable since metadata is kept nicely.
-                    write_image_blosc(fname,image_buffer) # fast and good lossless compression
+                    if self.write_enable.value:
+                        with open(os.path.join(dirname,index_file_name),'a') as fh:
+                            fh.write('%d,%f,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%s\n' %
+                                     (frame_indexes[dirname],
+                                      time.time(),
+                                      info['timestamp'],
+                                      info['frame_status'],
+                                      info['frame_id'],
+                                      chunk_data['acquisition_count'],
+                                      lens_status,
+                                      focus_step,
+                                      chunk_data['lens_aperture'],
+                                      chunk_data['exposure_us'],
+                                      chunk_data['gain_db'],
+                                      chunk_data['lens_focal_length'],
+                                      fname
+                                      ))
+                        write_image_blosc(fname,image_buffer) # fast and good lossless compression
                     self.disk_to_use = (self.disk_to_use + 1) % len(self.output_dirs) # if this thread is cycling
                     frame_indexes[dirname] = frame_indexes[dirname] + 1
                     # between disks, do the cycling here.
