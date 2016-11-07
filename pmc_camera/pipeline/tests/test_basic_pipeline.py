@@ -6,3 +6,6 @@ def test_pipeline_runs():
     time.sleep(1)
     bpl.get_status()
     bpl.close()
+
+if __name__ == "__main__":
+    test_pipeline_runs()

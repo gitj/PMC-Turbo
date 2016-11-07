@@ -37,7 +37,7 @@ public:
 	uint32_t GetImageSimple(uint8_t *data);
 	uint32_t GetImage(uint8_t *data, uint64_t &frame_id,
 			uint64_t &timestamp, uint32_t &frame_status);
-	uint32_t QueueFrameFromBuffer(uint8_t *data, frame_info *p_info);
+	uint32_t QueueFrameFromBuffer(uint8_t *data, uint32_t size, frame_info *p_info);
 	uint32_t buffer_size;
 private:
 	// A reference to the Vimba singleton

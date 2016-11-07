@@ -32,7 +32,7 @@ class BasicPipeline:
     def __init__(self, dimensions=(3232,4864), num_data_buffers=16,
                  disks_to_use = ['/data1','/data2','/data3','/data4'],
                  use_simulated_camera=False):
-        image_size_bytes = dimensions[0]*dimensions[1]*2
+        image_size_bytes = 31440952 # dimensions[0]*dimensions[1]*2  # Need to figure out how to not hard code this
         self.num_data_buffers = num_data_buffers
         self.raw_image_buffers = [mp.Array(ctypes.c_uint8, image_size_bytes) for b in range(num_data_buffers)]
         # We save the buffer info in a custom datatype array, which is a bit ugly, but it works and isn't too bad.
@@ -140,6 +140,8 @@ class AcquireImagesProcess:
         self.pc._pc.set_parameter_from_string('AcquisitionFrameRateAbs',"6.25")
         self.pc._pc.set_parameter_from_string('TriggerSource','FixedRate')
         self.pc._pc.set_parameter_from_string('ExposureTimeAbs',"500")
+        self.payload_size = int(self.pc._pc.get_parameter('PayloadSize'))
+        print "payload size:", self.payload_size
 
         last_trigger = int(time.time()+1)
         buffers_on_camera = set()
@@ -225,7 +227,7 @@ class WriteImageProcess(object):
                     self.status.value = "processing %d" % process_me
                     #t0 = timeit.default_timer()
                     image_buffer = np.frombuffer(self.data_buffers[process_me].get_obj(), dtype='uint16')
-                    image_buffer.shape=self.dimensions
+                    #image_buffer.shape=self.dimensions
                     npy_info_buffer = np.frombuffer(self.info_buffer[process_me].get_obj(),dtype=frame_info_dtype)
                     info = dict([(k,npy_info_buffer[0][k]) for k in frame_info_dtype.fields.keys()])
                     ts = time.strftime("%Y-%m-%d_%H%M%S")

@@ -119,8 +119,8 @@ uint32_t GigECamera::GetImageSimple(uint8_t *data){
 }
 
 
-uint32_t GigECamera::QueueFrameFromBuffer(uint8_t *data, frame_info *p_info){
-	FramePtr frame(new CustomFrame(data,buffer_size,p_info));
+uint32_t GigECamera::QueueFrameFromBuffer(uint8_t *data, uint32_t size, frame_info *p_info){
+	FramePtr frame(new CustomFrame(data,size,p_info));
 	frame->RegisterObserver(frame_observer);
 	//m_pCamera->AnnounceFrame(frame);
 	m_pCamera->QueueFrame(frame);
