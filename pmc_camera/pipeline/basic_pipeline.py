@@ -75,7 +75,7 @@ class BasicPipeline:
         self.disk_statuses = [mp.Array(ctypes.c_char,32) for disk in disks_to_use]
         num_writers = len(disks_to_use)
 
-        self.disk_write_enables = [mp.Value(int) for disk in disks_to_use]
+        self.disk_write_enables = [mp.Value(ctypes.c_int32) for disk in disks_to_use]
         for enable in self.disk_write_enables:
             enable.value=int(default_write_enable)
 
