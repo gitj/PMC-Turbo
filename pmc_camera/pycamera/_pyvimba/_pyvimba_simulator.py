@@ -19,7 +19,7 @@ class BasicPyCameraSimulator:
             return -3
     def get_parameter(self,name):
         if name in gt4907_parameter_names:
-            return "value"
+            return "0"
         else:
             return 'Error No Such Feature'
     def run_feature_command(self,name):

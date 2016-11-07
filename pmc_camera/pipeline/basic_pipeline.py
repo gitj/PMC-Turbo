@@ -194,6 +194,7 @@ class AcquireImagesProcess:
 
             if not buffers_on_camera:
                 time.sleep(0.001)
+            num_buffers_filled = 0
             for buffer_id in list(buffers_on_camera):
                 npy_info_buffer = np.frombuffer(self.info_buffer[buffer_id].get_obj(),dtype=frame_info_dtype)
                 if npy_info_buffer[0]['is_filled']:
@@ -201,6 +202,9 @@ class AcquireImagesProcess:
                     self.output_queue.put(buffer_id)
                     buffers_on_camera.remove(buffer_id)
                     frame_number += 1
+                    num_buffers_filled +=1
+            if num_buffers_filled == 0:
+                time.sleep(0.001)
         #if we get here, we were kindly asked to exit
         self.status.value = "exiting"
         return None
