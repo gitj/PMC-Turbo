@@ -25,8 +25,22 @@ import os
 import ctypes
 from Queue import Empty as EmptyException
 
-from pmc_camera.pycamera.dtypes import frame_info_dtype
+from pmc_camera.pycamera.dtypes import frame_info_dtype,chunk_dtype
 
+index_file_name = 'index.csv'
+index_file_header = ",".join(['file_index',
+                              'write_timestamp',
+                              'frame_timestamp_ns',
+                              'frame_status',
+                              'frame_id',
+                              'acquisition_count',
+                              'lens_status',
+                              'focus_step',
+                              'aperture_stop',
+                              'exposure_us',
+                              'gain_db',
+                              'focal_length_mm',
+                              'filename']) + '\n'
 
 class BasicPipeline:
     def __init__(self, dimensions=(3232,4864), num_data_buffers=16,
@@ -135,11 +149,12 @@ class AcquireImagesProcess:
         self.status.value = "initializing camera"
         self.pc = pmc_camera.PyCamera("10.0.0.2",use_simulated_camera=self.use_simulated_camera)
         self.pc._pc.start_capture()
-        self.pc._pc.set_parameter_from_string("AcquisitionFrameCount","2")
-        self.pc._pc.set_parameter_from_string('AcquisitionMode',"MultiFrame")
-        self.pc._pc.set_parameter_from_string('AcquisitionFrameRateAbs',"6.25")
-        self.pc._pc.set_parameter_from_string('TriggerSource','FixedRate')
-        self.pc._pc.set_parameter_from_string('ExposureTimeAbs',"500")
+        self.pc.set_parameter("ChunkModeActive","true")
+        self.pc.set_parameter("AcquisitionFrameCount","2")
+        self.pc.set_parameter('AcquisitionMode',"MultiFrame")
+        self.pc.set_parameter('AcquisitionFrameRateAbs',"6.25")
+        self.pc.set_parameter('TriggerSource','FixedRate')
+        self.pc.set_parameter('ExposureTimeAbs',"500")
         self.payload_size = int(self.pc._pc.get_parameter('PayloadSize'))
         print "payload size:", self.payload_size
 
@@ -172,9 +187,9 @@ class AcquireImagesProcess:
             if time.time() > last_trigger + 0.5:
                 self.status.value = "arming camera"
                 start_time = int(time.time()+1)
-                self.pc._pc.set_parameter_from_string('PtpAcquisitionGateTime',str(int(start_time*1e9)))
+                self.pc.set_parameter('PtpAcquisitionGateTime',str(int(start_time*1e9)))
                 time.sleep(0.1)
-                self.pc._pc.run_feature_command("AcquisitionStart")
+                self.pc.run_feature_command("AcquisitionStart")
                 last_trigger = start_time
 
             if not buffers_on_camera:
@@ -213,6 +228,10 @@ class WriteImageProcess(object):
 
     def run(self):
         process_me = -1
+        frame_indexes = dict([(dirname,0) for dirname in self.output_dirs])
+        for dirname in self.output_dirs:
+            with open(os.path.join(dirname,index_file_name),'w') as fh:
+                fh.write(index_file_header)
         while True:
             try:
                 process_me = self.input_queue.get_nowait()
@@ -230,17 +249,40 @@ class WriteImageProcess(object):
                     #image_buffer.shape=self.dimensions
                     npy_info_buffer = np.frombuffer(self.info_buffer[process_me].get_obj(),dtype=frame_info_dtype)
                     info = dict([(k,npy_info_buffer[0][k]) for k in frame_info_dtype.fields.keys()])
+                    chunk_data = image_buffer.view('uint8')[-48:].view(chunk_dtype)[0]
                     ts = time.strftime("%Y-%m-%d_%H%M%S")
                     info_str = '_'.join([('%s=%r' % (k,v)) for (k,v) in info.items()])
                     #print process_me, self.available_disks[self.disk_to_use], info['frame_id'], info['size']#, info_str
                     ts = ts + '_' + info_str
-                    fname = os.path.join(self.output_dirs[self.disk_to_use],ts)
+                    dirname = self.output_dirs[self.disk_to_use]
+                    fname = os.path.join(dirname,ts)
+                    #'file_index,write_timestamp,frame_timestamp_ns,frame_status,frame_id,acquisition_count,lens_status,
+                    # focus_step,aperture_stop,exposure_us,gain_db,focal_length_mm,filename'
+                    lens_status = chunk_data['lens_status_focus'] >> 10
+                    focus_step = chunk_data['lens_status_focus'] & 0x3FF
+                    with open(os.path.join(dirname,index_file_name),'a') as fh:
+                        fh.write('%d,%f,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%s\n' %
+                                 (frame_indexes[dirname],
+                                  time.time(),
+                                  info['timestamp'],
+                                  info['frame_status'],
+                                  info['frame_id'],
+                                  chunk_data['acquisition_count'],
+                                  lens_status,
+                                  focus_step,
+                                  chunk_data['lens_aperture'],
+                                  chunk_data['exposure_us'],
+                                  chunk_data['gain_db'],
+                                  chunk_data['lens_focal_length'],
+                                  fname
+                                  ))
                     #np.savez(fname,info=info,image=image_buffer) # too slow
                     #image_buffer.tofile(fname) # very fast but just raw binary, no compression, no metadata
                     #write_image_to_netcdf(fname,image_buffer) # works nicely, but compression is not quite as good as
                     # blosc. May be preferable since metadata is kept nicely.
                     write_image_blosc(fname,image_buffer) # fast and good lossless compression
                     self.disk_to_use = (self.disk_to_use + 1) % len(self.output_dirs) # if this thread is cycling
+                    frame_indexes[dirname] = frame_indexes[dirname] + 1
                     # between disks, do the cycling here.
                     self.output_queue.put(process_me)
 
