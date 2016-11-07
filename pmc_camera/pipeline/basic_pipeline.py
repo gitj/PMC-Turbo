@@ -155,7 +155,7 @@ class AcquireImagesProcess:
         self.pc.set_parameter('AcquisitionFrameRateAbs',"6.25")
         self.pc.set_parameter('TriggerSource','FixedRate')
         self.pc.set_parameter('ExposureTimeAbs',"500")
-        self.payload_size = int(self.pc._pc.get_parameter('PayloadSize'))
+        self.payload_size = int(self.pc.get_parameter('PayloadSize'))
         print "payload size:", self.payload_size
 
         last_trigger = int(time.time()+1)
