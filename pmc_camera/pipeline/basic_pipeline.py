@@ -113,7 +113,7 @@ class BasicPipeline:
         self.daemon = Pyro4.Daemon(host=ip,port=50000)
         uri = self.daemon.register(self,"pipeline")
         print uri
-        self.daemon.requestLoop()
+        #self.daemon.requestLoop()
 
     def _keep_running(self):
         print "check running",self.keep_running
