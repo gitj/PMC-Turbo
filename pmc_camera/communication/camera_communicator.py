@@ -18,7 +18,7 @@ class Communicator():
 
         self.ping = dict(cam_id=self.cam_id, msg='ping')
         # Change this to be a standard message sent to master.
-        self.ping_response = None
+        self.ping_response = dict(cam_id=self.cam_id, msg='ping_response')
         # master should give a ping response here
 
     def set_up_master_attributes(self, sip_ip, sip_port):
@@ -26,34 +26,46 @@ class Communicator():
         self.ping_queue = Queue.Queue()
         self.setup_sip_socket(sip_ip, sip_port)
         self.sip_packet_decoder = sip_packet_decoder.SIPPacketDecoder()
+        self.peers = {}
+        # Format of peers: {cam_id: zmq_socket}
 
     ### Loops to continually be run
 
-    def run_slave_loop(self):
+    def run_peer_tasks(self):
         self.identify_master()
+        self.look_for_messages()
         self.process_command_queue()
         self.reconcile_kvdb_and_pipeline()
 
-    def run_master_loop(self):
+    def run_master_tasks(self):
+        self.answer_pings()
         self.process_sip_socket()
         self.process_packet_queue()
-        self.answer_pings()
 
     ### Master methods
+
+    def populate_peers(self, num_cameras):
+        # Makes a dict of all the peers and a socket for each.
+        for i in range(num_cameras):
+            new_socket = self.context.socket(zmq.PAIR)
+            new_socket.connect("tcp://localhost:%s" % (self.base_port + i))
+            # Change from localhost eventually.
+            self.peers[i] = new_socket
 
     def answer_pings(self):
         while self.zmq_socket.poll(timeout=0):
             ping = self.zmq_socket.recv_json()
             self.ping_queue.put(ping)
-        while len(self.ping_queue) != 0:
+        while not self.ping_queue.empty():
             self.respond_to_ping(self.ping_queue.get())
 
     def respond_to_ping(self, ping):
-        # Fill this in
-        return
+        # If the ping is a ping, find the zmq_socket in self.peers and send the generic ping_response
+        if ping['msg'] == 'ping':
+            self.peers[ping['cam_id']].send_json(self.ping_response)
 
     def process_packet_queue(self):
-        while len(self.packet_queue) != 0:
+        while not self.packet_queue.empty():
             packet = self.packet_queue.get()
             packet_dict = science_communication.decode_packet(packet)
             self.process_packet(packet_dict)
@@ -73,9 +85,13 @@ class Communicator():
 
     def get_bytes_from_sip_socket(self):
         self.sip_socket.timeout = 0
-        while data is not None:
+        done = False
+        while not done:
             data = self.sip_socket.recv(1024)
-            self.sip_packet_decoder.buffer.append(data)
+            if data:
+                self.sip_packet_decoder.buffer.append(data)
+            else:
+                done = True
 
     def interpret_bytes_from_sip_socket(self):
         self.sip_packet_decoder.process_buffer()
@@ -86,10 +102,10 @@ class Communicator():
         self.get_bytes_from_sip_socket()
         self.interpret_bytes_from_sip_socket()
 
-    ### Slave methods
+    ### peer methods
 
     def process_command_queue(self):
-        while len(self.command_queue) != 0:
+        while not self.command_queue.empty():
             command = self.command_queue.get()
             self.run_command(command)
 
@@ -104,13 +120,28 @@ class Communicator():
             self.determine_master()
 
     def ping_master(self):
-        self.zmq_socket.send_json(self.ping)
-        self.get_ping_response()
-        if not self.ping_response:
+        self.master.zmq_socket.send_json(self.ping)
+        ### Semd to master socket rather than own socket
+        result = self.get_ping_response()
+        if not result:
             self.determine_master()
 
-    def get_ping_response(self):
+    def look_for_messages(self):
+        while self.zmq_socket.poll(timeout=0):
+            message = self.zmq_socket.recv_json()
+            self.process_message(message)
+
+    def process_message(self):
+        # If it is a ping back I want to let myself know I received a response
+        # If it is a command I want to put it in the command queue
+        # If it is junk I want to discard it.
         return
+
+    def get_ping_response(self):
+        pingback = self.zmq_socket.recv_json()
+        if pingback != self.expected_pingback:
+            return False
+        return True
 
     # Decide how to do this - I don't want a wait.
     # I think I want to check if the master pinged back last time I checked - a queue?
