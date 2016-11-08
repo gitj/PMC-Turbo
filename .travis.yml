@@ -23,6 +23,7 @@ install:
   - pip install codecov
   - pip install coverage
   - pip install blosc
+  - pip install Pyro4
   - nosetests --plugins
 after_success:
   - codecov

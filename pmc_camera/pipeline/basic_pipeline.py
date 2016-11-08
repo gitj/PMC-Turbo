@@ -25,6 +25,9 @@ import os
 import ctypes
 from Queue import Empty as EmptyException
 
+import Pyro4, Pyro4.socketutil
+import select
+
 from pmc_camera.pycamera.dtypes import frame_info_dtype,chunk_dtype
 
 index_file_name = 'index.csv'
@@ -42,6 +45,7 @@ index_file_header = ",".join(['file_index',
                               'focal_length_mm',
                               'filename']) + '\n'
 
+@Pyro4.expose
 class BasicPipeline:
     def __init__(self, dimensions=(3232,4864), num_data_buffers=16,
                  disks_to_use = ['/data1','/data2','/data3','/data4'],
@@ -105,6 +109,15 @@ class BasicPipeline:
 
 
 
+        ip = Pyro4.socketutil.getInterfaceAddress('192.168.1.1')
+        self.daemon = Pyro4.Daemon(host=ip,port=50000)
+        uri = self.daemon.register(self,"pipeline")
+        print uri
+        self.daemon.requestLoop()
+
+    def _keep_running(self):
+        print "check running",self.keep_running
+        return self.keep_running
     def get_status(self):
         """
         Print the status of all processing threads
@@ -132,8 +145,9 @@ class BasicPipeline:
         #self.write_images.child.join()
         for writer in self.writers:
             writer.child.join()
+        self.daemon.shutdown()
 
-
+@Pyro4.expose
 class AcquireImagesProcess:
     def __init__(self, raw_image_buffers, acquire_image_output_queue, acquire_image_input_queue, info_buffer,
                  dimensions,status,use_simulated_camera):
@@ -147,7 +161,18 @@ class AcquireImagesProcess:
         self.child = mp.Process(target=self.run)
         self.child.start()
 
+    def get_status(self):
+        return self.status.value
+    def get_parameter(self,name):
+        return self.pc.get_parameter(name)
+    def set_parameter(self,name,value):
+        return self.pc.set_parameter(name,value)
+
     def run(self):
+        ip = Pyro4.socketutil.getInterfaceAddress('192.168.1.1')
+        self.daemon = Pyro4.Daemon(host=ip,port=50001)
+        uri = self.daemon.register(self,"acquire")
+        print uri
         # Setup
         frame_number = 0
         import pmc_camera
@@ -209,7 +234,11 @@ class AcquireImagesProcess:
                     frame_number += 1
                     num_buffers_filled +=1
             if num_buffers_filled == 0:
-                time.sleep(0.001)
+                events,_,_ = select.select(self.daemon.sockets,[],[],0)
+                if events:
+                    self.daemon.events(events)
+                else:
+                    time.sleep(0.001)
         #if we get here, we were kindly asked to exit
         self.status.value = "exiting"
         return None
