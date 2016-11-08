@@ -221,18 +221,25 @@ string GigECamera::GetParameter(const char *name){
 		long long int intval;
 		feature->GetValue(intval);
 		ss << intval;
-		cout << intval << endl;
+		//cout << intval << endl;
 		value = ss.str();
 	} else if (datatype == VmbFeatureDataFloat) {
 		double fval;
 		feature->GetValue(fval);
 		ss << fval;
-		cout << fval << endl;
+		//cout << fval << endl;
 		value = ss.str();
-	} else {
-		cout << "unsupported type: " << datatype << endl;
+	} else if (datatype == VmbFeatureDataBool) {
+		bool bval;
+		feature->GetValue(bval);
+		ss << bval;
+		value = ss.str();
 	}
-	cout << name << ":" << value << endl;
+	else {
+		ss << "unknown";
+		value = ss.str();
+	}
+	//cout << name << ":" << value << endl;
 	return value;
 }
 
