@@ -7,7 +7,7 @@ class BasicPyCameraSimulator:
     def __init__(self,ip=None,num_buffers=None):
         self.bytes_per_image = 3232*4864*2
     def get_parameter_names(self):
-        return gt4907_parameter_names.copy()
+        return gt4907_parameter_names[:]
     def start_capture(self):
         return 0
     def end_capture(self):
