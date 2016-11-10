@@ -4,65 +4,102 @@ import time
 import science_communication
 import sip_packet_decoder
 import Queue
+import Pyro4, Pyro4.socketutil, Pyro4.errors
+import select
+import threading
+
+Pyro4.config.SERVERTYPE = "multiplex"
+Pyro4.config.COMMTIMEOUT = 1.0
+# Tests show COMMTIMEOUT works.
+# Note that there is another timeout POLLTIMEOUT
+# "For the multiplexing server only: the timeout of the select or poll calls"
+
+base_port = 40000  # Change this const when a base port is decided upon.
+num_cameras = 2
+ip_list = ['192.168.1.137'] * num_cameras
+port_list = [base_port + i for i in range(num_cameras)]  # Ditto for the IP list and ports.
 
 
+@Pyro4.expose
 class Communicator():
-    def __init__(self, base_port, cam_id):
-        self.base_port = base_port
+    def __init__(self, cam_id):
+        self.port = base_port + cam_id
         self.cam_id = cam_id
-        self.context = zmq.Context()
-        self.zmq_socket = self.context.socket(zmq.PAIR)
         self.kvdb = dict(value=4.6)
-        self.command_dict = dict(give_kvdb=self.send_kvdb)
+        self.command_dict = {}
+        # dict(give_kvdb=self.send_kvdb)
         self.command_queue = Queue.Queue()
+        self.leader_handle = None
+        self.peers = []
+        self.end_loop = False
 
-        self.ping = dict(cam_id=self.cam_id, msg='ping')
-        # Change this to be a standard message sent to master.
-        self.ping_response = dict(cam_id=self.cam_id, msg='ping_response')
-        # master should give a ping response here
+        self.daemon = None
+        self.sip_socket = None
+        # We will instantiate these later
 
-    def set_up_master_attributes(self, sip_ip, sip_port):
+        self.setup_pyro()
+        self.get_communicator_handles(ip_list, port_list)
+
+    def __del__(self):
+        if self.daemon:
+            self.daemon.shutdown()
+        if self.sip_socket:
+            self.sip_socket.close()
+
+    def setup_pyro(self):
+        ip = Pyro4.socketutil.getInterfaceAddress('192.168.1.1')
+        self.daemon = Pyro4.Daemon(host=ip, port=self.port)
+        uri = self.daemon.register(self, "communicator")
+        print uri
+
+    def setup_leader_attributes(self, sip_ip, sip_port):
         self.packet_queue = Queue.Queue()
-        self.ping_queue = Queue.Queue()
         self.setup_sip_socket(sip_ip, sip_port)
         self.sip_packet_decoder = sip_packet_decoder.SIPPacketDecoder()
-        self.peers = {}
         # Format of peers: {cam_id: zmq_socket}
+
+    def get_communicator_handles(self, ip_list, port_list):
+        # The ip_list and port_list are lists of strings for the ip addresses and ports where the communicators live.
+        # Grabs all the other peers.
+        for i in range(len(ip_list)):
+            peer_handle = Pyro4.Proxy('PYRO:communicator@%s:%s' % (ip_list[i], port_list[i]))
+            self.peers.append(peer_handle)
 
     ### Loops to continually be run
 
     def run_peer_tasks(self):
-        self.identify_master()
-        self.look_for_messages()
-        self.process_command_queue()
+        self.identify_leader()
+        #self.run_pyro_tasks()
         self.reconcile_kvdb_and_pipeline()
 
-    def run_master_tasks(self):
-        self.answer_pings()
+    def run_leader_tasks(self):
+        #elf.run_pyro_tasks()
         self.process_sip_socket()
         self.process_packet_queue()
 
-    ### Master methods
+    def start_pyro_thread(self):
+        pyro_thread = threading.Thread(target=self.pyro_loop)
+        pyro_thread.start()
 
-    def populate_peers(self, num_cameras):
-        # Makes a dict of all the peers and a socket for each.
-        for i in range(num_cameras):
-            new_socket = self.context.socket(zmq.PAIR)
-            new_socket.connect("tcp://localhost:%s" % (self.base_port + i))
-            # Change from localhost eventually.
-            self.peers[i] = new_socket
+    def pyro_loop(self):
+        while True:
+            self.run_pyro_tasks()
+            if self.end_loop == True:
+                # Switch this to end the pyro loop.
+                return
+            time.sleep(0.01)
 
-    def answer_pings(self):
-        while self.zmq_socket.poll(timeout=0):
-            ping = self.zmq_socket.recv_json()
-            self.ping_queue.put(ping)
-        while not self.ping_queue.empty():
-            self.respond_to_ping(self.ping_queue.get())
+    def run_pyro_tasks(self):
+        # Bug: first time this is run it doesn't do anything.
+        # Subsequent runs work.
+        events, _, _ = select.select(self.daemon.sockets, [], [], 0)
+        if events:
+            self.daemon.events(events)
+            # else:
+            #    time.sleep(0.001)
 
-    def respond_to_ping(self, ping):
-        # If the ping is a ping, find the zmq_socket in self.peers and send the generic ping_response
-        if ping['msg'] == 'ping':
-            self.peers[ping['cam_id']].send_json(self.ping_response)
+    ### leader methods
+
 
     def process_packet_queue(self):
         while not self.packet_queue.empty():
@@ -104,53 +141,46 @@ class Communicator():
 
     ### peer methods
 
-    def process_command_queue(self):
-        while not self.command_queue.empty():
-            command = self.command_queue.get()
-            self.run_command(command)
-
-    def run_command(self, command):
-        if command in self.command_dict:
-            self.command_dict[command]
-
-    def identify_master(self):
-        if self.master:
-            self.ping_master()
-        if not self.master:
-            self.determine_master()
-
-    def ping_master(self):
-        self.master.zmq_socket.send_json(self.ping)
-        ### Semd to master socket rather than own socket
-        result = self.get_ping_response()
-        if not result:
-            self.determine_master()
-
-    def look_for_messages(self):
-        while self.zmq_socket.poll(timeout=0):
-            message = self.zmq_socket.recv_json()
-            self.process_message(message)
-
-    def process_message(self):
-        # If it is a ping back I want to let myself know I received a response
-        # If it is a command I want to put it in the command queue
-        # If it is junk I want to discard it.
-        return
-
-    def get_ping_response(self):
-        pingback = self.zmq_socket.recv_json()
-        if pingback != self.expected_pingback:
-            return False
+    def ping(self):
         return True
 
-    # Decide how to do this - I don't want a wait.
-    # I think I want to check if the master pinged back last time I checked - a queue?
+    def ping_other(self, camera_handle):
+        # Need to add timeout to this, as well as a case for no ping.
+        try:
+            ping_response = camera_handle.ping()
+        except Pyro4.errors.CommunicationError as e:
+            print e
+            return False
+        except Pyro4.errors.TimeoutError as e:
+            print e
+            return False
+        if ping_response:
+            return True
+        else:
+            return False
 
-    def determine_master(self):
-        # ping all the addresses where lower cam ids should live, in order of priority
-        # If response, set master
-        # if no response, set self as master.
-        return
+    def identify_leader(self):
+        if self.leader_handle:
+            response = self.ping_other(self.leader_handle)
+            if not response:
+                self.determine_leader()
+        if not self.leader_handle:
+            self.determine_leader()
+
+    # Decide how to do this - I don't want a wait.
+    # I think I want to check if the leader pinged back last time I checked - a queue?
+
+    def determine_leader(self):
+        for i in range(num_cameras)[:self.cam_id]:
+            if i < self.cam_id:
+                response = self.ping_other(self.peers[i])
+                if response:
+                    self.leader_handle = self.peers[i]
+                    return True
+        self.leader_handle = self.peers[self.cam_id]
+        return True
+        # Note that this is self.
+        # If the camera can't find a lower cam_id, it is the leader.
 
     def reconcile_kvdb_and_pipeline(self):
         if self.kvdb != self.pipeline.status:
