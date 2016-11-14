@@ -33,23 +33,27 @@ class Communicator():
         self.peers = []
         self.end_loop = False
 
-        self.daemon = None
+        self.pyro_daemon = None
         self.sip_socket = None
+        self.pyro_thread = None
         # We will instantiate these later
 
         self.setup_pyro()
+        self.start_pyro_thread()
         self.get_communicator_handles(ip_list, port_list)
 
     def __del__(self):
-        if self.daemon:
-            self.daemon.shutdown()
+        if self.pyro_thread and self.pyro_thread.is_alive():
+            self.pyro_thread.join(timeout=0)
+        if self.pyro_daemon:
+            self.pyro_daemon.shutdown()
         if self.sip_socket:
             self.sip_socket.close()
 
     def setup_pyro(self):
         ip = Pyro4.socketutil.getInterfaceAddress('192.168.1.1')
-        self.daemon = Pyro4.Daemon(host=ip, port=self.port)
-        uri = self.daemon.register(self, "communicator")
+        self.pyro_daemon = Pyro4.Daemon(host=ip, port=self.port)
+        uri = self.pyro_daemon.register(self, "communicator")
         print uri
 
     def setup_leader_attributes(self, sip_ip, sip_port):
@@ -69,17 +73,18 @@ class Communicator():
 
     def run_peer_tasks(self):
         self.identify_leader()
-        #self.run_pyro_tasks()
+        # self.run_pyro_tasks()
         self.reconcile_kvdb_and_pipeline()
 
     def run_leader_tasks(self):
-        #elf.run_pyro_tasks()
+        # elf.run_pyro_tasks()
         self.process_sip_socket()
         self.process_packet_queue()
 
     def start_pyro_thread(self):
-        pyro_thread = threading.Thread(target=self.pyro_loop)
-        pyro_thread.start()
+        self.pyro_thread = threading.Thread(target=self.pyro_loop)
+        self.pyro_thread.daemon = True
+        self.pyro_thread.start()
 
     def pyro_loop(self):
         while True:
@@ -92,9 +97,9 @@ class Communicator():
     def run_pyro_tasks(self):
         # Bug: first time this is run it doesn't do anything.
         # Subsequent runs work.
-        events, _, _ = select.select(self.daemon.sockets, [], [], 0)
+        events, _, _ = select.select(self.pyro_daemon.sockets, [], [], 0)
         if events:
-            self.daemon.events(events)
+            self.pyro_daemon.events(events)
             # else:
             #    time.sleep(0.001)
 
@@ -117,18 +122,20 @@ class Communicator():
         # sip_ip='192.168.1.137', sip_port=4001 in our experimental setup.
         socket_ = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         socket_.bind((sip_ip, sip_port))
-        socket.timeout = 0
+        #socket_.settimeout(0)
         self.sip_socket = socket_
 
     def get_bytes_from_sip_socket(self):
-        self.sip_socket.timeout = 0
+        self.sip_socket.settimeout(0)
+        # Note sure why this throws an error, but we already set timeout to 0.
         done = False
-        while not done:
-            data = self.sip_socket.recv(1024)
-            if data:
-                self.sip_packet_decoder.buffer.append(data)
-            else:
-                done = True
+        while True:
+            try:
+                data = self.sip_socket.recv(1024)
+                self.sip_packet_decoder.buffer = self.sip_packet_decoder.buffer + data
+            except:
+                # This should except a timeouterrror.
+                return
 
     def interpret_bytes_from_sip_socket(self):
         self.sip_packet_decoder.process_buffer()
@@ -147,16 +154,9 @@ class Communicator():
     def ping_other(self, camera_handle):
         # Need to add timeout to this, as well as a case for no ping.
         try:
-            ping_response = camera_handle.ping()
-        except Pyro4.errors.CommunicationError as e:
+            return camera_handle.ping()
+        except (Pyro4.errors.CommunicationError, Pyro4.errors.TimeoutError) as e:
             print e
-            return False
-        except Pyro4.errors.TimeoutError as e:
-            print e
-            return False
-        if ping_response:
-            return True
-        else:
             return False
 
     def identify_leader(self):
