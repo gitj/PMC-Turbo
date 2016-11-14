@@ -45,6 +45,10 @@ index_file_header = ",".join(['file_index',
                               'focal_length_mm',
                               'filename']) + '\n'
 
+Pyro4.config.SERVERTYPE = 'multiplex'
+Pyro4.config.SERIALIZERS_ACCEPTED = {'pickle','json'}
+Pyro4.config.SERIALIZER = 'pickle'
+
 @Pyro4.expose
 class BasicPipeline:
     def __init__(self, dimensions=(3232,4864), num_data_buffers=16,
@@ -71,6 +75,7 @@ class BasicPipeline:
         # different processes
         self.acquire_image_input_queue = mp.Queue()
         self.acquire_image_output_queue = mp.Queue()
+        self.acquire_image_command_queue = mp.Queue()
 
         # The following are shared status variables used to indicate what state each process is in.
         # We can also use such things for other state (i.e. camera or birger state, or other housekeeping) if
@@ -87,47 +92,67 @@ class BasicPipeline:
         for i in range(num_data_buffers):
             self.acquire_image_input_queue.put(i)
 
-        # instantiate (and start) the threads
-        # in general, make sure to instantiate the Acquire process last; that way no data starts flowing through the
-        # system until all threads have started running.
-        output_dir = time.strftime("%Y-%m-%d_%H%M%S")
-        self.writers = [WriteImageProcess(input_buffers=self.raw_image_buffers,
-                                              input_queue=self.acquire_image_output_queue,
-                                              output_queue = self.acquire_image_input_queue,
-                                              info_buffer=self.info_buffer,dimensions=dimensions,
-                                              status = self.disk_statuses[k],
-                                          output_dir=output_dir,
-                                          available_disks=[disks_to_use[k]],
-                                          write_enable=self.disk_write_enables[k])
-                        for k in range(num_writers)]
-
-        self.acquire_images = AcquireImagesProcess(raw_image_buffers=self.raw_image_buffers,
-                                                              acquire_image_output_queue=self.acquire_image_output_queue,
-                                                              acquire_image_input_queue=self.acquire_image_input_queue,
-                                                              info_buffer=self.info_buffer,dimensions=dimensions,
-                                                   status=self.acquire_status, use_simulated_camera=use_simulated_camera)
-
-
+        self.status_dict = {}
 
         ip = Pyro4.socketutil.getInterfaceAddress('192.168.1.1')
         self.daemon = Pyro4.Daemon(host=ip,port=50000)
         uri = self.daemon.register(self,"pipeline")
         print uri
-        #self.daemon.requestLoop()
 
+        # instantiate (and start) the threads
+        # in general, make sure to instantiate the Acquire process last; that way no data starts flowing through the
+        # system until all threads have started running.
+        output_dir = time.strftime("%Y-%m-%d_%H%M%S")
+        self.writers = [WriteImageProcess(input_buffers=self.raw_image_buffers,
+                                          input_queue=self.acquire_image_output_queue,
+                                          output_queue = self.acquire_image_input_queue,
+                                          info_buffer=self.info_buffer,dimensions=dimensions,
+                                          status = self.disk_statuses[k],
+                                          output_dir=output_dir,
+                                          available_disks=[disks_to_use[k]],
+                                          write_enable=self.disk_write_enables[k],
+                                          uri=uri)
+                        for k in range(num_writers)]
+
+        self.acquire_images = AcquireImagesProcess(raw_image_buffers=self.raw_image_buffers,
+                                                              acquire_image_output_queue=self.acquire_image_output_queue,
+                                                              acquire_image_input_queue=self.acquire_image_input_queue,
+                                                   command_queue=self.acquire_image_command_queue,
+                                                              info_buffer=self.info_buffer,
+                                                   status=self.acquire_status,
+                                                   use_simulated_camera=use_simulated_camera,
+                                                   uri=uri)
+
+        for writer in self.writers:
+            writer.child.start()
+        self.acquire_images.child.start()
+
+    def run_pyro_loop(self):
+        self.daemon.requestLoop()
+    @Pyro4.oneway
+    def update_status(self,d):
+        self.status_dict.update(d)
     def _keep_running(self):
         print "check running",self.keep_running
         return self.keep_running
     def get_status(self):
         """
-        Print the status of all processing threads
+        return the status dictionary
         Returns
         -------
 
         """
-        disk_status = ' '.join([('disk%d:%s' % (k,status.value)) for k,status in enumerate(self.disk_statuses)])
-        print "acquire:",self.acquire_status.value, disk_status
+        process_status = dict(acquire=self.acquire_status.value)
+        for k,status in enumerate(self.disk_statuses):
+            process_status['disk %d' % k] = status.value
 
+        self.status_dict.update(process_status)
+        return self.status_dict
+
+    def send_camera_command(self,name,value):
+        self.acquire_image_command_queue.put((name,value))
+
+    @Pyro4.oneway
     def close(self):
         """
         Request all processing threads to stop.
@@ -147,32 +172,24 @@ class BasicPipeline:
             writer.child.join()
         self.daemon.shutdown()
 
-@Pyro4.expose
 class AcquireImagesProcess:
-    def __init__(self, raw_image_buffers, acquire_image_output_queue, acquire_image_input_queue, info_buffer,
-                 dimensions,status,use_simulated_camera):
+    def __init__(self, raw_image_buffers, acquire_image_output_queue, acquire_image_input_queue,
+                 command_queue, info_buffer,status,use_simulated_camera,uri):
         self.data_buffers = raw_image_buffers
         self.input_queue = acquire_image_input_queue
         self.output_queue = acquire_image_output_queue
+        self.command_queue = command_queue
         self.info_buffer = info_buffer
         self.use_simulated_camera = use_simulated_camera
+        self.uri = uri
         self.status = status
         self.status.value="starting"
         self.child = mp.Process(target=self.run)
-        self.child.start()
-
-    def get_status(self):
-        return self.status.value
-    def get_parameter(self,name):
-        return self.pc.get_parameter(name)
-    def set_parameter(self,name,value):
-        return self.pc.set_parameter(name,value)
+        #self.child.start()
 
     def run(self):
-        ip = Pyro4.socketutil.getInterfaceAddress('192.168.1.1')
-        self.daemon = Pyro4.Daemon(host=ip,port=50001)
-        uri = self.daemon.register(self,"acquire")
-        print uri
+        self.pipeline = Pyro4.Proxy(uri=self.uri)
+        self.pipeline._pyroTimeout = 0
         # Setup
         frame_number = 0
         import pmc_camera
@@ -187,6 +204,8 @@ class AcquireImagesProcess:
         self.pc.set_parameter('ExposureTimeAbs',"500")
         self.payload_size = int(self.pc.get_parameter('PayloadSize'))
         print "payload size:", self.payload_size
+
+        camera_parameters_last_updated = 0
 
         last_trigger = int(time.time()+1)
         buffers_on_camera = set()
@@ -215,6 +234,10 @@ class AcquireImagesProcess:
             if exit_request:
                 break
             if time.time() > last_trigger + 0.5:
+                if not self.command_queue.empty():
+                    name,value = self.command_queue.get()
+                    self.status.value = "sending command"
+                    self.pc.set_parameter(name,value)
                 self.status.value = "arming camera"
                 start_time = int(time.time()+1)
                 self.pc.set_parameter('PtpAcquisitionGateTime',str(int(start_time*1e9)))
@@ -234,18 +257,24 @@ class AcquireImagesProcess:
                     frame_number += 1
                     num_buffers_filled +=1
             if num_buffers_filled == 0:
-                events,_,_ = select.select(self.daemon.sockets,[],[],0)
-                if events:
-                    self.daemon.events(events)
+                update_at = time.time()
+                if update_at - camera_parameters_last_updated > 1.0:
+                    status = self.pc.get_all_parameters()
                 else:
-                    time.sleep(0.001)
+                    status = {}
+                timestamp_comparison = self.pc.compare_timestamps()*1e6
+                self.pipeline.update_status(dict(all_camera_parameters=status,
+                                            camera_status_update_at=update_at,
+                                            camera_timestamp_offset=timestamp_comparison,
+                                            total_frames=frame_number,
+                                                 ))
         #if we get here, we were kindly asked to exit
         self.status.value = "exiting"
         return None
 
 class WriteImageProcess(object):
     def __init__(self,input_buffers, input_queue, output_queue, info_buffer, dimensions, status, output_dir,
-                 available_disks, write_enable):
+                 available_disks, write_enable, uri):
         self.data_buffers = input_buffers
         self.input_queue = input_queue
         self.output_queue = output_queue
@@ -253,6 +282,7 @@ class WriteImageProcess(object):
         self.available_disks = available_disks
         self.dimensions=dimensions
         self.write_enable = write_enable
+        self.uri = uri
         self.output_dirs = [os.path.join(rpath,output_dir) for rpath in available_disks]
         for dname in self.output_dirs:
             try:
@@ -263,7 +293,7 @@ class WriteImageProcess(object):
         self.status = status
         self.status.value = "starting"
         self.child = mp.Process(target=self.run)
-        self.child.start()
+        #self.child.start()
 
     def run(self):
         process_me = -1
