@@ -35,7 +35,7 @@ class SIPPacketDecoder():
 
     def process_candidate_packets(self):
         for packet in self.candidate_packets:
-            self.confirmed_packets.append([packet for packet in self.candidate_packets if self.test_packet(packet)])
+            self.confirmed_packets += [packet for packet in self.candidate_packets if self.test_packet(packet)]
         self.candidate_packets = []
         # Grab the good packets, empty the candidate_packets
 

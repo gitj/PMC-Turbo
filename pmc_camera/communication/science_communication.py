@@ -47,8 +47,9 @@ def decode_science_command(message):
     # I am deciding that the message should have the following format:
     # 1Bxs where the first byte is "which camera"
     format_string = '<1B1B%ds' % (len(message)-2)
-    which, command, value = struct.unpack(format_string, message)
-    return dict(which=which, command=command, value=value, title='science_data_command')
+    # -2 because -1 byte for len, -1 byte for which
+    length, which, value = struct.unpack(format_string, message)
+    return dict(which=which, value=value, title='science_data_command')
 
 
 # These methods are to be sent to the SIP as a request for something.
