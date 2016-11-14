@@ -8,8 +8,6 @@ class TwoCommunicatorTests(unittest.TestCase):
     def setUp(self):
         self.communicator0 = camera_communicator.Communicator(0)
         self.communicator1 = camera_communicator.Communicator(1)
-        self.communicator0.start_pyro_thread()
-        self.communicator1.start_pyro_thread()
 
     def tearDown(self):
         self.communicator0.end_loop = True
@@ -32,7 +30,6 @@ class TwoCommunicatorTests(unittest.TestCase):
 class OneCommunicatorTests(unittest.TestCase):
     def setUp(self):
         self.communicator = camera_communicator.Communicator(0)
-        self.communicator.start_pyro_thread()
         self.communicator.setup_leader_attributes(sip_ip='localhost', sip_port=4001)
 
     def tearDown(self):

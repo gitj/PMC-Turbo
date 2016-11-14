@@ -16,7 +16,7 @@ Pyro4.config.COMMTIMEOUT = 1.0
 
 base_port = 40000  # Change this const when a base port is decided upon.
 num_cameras = 2
-ip_list = ['192.168.1.137'] * num_cameras
+
 port_list = [base_port + i for i in range(num_cameras)]  # Ditto for the IP list and ports.
 
 
@@ -38,9 +38,12 @@ class Communicator():
         self.pyro_thread = None
         # We will instantiate these later
 
+        self.ip_list = None
+        self.port_list = None
+
         self.setup_pyro()
         self.start_pyro_thread()
-        self.get_communicator_handles(ip_list, port_list)
+        self.get_communicator_handles(self.ip_list, self.port_list)
 
     def __del__(self):
         if self.pyro_thread and self.pyro_thread.is_alive():
@@ -52,6 +55,10 @@ class Communicator():
 
     def setup_pyro(self):
         ip = Pyro4.socketutil.getInterfaceAddress('192.168.1.1')
+
+        self.ip_list = [ip] * num_cameras
+        self.port_list = [base_port + i for i in range(num_cameras)]
+
         self.pyro_daemon = Pyro4.Daemon(host=ip, port=self.port)
         uri = self.pyro_daemon.register(self, "communicator")
         print uri
