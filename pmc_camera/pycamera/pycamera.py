@@ -31,7 +31,10 @@ class PyCamera():
 
     def compare_timestamps(self):
         now = time.time()
-        ts = float(self.get_timestamp())/1e9
+        self.run_feature_command("GevTimestampControlLatch")
+        now2 = time.time()
+        now = (now+now2)/2.
+        ts = float(self.get_parameter("GevTimestampValue"))/1e9
         return now-ts
 
     def get_image(self):
