@@ -23,8 +23,8 @@ class TwoCommunicatorTests(unittest.TestCase):
         self.assertEqual(self.communicator0.leader_handle, self.communicator1.leader_handle)
 
     def test_pings(self):
-        assert (self.communicator0.ping_other(self.communicator0.peers[1]) == True)
-        assert (self.communicator1.ping_other(self.communicator0.peers[0]) == True)
+        self.assertEqual(self.communicator0.ping_other(self.communicator0.peers[1]), True)
+        self.assertEqual(self.communicator1.ping_other(self.communicator0.peers[0]), True)
 
 
 class OneCommunicatorTests(unittest.TestCase):
@@ -41,7 +41,23 @@ class OneCommunicatorTests(unittest.TestCase):
         sip_packet = SIP_communication_simulator.construct_science_request_packet()
         sip_simulator_port.sendto(sip_packet, ('localhost', 4001))
         self.communicator.get_bytes_from_sip_socket()
-        assert (self.communicator.sip_packet_decoder.buffer == sip_packet)
+        self.assertEqual(self.communicator.sip_packet_decoder.buffer, sip_packet)
+
+    def test_process_packet(self):
+        packet = SIP_communication_simulator.construct_science_command_packet(2, '\x20\x21\x22\x23\x24')
+        expected_packet_dict = {'title': 'science_data_command', 'value': '\x20\x21\x22\x23\x24', 'which': 2}
+        self.communicator.packet_queue.put(packet)
+        self.communicator.process_packet_queue()
+        self.assertEqual(self.communicator.command_queue.get(), expected_packet_dict)
+
+    def test_whole_sip_pipeline(self):
+        packet = SIP_communication_simulator.construct_science_command_packet(2, '\x20\x21\x22\x23\x24')
+        expected_packet_dict = {'title': 'science_data_command', 'value': '\x20\x21\x22\x23\x24', 'which': 2}
+        sip_simulator_port = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sip_simulator_port.sendto(packet, ('localhost', 4001))
+        self.communicator.process_sip_socket()
+        self.communicator.process_packet_queue()
+        self.assertEqual(self.communicator.command_queue.get(), expected_packet_dict)
 
 
 '''

@@ -121,7 +121,7 @@ class Communicator():
 
     def process_packet(self, packet_dict):
         # I need to think about the format of packets and how to deal with them.
-        return
+        self.command_queue.put(packet_dict)
 
     ##### SIP socket methods
 
@@ -129,7 +129,7 @@ class Communicator():
         # sip_ip='192.168.1.137', sip_port=4001 in our experimental setup.
         socket_ = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         socket_.bind((sip_ip, sip_port))
-        #socket_.settimeout(0)
+        # socket_.settimeout(0)
         self.sip_socket = socket_
 
     def get_bytes_from_sip_socket(self):
@@ -147,7 +147,10 @@ class Communicator():
     def interpret_bytes_from_sip_socket(self):
         self.sip_packet_decoder.process_buffer()
         self.sip_packet_decoder.process_candidate_packets()
-        self.packet_queue.put(self.sip_packet_decoder.confirmed_packets)
+        print self.sip_packet_decoder.confirmed_packets
+        for packet in self.sip_packet_decoder.confirmed_packets:
+            # There must be a more pythonic way to do this.
+            self.packet_queue.put(packet)
 
     def process_sip_socket(self):
         self.get_bytes_from_sip_socket()
