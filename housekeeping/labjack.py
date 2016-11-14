@@ -1,7 +1,10 @@
 import Pyro4, Pyro4.socketutil
 import time
 import os
-import u3
+try:
+    import u3
+except ImportError:
+    pass
 import select
 
 Pyro4.config.SERVERTYPE = 'multiplex'
