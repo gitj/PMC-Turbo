@@ -33,7 +33,7 @@ def decode_gps_time(message):
 
 
 def decode_mks_pressure_altitude(message):
-    high, mid, low= struct.unpack('<3h', message)
+    high, mid, low = struct.unpack('<3h', message)
     return dict(title='mks_pressure_altitude', high=high, mid=mid, low=low)
 
 
@@ -46,10 +46,11 @@ def decode_science_data_request(message):
 def decode_science_command(message):
     # I am deciding that the message should have the following format:
     # 1Bxs where the first byte is "which camera"
-    format_string = '<1B1B%ds' % (len(message)-2)
+    format_string = '<%ds' % (len(message))
     # -2 because -1 byte for len, -1 byte for which
-    length, which, value = struct.unpack(format_string, message)
-    return dict(which=which, value=value, title='science_data_command')
+    value, = struct.unpack(format_string, message)
+    # Comma is necessary because the struct.unpack returns a tuple.
+    return dict(value=value, title='science_data_command')
 
 
 # These methods are to be sent to the SIP as a request for something.
@@ -71,11 +72,12 @@ def construct_mks_altitude_request_packet():
     # 0x03 is ascii.etx, the terminator
     return struct.pack('<3B', 0x10, 0x52, 0x03)
 
+
 def construct_science_data_packet(data):
     if not 1 <= len(data) <= 255:
         raise ValueError("Data length must be between 1 and 255.")
-    #format_string = '3B%dh' % data_length
-    #return struct.pack(format_string, 0x10, 0x53, data_length, *data)
+    # format_string = '3B%dh' % data_length
+    # return struct.pack(format_string, 0x10, 0x53, data_length, *data)
     # This passes in as arguments all of the values in an array.
     # It may be easier to use strings instead - convert data to string before passing it in.
     format_string = '<3B%ds1B' % len(data)
@@ -83,9 +85,9 @@ def construct_science_data_packet(data):
 
 
 packet_dict = {
-                0x10: decode_gps_position,
-                0x11: decode_gps_time,
-                0x12: decode_mks_pressure_altitude,
-                0x13: decode_science_data_request,
-                0x14: decode_science_command,
-               }
+    0x10: decode_gps_position,
+    0x11: decode_gps_time,
+    0x12: decode_mks_pressure_altitude,
+    0x13: decode_science_data_request,
+    0x14: decode_science_command,
+}

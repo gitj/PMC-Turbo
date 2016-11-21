@@ -30,9 +30,8 @@ def construct_science_request_packet():
 
 
 def construct_science_command_packet(which, command):
-    format_string = '<3B1B%ds1B' % len(command)
-    return struct.pack(format_string, 0x10, 0x14, len(command)+1, which, command, 0x03)
-    # Len(command)+1 because the length of the message is the len(command) +1 byte for which.
+    format_string = '<2B1B%ds1B' % len(command)
+    return struct.pack(format_string, 0x10, 0x14, which, command, 0x03)
 
 
 def tentative_construct_science_command_packet(which, command, value):
