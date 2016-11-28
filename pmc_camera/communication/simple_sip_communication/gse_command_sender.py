@@ -1,14 +1,47 @@
 import serial
+import struct
 
 USB_PORT_ADDRESS = '/dev/ttyUSB1'
 BAUDRATE = 2400
 
+HEADER = '\x10\x01\x09'
+PACKET_LENGTH = '\x16'
+FOOTER = '\x03'
+
+def send_command(sequence, verify, which, command, args):
+    padding_length = 22 - (4 + len(args))
+    # Decided to pad the packet to 22 bytes so it is sent in one packet.
+    padding = [0]*padding_length
+    format_string = '<4B%dB' % (len(args) + padding_length)
+    #msg = struct.pack(format_string, sequence, verify, which, command, *args, *padding)
+    # Python only wants one unpacked list
+    msg = struct.pack(format_string, sequence, verify, which, command, *(args+padding))
+    print msg
+    msg = HEADER+PACKET_LENGTH+msg+FOOTER
+    print msg
+    ser = serial.Serial(USB_PORT_ADDRESS, baudrate=BAUDRATE)
+    ser.write(msg)
+    ser.close()
+
+# Example send_command(sequence=0,verify=0, which=4,command=1,args=[100,200,5])
+
+
+'''
 ser = serial.Serial(USB_PORT_ADDRESS, baudrate=BAUDRATE)
 
-msg = '\x10\x01\x09\x02\x00\x00\x03'
+#msg = '\x10\x01\x09\x02\x00\x00\x03'
+#msg = '\x10\x01\x09\x06\x11\x12\x13\x15\x16\x17\x03'
+header = '\x10\x01\x09'
+data = '\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01'
+length = '\x1c'
+footer = '\x03'
+msg = header+length+data+footer
+print msg
 
 ser.write(msg)
 ser.close()
+'''
+
 '''
 import struct
 
