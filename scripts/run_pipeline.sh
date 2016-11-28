@@ -1,4 +1,5 @@
 #!/bin/bash
+export PATH=/home/pmc/miniconda2/bin:$PATH
 source activate pmc
 export PYTHONPATH=/home/pmc/pmc-turbo
 export LD_LIBRARY_PATH=/home/pmc/Vimba_2_0/VimbaCPP/DynamicLib/x86_64bit
