@@ -49,6 +49,8 @@ Pyro4.config.SERVERTYPE = 'multiplex'
 Pyro4.config.SERIALIZERS_ACCEPTED = {'pickle','json'}
 Pyro4.config.SERIALIZER = 'pickle'
 
+LOG_DIR='/home/pmc/logs/camera'
+
 @Pyro4.expose
 class BasicPipeline:
     def __init__(self, dimensions=(3232,4864), num_data_buffers=16,
@@ -187,6 +189,24 @@ class AcquireImagesProcess:
         self.child = mp.Process(target=self.run)
         #self.child.start()
 
+    def create_log_file(self,log_dir=LOG_DIR):
+        try:
+            os.mkdir(log_dir)
+        except OSError:
+            pass
+
+        self.temperature_log_filename = os.path.join(LOG_DIR,(time.strftime('%Y-%m-%d_%H%M%S.csv')))
+        self.temperature_log_file = open(self.temperature_log_filename,'a')
+
+    def write_temperature_log(self):
+        epoch = time.time()
+        self.pc.set_parameter("DeviceTemperatureSelector","Main")
+        main = self.pc.get_parameter("DeviceTemperature")
+        self.pc.set_parameter("DeviceTemperatureSelector","Sensor")
+        sensor = self.pc.get_parameter("DeviceTemperature")
+        self.temperature_log_file.write("%f,%s,%s\n" % (epoch,main,sensor))
+        self.temperature_log_file.flush()
+
     def run(self):
         self.pipeline = Pyro4.Proxy(uri=self.uri)
         self.pipeline._pyroTimeout = 0
@@ -205,6 +225,14 @@ class AcquireImagesProcess:
         self.payload_size = int(self.pc.get_parameter('PayloadSize'))
         print "payload size:", self.payload_size
 
+        self.create_log_file()
+        self.temperature_log_file.write('# %s %s %s %s\n' %
+                                        (self.pc.get_parameter("DeviceModelName"),
+                                         self.pc.get_parameter("DeviceID"),
+                                         self.pc.get_parameter("DeviceFirmwareVersion"),
+                                         self.pc.get_parameter("GevDeviceMACAddress")))
+        self.temperature_log_file.write("epoch,sensor,main\n")
+
         camera_parameters_last_updated = 0
 
         last_trigger = int(time.time()+1)
@@ -213,6 +241,8 @@ class AcquireImagesProcess:
         # Run loop
         exit_request = False
         self.status.value = "idle"
+
+
         while True:
             while True:
                 try:
@@ -260,6 +290,8 @@ class AcquireImagesProcess:
                 update_at = time.time()
                 if update_at - camera_parameters_last_updated > 1.0:
                     status = self.pc.get_all_parameters()
+                    self.write_temperature_log()
+                    camera_parameters_last_updated = update_at
                 else:
                     status = {}
                 timestamp_comparison = self.pc.compare_timestamps()*1e6
