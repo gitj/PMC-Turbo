@@ -4,9 +4,9 @@ import time
 class PyCamera():
     def __init__(self,ip="10.0.0.2",num_buffers=0,use_simulated_camera=False):
         if use_simulated_camera:
-            from _pyvimba._pyvimba_simulator import BasicPyCameraSimulator as _PyCamera
+            from pmc_camera.pycamera._pyvimba._pyvimba_simulator import BasicPyCameraSimulator as _PyCamera
         else:
-            from _pyvimba._pyvimba import PyCamera as _PyCamera
+            from pmc_camera.pycamera._pyvimba._pyvimba import PyCamera as _PyCamera
 
         self._pc = _PyCamera(ip=ip,num_buffers=num_buffers)
         self._num_buffers = num_buffers
