@@ -1,4 +1,3 @@
-import zmq
 import socket
 import time
 import science_communication
@@ -6,6 +5,7 @@ import sip_packet_decoder
 import Queue
 import Pyro4, Pyro4.socketutil, Pyro4.errors
 import select
+import struct
 import threading
 
 Pyro4.config.SERVERTYPE = "multiplex"
@@ -32,10 +32,27 @@ class Communicator():
         self.leader_handle = None
         self.peers = []
         self.end_loop = False
-
+        self.packet_handling_dict = {
+            'science_data_command': self.process_science_data_command,
+            'science_data_request': self.process_science_data_request,
+            'gps_position': self.process_gps_position,
+            'gps_time': self.process_gps_time,
+            'mks_pressure_altitude': self.process_mks_pressure_altitude
+        }
+        self.science_data_commands = {
+            0x00: self.request_autoexposure,
+            0x01: self.request_autofocus,
+            0x02: self.request_postage_stamp,
+            0x03: self.send_overall_status,
+            0x04: self.send_specific_status,
+            0x05: self.run_python_command,
+            0x06: self.run_linux_command,
+            0x07: self.change_to_preset_acquistion_mode
+        }
         self.pyro_daemon = None
         self.sip_socket = None
         self.pyro_thread = None
+        self.leader_thread = None
         # We will instantiate these later
 
         self.ip_list = None
@@ -48,6 +65,8 @@ class Communicator():
     def __del__(self):
         if self.pyro_thread and self.pyro_thread.is_alive():
             self.pyro_thread.join(timeout=0)
+        if self.leader_thread and self.leader_thread.is_alive():
+            self.leader_thread.join(timeout=0)
         if self.pyro_daemon:
             self.pyro_daemon.shutdown()
         if self.sip_socket:
@@ -83,6 +102,19 @@ class Communicator():
         # self.run_pyro_tasks()
         self.reconcile_kvdb_and_pipeline()
 
+    def start_leader_thread(self):
+        self.leader_thread = threading.Thread(target=self.leader_loop)
+        self.leader_thread.daemon = True
+        self.leader_thread.start()
+
+    def leader_loop(self):
+        while True:
+            self.run_leader_tasks()
+            if self.end_loop == True:
+                # Switch this to end the pyro loop.
+                return
+            time.sleep(0.01)
+
     def run_leader_tasks(self):
         # elf.run_pyro_tasks()
         self.process_sip_socket()
@@ -112,7 +144,6 @@ class Communicator():
 
     ### leader methods
 
-
     def process_packet_queue(self):
         while not self.packet_queue.empty():
             packet = self.packet_queue.get()
@@ -120,8 +151,71 @@ class Communicator():
             self.process_packet(packet_dict)
 
     def process_packet(self, packet_dict):
+        self.packet_handling_dict[packet_dict['title']](packet_dict)
         # I need to think about the format of packets and how to deal with them.
-        self.command_queue.put(packet_dict)
+
+    def process_science_data_command(self, science_packet_dict):
+        msg = science_packet_dict['value']
+
+        format_string = '<5B%ds' % (len(msg)-5)
+        length, sequence, verify, which, command, args = struct.unpack(format_string, msg)
+        self.science_data_commands[command](which, sequence, verify, args)
+
+    def process_science_data_request(self, science_data_request_dict):
+        print "Science data request received."
+        return
+        #return self.send_overall_status()
+
+    def process_gps_position(self, gps_position_dict):
+        return
+
+    def process_gps_time(self, gps_time_dict):
+        return
+
+    def process_mks_pressure_altitude(self, mks_pressure_altitude_dict):
+        return
+
+    def request_autoexposure(self, which, sequence, verify, args):
+        format_string = '<3B%ds' % (len(args)-3)
+        start, stop, step, padding = struct.unpack(format_string, args)
+        if True:
+            print 'Autofocus command received'
+            print 'which: %d, sequence: %d, verify: %d' % (which, sequence, verify)
+            print 'start: %d, stop: %d, step: %d' % (start, stop, step)
+        #return self.peers[which].run_autoexposure(start, stop, step)
+
+    def request_autofocus(self, which, sequence, verify, args):
+        format_string = '<3B%ds' % (len(args)-3)
+        start, stop, step, padding = struct.unpack(format_string, args)
+        if True:
+            print 'Autofocus command received'
+            print 'which: %d, sequence: %d, verify: %d' % (which, sequence, verify)
+            print 'start: %d, stop: %d, step: %d' % (start, stop, step)
+        #return self.peers[which].run_autofocus(start, stop, step)
+
+    def request_postage_stamp(self, which, sequence, verify, args):
+        compression_factor = args[0]
+        return self.peers[which].get_postage_stamp(compression_factor)
+
+    def send_overall_status(self, which=None, sequence=None, verify=None, args=None):
+        # Need to decide what to do heres
+        # Send 1 for everything that's okay, 0 for everything that isn't
+        status_summaries = []
+        for peer in self.peers:
+            status_summaries.append(peer.give_status_summary())
+        return status_summaries
+
+    def send_specific_status(self, which, sequence, verify, args):
+        return self.peers[which].get_detailed_status()
+
+    def run_python_command(self, which, sequence, verify, args):
+        return
+
+    def run_linux_command(self, which, sequence, verify, args):
+        return
+
+    def change_to_preset_acquistion_mode(self, which, sequence, verify, args):
+        return
 
     ##### SIP socket methods
 
@@ -147,10 +241,11 @@ class Communicator():
     def interpret_bytes_from_sip_socket(self):
         self.sip_packet_decoder.process_buffer()
         self.sip_packet_decoder.process_candidate_packets()
-        print self.sip_packet_decoder.confirmed_packets
+        #print self.sip_packet_decoder.confirmed_packets
         for packet in self.sip_packet_decoder.confirmed_packets:
             # There must be a more pythonic way to do this.
             self.packet_queue.put(packet)
+        self.sip_packet_decoder.confirmed_packets = []
 
     def process_sip_socket(self):
         self.get_bytes_from_sip_socket()
