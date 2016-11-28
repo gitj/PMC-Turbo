@@ -50,7 +50,9 @@ class Communicator():
             0x07: self.change_to_preset_acquistion_mode
         }
         self.pyro_daemon = None
-        self.sip_socket = None
+        self.sip_uplink_socket = None
+        self.sip_downlink_socket = None
+        self.sip_downlink_ip, self.sip_downlink_port = None, None
         self.pyro_thread = None
         self.leader_thread = None
         # We will instantiate these later
@@ -69,8 +71,10 @@ class Communicator():
             self.leader_thread.join(timeout=0)
         if self.pyro_daemon:
             self.pyro_daemon.shutdown()
-        if self.sip_socket:
-            self.sip_socket.close()
+        if self.sip_uplink_socket:
+            self.sip_uplink_socket.close()
+        if self.sip_downlink_socket:
+            self.sip_downlink_socket.close()
 
     def setup_pyro(self):
         ip = Pyro4.socketutil.getInterfaceAddress('192.168.1.1')
@@ -82,9 +86,10 @@ class Communicator():
         uri = self.pyro_daemon.register(self, "communicator")
         print uri
 
-    def setup_leader_attributes(self, sip_ip, sip_port):
+    def setup_leader_attributes(self, sip_uplink_ip, sip_uplink_port, sip_downlink_ip, sip_downlink_port):
         self.packet_queue = Queue.Queue()
-        self.setup_sip_socket(sip_ip, sip_port)
+        self.setup_sip_uplink_socket(sip_uplink_ip, sip_uplink_port)
+        self.setup_sip_downlink_socket(sip_downlink_ip, sip_downlink_port)
         self.sip_packet_decoder = sip_packet_decoder.SIPPacketDecoder()
         # Format of peers: {cam_id: zmq_socket}
 
@@ -156,7 +161,8 @@ class Communicator():
 
     def process_science_data_command(self, science_packet_dict):
         msg = science_packet_dict['value']
-
+        self.send_message_to_downlink(msg)
+        # Just echo the message back right now
         format_string = '<5B%ds' % (len(msg)-5)
         length, sequence, verify, which, command, args = struct.unpack(format_string, msg)
         self.science_data_commands[command](which, sequence, verify, args)
@@ -219,20 +225,36 @@ class Communicator():
 
     ##### SIP socket methods
 
-    def setup_sip_socket(self, sip_ip, sip_port):
+    def setup_sip_uplink_socket(self, sip_uplink_ip, sip_uplink_port):
         # sip_ip='192.168.1.137', sip_port=4001 in our experimental setup.
         socket_ = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        socket_.bind((sip_ip, sip_port))
+        socket_.bind((sip_uplink_ip, sip_uplink_port))
         # socket_.settimeout(0)
-        self.sip_socket = socket_
+        self.sip_uplink_socket = socket_
+
+    def setup_sip_downlink_socket(self, sip_downlink_ip, sip_downlink_port):
+        # sip_downlink_ip='192.168.1.253', sip_downlink_port=4001 in our experimental setup.
+        socket_ = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.sip_downlink_ip, self.sip_downlink_port = sip_downlink_ip, sip_downlink_port
+        self.sip_downlink_socket = socket_
+
+    def send_message_to_downlink(self, data):
+        HEADER = '\x10\x53'
+        FOOTER = '\x03'
+        format_string = '1B%ds' % len(data)
+        msg = struct.pack(format_string, len(data), data)
+        msg = HEADER + msg + FOOTER
+        #msg = '\x10\x53\x04\x01\x02\x04\x05\x03'
+        print msg
+        self.sip_downlink_socket.sendto(msg, (self.sip_downlink_ip, self.sip_downlink_port))
 
     def get_bytes_from_sip_socket(self):
-        self.sip_socket.settimeout(0)
+        self.sip_uplink_socket.settimeout(0)
         # Note sure why this throws an error, but we already set timeout to 0.
         done = False
         while True:
             try:
-                data = self.sip_socket.recv(1024)
+                data = self.sip_uplink_socket.recv(1024)
                 self.sip_packet_decoder.buffer = self.sip_packet_decoder.buffer + data
             except:
                 # This should except a timeouterrror.
