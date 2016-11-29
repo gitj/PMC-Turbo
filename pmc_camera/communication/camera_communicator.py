@@ -7,6 +7,7 @@ import Pyro4, Pyro4.socketutil, Pyro4.errors
 import select
 import struct
 import threading
+import logging
 
 Pyro4.config.SERVERTYPE = "multiplex"
 Pyro4.config.COMMTIMEOUT = 1.0
@@ -18,12 +19,14 @@ base_port = 40000  # Change this const when a base port is decided upon.
 num_cameras = 2
 
 port_list = [base_port + i for i in range(num_cameras)]  # Ditto for the IP list and ports.
+logger = logging.getLogger(__name__)
 
 
 @Pyro4.expose
 class Communicator():
     def __init__(self, cam_id):
         self.port = base_port + cam_id
+        logger.debug('Communicator initialized')
         self.cam_id = cam_id
         self.kvdb = dict(value=4.6)
         self.command_dict = {}
@@ -55,6 +58,7 @@ class Communicator():
         self.sip_downlink_ip, self.sip_downlink_port = None, None
         self.pyro_thread = None
         self.leader_thread = None
+        self.buffer_for_downlink = ''
         # We will instantiate these later
 
         self.ip_list = None
@@ -75,6 +79,7 @@ class Communicator():
             self.sip_uplink_socket.close()
         if self.sip_downlink_socket:
             self.sip_downlink_socket.close()
+        logger.debug('Communicator deleted')
 
     def setup_pyro(self):
         ip = Pyro4.socketutil.getInterfaceAddress('192.168.1.1')
@@ -161,16 +166,26 @@ class Communicator():
 
     def process_science_data_command(self, science_packet_dict):
         msg = science_packet_dict['value']
-        self.send_message_to_downlink(msg)
-        # Just echo the message back right now
-        format_string = '<5B%ds' % (len(msg)-5)
+        self.buffer_for_downlink += msg
+        # Just echo the message back into the buffer right now
+        format_string = '<5B%ds' % (len(msg) - 5)
         length, sequence, verify, which, command, args = struct.unpack(format_string, msg)
         self.science_data_commands[command](which, sequence, verify, args)
 
     def process_science_data_request(self, science_data_request_dict):
-        print "Science data request received."
+        logger.debug("Science data request received.")
+        msg = self.package_updates_for_downlink()
+        self.send_message_to_downlink(msg)
         return
-        #return self.send_overall_status()
+        # return self.send_overall_status()
+
+    def package_updates_for_downlink(self):
+        # Constantly keep a buffer of stuff I want to send on downlink.
+        # When this function is called, package that stuff as a 255 byte package to be sent on downlink
+        # Then clear the buffer.
+        buffer = self.buffer_for_downlink
+        self.buffer_for_downlink = ''
+        return buffer
 
     def process_gps_position(self, gps_position_dict):
         return
@@ -182,22 +197,22 @@ class Communicator():
         return
 
     def request_autoexposure(self, which, sequence, verify, args):
-        format_string = '<3B%ds' % (len(args)-3)
+        format_string = '<3B%ds' % (len(args) - 3)
         start, stop, step, padding = struct.unpack(format_string, args)
         if True:
             print 'Autofocus command received'
             print 'which: %d, sequence: %d, verify: %d' % (which, sequence, verify)
             print 'start: %d, stop: %d, step: %d' % (start, stop, step)
-        #return self.peers[which].run_autoexposure(start, stop, step)
+            # return self.peers[which].run_autoexposure(start, stop, step)
 
     def request_autofocus(self, which, sequence, verify, args):
-        format_string = '<3B%ds' % (len(args)-3)
+        format_string = '<3B%ds' % (len(args) - 3)
         start, stop, step, padding = struct.unpack(format_string, args)
         if True:
             print 'Autofocus command received'
             print 'which: %d, sequence: %d, verify: %d' % (which, sequence, verify)
             print 'start: %d, stop: %d, step: %d' % (start, stop, step)
-        #return self.peers[which].run_autofocus(start, stop, step)
+            # return self.peers[which].run_autofocus(start, stop, step)
 
     def request_postage_stamp(self, which, sequence, verify, args):
         compression_factor = args[0]
@@ -244,8 +259,7 @@ class Communicator():
         format_string = '1B%ds' % len(data)
         msg = struct.pack(format_string, len(data), data)
         msg = HEADER + msg + FOOTER
-        #msg = '\x10\x53\x04\x01\x02\x04\x05\x03'
-        print msg
+        # print msg
         self.sip_downlink_socket.sendto(msg, (self.sip_downlink_ip, self.sip_downlink_port))
 
     def get_bytes_from_sip_socket(self):
@@ -255,6 +269,7 @@ class Communicator():
         while True:
             try:
                 data = self.sip_uplink_socket.recv(1024)
+                logger.debug('%r' % data)
                 self.sip_packet_decoder.buffer = self.sip_packet_decoder.buffer + data
             except:
                 # This should except a timeouterrror.
@@ -263,7 +278,7 @@ class Communicator():
     def interpret_bytes_from_sip_socket(self):
         self.sip_packet_decoder.process_buffer()
         self.sip_packet_decoder.process_candidate_packets()
-        #print self.sip_packet_decoder.confirmed_packets
+        # print self.sip_packet_decoder.confirmed_packets
         for packet in self.sip_packet_decoder.confirmed_packets:
             # There must be a more pythonic way to do this.
             self.packet_queue.put(packet)
