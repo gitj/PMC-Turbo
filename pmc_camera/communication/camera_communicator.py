@@ -1,7 +1,5 @@
 import socket
 import time
-import science_communication
-import sip_packet_decoder
 import Queue
 import Pyro4, Pyro4.socketutil, Pyro4.errors
 import select
@@ -21,6 +19,9 @@ num_cameras = 2
 port_list = [base_port + i for i in range(num_cameras)]  # Ditto for the IP list and ports.
 logger = logging.getLogger(__name__)
 
+START_BYTE = '\x10'
+END_BYTE = '\x03'
+
 
 @Pyro4.expose
 class Communicator():
@@ -35,12 +36,10 @@ class Communicator():
         self.leader_handle = None
         self.peers = []
         self.end_loop = False
-        self.packet_handling_dict = {
-            'science_data_command': self.process_science_data_command,
-            'science_data_request': self.process_science_data_request,
-            'gps_position': self.process_gps_position,
-            'gps_time': self.process_gps_time,
-            'mks_pressure_altitude': self.process_mks_pressure_altitude
+
+        self.packet_decoding_methods = {
+            '\x13': self.decode_science_request,
+            '\x14': self.decode_science_command
         }
         self.science_data_commands = {
             0x00: self.request_autoexposure,
@@ -92,10 +91,10 @@ class Communicator():
         print uri
 
     def setup_leader_attributes(self, sip_uplink_ip, sip_uplink_port, sip_downlink_ip, sip_downlink_port):
-        self.packet_queue = Queue.Queue()
+        self.sip_buffer = ''
+        self.leftover_buffer = ''
         self.setup_sip_uplink_socket(sip_uplink_ip, sip_uplink_port)
         self.setup_sip_downlink_socket(sip_downlink_ip, sip_downlink_port)
-        self.sip_packet_decoder = sip_packet_decoder.SIPPacketDecoder()
         # Format of peers: {cam_id: zmq_socket}
 
     def get_communicator_handles(self, ip_list, port_list):
@@ -123,12 +122,15 @@ class Communicator():
             if self.end_loop == True:
                 # Switch this to end the pyro loop.
                 return
-            time.sleep(0.01)
+            # time.sleep(0.01)
+            time.sleep(1)
 
     def run_leader_tasks(self):
+        self.get_bytes_from_sip_socket()
+        self.get_packets_from_buffer()
         # elf.run_pyro_tasks()
-        self.process_sip_socket()
-        self.process_packet_queue()
+        # self.process_sip_socket()
+        # self.process_packet_queue()
 
     def start_pyro_thread(self):
         self.pyro_thread = threading.Thread(target=self.pyro_loop)
@@ -154,30 +156,20 @@ class Communicator():
 
     ### leader methods
 
-    def process_packet_queue(self):
-        while not self.packet_queue.empty():
-            packet = self.packet_queue.get()
-            packet_dict = science_communication.decode_packet(packet)
-            self.process_packet(packet_dict)
 
-    def process_packet(self, packet_dict):
-        self.packet_handling_dict[packet_dict['title']](packet_dict)
-        # I need to think about the format of packets and how to deal with them.
-
-    def process_science_data_command(self, science_packet_dict):
-        msg = science_packet_dict['value']
-        self.buffer_for_downlink += msg
-        # Just echo the message back into the buffer right now
-        format_string = '<5B%ds' % (len(msg) - 5)
-        length, sequence, verify, which, command, args = struct.unpack(format_string, msg)
-        self.science_data_commands[command](which, sequence, verify, args)
-
-    def process_science_data_request(self, science_data_request_dict):
+    def respond_to_science_data_request(self):
         logger.debug("Science data request received.")
         msg = self.package_updates_for_downlink()
         self.send_message_to_downlink(msg)
         return
         # return self.send_overall_status()
+
+    def respond_to_science_command(self, msg):
+        self.buffer_for_downlink += msg
+        #   # Just echo the message back into the buffer right now
+        format_string = '<4B%ds' % (len(msg) - 4)
+        sequence, verify, which, command, args = struct.unpack(format_string, msg)
+        self.science_data_commands[command](which, sequence, verify, args)
 
     def package_updates_for_downlink(self):
         # Constantly keep a buffer of stuff I want to send on downlink.
@@ -270,23 +262,51 @@ class Communicator():
             try:
                 data = self.sip_uplink_socket.recv(1024)
                 logger.debug('%r' % data)
-                self.sip_packet_decoder.buffer = self.sip_packet_decoder.buffer + data
+                self.sip_buffer = self.sip_buffer + data
             except:
                 # This should except a timeouterrror.
                 return
 
-    def interpret_bytes_from_sip_socket(self):
-        self.sip_packet_decoder.process_buffer()
-        self.sip_packet_decoder.process_candidate_packets()
-        # print self.sip_packet_decoder.confirmed_packets
-        for packet in self.sip_packet_decoder.confirmed_packets:
-            # There must be a more pythonic way to do this.
-            self.packet_queue.put(packet)
-        self.sip_packet_decoder.confirmed_packets = []
+    def get_packets_from_buffer(self):
+        while self.sip_buffer != '':
+            idx = self.sip_buffer.find(START_BYTE)
+            if idx == -1:
+                # This means the START_BYTE was not found
+                # We just want to discard the buffer.
+                return
+            id_byte = self.sip_buffer[idx + 1]
+            if not id_byte in self.packet_decoding_methods:
+                # If the id_byte is not valid, we cut off the junk and continue the loop.
+                self.sip_buffer = self.sip_buffer[idx + 2:]
+                continue
+            if id_byte in self.packet_decoding_methods.keys():
+                # Decoding method handles unfinished packets.
+                # It returns how long the message it interpreted was.
+                message_length = self.packet_decoding_methods[id_byte](self.sip_buffer[idx:])
+                self.sip_buffer = self.sip_buffer[idx + message_length:]
 
-    def process_sip_socket(self):
-        self.get_bytes_from_sip_socket()
-        self.interpret_bytes_from_sip_socket()
+    def decode_science_request(self, buffer):
+        if buffer[2] == END_BYTE:
+            self.respond_to_science_data_request()
+            return 3
+        else:
+            # Put the hanging bytes into the sip_buffer
+            self.sip_buffer += buffer
+            # This better be 2...
+            # This cause the buffer to go to the end.
+            return len(buffer)
+
+    def decode_science_command(self, buffer):
+        logger.debug('logging science command')
+        length, = struct.unpack('<1B', buffer[2])
+        if buffer[3 + length] == END_BYTE:
+            format_string = '<%ds' % length
+            msg, = struct.unpack(format_string, buffer[3:-1])
+            self.respond_to_science_command(msg)
+            return len(buffer)
+        else:
+            self.leftover_buffer += buffer
+            return len(buffer)
 
     ### peer methods
 
