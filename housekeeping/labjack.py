@@ -37,7 +37,7 @@ class LabJackLogger():
                                                                   self.u3.bootloaderVersion,self.u3.firmwareVersion,
                                                                               self.u3.hardwareVersion))
         self.file.write(header)
-        columns = ['epoch','temperature',] + [('ain%d' %x) for x in range(8)]
+        columns = ['epoch','temperature',] + [('ain%d' %x) for x in (range(8)+[31])]
         self.file.write(','.join(columns) + '\n')
         self.file.flush()
 
@@ -45,10 +45,10 @@ class LabJackLogger():
         self.u3.toggleLED()
         epoch = time.time()
         temperature = self.u3.getTemperature()
-        voltages = [self.u3.getAIN(x) for x in range(8)]
+        voltages = [self.u3.getAIN(x) for x in range(8)+[31]]
         result = dict(epoch=epoch,temperature=temperature)
-        for x in range(8):
-            result['ain%d'%x] = voltages[x]
+        for x,ain in enumerate(range(8)+[31]):
+            result['ain%d'%ain] = voltages[x]
         return result
 
     def run(self):
@@ -57,7 +57,7 @@ class LabJackLogger():
             if self.file is None:
                 self.create_file()
             values = ([self.last_measurement['epoch'],self.last_measurement['temperature']]
-            + [self.last_measurement['ain%d' %x] for x in range(8)])
+            + [self.last_measurement['ain%d' %x] for x in (range(8)+[31])])
             self.file.write((','.join([('%f' %x) for x in values])) + '\n')
             self.file.flush()
             while time.time() - self.last_measurement['epoch'] < self.measurement_interval:
