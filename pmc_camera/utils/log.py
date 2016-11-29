@@ -11,6 +11,24 @@ default_formatter = logging.Formatter(short_message_format)
 long_formatter = logging.Formatter(long_message_format)
 default_handler.setFormatter(default_formatter)
 
+pmc_camera_logger = logging.getLogger('pmc_camera')
+
+def setup_stream_handler(level=logging.INFO):
+    if default_handler not in pmc_camera_logger.handlers:
+        pmc_camera_logger.addHandler(default_handler)
+        pmc_camera_logger.setLevel(level)
+    pmc_camera_logger.info("Stream handler initialized")
+
+def setup_file_handler(name='general',level=logging.DEBUG):
+    has_file_handler = False
+    for handler in pmc_camera_logger.handlers:
+        if issubclass(handler.__class__,logging.FileHandler):
+            has_file_handler=True
+    if not has_file_handler:
+        pmc_camera_logger.addHandler(file_handler(name,level))
+        pmc_camera_logger.info("File handler added")
+    pmc_camera_logger.info("File handler initialized")
+
 
 def file_handler(name='', level=logging.DEBUG):
     """
@@ -19,7 +37,7 @@ def file_handler(name='', level=logging.DEBUG):
     Parameters
     ----------
     name : str
-        A name to identify the log file; a good practice would be to use __file__ from the calling module.
+        A name to identify the log file
     level : int
         The log level to use.
 
