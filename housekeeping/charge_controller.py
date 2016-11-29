@@ -7,7 +7,7 @@ try:
 except ImportError:
     pass
 
-LOG_DIR = '/home/pmc/logs/charge_controller'
+LOG_DIR = '/home/pmc/logs/housekeeping/charge_controller'
 serial_number = 16050331
 device_name = 'TriStar-MPPT-60'
 NUM_REGISTERS = 92
@@ -48,7 +48,7 @@ class ChargeController():
 class ChargeControllerLogger():
     def __init__(self, measurement_interval=10, record_eeprom=False, eeprom_measurement_interval=60):
         try:
-            os.mkdir(LOG_DIR)
+            os.makedirs(LOG_DIR)
         except OSError:
             pass
         self.charge_controller = ChargeController()

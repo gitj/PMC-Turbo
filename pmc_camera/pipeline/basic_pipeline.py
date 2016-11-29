@@ -24,6 +24,7 @@ import time
 import os
 import ctypes
 from Queue import Empty as EmptyException
+import logging
 
 import Pyro4, Pyro4.socketutil
 import select
@@ -49,7 +50,8 @@ Pyro4.config.SERVERTYPE = 'multiplex'
 Pyro4.config.SERIALIZERS_ACCEPTED = {'pickle','json'}
 Pyro4.config.SERIALIZER = 'pickle'
 
-LOG_DIR='/home/pmc/logs/camera'
+logger = logging.getLogger(__name__)
+LOG_DIR='/home/pmc/logs/housekeeping/camera'
 
 @Pyro4.expose
 class BasicPipeline:
@@ -191,7 +193,7 @@ class AcquireImagesProcess:
 
     def create_log_file(self,log_dir=LOG_DIR):
         try:
-            os.mkdir(log_dir)
+            os.makedirs(log_dir)
         except OSError:
             pass
 

@@ -11,7 +11,7 @@ Pyro4.config.SERVERTYPE = 'multiplex'
 Pyro4.config.SERIALIZERS_ACCEPTED = {'pickle','json'}
 Pyro4.config.SERIALIZER = 'pickle'
 
-LOG_DIR = '/home/pmc/logs/labjack'
+LOG_DIR = '/home/pmc/logs/housekeeping/labjack'
 
 @Pyro4.expose
 class LabJackLogger():
@@ -19,7 +19,7 @@ class LabJackLogger():
         self.u3 = u3.U3(debug=debug, autoOpen=autoOpen, **openArgs)
         self.u3.configIO(FIOAnalog=0xFF)
         try:
-            os.mkdir(LOG_DIR)
+            os.makedirs(LOG_DIR)
         except OSError:
             pass
         self.filename = None
