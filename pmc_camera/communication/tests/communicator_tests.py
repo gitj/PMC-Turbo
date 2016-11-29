@@ -3,7 +3,7 @@ import unittest
 from pmc_camera.communication import camera_communicator, science_communication, SIP_communication_simulator, \
     generate_bad_packets
 from pmc_camera.pipeline import basic_pipeline
-
+__test__=False
 
 class TwoCommunicatorTests(unittest.TestCase):
     def setUp(self):
@@ -31,7 +31,7 @@ class TwoCommunicatorTests(unittest.TestCase):
 class OneCommunicatorTests(unittest.TestCase):
     def setUp(self):
         self.communicator = camera_communicator.Communicator(0)
-        self.communicator.setup_leader_attributes(sip_ip='localhost', sip_port=4001)
+        self.communicator.setup_leader_attributes(sip_uplink_ip='localhost', sip_uplink_port=4001)
 
     def tearDown(self):
         self.communicator.end_loop = True
