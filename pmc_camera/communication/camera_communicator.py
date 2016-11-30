@@ -156,10 +156,12 @@ class Communicator():
         # return self.send_overall_status()
 
     def respond_to_science_command(self, msg):
+        logger.debug('%r' % msg)
         self.buffer_for_downlink += msg
         #   # Just echo the message back into the buffer right now
-        format_string = '<4B%ds' % (len(msg) - 4)
-        sequence, verify, which, command, args = struct.unpack(format_string, msg)
+        format_string = '<5B%ds' % (len(msg) - 5)
+        length, sequence, verify, which, command, args = struct.unpack(format_string, msg)
+        logger.debug('sequence: %d verify: %d which: %d command: %d' % (sequence, verify, which, command))
         self.science_data_commands[command](which, sequence, verify, args)
 
     def package_updates_for_downlink(self):
@@ -192,9 +194,9 @@ class Communicator():
         format_string = '<3B%ds' % (len(args) - 3)
         start, stop, step, padding = struct.unpack(format_string, args)
         if True:
-            print 'Autofocus command received'
-            print 'which: %d, sequence: %d, verify: %d' % (which, sequence, verify)
-            print 'start: %d, stop: %d, step: %d' % (start, stop, step)
+            logger.debug('Autofocus command received')
+            logger.debug('which: %d, sequence: %d, verify: %d' % (which, sequence, verify))
+            logger.debug('start: %d, stop: %d, step: %d' % (start, stop, step))
             # return self.peers[which].run_autofocus(start, stop, step)
 
     def request_postage_stamp(self, which, sequence, verify, args):
@@ -255,7 +257,6 @@ class Communicator():
             self.sip_leftover_buffer = ''
             while True:
                 valid_packet, remainder = self.process_bytes(buffer)
-                logger.debug('%r' % valid_packet)
                 if valid_packet:
                     self.execute_packet(valid_packet)
                     buffer = remainder
@@ -308,6 +309,13 @@ class Communicator():
                         continue
                     else:
                         return packet, remainder
+
+    def execute_packet(self, packet):
+        id_byte = packet[1]
+        if id_byte == '\x13':
+            self.respond_to_science_data_request()
+        if id_byte == '\x14':
+            self.respond_to_science_command(packet[2:-1])
 
 
 ### peer methods
