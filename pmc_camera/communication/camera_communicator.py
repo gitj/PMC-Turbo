@@ -156,7 +156,6 @@ class Communicator():
 
     ### leader methods
 
-
     def respond_to_science_data_request(self):
         logger.debug("Science data request received.")
         msg = self.package_updates_for_downlink()
@@ -301,9 +300,10 @@ class Communicator():
         length, = struct.unpack('<1B', buffer[2])
         if buffer[3 + length] == END_BYTE:
             format_string = '<%ds' % length
-            msg, = struct.unpack(format_string, buffer[3:-1])
+            logger.debug('%r' % buffer)
+            msg, = struct.unpack(format_string, buffer[3:3+length])
             self.respond_to_science_command(msg)
-            return len(buffer)
+            return len(buffer[:(3+length)])
         else:
             self.leftover_buffer += buffer
             return len(buffer)
