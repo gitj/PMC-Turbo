@@ -218,6 +218,7 @@ class AcquireImagesProcess:
         self.status.value = "initializing camera"
         self.pc = pmc_camera.PyCamera("10.0.0.2",use_simulated_camera=self.use_simulated_camera)
         self.pc._pc.start_capture()
+        self.pc.set_parameter("PtpMode","Slave")
         self.pc.set_parameter("ChunkModeActive","true")
         self.pc.set_parameter("AcquisitionFrameCount","2")
         self.pc.set_parameter('AcquisitionMode',"MultiFrame")
