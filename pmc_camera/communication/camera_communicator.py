@@ -25,7 +25,7 @@ END_BYTE = '\x03'
 
 @Pyro4.expose
 class Communicator():
-    def __init__(self, cam_id):
+    def __init__(self, cam_id, run_pyro=True):
         self.port = base_port + cam_id
         logger.debug('Communicator initialized')
         self.cam_id = cam_id
@@ -59,9 +59,10 @@ class Communicator():
         self.ip_list = None
         self.port_list = None
 
-        self.setup_pyro()
-        self.start_pyro_thread()
-        self.get_communicator_handles(self.ip_list, self.port_list)
+        if run_pyro:
+            self.setup_pyro()
+            self.start_pyro_thread()
+            self.get_communicator_handles(self.ip_list, self.port_list)
 
     def __del__(self):
         if self.pyro_thread and self.pyro_thread.is_alive():
@@ -273,6 +274,11 @@ class Communicator():
                 # This means a START_BYTE was not found
                 # We are done processing - discard junk before first idx.
                 return None, ''
+            if not len(buffer) > (idx + 1):
+                # Make sure the buffer is long enough...
+                packet = None
+                remainder = buffer[idx:]
+                return packet, remainder
             id_byte = buffer[idx + 1]
             if not id_byte in ['\x13', '\x14']:
                 # If the id_byte is not valid, we cut off the junk and continue the loop.
@@ -280,6 +286,12 @@ class Communicator():
                 continue
             if id_byte == '\x13':
                 # Science data request
+                logger.debug('%d' % len(buffer[idx:]))
+                if len(buffer[idx:]) < 3:
+                    # We are just missing the end byte - throw it in the remainder.
+                    packet = None
+                    remainder = buffer[idx:]
+                    return packet, remainder
                 if buffer[idx + 2] == END_BYTE:
                     packet = buffer[idx:idx + 3]
                     remainder = buffer[idx + 3:]
