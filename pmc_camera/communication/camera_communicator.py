@@ -37,10 +37,6 @@ class Communicator():
         self.peers = []
         self.end_loop = False
 
-        self.packet_decoding_methods = {
-            '\x13': self.decode_science_request,
-            '\x14': self.decode_science_command
-        }
         self.science_data_commands = {
             0x00: self.request_autoexposure,
             0x01: self.request_autofocus,
@@ -91,7 +87,7 @@ class Communicator():
         print uri
 
     def setup_leader_attributes(self, sip_uplink_ip, sip_uplink_port, sip_downlink_ip, sip_downlink_port):
-        self.sip_buffer = ''
+        self.sip_leftover_buffer = ''
         self.leftover_buffer = ''
         self.setup_sip_uplink_socket(sip_uplink_ip, sip_uplink_port)
         self.setup_sip_downlink_socket(sip_downlink_ip, sip_downlink_port)
@@ -126,11 +122,7 @@ class Communicator():
             time.sleep(1)
 
     def run_leader_tasks(self):
-        self.get_bytes_from_sip_socket()
-        self.get_packets_from_buffer()
-        # elf.run_pyro_tasks()
-        # self.process_sip_socket()
-        # self.process_packet_queue()
+        self.get_and_process_sip_bytes()
 
     def start_pyro_thread(self):
         self.pyro_thread = threading.Thread(target=self.pyro_loop)
@@ -253,98 +245,112 @@ class Communicator():
         # print msg
         self.sip_downlink_socket.sendto(msg, (self.sip_downlink_ip, self.sip_downlink_port))
 
-    def get_bytes_from_sip_socket(self):
+    def get_and_process_sip_bytes(self):
         self.sip_uplink_socket.settimeout(0)
-        # Note sure why this throws an error, but we already set timeout to 0.
-        done = False
-        while True:
-            try:
-                data = self.sip_uplink_socket.recv(1024)
-                logger.debug('%r' % data)
-                self.sip_buffer = self.sip_buffer + data
-            except:
-                # This should except a timeouterrror.
-                return
-
-    def get_packets_from_buffer(self):
-        while self.sip_buffer != '':
-            idx = self.sip_buffer.find(START_BYTE)
-            if idx == -1:
-                # This means the START_BYTE was not found
-                # We just want to discard the buffer.
-                return
-            id_byte = self.sip_buffer[idx + 1]
-            if not id_byte in self.packet_decoding_methods:
-                # If the id_byte is not valid, we cut off the junk and continue the loop.
-                self.sip_buffer = self.sip_buffer[idx + 2:]
-                continue
-            if id_byte in self.packet_decoding_methods.keys():
-                # Decoding method handles unfinished packets.
-                # It returns how long the message it interpreted was.
-                message_length = self.packet_decoding_methods[id_byte](self.sip_buffer[idx:])
-                self.sip_buffer = self.sip_buffer[idx + message_length:]
-
-    def decode_science_request(self, buffer):
-        if buffer[2] == END_BYTE:
-            self.respond_to_science_data_request()
-            return 3
-        else:
-            # Put the hanging bytes into the sip_buffer
-            self.sip_buffer += buffer
-            # This better be 2...
-            # This cause the buffer to go to the end.
-            return len(buffer)
-
-    def decode_science_command(self, buffer):
-        logger.debug('logging science command')
-        length, = struct.unpack('<1B', buffer[2])
-        if buffer[3 + length] == END_BYTE:
-            format_string = '<%ds' % length
-            logger.debug('%r' % buffer)
-            msg, = struct.unpack(format_string, buffer[3:3+length])
-            self.respond_to_science_command(msg)
-            return len(buffer[:(3+length)])
-        else:
-            self.leftover_buffer += buffer
-            return len(buffer)
-
-    ### peer methods
-
-    def ping(self):
-        return True
-
-    def ping_other(self, camera_handle):
-        # Need to add timeout to this, as well as a case for no ping.
         try:
-            return camera_handle.ping()
-        except (Pyro4.errors.CommunicationError, Pyro4.errors.TimeoutError) as e:
-            print e
-            return False
+            data = self.sip_uplink_socket.recv(1024)
+            logger.debug('%r' % data)
 
-    def identify_leader(self):
-        if self.leader_handle:
-            response = self.ping_other(self.leader_handle)
-            if not response:
-                self.determine_leader()
-        if not self.leader_handle:
+            buffer = self.sip_leftover_buffer + data
+            self.sip_leftover_buffer = ''
+            while True:
+                valid_packet, remainder = self.process_bytes(buffer)
+                logger.debug('%r' % valid_packet)
+                if valid_packet:
+                    self.execute_packet(valid_packet)
+                    buffer = remainder
+                else:
+                    self.sip_leftover_buffer = remainder
+                    break
+        except:  # This should except a timeouterrror.
+            return
+
+    def process_bytes(self, buffer):
+        while buffer:
+            idx = buffer.find(START_BYTE)
+            if idx == -1:
+                # This means a START_BYTE was not found
+                # We are done processing - discard junk before first idx.
+                return None, ''
+            id_byte = buffer[idx + 1]
+            if not id_byte in ['\x13', '\x14']:
+                # If the id_byte is not valid, we cut off the junk and continue the loop.
+                buffer = buffer[idx + 2:]
+                continue
+            if id_byte == '\x13':
+                # Science data request
+                if buffer[idx + 2] == END_BYTE:
+                    packet = buffer[idx:idx + 3]
+                    remainder = buffer[idx + 3:]
+                    return packet, remainder
+                else:
+                    packet = None
+                    remainder = buffer[idx + 2:]
+                    if remainder.find(START_BYTE) != -1:
+                        # If there is another start byte in the buffer, this is junk
+                        buffer = remainder
+                        continue
+                    else:
+                        return packet, remainder
+
+            if id_byte == '\x14':
+                length, = struct.unpack('<1B', buffer[idx + 2])
+                if buffer[idx + 3 + length] == END_BYTE:
+                    packet = buffer[idx:idx + 3 + length + 1]
+                    remainder = buffer[idx + 3 + length + 1:]
+                    return packet, remainder
+                else:
+                    packet = None
+                    remainder = buffer[idx + 3 + length:]
+                    if remainder.find(START_BYTE) != -1:
+                        # If there is another start byte in the buffer, this is junk
+                        buffer = remainder
+                        continue
+                    else:
+                        return packet, remainder
+
+
+### peer methods
+
+def ping(self):
+    return True
+
+
+def ping_other(self, camera_handle):
+    # Need to add timeout to this, as well as a case for no ping.
+    try:
+        return camera_handle.ping()
+    except (Pyro4.errors.CommunicationError, Pyro4.errors.TimeoutError) as e:
+        print e
+        return False
+
+
+def identify_leader(self):
+    if self.leader_handle:
+        response = self.ping_other(self.leader_handle)
+        if not response:
             self.determine_leader()
+    if not self.leader_handle:
+        self.determine_leader()
 
-    # Decide how to do this - I don't want a wait.
-    # I think I want to check if the leader pinged back last time I checked - a queue?
 
-    def determine_leader(self):
-        for i in range(num_cameras)[:self.cam_id]:
-            if i < self.cam_id:
-                response = self.ping_other(self.peers[i])
-                if response:
-                    self.leader_handle = self.peers[i]
-                    return True
-        self.leader_handle = self.peers[self.cam_id]
-        return True
-        # Note that this is self.
-        # If the camera can't find a lower cam_id, it is the leader.
+# Decide how to do this - I don't want a wait.
+# I think I want to check if the leader pinged back last time I checked - a queue?
 
-    def reconcile_kvdb_and_pipeline(self):
-        if self.kvdb != self.pipeline.status:
-            self.pipeline.change_parameters(self.kvdb)
-            # These functions need to be written for the pipeline
+def determine_leader(self):
+    for i in range(num_cameras)[:self.cam_id]:
+        if i < self.cam_id:
+            response = self.ping_other(self.peers[i])
+            if response:
+                self.leader_handle = self.peers[i]
+                return True
+    self.leader_handle = self.peers[self.cam_id]
+    return True
+    # Note that this is self.
+    # If the camera can't find a lower cam_id, it is the leader.
+
+
+def reconcile_kvdb_and_pipeline(self):
+    if self.kvdb != self.pipeline.status:
+        self.pipeline.change_parameters(self.kvdb)
+        # These functions need to be written for the pipeline
