@@ -65,6 +65,8 @@ class Communicator():
             self.get_communicator_handles(self.ip_list, self.port_list)
 
     def __del__(self):
+        self.end_loop = True
+        time.sleep(0.01)
         if self.pyro_thread and self.pyro_thread.is_alive():
             self.pyro_thread.join(timeout=0)
         if self.leader_thread and self.leader_thread.is_alive():
