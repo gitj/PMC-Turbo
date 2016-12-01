@@ -310,36 +310,31 @@ class Communicator():
                         return packet, remainder
 
             if id_byte == '\x14':
+                logger.debug('Id byte 14 found')
                 if len(buffer[idx:]) < 3:
-                    # We are missing the length byte - throw it in the remainder.
+                    logger.debug('Length of buffer insufficient to contain length byte')
                     packet = None
                     remainder = buffer[idx:]
                     return packet, remainder
                 length, = struct.unpack('<1B', buffer[idx + 2])
-                if len(buffer[idx:]) < (3+length+1):
+                if len(buffer[idx:]) < (3 + length + 1):
+                    logger.debug('Length of buffer insufficient to contain full packet.')
                     # We are missing the rest of the packet. Throw it in the remainder.
                     packet = None
                     remainder = buffer[idx:]
-                    if remainder[3:].find(START_BYTE) != -1:
-                        # If there is another start byte in the buffer, this is junk
-                        # We discard until that start_byte - restart from there.
-                        new_idx = remainder[3:].find(START_BYTE)
-                        buffer = (remainder[3:])[new_idx:]
-                        continue
                     return packet, remainder
+
                 if buffer[idx + 3 + length] == END_BYTE:
+                    logger.debug('Expected end byte is an end byte.')
                     packet = buffer[idx:idx + 3 + length + 1]
                     remainder = buffer[idx + 3 + length + 1:]
                     return packet, remainder
                 else:
+                    logger.debug('Expected end byte is NOT an end byte.')
                     packet = None
-                    remainder = buffer[idx + 3 + length:]
-                    if remainder.find(START_BYTE) != -1:
-                        # If there is another start byte in the buffer, this is junk
-                        buffer = remainder
-                        continue
-                    else:
-                        return packet, remainder
+                    remainder = buffer[idx + 3:]
+                    buffer = remainder
+                    continue
 
     def execute_packet(self, packet):
         id_byte = packet[1]
