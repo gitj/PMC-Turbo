@@ -292,6 +292,7 @@ class Communicator():
                     packet = None
                     remainder = buffer[idx:]
                     return packet, remainder
+
                 if buffer[idx + 2] == END_BYTE:
                     packet = buffer[idx:idx + 3]
                     remainder = buffer[idx + 3:]
@@ -307,7 +308,23 @@ class Communicator():
                         return packet, remainder
 
             if id_byte == '\x14':
+                if len(buffer[idx:]) < 3:
+                    # We are missing the length byte - throw it in the remainder.
+                    packet = None
+                    remainder = buffer[idx:]
+                    return packet, remainder
                 length, = struct.unpack('<1B', buffer[idx + 2])
+                if len(buffer[idx:]) < (3+length+1):
+                    # We are missing the rest of the packet. Throw it in the remainder.
+                    packet = None
+                    remainder = buffer[idx:]
+                    if remainder[3:].find(START_BYTE) != -1:
+                        # If there is another start byte in the buffer, this is junk
+                        # We discard until that start_byte - restart from there.
+                        new_idx = remainder[3:].find(START_BYTE)
+                        buffer = (remainder[3:])[new_idx:]
+                        continue
+                    return packet, remainder
                 if buffer[idx + 3 + length] == END_BYTE:
                     packet = buffer[idx:idx + 3 + length + 1]
                     remainder = buffer[idx + 3 + length + 1:]
