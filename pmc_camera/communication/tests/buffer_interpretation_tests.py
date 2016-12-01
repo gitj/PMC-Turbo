@@ -46,10 +46,22 @@ class BufferInterpretationTests(unittest.TestCase):
         self.assertEqual(remainder, '')
 
     def test_lost_end1(self):
-        buffer = '\x10\x14\x06\x00\x00\x10\x13\x03'
+        buffer = '\x10\x14\x06\x00\x10\x13\x03'
+        packet, remainder = self.c.process_bytes(buffer)
+        self.assertEqual(packet, None)
+        self.assertEqual(remainder, '\x10\x14\x06\x00\x10\x13\x03')
+
+    def test_science_in_middle_valid_end_byte(self):
+        buffer = '\x10\x14\x06\x00\x10\x13\x03\x00\x00\x03'
+        packet, remainder = self.c.process_bytes(buffer)
+        self.assertEqual(packet, '\x10\x14\x06\x00\x10\x13\x03\x00\x00\x03')
+        self.assertEqual(remainder, '')
+
+    def test_science_request_in_middle_invalid_end_byte(self):
+        buffer = '\x10\x14\x06\x00\x10\x13\x03\x00\x00\x55'
         packet, remainder = self.c.process_bytes(buffer)
         self.assertEqual(packet, '\x10\x13\x03')
-        self.assertEqual(remainder, '')
+        self.assertEqual(remainder, '\x00\x00\x55')
 
     def test_lost_end2(self):
         buffer = '\x10\x14\x06\x00\x00\x00\x00\x00\x00\x10\x13\x03'
@@ -67,7 +79,7 @@ class BufferInterpretationTests(unittest.TestCase):
         buffer = '\x10\x14\x06\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
         packet, remainder = self.c.process_bytes(buffer)
         self.assertEqual(packet, None)
-        self.assertEqual(remainder, '\x00\x00\x00\x00\x00\x00')
+        self.assertEqual(remainder, '')
 
     def test_crap_at_beginning(self):
         buffer = '\x00\x00\x00\x00\x10\x13\x03'
