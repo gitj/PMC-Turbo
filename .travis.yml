@@ -25,6 +25,7 @@ install:
   - pip install coverage
   - pip install blosc
   - pip install Pyro4
+  - pip install cobs
   - pushd $HOME
   - git clone --depth=10 --branch=master https://github.com/labjack/LabJackPython.git
   - cd LabJackPython
