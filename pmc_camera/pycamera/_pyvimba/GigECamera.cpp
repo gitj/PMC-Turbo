@@ -182,6 +182,12 @@ uint32_t GigECamera::SetParameterFromString(const char *name, const char *value)
 		fval = strtod(value,NULL);
 		cout << name << " : " << fval << endl;
 		return feature->SetValue(fval);
+	} else if (datatype == VmbFeatureDataBool){
+		bool bval = false;
+		if (value[0] == '1' | value[0] == 'T' | value[0] =='t'){
+			bval = true;
+		}
+		return feature->SetValue(bval);
 	} else {
 		cout << "unsupported type: " << datatype << endl;
 	}
