@@ -1,6 +1,7 @@
 import Pyro4, Pyro4.socketutil
 import time
 import os
+import numpy as np
 try:
     import u3
 except ImportError:
@@ -65,6 +66,40 @@ class LabJackLogger():
                 if events:
                     self.daemon.events(events)
 
+    def merge_measurements(self,measurement_list):
+        merged_measurement = {}
+        for measurement in measurement_list:
+            for k,v in measurement.items():
+                try:
+                    merged_measurement[k].append(v)
+                except KeyError:
+                    merged_measurement[k] = [v]
+        for k in merged_measurement.keys():
+            merged_measurement[k] = np.mean(merged_measurement[k])
+        return merged_measurement
+
+    def get_last_measurement(self):
+        return self.last_measurement
+    def fast_run(self):
+        measurements = []
+        last_epoch = time.time()
+        while True:
+            events,_,_ = select.select(self.daemon.sockets,[],[],0.1)
+            if events:
+                self.daemon.events(events)
+            measurements.append(self.measure())
+            if time.time() - last_epoch >= self.measurement_interval:
+                last_epoch = time.time()
+                self.last_measurement = self.merge_measurements(measurements)
+                if self.file is None:
+                    self.create_file()
+                values = ([self.last_measurement['epoch'],self.last_measurement['temperature']]
+                + [self.last_measurement['ain%d' %x] for x in (range(8)+[31])])
+                self.file.write((','.join([('%f' %x) for x in values])) + '\n')
+                self.file.flush()
+                measurements = []
+
+
 if __name__ == "__main__":
     lj = LabJackLogger()
-    lj.run()
+    lj.fast_run()
