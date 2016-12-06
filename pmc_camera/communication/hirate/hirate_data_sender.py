@@ -2,9 +2,8 @@ from __future__ import division
 import socket
 import struct
 import numpy as np
-import IPython
-
 import cobs_encoding
+import IPython
 
 IP = '192.168.1.253'
 # IP address of the NPort
@@ -25,6 +24,42 @@ def send(msg):
     sock.close()
 
 
+def chunk_data_by_size(chunk_size, file_id, data=random_msg):
+    chunks = []
+    START_BYTE = 0x10
+    # END_BYTE = 0x03
+    num_chunks = np.ceil(len(data) / chunk_size)
+    for i in range(int(num_chunks)):
+        msg = data[(i * chunk_size):((i + 1) * chunk_size)]
+        format_string = '4B%ds' % len(msg)
+        chunk = struct.pack(format_string, START_BYTE, file_id, i, num_chunks, msg)
+        # chunk += struct.pack('1B', END_BYTE)
+        chunks.append(chunk)
+    return chunks
+
+
+def send_chunks(chunks):
+    for chunk in chunks:
+        send(chunk)
+
+
+def get_packets_from_buffer(buffer):
+    START_BYTE = '\x10'
+    packets = []
+    while buffer:
+        idx = buffer.find(START_BYTE)
+        if idx == -1:
+            return packets
+        end = buffer[idx + 1:].find(START_BYTE)
+        if end == -1:
+            packets.append(buffer[idx:])
+            return packets
+        packets.append(buffer[idx:end])
+        buffer = buffer[end:]
+
+
+'''
+Old methods
 def chunk_data(data, file_id):
     packets = []
     num_packets = np.ceil(len(data) / len_data_packet)
@@ -35,9 +70,14 @@ def chunk_data(data, file_id):
         if len(msg) < len_data_packet:
             padding = '\x00' * (len_data_packet - len(msg))
             packet += padding
-        #packet = cobs_encoding.encode_data(packet)
         packets.append(packet)
     return packets
+
+
+
+
+
+
 
 
 def create_shuffled_data():
@@ -52,6 +92,7 @@ def create_and_send_two_files():
     for i in range(len(packets1)):
         send(packets1[i])
         send(packets2[i])
+'''
 
 
 def main():
