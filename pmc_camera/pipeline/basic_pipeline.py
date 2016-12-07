@@ -22,12 +22,14 @@ import numpy as np
 import multiprocessing as mp
 import time
 import os
+import sys
 import ctypes
 from Queue import Empty as EmptyException
 import logging
 
 import Pyro4, Pyro4.socketutil
 import select
+import signal
 
 from pmc_camera.pycamera.dtypes import frame_info_dtype,chunk_dtype
 
@@ -130,6 +132,7 @@ class BasicPipeline:
         for writer in self.writers:
             writer.child.start()
         self.acquire_images.child.start()
+        #signal.signal(signal.SIGTERM,self.exit)
 
     def run_pyro_loop(self):
         self.daemon.requestLoop()
@@ -175,6 +178,10 @@ class BasicPipeline:
         for writer in self.writers:
             writer.child.join()
         self.daemon.shutdown()
+    def exit(self,signum,frame):
+        print "exiting with signum",signum,frame
+        self.close()
+        sys.exit(0)
 
 class AcquireImagesProcess:
     def __init__(self, raw_image_buffers, acquire_image_output_queue, acquire_image_input_queue,
@@ -224,7 +231,7 @@ class AcquireImagesProcess:
         self.pc.set_parameter('AcquisitionMode',"MultiFrame")
         self.pc.set_parameter('AcquisitionFrameRateAbs',"6.25")
         self.pc.set_parameter('TriggerSource','FixedRate')
-        self.pc.set_parameter('ExposureTimeAbs',"500")
+        self.pc.set_parameter('ExposureTimeAbs',"100000")
         self.payload_size = int(self.pc.get_parameter('PayloadSize'))
         print "payload size:", self.payload_size
 
