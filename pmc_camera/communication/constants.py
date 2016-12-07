@@ -1,0 +1,2 @@
+START_BYTE = 0x10
+END_BYTE = 0x03
