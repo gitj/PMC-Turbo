@@ -41,13 +41,27 @@ class HirateBufferSiftTests(unittest.TestCase):
         assert (sip_packets == [])
 
     def insufficient_length_for_length_byte_test(self):
-        buffer = '\xfa\xff\x01\x00\x00\x00'
+        buffer = '\xfa\xff\x01\x00\x00\x03\x00'
         filtered_buffer, sip_packets = hirate_receiving_methods.find_sip_packets_in_buffer(buffer)
-        assert (filtered_buffer == '\xfa\xff\x01\x00\x00\x00')
+        assert (filtered_buffer == '\xfa\xff\x01\x00\x00\x03\x00')
         assert (sip_packets == [])
 
     def bad_id_byte_test(self):
         buffer = '\xfa\x99\x01\x00\x00\x00\x01'
         filtered_buffer, sip_packets = hirate_receiving_methods.find_sip_packets_in_buffer(buffer)
         assert (filtered_buffer == '\xfa\x99\x01\x00\x00\x00\x01')
+        assert (sip_packets == [])
+
+    def no_end_test(self):
+        buffer = '\xfa\xff\x01\x00\x00\x00'
+        # A bit confused about where this goes - I thought it fails on length but that doesn't look covered
+        # it work but follow it step by step.
+        filtered_buffer, sip_packets = hirate_receiving_methods.find_sip_packets_in_buffer(buffer)
+        assert (filtered_buffer == '\xfa\xff\x01\x00\x00\x00')
+        assert (sip_packets == [])
+
+    def bad_checksum_test(self):
+        buffer = '\xfa\xff\x01\x00\x00\x00\x07'
+        filtered_buffer, sip_packets = hirate_receiving_methods.find_sip_packets_in_buffer(buffer)
+        assert (filtered_buffer == '\xfa\xff\x01\x00\x00\x00\x07')
         assert (sip_packets == [])
