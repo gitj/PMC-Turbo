@@ -82,8 +82,8 @@ def find_sip_packets_in_buffer(buffer):
             filtered_buffer += buffer[:idx + 1]
             buffer = buffer[idx + 1:]
             continue
-        length, = struct.unpack('1H', buffer[idx + 4:idx + 6])
-        # These two bytes are the length
+        length, = struct.unpack('>1H', buffer[idx + 4:idx + 6])
+        # These two bytes are the length. Most significant byte first, unlike most of the SIP communication protocols.
         if not len(buffer) > (idx + 5 + length + 1):
             # Buffer doesn't have minimum length to include checksum byte, and thus packet
             filtered_buffer += buffer
