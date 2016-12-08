@@ -7,6 +7,8 @@ import struct
 import threading
 import logging
 
+from pmc_camera.communication import constants
+
 Pyro4.config.SERVERTYPE = "multiplex"
 Pyro4.config.COMMTIMEOUT = 1.0
 # Tests show COMMTIMEOUT works.
@@ -19,8 +21,8 @@ num_cameras = 2
 port_list = [base_port + i for i in range(num_cameras)]  # Ditto for the IP list and ports.
 logger = logging.getLogger(__name__)
 
-START_BYTE = '\x10'
-END_BYTE = '\x03'
+START_BYTE = chr(constants.SIP_START_BYTE)
+END_BYTE = chr(constants.SIP_END_BYTE)
 
 
 @Pyro4.expose
