@@ -29,8 +29,10 @@ class SIPPacketDecoder():
 
     def process_buffer(self):
         self.find_candidate_packets()
-        if len(self.buffer) > self.max_buffer_len:
-            self.buffer = self.buffer[-self.max_buffer_len]
+        self.buffer = ''
+        # Empty buffer for now. Worry about partial messages later.
+        #if len(self.buffer) > self.max_buffer_len:
+            #self.buffer = self.buffer[-self.max_buffer_len]
             # Find potential packets, cut the buffer to the most recent bytes.
 
     def process_candidate_packets(self):
@@ -39,7 +41,9 @@ class SIPPacketDecoder():
         self.candidate_packets = []
         # Grab the good packets, empty the candidate_packets
 
+
     def test_packet(self, potential_packet):
+        # I want a more rigorous test. Or a test that does more things.
         try:
             packet = science_communication.decode_packet(potential_packet)
             return True

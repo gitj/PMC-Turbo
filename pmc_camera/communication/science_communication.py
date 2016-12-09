@@ -43,11 +43,10 @@ def decode_science_data_request(message):
     return dict(title='science_data_request')
 
 
-def decode_science_command(message):
-    # I am deciding that the message should have the following format:
-    # 1Bxs where the first byte is "which camera"
+def decode_science_data_command(message):
+    #if message[0] != (len(message)):
+    #    raise RuntimeError("Length is incorrect.")
     format_string = '<%ds' % (len(message))
-    # -2 because -1 byte for len, -1 byte for which
     value, = struct.unpack(format_string, message)
     # Comma is necessary because the struct.unpack returns a tuple.
     return dict(value=value, title='science_data_command')
@@ -89,5 +88,5 @@ packet_dict = {
     0x11: decode_gps_time,
     0x12: decode_mks_pressure_altitude,
     0x13: decode_science_data_request,
-    0x14: decode_science_command,
+    0x14: decode_science_data_command,
 }
