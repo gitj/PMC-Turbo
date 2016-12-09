@@ -31,6 +31,8 @@ class HirateBufferSiftTests(unittest.TestCase):
     def false_start_test(self):
         buffer = '\xfa\xfa\xff\x01\x00\x00\x00\x01'
         filtered_buffer, sip_packets = hirate_receiving_methods.find_sip_packets_in_buffer(buffer)
+        print '%r' % filtered_buffer
+        print '%r' % sip_packets[0]
         assert (filtered_buffer == '\xfa')
         assert (sip_packets == ['\xfa\xff\x01\x00\x00\x00\x01'])
 
@@ -68,14 +70,14 @@ class HirateBufferSiftTests(unittest.TestCase):
 
     def long_sip_packet_test(self):
         sync = [0xFA, 0xFF]
-        header = [ 0x01, 0x00]
-        data = range(0,100)
-        length = [0x00, len(data)] #assumes payload is < 255 bytes
-        checksum_data = np.array(header+length+data,dtype='uint8')
-        checksum = int(np.sum(checksum_data,dtype='uint8'))
+        header = [0x01, 0x00]
+        data = range(0, 100)
+        length = [0x00, len(data)]  # assumes payload is < 255 bytes
+        checksum_data = np.array(header + length + data, dtype='uint8')
+        checksum = int(np.sum(checksum_data, dtype='uint8'))
         print "total sum:", np.sum(checksum_data)
-        assert(checksum < 256)
+        assert (checksum < 256)
         packet = np.array(sync + header + length + data + [checksum], dtype='uint8').tostring()
-        filtered_buffer,sip_packets = hirate_receiving_methods.find_sip_packets_in_buffer(packet)
-        assert(filtered_buffer == '')
-        assert(sip_packets == [packet])
+        filtered_buffer, sip_packets = hirate_receiving_methods.find_sip_packets_in_buffer(packet)
+        assert (filtered_buffer == '')
+        assert (sip_packets == [packet])
