@@ -1,9 +1,11 @@
 import unittest
 from pmc_camera.communication import camera_communicator
 
+
+__test__ = False
 class BufferInterpretationTests(unittest.TestCase):
     def setUp(self):
-        self.c = camera_communicator.Communicator(0, run_pyro=True)
+        self.c = camera_communicator.Communicator(0)
 
     def tearDown(self):
         self.c.__del__()
