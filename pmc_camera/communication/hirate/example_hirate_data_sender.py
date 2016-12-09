@@ -7,7 +7,7 @@ import IPython
 from pmc_camera.communication.hirate import hirate_sending_methods
 from pmc_camera.communication import constants
 
-IP = '192.168.1.253'
+IP = '192.168.1.54'
 # IP address of the NPort
 PORT = 4002
 # Port which the NPort listens to.
