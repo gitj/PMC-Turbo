@@ -1,0 +1,32 @@
+# primary IP addresses for the camera computers
+192.168.1.30 pmc-camera-0
+192.168.1.31 pmc-camera-1
+192.168.1.32 pmc-camera-2
+192.168.1.33 pmc-camera-3
+192.168.1.34 pmc-camera-4
+192.168.1.35 pmc-camera-5
+192.168.1.36 pmc-camera-6
+192.168.1.37 pmc-camera-7
+
+# IP addresses for the camera computer managment interfaces (IPMI)
+192.168.1.40 pmc-camera-ipmi-0
+192.168.1.41 pmc-camera-ipmi-1
+192.168.1.42 pmc-camera-ipmi-2
+192.168.1.43 pmc-camera-ipmi-3
+192.168.1.44 pmc-camera-ipmi-4
+192.168.1.45 pmc-camera-ipmi-5
+192.168.1.46 pmc-camera-ipmi-6
+192.168.1.47 pmc-camera-ipmi-7
+
+# IP addresses for misc. equipment
+192.168.1.50 pmc-charge-controller-0
+192.168.1.51 pmc-charge-controller-1
+192.168.1.52 pmc-ethernet-switch-0
+192.168.1.53 pmc-ethernet-switch-1
+192.168.1.54 pmc-serial-0
+192.168.1.55 pmc-serial-1
+192.168.1.56 pmc-serial-2
+
+# LIDAR (TBD)
+
+# Batteries?
