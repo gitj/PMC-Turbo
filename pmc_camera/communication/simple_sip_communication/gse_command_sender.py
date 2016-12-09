@@ -19,8 +19,9 @@ def send_command(sequence, verify, which, command, args):
     print msg
     msg = HEADER+PACKET_LENGTH+msg+FOOTER
     print msg
-    ser = serial.Serial(USB_PORT_ADDRESS, baudrate=BAUDRATE)
+    ser = serial.Serial(USB_PORT_ADDRESS, baudrate=BAUDRATE, timeout=1)
     ser.write(msg)
+    print '%r' % ser.read(100)
     ser.close()
 
 # Example send_command(sequence=0,verify=0, which=4,command=1,args=[100,200,5])
