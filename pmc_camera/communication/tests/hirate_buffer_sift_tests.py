@@ -40,7 +40,7 @@ class HirateBufferSiftTests(unittest.TestCase):
         assert (filtered_buffer == '\xfa\xff\x01')
         assert (sip_packets == [])
 
-    def insufficient_length_for_length_byte_test(self):
+    def insufficient_length_for_length_byte_test2(self):
         buffer = '\xfa\xff\x01\x00\x00\x03\x00'
         filtered_buffer, sip_packets = hirate_receiving_methods.find_sip_packets_in_buffer(buffer)
         assert (filtered_buffer == '\xfa\xff\x01\x00\x00\x03\x00')
@@ -65,3 +65,17 @@ class HirateBufferSiftTests(unittest.TestCase):
         filtered_buffer, sip_packets = hirate_receiving_methods.find_sip_packets_in_buffer(buffer)
         assert (filtered_buffer == '\xfa\xff\x01\x00\x00\x00\x07')
         assert (sip_packets == [])
+
+    def long_sip_packet_test(self):
+        sync = [0xFA, 0xFF]
+        header = [ 0x01, 0x00]
+        data = range(0,100)
+        length = [0x00, len(data)] #assumes payload is < 255 bytes
+        checksum_data = np.array(header+length+data,dtype='uint8')
+        checksum = int(np.sum(checksum_data,dtype='uint8'))
+        print "total sum:", np.sum(checksum_data)
+        assert(checksum < 256)
+        packet = np.array(sync + header + length + data + [checksum], dtype='uint8').tostring()
+        filtered_buffer,sip_packets = hirate_receiving_methods.find_sip_packets_in_buffer(packet)
+        assert(filtered_buffer == '')
+        assert(sip_packets == [packet])
