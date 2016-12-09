@@ -27,7 +27,7 @@ END_BYTE = chr(constants.SIP_END_BYTE)
 
 @Pyro4.expose
 class Communicator():
-    def __init__(self, cam_id, run_pyro=True):
+    def __init__(self, cam_id):
         self.port = base_port + cam_id
         logger.debug('Communicator initialized')
         self.cam_id = cam_id
@@ -61,10 +61,9 @@ class Communicator():
         self.ip_list = None
         self.port_list = None
 
-        if run_pyro:
-            self.setup_pyro()
-            self.start_pyro_thread()
-            self.get_communicator_handles(self.ip_list, self.port_list)
+        self.setup_pyro()
+        self.start_pyro_thread()
+        self.get_communicator_handles(self.ip_list, self.port_list)
 
     def __del__(self):
         self.end_loop = True
@@ -174,6 +173,11 @@ class Communicator():
         # When this function is called, package that stuff as a 255 byte package to be sent on downlink
         # Then clear the buffer.
         buffer = self.buffer_for_downlink
+        if len(buffer) > 255:
+            logger.error('Buffer length %d. Buffer: %r' % (len(buffer), buffer))
+            buffer = buffer[:256]
+        if len(buffer) == 0:
+            logger.warning('Empty buffer')
         self.buffer_for_downlink = ''
         return buffer
 
@@ -238,7 +242,7 @@ class Communicator():
         self.sip_uplink_socket = socket_
 
     def setup_sip_downlink_socket(self, sip_downlink_ip, sip_downlink_port):
-        # sip_downlink_ip='192.168.1.253', sip_downlink_port=4001 in our experimental setup.
+        # sip_downlink_ip='192.168.1.54', sip_downlink_port=4001 in our experimental setup.
         socket_ = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sip_downlink_ip, self.sip_downlink_port = sip_downlink_ip, sip_downlink_port
         self.sip_downlink_socket = socket_
