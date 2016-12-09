@@ -82,6 +82,10 @@ def find_sip_packets_in_buffer(buffer):
             filtered_buffer += buffer[:idx + 1]
             buffer = buffer[idx + 1:]
             continue
+        if ord(buffer[idx + 2]) & 0xf0:
+            filtered_buffer += buffer[:idx + 1]
+            buffer = buffer[idx + 1:]
+            continue
         length, = struct.unpack('>1H', buffer[idx + 4:idx + 6])
         # These two bytes are the length. Most significant byte first, unlike most of the SIP communication protocols.
         if not len(buffer) > (idx + 5 + length + 1):
@@ -91,8 +95,10 @@ def find_sip_packets_in_buffer(buffer):
             continue
         checksum_byte = ord(buffer[idx + 5 + length + 1])
         sum = 0
-        for byte in buffer[idx + 2:idx + 5 + length]:
+        for byte in buffer[idx + 2:idx + 5 + length + 1]:
             sum += ord(byte)
+        sum %= 256
+        # Sum needs to be mode 256 to fit in 1 byte.
         if sum != checksum_byte:
             filtered_buffer += buffer[:idx + 1]
             buffer = buffer[idx + 1:]
