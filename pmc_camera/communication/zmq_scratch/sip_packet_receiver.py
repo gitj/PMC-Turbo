@@ -3,10 +3,10 @@ import struct
 
 
 def get_command_from_struct(mystruct):
-    start_byte, command = stuct.unpack('2B', mystruct[:2])
+    start_byte, command = struct.unpack('2B', mystruct[:2])
     end_byte = struct.unpack('1B', mystruct[-1])[0]
     if start_byte != 0x10:
-        raise RuntimeErrore("Start byte incorrect")
+        raise RuntimeError("Start byte incorrect")
     if end_byte != 0x03:
         raise RuntimeError("End byte incorrect")
     if command not in command_dict:
@@ -25,26 +25,32 @@ def handle_gps_time(mystruct):
 
 
 def handle_mks_pressure_altitude(mystruct):
-    start, id_byte, high, mid, low, end = struct.unpack('2B3h2B', mystruct)
+    start, id_byte, high, mid, low, end = struct.unpack('2B3h1B', mystruct)
     return high, mid, low
 
 
 # Need to actually write these functions
-def handle_request_science_data():
+def handle_request_science_data(mystruct):
     # This will be complicated
     # It either needs to decide beforehand what science data to send down
     # Or decide when this is called.
     return
-def handle_science_command():
-    # Figure out which command has been sent, execute it.
+def handle_science_command(mystruct):
+    # Right now this just parses the science command
+    # Needs to figure out how long command is, then extract it.
     return
 
-def handle_request_gps_position():
-    return
-def handle_request_gps_time():
-    return
-def handle_request_altitude():
-    return
+def handle_request_gps_position(mystruct):
+    start, id_byte, end = struct.unpack('3B', mystruct)
+    return id_byte
+
+def handle_request_gps_time(mystruct):
+    start, id_byte, end = struct.unpack('3B', mystruct)
+    return id_byte
+
+def handle_request_altitude(mystruct):
+    start, id_byte, end = struct.unpack('3B', mystruct)
+    return id_byte
 # We don't really need to worry about these - the SIP should deal with them already
 # Make sure this is correct.
 
