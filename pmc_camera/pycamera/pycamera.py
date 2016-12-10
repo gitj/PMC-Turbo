@@ -1,5 +1,7 @@
 import numpy as np
 import time
+import logging
+logger = logging.getLogger(__name__)
 
 class PyCamera():
     def __init__(self,ip="10.0.0.2",num_buffers=0,use_simulated_camera=False):
@@ -17,7 +19,10 @@ class PyCamera():
         return dict([(name,self.get_parameter(name)) for name in self.parameter_names])
 
     def set_parameter(self,name,value):
-        return self._pc.set_parameter_from_string(name,str(value))
+        result = self._pc.set_parameter_from_string(name,str(value))
+        if result:
+            logger.warn("problem setting camera parameter %s to %s, result code %d" % (name,value,result))
+        return result
 
     def get_parameter(self,name):
         return self._pc.get_parameter(name)

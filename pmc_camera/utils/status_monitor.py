@@ -6,7 +6,7 @@ Pyro4.config.SERIALIZER = 'pickle'
 Pyro4.config.COMMTIMEOUT = 0.2
 
 important_camera_parameters=[ "AcquisitionFrameCount", "AcquisitionFrameRateAbs", "AcquisitionFrameRateLimit",
-                              "AcquisitionMode",
+                              "AcquisitionMode","ChunkModeActive",
                              "DeviceTemperature", "DeviceTemperatureSelector",  "EFLensFStopCurrent",
                               "EFLensFStopMax", "EFLensFStopMin", "EFLensFStopStepSize",
                              "EFLensFocusCurrent",  "EFLensFocusMax", "EFLensFocusMin", "EFLensFocusSwitch", "EFLensID",
@@ -103,7 +103,7 @@ def display_status(stdscr,proxy):
             c = stdscr.getch()
 
 if __name__ == "__main__":
-    proxy = Pyro4.Proxy('PYRO:pipeline@192.168.1.137:50000')
+    proxy = Pyro4.Proxy('PYRO:pipeline@pmc-camera-1:50000')
     try:
         curses.wrapper(display_status,proxy)
     except KeyboardInterrupt:
