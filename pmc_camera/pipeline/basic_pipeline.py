@@ -224,16 +224,16 @@ class AcquireImagesProcess:
         import pmc_camera
         self.status.value = "initializing camera"
         self.pc = pmc_camera.PyCamera("10.0.0.2",use_simulated_camera=self.use_simulated_camera)
-        self.pc._pc.start_capture()
         self.pc.set_parameter("PtpMode","Slave")
         self.pc.set_parameter("ChunkModeActive","1")
         self.pc.set_parameter("AcquisitionFrameCount","2")
         self.pc.set_parameter('AcquisitionMode',"MultiFrame")
+        self.pc.set_parameter("StreamFrameRateConstrain","0")
         self.pc.set_parameter('AcquisitionFrameRateAbs',"6.25")
         self.pc.set_parameter('TriggerSource','FixedRate')
         self.pc.set_parameter('ExposureTimeAbs',"100000")
         self.payload_size = int(self.pc.get_parameter('PayloadSize'))
-        print "payload size:", self.payload_size
+        logger.debug("payload size: %d" % self.payload_size)
 
         self.create_log_file()
         self.temperature_log_file.write('# %s %s %s %s\n' %
@@ -242,6 +242,8 @@ class AcquireImagesProcess:
                                          self.pc.get_parameter("DeviceFirmwareVersion"),
                                          self.pc.get_parameter("GevDeviceMACAddress")))
         self.temperature_log_file.write("epoch,sensor,main\n")
+
+        self.pc._pc.start_capture()
 
         camera_parameters_last_updated = 0
 
