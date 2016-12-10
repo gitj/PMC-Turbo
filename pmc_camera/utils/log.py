@@ -16,6 +16,7 @@ pmc_camera_logger = logging.getLogger('pmc_camera')
 def setup_stream_handler(level=logging.INFO):
     if default_handler not in pmc_camera_logger.handlers:
         pmc_camera_logger.addHandler(default_handler)
+        default_handler.setLevel(level)
         pmc_camera_logger.setLevel(level)
     pmc_camera_logger.info("Stream handler initialized")
 
@@ -27,6 +28,7 @@ def setup_file_handler(name='general',level=logging.DEBUG):
     if not has_file_handler:
         pmc_camera_logger.addHandler(file_handler(name,level))
         pmc_camera_logger.info("File handler added")
+        pmc_camera_logger.setLevel(level)
     pmc_camera_logger.info("File handler initialized")
 
 
