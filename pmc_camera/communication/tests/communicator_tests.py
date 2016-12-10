@@ -3,8 +3,8 @@ import unittest
 from pmc_camera.communication import camera_communicator, science_communication, SIP_communication_simulator, \
     generate_bad_packets
 from pmc_camera.pipeline import basic_pipeline
-__test__=False
 
+__test__=False
 class TwoCommunicatorTests(unittest.TestCase):
     def setUp(self):
         self.communicator0 = camera_communicator.Communicator(0)
@@ -27,7 +27,7 @@ class TwoCommunicatorTests(unittest.TestCase):
         self.assertEqual(self.communicator0.ping_other(self.communicator0.peers[1]), True)
         self.assertEqual(self.communicator1.ping_other(self.communicator0.peers[0]), True)
 
-
+__test__ = False
 class OneCommunicatorTests(unittest.TestCase):
     def setUp(self):
         self.communicator = camera_communicator.Communicator(0)
