@@ -31,7 +31,7 @@ import Pyro4, Pyro4.socketutil
 import select
 import signal
 
-from pmc_camera.pycamera.dtypes import frame_info_dtype,chunk_dtype
+from pmc_camera.pycamera.dtypes import frame_info_dtype,chunk_dtype, chunk_num_bytes
 
 index_file_name = 'index.csv'
 index_file_header = ",".join(['file_index',
@@ -232,6 +232,7 @@ class AcquireImagesProcess:
         self.pc.set_parameter('AcquisitionFrameRateAbs',"6.25")
         self.pc.set_parameter('TriggerSource','FixedRate')
         self.pc.set_parameter('ExposureTimeAbs',"100000")
+        self.pc.set_parameter('EFLensFocusCurrent',"4800")
         self.payload_size = int(self.pc.get_parameter('PayloadSize'))
         logger.debug("payload size: %d" % self.payload_size)
 
@@ -364,7 +365,7 @@ class WriteImageProcess(object):
                     #image_buffer.shape=self.dimensions
                     npy_info_buffer = np.frombuffer(self.info_buffer[process_me].get_obj(),dtype=frame_info_dtype)
                     info = dict([(k,npy_info_buffer[0][k]) for k in frame_info_dtype.fields.keys()])
-                    chunk_data = image_buffer.view('uint8')[-48:].view(chunk_dtype)[0]
+                    chunk_data = image_buffer.view('uint8')[-chunk_num_bytes:].view(chunk_dtype)[0]
                     ts = time.strftime("%Y-%m-%d_%H%M%S")
                     info_str = '_'.join([('%s=%r' % (k,v)) for (k,v) in info.items()])
                     #print process_me, self.available_disks[self.disk_to_use], info['frame_id'], info['size']#, info_str
