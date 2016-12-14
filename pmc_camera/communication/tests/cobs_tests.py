@@ -3,7 +3,6 @@ import numpy as np
 import struct
 from pmc_camera.communication.hirate import cobs_encoding
 
-
 '''
 def encode_data_old(data):
     a = cobs.cobs.encode(data)
@@ -31,41 +30,41 @@ class CobsTests(unittest.TestCase):
     def test_null_case(self):
         buffer = '\x10\x14\x06\x11\x11\x11\x11\x11\x11\x03'
         data = buffer[1:]
-        encoded_data = cobs_encoding.encode_data(data)
+        encoded_data = cobs_encoding.encode_data(data, escape_character=0x10)
         assert (encoded_data.find('\x10') == -1)
-        decoded_data = cobs_encoding.decode_data(encoded_data)
+        decoded_data = cobs_encoding.decode_data(encoded_data, escape_character=0x10)
         assert (decoded_data == data)
 
     def test_all_zeros(self):
         buffer = '\x10\x14\x06\x00\x00\x00\x00\x00\x00\x03'
         data = buffer[1:]
-        encoded_data = cobs_encoding.encode_data(data)
+        encoded_data = cobs_encoding.encode_data(data, escape_character=0x10)
         assert (encoded_data.find('\x10') == -1)
-        decoded_data = cobs_encoding.decode_data(encoded_data)
+        decoded_data = cobs_encoding.decode_data(encoded_data, escape_character=0x10)
         assert (decoded_data == data)
 
     def test_one_10(self):
         buffer = '\x10\x14\x06\x11\x11\x10\x11\x11\x11\x03'
         data = buffer[1:]
-        encoded_data = cobs_encoding.encode_data(data)
+        encoded_data = cobs_encoding.encode_data(data, escape_character=0x10)
         assert (encoded_data.find('\x10') == -1)
-        decoded_data = cobs_encoding.decode_data(encoded_data)
+        decoded_data = cobs_encoding.decode_data(encoded_data, escape_character=0x10)
         assert (decoded_data == data)
 
     def test_all_10(self):
         buffer = '\x10\x14\x06\x10\x10\x10\x10\x10\x10\x03'
         data = buffer[1:]
-        encoded_data = cobs_encoding.encode_data(data)
+        encoded_data = cobs_encoding.encode_data(data, escape_character=0x10)
         assert (encoded_data.find('\x10') == -1)
-        decoded_data = cobs_encoding.decode_data(encoded_data)
+        decoded_data = cobs_encoding.decode_data(encoded_data, escape_character=0x10)
         assert (decoded_data == data)
 
     def test_alternating_0_and_10(self):
         buffer = '\x10\x14\x06\x00\x10\x00\x10\x00\x10\x03'
         data = buffer[1:]
-        encoded_data = cobs_encoding.encode_data(data)
+        encoded_data = cobs_encoding.encode_data(data, escape_character=0x10)
         assert (encoded_data.find('\x10') == -1)
-        decoded_data = cobs_encoding.decode_data(encoded_data)
+        decoded_data = cobs_encoding.decode_data(encoded_data, escape_character=0x10)
         assert (decoded_data == data)
 
     def test_random_data(self):
@@ -73,7 +72,7 @@ class CobsTests(unittest.TestCase):
         random_msg = np.random.randint(0, 255, size=10000).astype('uint8')
         format_string = '%dB' % len(random_msg)
         packet = struct.pack(format_string, *random_msg)
-        encoded_data = cobs_encoding.encode_data(packet)
+        encoded_data = cobs_encoding.encode_data(packet, escape_character=0x10)
         assert (encoded_data.find('\x10') == -1)
-        decoded_data = cobs_encoding.decode_data(encoded_data)
+        decoded_data = cobs_encoding.decode_data(encoded_data, escape_character=0x10)
         assert (decoded_data == packet)
