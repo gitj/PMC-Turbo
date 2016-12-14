@@ -82,6 +82,8 @@ class BasicPipeline:
         self.acquire_image_input_queue = mp.Queue()
         self.acquire_image_output_queue = mp.Queue()
         self.acquire_image_command_queue = mp.Queue()
+        self.acquire_image_command_results_queue = mp.Queue()
+        self.acquire_image_command_results_dict = {}
 
         # The following are shared status variables used to indicate what state each process is in.
         # We can also use such things for other state (i.e. camera or birger state, or other housekeeping) if
@@ -124,6 +126,7 @@ class BasicPipeline:
                                                               acquire_image_output_queue=self.acquire_image_output_queue,
                                                               acquire_image_input_queue=self.acquire_image_input_queue,
                                                    command_queue=self.acquire_image_command_queue,
+                                                   command_result_queue=self.acquire_image_command_results_queue,
                                                               info_buffer=self.info_buffer,
                                                    status=self.acquire_status,
                                                    use_simulated_camera=use_simulated_camera,
@@ -152,12 +155,38 @@ class BasicPipeline:
         process_status = dict(acquire=self.acquire_status.value)
         for k,status in enumerate(self.disk_statuses):
             process_status['disk %d' % k] = status.value
+            process_status['disk write enable %d' %k] = self.disk_write_enables[k].value
 
         self.status_dict.update(process_status)
         return self.status_dict
 
     def send_camera_command(self,name,value):
-        self.acquire_image_command_queue.put((name,value))
+        tag = time.time()
+        self.acquire_image_command_queue.put((name,value,tag))
+        return tag
+
+    def get_camera_command_result(self,tag):
+        while not self.acquire_image_command_results_queue.empty():
+            try:
+                tag,name,value,result = self.acquire_image_command_results_queue.get_nowait()
+                self.acquire_image_command_results_dict[tag] = (name,value,result)
+            except EmptyException:
+                break
+        if tag in self.acquire_image_command_results_dict:
+            return self.acquire_image_command_results_dict.pop(tag)
+        else:
+            raise KeyError("Result of command tag %r not found" % tag)
+
+    def send_camera_command_get_result(self,name,value,timeout=1):
+        tag = self.send_camera_command(name,value)
+        start = time.time()
+        while time.time() - start < timeout:
+            try:
+                return self.get_camera_command_result(tag)
+            except KeyError:
+                time.sleep(0.01)
+        raise RuntimeError("Timeout waiting for command result")
+
 
     @Pyro4.oneway
     def close(self):
@@ -185,11 +214,12 @@ class BasicPipeline:
 
 class AcquireImagesProcess:
     def __init__(self, raw_image_buffers, acquire_image_output_queue, acquire_image_input_queue,
-                 command_queue, info_buffer,status,use_simulated_camera,uri):
+                 command_queue, command_result_queue, info_buffer,status,use_simulated_camera,uri):
         self.data_buffers = raw_image_buffers
         self.input_queue = acquire_image_input_queue
         self.output_queue = acquire_image_output_queue
         self.command_queue = command_queue
+        self.command_result_queue = command_result_queue
         self.info_buffer = info_buffer
         self.use_simulated_camera = use_simulated_camera
         self.uri = uri
@@ -279,9 +309,13 @@ class AcquireImagesProcess:
                 break
             if time.time() > last_trigger + 0.5:
                 if not self.command_queue.empty():
-                    name,value = self.command_queue.get()
+                    name,value,tag = self.command_queue.get()
                     self.status.value = "sending command"
-                    self.pc.set_parameter(name,value)
+                    if value is None:
+                        result = self.pc.run_feature_command(name)
+                    else:
+                        result = self.pc.set_parameter(name,value)
+                    self.command_result_queue.put((tag,name,value,result))
                 self.status.value = "arming camera"
                 start_time = int(time.time()+1)
                 self.pc.set_parameter('PtpAcquisitionGateTime',str(int(start_time*1e9)))
