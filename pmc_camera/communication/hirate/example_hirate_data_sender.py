@@ -5,7 +5,7 @@ import numpy as np
 import cobs_encoding
 import IPython
 from pmc_camera.communication.hirate import hirate_sending_methods
-from pmc_camera.communication import constants
+from pmc_camera.communication import constants, hirate
 
 IP = '192.168.1.54'
 # IP address of the NPort
@@ -16,6 +16,8 @@ zero_msg = '\x00' * 2041
 np.random.seed(0)
 random_msg = np.random.randint(0, 255, size=10e3).astype('uint8')
 
+incrementing_msg = (np.arange(0, 3000) % 255).astype('uint8')
+
 num_headers = 5
 len_data_packet = 2041 - num_headers
 
@@ -25,7 +27,12 @@ def send(msg):
 
 
 def get_chunks(msg):
-    return hirate_sending_methods.chunk_data_by_size(chunk_size=1000, file_id=0, data=msg)
+    return hirate_sending_methods.chunk_data_by_size(chunk_size=1000, start_byte=constants.SIP_START_BYTE,
+                                                     file_id=0, data=msg)
+
+
+def get_unaltered_chunks(chunk_size, msg):
+    return hirate_sending_methods.chunk_data_by_size_no_changes(chunk_size, data=msg)
 
 
 def send_chunks(chunks):
