@@ -17,14 +17,13 @@ def gather_data_and_put_into_buffer(usb_port_address, baudrate, loop_time):
     return buffer
 
 
-def get_packets_from_buffer(buffer):
-    SYNC_BYTE = chr(constants.SYNC_BYTE)
+def get_packets_from_buffer(buffer, start_byte):
     packets = []
     while buffer:
-        idx = buffer.find(SYNC_BYTE)
+        idx = buffer.find(start_byte)
         if idx == -1:
             return packets
-        next_idx = buffer[idx + 1:].find(SYNC_BYTE)
+        next_idx = buffer[idx + 1:].find(start_byte)
         # This is necessary since we ignore the first idx.
         if next_idx == -1:
             packets.append(buffer[idx:])
@@ -63,34 +62,34 @@ def packets_to_files(packets):
 
 
 def find_sip_packets_in_buffer(buffer):
-    filtered_buffer = ''
+    leftover_buffer = ''
     sip_packets = []
     while buffer:
         idx = buffer.find(chr(constants.SYNC_BYTE))
         if idx == -1:
-            filtered_buffer += buffer
+            leftover_buffer += buffer
             buffer = ''
             continue
 
         if not len(buffer) > (idx + 6):
             # Buffer doesn't have minimum length to include length bytes, thus packets
-            filtered_buffer += buffer
+            leftover_buffer += buffer
             buffer = ''
             continue
 
         if not ord(buffer[idx + 1]) in [0xfa, 0xfb, 0xfc, 0xfd, 0xff]:
-            filtered_buffer += buffer[:idx + 1]
+            leftover_buffer += buffer[:idx + 1]
             buffer = buffer[idx + 1:]
             continue
         if ord(buffer[idx + 2]) & 0xf0:
-            filtered_buffer += buffer[:idx + 1]
+            leftover_buffer += buffer[:idx + 1]
             buffer = buffer[idx + 1:]
             continue
         length, = struct.unpack('>1H', buffer[idx + 4:idx + 6])
         # These two bytes are the length. Most significant byte first, unlike most of the SIP communication protocols.
         if not len(buffer) > (idx + 5 + length + 1):
             # Buffer doesn't have minimum length to include checksum byte, and thus packet
-            filtered_buffer += buffer
+            leftover_buffer += buffer
             buffer = ''
             continue
         checksum_byte = ord(buffer[idx + 5 + length + 1])
@@ -100,14 +99,14 @@ def find_sip_packets_in_buffer(buffer):
         sum %= 256
         # Sum needs to be mode 256 to fit in 1 byte.
         if sum != checksum_byte:
-            filtered_buffer += buffer[:idx + 1]
+            leftover_buffer += buffer[:idx + 1]
             buffer = buffer[idx + 1:]
             continue
         # Need to verify checksum here.
         if sum == checksum_byte:
             sip_packets.append(buffer[idx:(idx + 5 + length + 1) + 1])
-            filtered_buffer += buffer[:idx]
+            leftover_buffer += buffer[:idx]
             buffer = buffer[(idx + 5 + length + 1) + 1:]
             continue
 
-    return filtered_buffer, sip_packets
+    return leftover_buffer, sip_packets
