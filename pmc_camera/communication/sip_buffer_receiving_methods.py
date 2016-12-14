@@ -1,13 +1,14 @@
 from pmc_camera.communication import constants
 import struct
 
-START_BYTE = chr(constants.SIP_START_BYTE)
-END_BYTE = chr(constants.SIP_END_BYTE)
+
+# start_byte = chr(constants.SIP_START_BYTE)
+# end_byte = chr(constants.SIP_END_BYTE)
 
 
-def process_bytes(buffer, logger=None):
+def process_bytes(buffer, start_byte, end_byte, logger=None):
     while buffer:
-        idx = buffer.find(START_BYTE)
+        idx = buffer.find(start_byte)
         if idx == -1:
             # This means a START_BYTE was not found
             # We are done processing - discard junk before first idx.
@@ -32,14 +33,14 @@ def process_bytes(buffer, logger=None):
                 remainder = buffer[idx:]
                 return packet, remainder
 
-            if buffer[idx + 2] == END_BYTE:
+            if buffer[idx + 2] == end_byte:
                 packet = buffer[idx:idx + 3]
                 remainder = buffer[idx + 3:]
                 return packet, remainder
             else:
                 packet = None
                 remainder = buffer[idx + 2:]
-                if remainder.find(START_BYTE) != -1:
+                if remainder.find(start_byte) != -1:
                     # If there is another start byte in the buffer, this is junk
                     buffer = remainder
                     continue
@@ -64,7 +65,7 @@ def process_bytes(buffer, logger=None):
                 remainder = buffer[idx:]
                 return packet, remainder
 
-            if buffer[idx + 3 + length] == END_BYTE:
+            if buffer[idx + 3 + length] == end_byte:
                 if logger:
                     logger.debug('Expected end byte is an end byte.')
                 packet = buffer[idx:idx + 3 + length + 1]
