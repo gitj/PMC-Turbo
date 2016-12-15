@@ -1,8 +1,85 @@
 import serial
 import struct
 import time
+import os
 
-from pmc_camera.communication import constants
+from pmc_camera.communication import constants, packet_classes
+import cobs_encoding
+
+
+def gather_data_and_write_to_disk(usb_port_address='/dev/ttyUSB0', baudrate=115200, path='./received_sip_data'):
+    ser = serial.Serial(usb_port_address, baudrate=baudrate)
+    ser.timeout = 1
+    filename = os.path.join(path, time.strftime('%Y-%m-%d_%H%M%S.txt'))
+    while True:
+        data = ser.read(10000)
+        print '%r' % data
+        if data:
+            f = open(filename, 'ab+')
+            f.write(data)
+            f.close()
+    ser.close()
+
+
+def get_sip_packets_from_buffer(buffer):
+    leftover, ps = find_sip_packets_in_buffer(buffer)
+    packets = []
+    for p in ps:
+        packet = packet_classes.SIPPacket()
+        packet.from_buffer(p)
+        packets.append(packet)
+    return packets
+
+
+def get_hirate_packets_from_sip_packets(sip_packets, start_byte):
+    sip_data = ''
+    for packet in sip_packets:
+        sip_data += packet.data
+    return get_hirate_packets_from_buffer(sip_data, start_byte)
+
+
+def get_sip_packets_from_file(filename):
+    f = open(filename, 'rb')
+    buffer = f.read()
+    f.close()
+    return get_sip_packets_from_buffer(buffer)
+
+
+def get_hirate_packets_from_buffer(buffer, start_byte):
+    # Later, this should also return
+    packets = []
+    while buffer:
+        idx = buffer.find(start_byte)
+        if idx == -1:
+            print '1'
+            return packets
+        if len(buffer) < idx + 8:
+            print '2'
+            return packets
+        length, = struct.unpack('>1H', buffer[idx + 4:idx + 6])
+        if len(buffer) < idx + 6 + length + 2:
+            print '3'
+            return packets
+        packet = packet_classes.HiratePacket()
+        packet.from_buffer(buffer[idx:idx + 6 + length + 2])
+        packets.append(packet)
+        buffer = buffer[idx + 6 + length + 2:]
+
+
+def example():
+    # '2016-12-14_183618.txt' was sent from hirate sending methods ez_send_using_packets. See that function for details.
+    sip_packets = get_sip_packets_from_file('./received_sip_data/2016-12-14_183618.txt')
+    hirate_packets = get_hirate_packets_from_sip_packets(sip_packets, '\x17')
+    data_packets = [packet for packet in hirate_packets if packet.file_id == 1]
+    jpg_buffer = ''
+    for packet in data_packets:
+        jpg_buffer += packet.data
+    decoded_jpg_buffer = cobs_encoding.decode_data(jpg_buffer, escape_character=0x17)
+    with open('mytest.jpg', 'wb') as f:
+        f.write(decoded_jpg_buffer)
+
+
+##############################################################
 
 
 def gather_data_and_put_into_buffer(usb_port_address, baudrate, loop_time):

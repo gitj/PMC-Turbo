@@ -1,16 +1,37 @@
 from __future__ import division
 import struct
 import socket
-from pmc_camera.communication import constants
+from pmc_camera.communication import constants, packet_classes
 from pmc_camera.communication.hirate import cobs_encoding
 import numpy as np
 import time
+
+ez_IP = '192.168.1.54'
+ez_PORT = 4002
 
 
 def send(msg, ip, port):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.sendto(msg, (ip, port))
     sock.close()
+
+
+def data_to_hirate_packets(packet_size, start_byte, file_id, data):
+    packets = []
+    num_packets = np.ceil(len(data) / packet_size)
+    for i in range(int(num_packets)):
+        msg = data[(i * packet_size):((i + 1) * packet_size)]
+        packet = packet_classes.HiratePacket()
+        packet.from_arguments(start_byte=start_byte, file_id=file_id, packet_number=i, total_packet_number=num_packets,
+                              data=msg)
+        packets.append(packet)
+    return packets
+
+
+def send_packets(packets, ip, port):
+    for packet in packets:
+        send(packet.to_buffer(), ip, port)
+        time.sleep(1)
 
 
 def chunk_data_by_size(chunk_size, start_byte, file_id, data):
@@ -37,12 +58,26 @@ def chunk_data_by_size_no_changes(chunk_size, data):
 def get_buffer_from_file(filename):
     buffer = ''
     with open(filename, 'rb') as f:
-        byte = f.read(1)
-        buffer += byte
-        while byte:
-            byte = f.read(1)
-            buffer += byte
-    return buffer
+        return f.read()
+
+
+def ez_send_using_packets(filename, start_byte=constants.TEST_START_BYTE, ip='192.168.1.54', port=4002):
+    zeros = '\x00' * 2041
+    zero_packets = data_to_hirate_packets(data=zeros, file_id=2, packet_size=150, start_byte=start_byte)
+    send_packets(zero_packets, ip, port)
+
+    time.sleep(1)
+
+    data = get_buffer_from_file(filename)
+    data = cobs_encoding.encode_data(data, escape_character=start_byte)
+    print len(data)
+    packets = data_to_hirate_packets(data=data, packet_size=150, start_byte=start_byte, file_id=1)
+    print len(packets)
+    send_packets(packets, ip, port)
+
+    time.sleep(1)
+
+    send_packets(zero_packets, ip, port)
 
 
 def ez_send(filename, chunk_size=100, start_byte=constants.HIRATE_START_BYTE, file_id=0, IP='192.168.1.54', PORT=4002):
@@ -50,8 +85,8 @@ def ez_send(filename, chunk_size=100, start_byte=constants.HIRATE_START_BYTE, fi
     send(zeros, IP, PORT)
     time.sleep(0.2)
     data = get_buffer_from_file(filename)
-    #data = cobs_encoding.encode_data(data, escape_character=start_byte)
-    #chunks = chunk_data_by_size(chunk_size, start_byte, file_id, data)
+    # data = cobs_encoding.encode_data(data, escape_character=start_byte)
+    # chunks = chunk_data_by_size(chunk_size, start_byte, file_id, data)
     chunks = chunk_data_by_size_no_changes(100, data)
     print len(chunks)
     for chunk in chunks:
@@ -59,7 +94,9 @@ def ez_send(filename, chunk_size=100, start_byte=constants.HIRATE_START_BYTE, fi
         time.sleep(0.2)
     send(zeros, IP, PORT)
 
-def ez_send_encoding(filename, chunk_size=100, start_byte=constants.TEST_START_BYTE, file_id=0, IP='192.168.1.54', PORT=4002):
+
+def ez_send_encoding(filename, chunk_size=100, start_byte=constants.TEST_START_BYTE, file_id=0, IP='192.168.1.54',
+                     PORT=4002):
     zeros = '\x00' * 2041
     send(zeros, IP, PORT)
     time.sleep(0.2)
