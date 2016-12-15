@@ -27,6 +27,7 @@ install:
   - pip install Pyro4
   - pip install cobs
   - pip install ipython
+  - pip install PyCRC
   - pip install pillow
   # --
   - pushd $HOME
