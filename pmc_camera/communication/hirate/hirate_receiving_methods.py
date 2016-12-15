@@ -79,6 +79,29 @@ def example():
         f.write(decoded_jpg_buffer)
 
 
+def get_stuff_from_filename(filename, file_id, escape_character):
+    sip_packets = get_sip_packets_from_file(filename)
+    hirate_packets = get_hirate_packets_from_sip_packets(sip_packets, '\x17')
+    data_packets = [packet for packet in hirate_packets if packet.file_id == file_id]
+    jpg_buffer = ''
+    for packet in data_packets:
+        jpg_buffer += packet.data
+    decoded_jpg_buffer = cobs_encoding.decode_data(jpg_buffer, escape_character=ord(escape_character))
+    return sip_packets, hirate_packets, data_packets, jpg_buffer, decoded_jpg_buffer
+    # with open('mytest.jpg', 'wb') as f:
+    #    f.write(decoded_jpg_buffer)
+
+
+def write_buffer_to_file(filename, buffer):
+    with open(filename, 'wb') as f:
+        f.write(buffer)
+
+
+def get_jpeg_from_filename(filename, file_id, escape_character):
+    _, _, _, _, decoded_buffer = get_stuff_from_filename(filename, file_id, escape_character)
+    write_buffer_to_file('tmp.jpg', decoded_buffer)
+
+
 ##############################################################
 
 
