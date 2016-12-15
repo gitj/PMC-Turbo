@@ -82,4 +82,5 @@ if __name__ == "__main__":
     ip = Pyro4.socketutil.getInterfaceAddress('192.168.1.1')
     daemon = Pyro4.Daemon(host=ip,port=50001)
     uri = daemon.register(server,"image")
+    print uri
     daemon.requestLoop()
