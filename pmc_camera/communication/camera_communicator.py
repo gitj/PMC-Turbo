@@ -119,15 +119,12 @@ class Communicator():
 
     def leader_loop(self):
         while True:
-            self.run_leader_tasks()
+            self.get_and_process_sip_bytes()
             if self.end_loop == True:
                 # Switch this to end the pyro loop.
                 return
             # time.sleep(0.01)
             time.sleep(1)
-
-    def run_leader_tasks(self):
-        self.get_and_process_sip_bytes()
 
     def start_pyro_thread(self):
         self.pyro_thread = threading.Thread(target=self.pyro_loop)
@@ -136,20 +133,14 @@ class Communicator():
 
     def pyro_loop(self):
         while True:
-            self.run_pyro_tasks()
+            events, _, _ = select.select(self.pyro_daemon.sockets, [], [], 0)
+            # Check this carefully for bugs - I think I eliminated them but make sure.
+            if events:
+                self.pyro_daemon.events(events)
             if self.end_loop == True:
                 # Switch this to end the pyro loop.
                 return
             time.sleep(0.01)
-
-    def run_pyro_tasks(self):
-        # Bug: first time this is run it doesn't do anything.
-        # Subsequent runs work.
-        events, _, _ = select.select(self.pyro_daemon.sockets, [], [], 0)
-        if events:
-            self.pyro_daemon.events(events)
-            # else:
-            #    time.sleep(0.001)
 
     ### leader methods
 
@@ -276,7 +267,6 @@ class Communicator():
         except:  # This should except a timeouterrror.
             return
 
-
     def execute_packet(self, packet):
         id_byte = packet[1]
         if id_byte == '\x13':
@@ -323,9 +313,3 @@ def determine_leader(self):
     return True
     # Note that this is self.
     # If the camera can't find a lower cam_id, it is the leader.
-
-
-def reconcile_kvdb_and_pipeline(self):
-    if self.kvdb != self.pipeline.status:
-        self.pipeline.change_parameters(self.kvdb)
-        # These functions need to be written for the pipeline
