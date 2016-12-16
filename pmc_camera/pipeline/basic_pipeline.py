@@ -165,17 +165,17 @@ class BasicPipeline:
         self.acquire_image_command_queue.put((name,value,tag))
         return tag
 
-    def get_camera_command_result(self,tag):
+    def get_camera_command_result(self,command_tag):
         while not self.acquire_image_command_results_queue.empty():
             try:
                 tag,name,value,result = self.acquire_image_command_results_queue.get_nowait()
                 self.acquire_image_command_results_dict[tag] = (name,value,result)
             except EmptyException:
                 break
-        if tag in self.acquire_image_command_results_dict:
-            return self.acquire_image_command_results_dict.pop(tag)
+        if command_tag in self.acquire_image_command_results_dict:
+            return self.acquire_image_command_results_dict.pop(command_tag)
         else:
-            raise KeyError("Result of command tag %r not found" % tag)
+            raise KeyError("Result of command tag %r not found" % command_tag)
 
     def send_camera_command_get_result(self,name,value,timeout=1):
         tag = self.send_camera_command(name,value)
