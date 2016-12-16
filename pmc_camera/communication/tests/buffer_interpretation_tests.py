@@ -9,6 +9,12 @@ class BufferInterpretationTests(unittest.TestCase):
     def tearDown(self):
         return
 
+    def test_empty_buffer(self):
+        buffer = ''
+        packet, remainder = sip_buffer_receiving_methods.process_bytes(buffer, start_byte='\x10', end_byte='\x03')
+        self.assertEqual(packet, None)
+        self.assertEqual(remainder, '')
+
     def test_science_request(self):
         buffer = '\x10\x13\x03'
         packet, remainder = sip_buffer_receiving_methods.process_bytes(buffer, start_byte='\x10', end_byte='\x03')
