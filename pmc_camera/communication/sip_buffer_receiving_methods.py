@@ -7,17 +7,20 @@ import struct
 
 
 def process_bytes(buffer, start_byte, end_byte, logger=None):
+    packet = None
+    remainder = buffer
     while buffer:
         idx = buffer.find(start_byte)
         if idx == -1:
             # This means a START_BYTE was not found
             # We are done processing - discard junk before first idx.
-            return None, ''
+            packet, remainder = None, ''
+            break
         if not len(buffer) > (idx + 1):
             # Make sure the buffer is long enough...
             packet = None
             remainder = buffer[idx:]
-            return packet, remainder
+            break
         id_byte = buffer[idx + 1]
         if not id_byte in ['\x13', '\x14']:
             # If the id_byte is not valid, we cut off the junk and continue the loop.
@@ -31,12 +34,12 @@ def process_bytes(buffer, start_byte, end_byte, logger=None):
                 # We are just missing the end byte - throw it in the remainder.
                 packet = None
                 remainder = buffer[idx:]
-                return packet, remainder
+                break
 
             if buffer[idx + 2] == end_byte:
                 packet = buffer[idx:idx + 3]
                 remainder = buffer[idx + 3:]
-                return packet, remainder
+                break
             else:
                 packet = None
                 remainder = buffer[idx + 2:]
@@ -45,7 +48,7 @@ def process_bytes(buffer, start_byte, end_byte, logger=None):
                     buffer = remainder
                     continue
                 else:
-                    return packet, remainder
+                    break
 
         if id_byte == '\x14':
             if logger:
@@ -55,7 +58,7 @@ def process_bytes(buffer, start_byte, end_byte, logger=None):
                     logger.debug('Length of buffer insufficient to contain length byte')
                 packet = None
                 remainder = buffer[idx:]
-                return packet, remainder
+                break
             length, = struct.unpack('<1B', buffer[idx + 2])
             if len(buffer[idx:]) < (3 + length + 1):
                 if logger:
@@ -63,14 +66,14 @@ def process_bytes(buffer, start_byte, end_byte, logger=None):
                 # We are missing the rest of the packet. Throw it in the remainder.
                 packet = None
                 remainder = buffer[idx:]
-                return packet, remainder
+                break
 
             if buffer[idx + 3 + length] == end_byte:
                 if logger:
                     logger.debug('Expected end byte is an end byte.')
                 packet = buffer[idx:idx + 3 + length + 1]
                 remainder = buffer[idx + 3 + length + 1:]
-                return packet, remainder
+                break
             else:
                 if logger:
                     logger.debug('Expected end byte is NOT an end byte.')
@@ -78,3 +81,4 @@ def process_bytes(buffer, start_byte, end_byte, logger=None):
                 remainder = buffer[idx + 3:]
                 buffer = remainder
                 continue
+    return packet, remainder

@@ -7,6 +7,7 @@ import struct
 import threading
 import logging
 import sip_buffer_receiving_methods
+from hirate import hirate_sending_methods, cobs_encoding
 
 from pmc_camera.communication import constants
 
@@ -91,11 +92,21 @@ class Communicator():
         uri = self.pyro_daemon.register(self, "communicator")
         print uri
 
-    def setup_leader_attributes(self, sip_uplink_ip, sip_uplink_port, sip_downlink_ip, sip_downlink_port):
+    def setup_leader_attributes(self, sip_uplink_ip, sip_uplink_port, sip_downlink_ip, sip_downlink_port,
+                                hirate_downlink_ip, hirate_downlink_port, downlink_speed):
         self.sip_leftover_buffer = ''
         self.leftover_buffer = ''
         self.setup_sip_uplink_socket(sip_uplink_ip, sip_uplink_port)
         self.setup_sip_downlink_socket(sip_downlink_ip, sip_downlink_port)
+
+        self.packets_to_send = []
+        self.prev_packet_size = 0
+        self.prev_packet_time = 0
+        self.hirate_downlink_ip, self.hirate_downlink_port = hirate_downlink_ip, hirate_downlink_port
+        self.downlink_speed = downlink_speed
+        self.file_id = 55
+        Pyro4.config.SERIALIZER = 'pickle'
+        self.image_server = Pyro4.Proxy('PYRO:image@192.168.1.30:50001')
         # Format of peers: {cam_id: zmq_socket}
 
     def get_communicator_handles(self, ip_list, port_list):
@@ -119,12 +130,41 @@ class Communicator():
 
     def leader_loop(self):
         while True:
+            self.get_housekeeping()
             self.get_and_process_sip_bytes()
+            self.try_to_send_image()
             if self.end_loop == True:
-                # Switch this to end the pyro loop.
+                # Switch this to end the leader loop.
                 return
-            # time.sleep(0.01)
             time.sleep(1)
+
+    def get_housekeeping(self):
+        # Eventually this should query all the subsystems and condense to a housekeeping report.
+        # For now we will keep it simple - just returns a 1 for each of the cameras.
+        self.buffer_for_downlink += '\x01\x01\x01\x01\x01\x01\x01'
+
+    def try_to_send_image(self):
+        # write something to try to send image down.
+        if not self.packets_to_send:
+            self.file_id += 1
+            self.get_packets_to_send()
+        wait_time = self.prev_packet_size / self.downlink_speed
+        if time.time() - self.prev_packet_time > wait_time:
+            buffer = self.packets_to_send[0].to_buffer()
+            hirate_sending_methods.send(buffer, self.hirate_downlink_ip,
+                                        self.hirate_downlink_port)
+            self.prev_packet_size = len(buffer)
+            self.prev_packet_time = time.time()
+            self.packets_to_send = self.packets_to_send[1:]
+        return
+
+    def get_packets_to_send(self):
+        # buffer = hirate_sending_methods.get_buffer_from_file('cloud_icon.jpg')
+        buffer, metadata = self.image_server.get_latest_jpeg()
+        buffer = cobs_encoding.encode_data(buffer, constants.TEST_START_BYTE)
+        print len(buffer)
+        packets = hirate_sending_methods.data_to_hirate_packets(1000, constants.TEST_START_BYTE, self.file_id, buffer)
+        self.packets_to_send += packets
 
     def start_pyro_thread(self):
         self.pyro_thread = threading.Thread(target=self.pyro_loop)
@@ -165,6 +205,7 @@ class Communicator():
         # When this function is called, package that stuff as a 255 byte package to be sent on downlink
         # Then clear the buffer.
         buffer = self.buffer_for_downlink
+        logger.debug('Packaging buffer for downlink: %r' % buffer)
         if len(buffer) > 255:
             logger.error('Buffer length %d. Buffer: %r' % (len(buffer), buffer))
             buffer = buffer[:256]
@@ -245,7 +286,7 @@ class Communicator():
         format_string = '1B%ds' % len(data)
         msg = struct.pack(format_string, len(data), data)
         msg = HEADER + msg + FOOTER
-        # print msg
+        logger.debug('Message to be sent to downlink: %r' % msg)
         self.sip_downlink_socket.sendto(msg, (self.sip_downlink_ip, self.sip_downlink_port))
 
     def get_and_process_sip_bytes(self):
@@ -256,60 +297,61 @@ class Communicator():
 
             buffer = self.sip_leftover_buffer + data
             self.sip_leftover_buffer = ''
-            while True:
-                valid_packet, remainder = sip_buffer_receiving_methods.process_bytes(buffer)
+            while buffer:
+                valid_packet, remainder = sip_buffer_receiving_methods.process_bytes(buffer,
+                                                                    start_byte=chr(
+                                                                        constants.SIP_START_BYTE),
+                                                                    end_byte=chr(
+                                                                        constants.SIP_END_BYTE))
                 if valid_packet:
                     self.execute_packet(valid_packet)
                     buffer = remainder
                 else:
+                    logger.debug('Did not receive valid packet. Remainder is: %r' % remainder)
                     self.sip_leftover_buffer = remainder
                     break
-        except:  # This should except a timeouterrror.
-            return
+        except socket.error as e:  # This should except a timeouterrror.
+            if e.errno != 11:
+                logger.exception(str(e))
 
     def execute_packet(self, packet):
         id_byte = packet[1]
+        logger.debug('Got packet with id %r' % id_byte)
         if id_byte == '\x13':
             self.respond_to_science_data_request()
         if id_byte == '\x14':
-            self.respond_to_science_command(packet[2:-1])
+            self.respond_to_science_command(packet[2:-1])  ### peer methods
 
+    def ping(self):
+        return True
 
-### peer methods
+    def ping_other(self, camera_handle):
+        # Need to add timeout to this, as well as a case for no ping.
+        try:
+            return camera_handle.ping()
+        except (Pyro4.errors.CommunicationError, Pyro4.errors.TimeoutError) as e:
+            print e
+            return False
 
-def ping(self):
-    return True
-
-
-def ping_other(self, camera_handle):
-    # Need to add timeout to this, as well as a case for no ping.
-    try:
-        return camera_handle.ping()
-    except (Pyro4.errors.CommunicationError, Pyro4.errors.TimeoutError) as e:
-        print e
-        return False
-
-
-def identify_leader(self):
-    if self.leader_handle:
-        response = self.ping_other(self.leader_handle)
-        if not response:
+    def identify_leader(self):
+        if self.leader_handle:
+            response = self.ping_other(self.leader_handle)
+            if not response:
+                self.determine_leader()
+        if not self.leader_handle:
             self.determine_leader()
-    if not self.leader_handle:
-        self.determine_leader()
 
+    # Decide how to do this - I don't want a wait.
+    # I think I want to check if the leader pinged back last time I checked - a queue?
 
-# Decide how to do this - I don't want a wait.
-# I think I want to check if the leader pinged back last time I checked - a queue?
-
-def determine_leader(self):
-    for i in range(num_cameras)[:self.cam_id]:
-        if i < self.cam_id:
-            response = self.ping_other(self.peers[i])
-            if response:
-                self.leader_handle = self.peers[i]
-                return True
-    self.leader_handle = self.peers[self.cam_id]
-    return True
-    # Note that this is self.
-    # If the camera can't find a lower cam_id, it is the leader.
+    def determine_leader(self):
+        for i in range(num_cameras)[:self.cam_id]:
+            if i < self.cam_id:
+                response = self.ping_other(self.peers[i])
+                if response:
+                    self.leader_handle = self.peers[i]
+                    return True
+        self.leader_handle = self.peers[self.cam_id]
+        return True
+        # Note that this is self.
+        # If the camera can't find a lower cam_id, it is the leader.
