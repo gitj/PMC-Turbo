@@ -69,15 +69,19 @@ class IndexWatcher(object):
     def get_latest(self,update=True):
         if update:
             self.update()
-        if self.df.shape[0]:
+        if self.df is not None and self.df.shape[0]:
             return self.df.iloc[-1]
         else:
             return None
     def update(self):
         with open(self.filename) as fh:
             if self.df is None:
-                self.df = pd.read_csv(fh)
-                self.last_position = fh.tell()
+                try:
+                    self.df = pd.read_csv(fh)
+                    self.last_position = fh.tell()
+                except Exception as e:
+                    logger.exception("Failed to parse index file")
+                    self.df = None
             else:
                 fh.seek(self.last_position)
                 fragment = pd.read_csv(fh,names = list(self.df.columns), header=None)
