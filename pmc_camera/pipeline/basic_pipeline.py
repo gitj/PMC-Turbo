@@ -55,6 +55,8 @@ Pyro4.config.SERIALIZER = 'pickle'
 logger = logging.getLogger(__name__)
 LOG_DIR='/home/pmc/logs/housekeeping/camera'
 
+DISK_MIN_BYTES_AVAILABLE = 100*1024*1024 # 100 MiB
+
 @Pyro4.expose
 class BasicPipeline:
     def __init__(self, dimensions=(3232,4864), num_data_buffers=16,
@@ -360,7 +362,16 @@ class WriteImageProcess(object):
         self.input_queue = input_queue
         self.output_queue = output_queue
         self.info_buffer = info_buffer
-        self.available_disks = available_disks
+        self.original_disks = available_disks
+        disks_with_free_space = []
+        for disk in available_disks:
+            stats = os.statvfs(disk)
+            bytes_available = stats.f_bavail*stats.f_frsize
+            if bytes_available > DISK_MIN_BYTES_AVAILABLE:
+                disks_with_free_space.append(disk)
+            else:
+                logger.warning("Insufficient disk space available on %s, only %d MiB" % (disk,bytes_available//2**20))
+        self.available_disks = disks_with_free_space
         self.dimensions=dimensions
         self.write_enable = write_enable
         self.uri = uri
@@ -369,14 +380,21 @@ class WriteImageProcess(object):
             try:
                 os.mkdir(dname)
             except OSError:
-                pass
+                logger.exception("Error creating data directory %s" % dname)
         self.disk_to_use = 0
         self.status = status
-        self.status.value = "starting"
+        if self.output_dirs:
+            self.status.value = "starting"
+        else:
+            self.status.value = "no disk space"
+            self.write_enable.value = False
         self.child = mp.Process(target=self.run)
         #self.child.start()
 
     def run(self):
+        if not self.available_disks:
+            logger.warning("No disk space available on any of %s, exiting" % (' '.join(self.original_disks)))
+            return
         process_me = -1
         frame_indexes = dict([(dirname,0) for dirname in self.output_dirs])
         for dirname in self.output_dirs:
@@ -387,11 +405,30 @@ class WriteImageProcess(object):
                 process_me = self.input_queue.get_nowait()
             except EmptyException:
                 self.status.value = "waiting"
+                available_output_dirs = []
                 time.sleep(0.005)
                 continue
             if process_me is None:
+                self.status.value = "exiting"
+                logger.info("Exiting normally")
                 break
             else:
+                self.status.value = "checking disk"
+                for output_dir in self.output_dirs:
+                    stats = os.statvfs(output_dir)
+                    bytes_available = stats.f_bavail*stats.f_frsize
+                    if bytes_available > DISK_MIN_BYTES_AVAILABLE:
+                        available_output_dirs.append(output_dir)
+                    else:
+                        logger.warning("Insufficient disk space available on %s, only %d MiB" %
+                                       (output_dir,bytes_available//2**20))
+                self.output_dirs = available_output_dirs
+                if not self.output_dirs:
+                    self.status.value = "no disk space"
+                    logger.warning("No disk space available on any of %s, exiting" % (' '.join(self.original_disks)))
+                    break
+                if self.disk_to_use >= len(self.output_dirs):
+                    self.disk_to_use = 0
                 with self.data_buffers[process_me].get_lock():
                     self.status.value = "processing %d" % process_me
                     #t0 = timeit.default_timer()
