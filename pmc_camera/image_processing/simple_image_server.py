@@ -1,6 +1,8 @@
 import glob
 import os
 import time
+
+import PIL
 import Pyro4
 import logging
 import pandas as pd
@@ -44,14 +46,18 @@ class SimpleImageServer(object):
 
     def get_latest_fileinfo(self):
         candidates = [iw.get_latest() for iw in self.index_watchers]
+        candidates = [cand for cand in candidates if cand is not None]
         candidates = pd.DataFrame(candidates)
         candidates.sort_values(['frame_id'],inplace=True)
-        return candidates.iloc[-1]
+        if candidates.shape[0]:
+            return candidates.iloc[-1]
+        else:
+            raise RuntimeError("No candidates for latest file!")
 
-    def get_latest_jpeg(self,scale_by=1/8.):
+    def get_latest_jpeg(self,scale_by=1/8.,resample=PIL.Image.LANCZOS,**kwargs):
         info = self.get_latest_fileinfo()
         image,chunk = load_blosc_image(info.filename)
-        return simple_jpeg(image,scale_by=scale_by),info
+        return simple_jpeg(image,scale_by=scale_by,resample=resample,**kwargs),info
 
 class IndexWatcher(object):
     def __init__(self, filename):
@@ -63,7 +69,10 @@ class IndexWatcher(object):
     def get_latest(self,update=True):
         if update:
             self.update()
-        return self.df.iloc[-1]
+        if self.df.shape[0]:
+            return self.df.iloc[-1]
+        else:
+            return None
     def update(self):
         with open(self.filename) as fh:
             if self.df is None:
