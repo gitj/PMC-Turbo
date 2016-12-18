@@ -105,7 +105,7 @@ class GSEPacket(object):
         if greedy:
             checksum_index = -1
         else:
-            checksum_index = self._header_length + self.payload_length + 1
+            checksum_index = self._header_length + self.payload_length
         payload = buffer[self._header_length:checksum_index]
         if len(payload) != self.payload_length:
             raise PacketLengthError("Payload length %d does not match length field value %d" % (len(payload),
