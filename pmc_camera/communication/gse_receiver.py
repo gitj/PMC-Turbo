@@ -75,7 +75,8 @@ def get_hirate_packets_from_buffer(buffer):
             logger.debug(str(e))
             # This comes up occasionally - i need to think about how to handle this
             # Probably just toss the packet... which is what I do already.
-            remainder = buffer[idx + 6 + 1000 + 2:]
+            #remainder = buffer[idx + 6 + 1000 + 2:]
+            remainder = buffer[idx + 6:]
             # This is hardcoded right now because I know these lengths... I need to fix this in the future
             # The problem is I can't use hirate_packet.payload_length, etc. since the packet never gets formed
             # It raises this exception instead - possible to pass arguments in exception?
