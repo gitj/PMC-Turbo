@@ -76,7 +76,7 @@ class GSEPacket(object):
             self.origin = origin
             self.payload = payload
             self.payload_length = len(payload)
-            self.checksum = get_checksum(struct.pack('>1B1H%ds', self.origin, self.payload_length, payload))
+            self.checksum = (get_checksum(payload) + self.origin + self.payload_length) % 256
             # This could be clearer, but I don't want to convert origin and payload_length to string.
             self.start_byte = self._valid_start_byte
 
@@ -207,15 +207,17 @@ class HiratePacket(object):
             crc_index = -1
         else:
             crc_index = self._header_length + self.payload_length
+        print crc_index
         payload = buffer[self._header_length:crc_index]
         if len(payload) != self.payload_length:
             raise PacketLengthError("Payload length %d does not match length field value %d" % (len(payload),
                                                                                                 self.payload_length))
 
         payload_crc = get_crc(payload)
-        if payload_crc != ord(buffer[crc_index]):
+        buffer_crc, = struct.unpack('>1H', buffer[crc_index:crc_index + 2])
+        if payload_crc != buffer_crc:
             raise PacketChecksumError("Payload CRC %d does not match CRC field value %d" %
-                                      (payload_crc, ord(buffer[crc_index])))
+                                      (payload_crc, buffer_crc))
         self.payload = payload
         self.payload_crc = payload_crc
 
