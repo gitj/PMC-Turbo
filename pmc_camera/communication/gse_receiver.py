@@ -4,6 +4,13 @@ import time
 import constants
 from hirate import cobs_encoding
 import packet_classes
+import cv2
+import matplotlib.pyplot
+import IPython
+import logging
+
+
+# logger = logging.getLogger(__name__)
 
 
 def get_new_data_into_buffer(time_loop, usb_port_address='/dev/ttyUSB0', baudrate=115200):
@@ -14,7 +21,6 @@ def get_new_data_into_buffer(time_loop, usb_port_address='/dev/ttyUSB0', baudrat
     while (time.time() - start) < time_loop:
         data = ser.read(10000)
         buffer += data
-        # print '%r' % buffer
     ser.close()
     return buffer
 
@@ -52,7 +58,7 @@ def get_hirate_packets_from_buffer(buffer):
     while buffer:
         idx = buffer.find(chr(0x17))
         if idx == -1:
-            print 'no start byte found'
+            logger.debug('no start byte found')
             remainder = buffer
             break
         try:
@@ -60,13 +66,13 @@ def get_hirate_packets_from_buffer(buffer):
             hirate_packets.append(hirate_packet)
             buffer = buffer[idx + hirate_packet._header_length + hirate_packet.payload_length + 2:]
         except packet_classes.PacketLengthError as e:
-            print str(e)
+            logger.debug(str(e))
             # This triggers when there are insufficient bytes to finish a GSEPacket.
             # This is common - usually just needs to wait for more data.
             remainder = buffer[idx:]
             break
         except packet_classes.PacketChecksumError as e:
-            print str(e)
+            logger.debug(str(e))
             # This comes up occasionally - i need to think about how to handle this
             # Probably just toss the packet... which is what I do already.
             remainder = buffer[idx + 6 + 1000 + 2:]
@@ -84,6 +90,8 @@ def write_file_from_hirate_packets(packets, filename):
     data_buffer = cobs_encoding.decode_data(data_buffer, 0x17)
     with open(filename, 'wb') as f:
         f.write(data_buffer)
+        # img = cv2.imread(filename)
+        # matplotlib.pyplot.imshow(img)
 
 
 def main():
@@ -112,7 +120,7 @@ def main():
         f = open(raw_filename, 'ab+')
         for packet in gse_lowrate_packets:
             # f.write(packet.to_buffer())
-            print 'lowrate_received'
+            logger.debug('lowrate_received')
         f.close()
 
         gse_hirate_buffer = ''
@@ -120,9 +128,8 @@ def main():
             gse_hirate_buffer += packet.payload
         hirate_packets, remainder = get_hirate_packets_from_buffer(hirate_remainder + gse_hirate_buffer)
         for packet in hirate_packets:
-            print packet.file_id
-            print packet.packet_number, packet.total_packet_number
-            print
+            logger.debug('File_id: %d, Packet Number: %d or %d' % (
+            packet.file_id, packet.packet_number, packet.total_packet_number))
         hirate_remainder = remainder
 
         for packet in hirate_packets:
@@ -134,7 +141,7 @@ def main():
         for file_id in files.keys():
             sorted_packets = sorted(files[file_id], key=lambda k: k.packet_number)
             if [packet.packet_number for packet in sorted_packets] == range(sorted_packets[0].total_packet_number):
-                print 'Full image received: file id %d' % file_id
+                logger.debug('Full image received: file id %d' % file_id)
                 jpg_filename = '%d.jpg' % file_id
                 jpg_filename = os.path.join(path, jpg_filename)
                 write_file_from_hirate_packets(sorted_packets, jpg_filename)
@@ -142,4 +149,21 @@ def main():
 
 
 if __name__ == "__main__":
+    # IPython.embed()
+
+    logger = logging.getLogger('pmc_camera')
+    default_handler = logging.StreamHandler()
+
+    LOG_DIR = '/home/pmc/logs/gse_receiver'
+    filename = os.path.join(LOG_DIR, (time.strftime('%Y-%m-%d_%H%M%S.txt')))
+    default_filehandler = logging.FileHandler(filename=filename)
+
+    message_format = '%(levelname)-8.8s %(asctime)s - %(name)s.%(funcName)s:%(lineno)d  %(message)s'
+    default_formatter = logging.Formatter(message_format)
+    default_handler.setFormatter(default_formatter)
+    default_filehandler.setFormatter(default_formatter)
+    logger.addHandler(default_handler)
+    logger.addHandler(default_filehandler)
+    logger.setLevel(logging.DEBUG)
+
     main()
