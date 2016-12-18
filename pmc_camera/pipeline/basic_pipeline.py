@@ -413,7 +413,6 @@ class WriteImageProcess(object):
                 process_me = self.input_queue.get_nowait()
             except EmptyException:
                 self.status.value = "waiting"
-                available_output_dirs = []
                 time.sleep(0.1)
                 continue
             if process_me is None:
@@ -422,6 +421,7 @@ class WriteImageProcess(object):
                 break
             else:
                 self.status.value = "checking disk"
+                available_output_dirs = []
                 for output_dir in self.output_dirs:
                     stats = os.statvfs(output_dir)
                     bytes_available = stats.f_bavail*stats.f_frsize
