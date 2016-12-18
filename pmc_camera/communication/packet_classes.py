@@ -168,7 +168,7 @@ class HiratePacket(object):
             If false, use the length field of the packet to decide how much of the buffer to interpret.
         """
         self._header_length = struct.calcsize(self._header_format_string)
-        self._minimum_buffer_length = self._header_length + 1
+        self._minimum_buffer_length = self._header_length + 2
         if buffer is not None:
             self.from_buffer(buffer)
         else:
@@ -201,16 +201,17 @@ class HiratePacket(object):
                                     (len(buffer), self._minimum_buffer_length))
         self.start_byte, self.file_id, self.packet_number, self.total_packet_number, self.payload_length = struct.unpack(
             self._header_format_string, buffer[:self._header_length])
-        print self.start_byte, self.file_id, self.packet_number, self.total_packet_number, self.payload_length
         crc_index = self._header_length + self.payload_length
-        print crc_index
         payload = buffer[self._header_length:crc_index]
         if len(payload) != self.payload_length:
             raise PacketLengthError("Payload length %d does not match length field value %d" % (len(payload),
                                                                                                 self.payload_length))
 
         payload_crc = get_crc(payload)
-        buffer_crc, = struct.unpack('>1H', buffer[crc_index:crc_index + 2])
+        crc_bytes = buffer[crc_index:crc_index + 2]
+        if len(crc_bytes) < 2:
+            raise PacketLengthError("Buffer length insufficient to contain complete CRC.")
+        buffer_crc, = struct.unpack('>1H', crc_bytes)
         if payload_crc != buffer_crc:
             raise PacketChecksumError("Payload CRC %d does not match CRC field value %d" %
                                       (payload_crc, buffer_crc))
