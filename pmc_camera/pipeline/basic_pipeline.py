@@ -326,7 +326,10 @@ class AcquireImagesProcess:
                 last_trigger = start_time
 
             if not buffers_on_camera:
+                self.status.value = "waiting for buffer on camera"
                 time.sleep(0.001)
+            else:
+                self.status.value = "checking buffers"
             num_buffers_filled = 0
             for buffer_id in list(buffers_on_camera):
                 npy_info_buffer = np.frombuffer(self.info_buffer[buffer_id].get_obj(),dtype=frame_info_dtype)
@@ -337,20 +340,25 @@ class AcquireImagesProcess:
                     frame_number += 1
                     num_buffers_filled +=1
             if num_buffers_filled == 0:
+                self.status.value = "waiting for buffer to be filled"
                 update_at = time.time()
                 if update_at - camera_parameters_last_updated > 1.0:
+                    self.status.value = "getting camera parameters"
                     status = self.pc.get_all_parameters()
                     self.write_temperature_log()
                     camera_parameters_last_updated = update_at
                     last_camera_status = status
+
+                    self.status.value = "updating status"
+                    timestamp_comparison = self.pc.compare_timestamps()*1e6
+                    self.pipeline.update_status(dict(all_camera_parameters=status,
+                                                camera_status_update_at=update_at,
+                                                camera_timestamp_offset=timestamp_comparison,
+                                                total_frames=frame_number,
+                                                     ))
                 else:
-                    status = last_camera_status
-                timestamp_comparison = self.pc.compare_timestamps()*1e6
-                self.pipeline.update_status(dict(all_camera_parameters=status,
-                                            camera_status_update_at=update_at,
-                                            camera_timestamp_offset=timestamp_comparison,
-                                            total_frames=frame_number,
-                                                 ))
+                    time.sleep(0.001)
+                    self.status.value = "waiting"
         #if we get here, we were kindly asked to exit
         self.status.value = "exiting"
         return None
@@ -375,7 +383,7 @@ class WriteImageProcess(object):
         self.dimensions=dimensions
         self.write_enable = write_enable
         self.uri = uri
-        self.output_dirs = [os.path.join(rpath,output_dir) for rpath in available_disks]
+        self.output_dirs = [os.path.join(rpath,output_dir) for rpath in self.available_disks]
         for dname in self.output_dirs:
             try:
                 os.mkdir(dname)
@@ -406,7 +414,7 @@ class WriteImageProcess(object):
             except EmptyException:
                 self.status.value = "waiting"
                 available_output_dirs = []
-                time.sleep(0.005)
+                time.sleep(0.1)
                 continue
             if process_me is None:
                 self.status.value = "exiting"
@@ -429,6 +437,7 @@ class WriteImageProcess(object):
                     break
                 if self.disk_to_use >= len(self.output_dirs):
                     self.disk_to_use = 0
+                self.status.value = "waiting for lock"
                 with self.data_buffers[process_me].get_lock():
                     self.status.value = "processing %d" % process_me
                     #t0 = timeit.default_timer()
