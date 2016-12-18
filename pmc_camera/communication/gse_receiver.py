@@ -2,6 +2,7 @@ import serial
 import os
 import time
 import constants
+from hirate import cobs_encoding
 import packet_classes
 
 
@@ -76,6 +77,15 @@ def get_hirate_packets_from_buffer(buffer):
     return hirate_packets, remainder
 
 
+def write_file_from_hirate_packets(packets, filename):
+    data_buffer = ''
+    for packet in packets:
+        data_buffer += packet.payload
+    data_buffer = cobs_encoding.decode_data(data_buffer, 0x17)
+    with open(filename, 'wb') as f:
+        f.write(data_buffer)
+
+
 def main():
     timestamp = time.strftime('%Y-%m-%d_%H%M%S')
     generic_path = './gse_receiver_data'
@@ -115,26 +125,21 @@ def main():
             print
         hirate_remainder = remainder
 
+        for packet in hirate_packets:
+            if packet.file_id in files.keys():
+                files[packet.file_id].append(packet)
+            else:
+                files[packet.file_id] = [packet]
 
-'''
-        if hirate_packets:
-            for packet in hirate_packets:
-                if packet.file_id in files.keys():
-                    files[packet.file_id].append(packet)
-                else:
-                    files[packet.file_id] = [packet]
-            hirate_packets = []
-            for file_id in files.keys():
-                print file_id
-                print [packet.packet_number for packet in files[file_id]]
-                print files[file_id][0].total_packet_number
-                # sorted_packets = sorted(files[file_id], key=lambda k: k.packet_number)
-                # if [p.packet_number for p in sorted_packets] == range(sorted_packets[-1].packet_number):
-                ##    print 'full image received.'
-                # else:
-                #    print [packet.packet_number for packet in sorted_packets]
-                #    print sorted_packets[0].total_packet_number
-                '''
+        for file_id in files.keys():
+            sorted_packets = sorted(files[file_id], key=lambda k: k.packet_number)
+            if [packet.packet_number for packet in sorted_packets] == range(sorted_packets[0].total_packet_number):
+                print 'Full image received: file id %d' % file_id
+                jpg_filename = '%d.jpg' % file_id
+                jpg_filename = os.path.join(path, jpg_filename)
+                write_file_from_hirate_packets(sorted_packets, jpg_filename)
+                del files[file_id]
+
 
 if __name__ == "__main__":
     main()
