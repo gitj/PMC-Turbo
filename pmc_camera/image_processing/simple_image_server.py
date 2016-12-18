@@ -39,7 +39,7 @@ class SimpleImageServer(object):
             self.current_image_dirs = []
             for data_dir in self.data_dirs:
                 candidate = os.path.join(data_dir,latest)
-                if os.path.exists(candidate):
+                if os.path.exists(os.path.join(candidate,INDEX_FILENAME)):
                     self.current_image_dirs.append(candidate)
             logger.debug("Found new image subdirectories:\n\t%s" % ('\n\t'.join(self.current_image_dirs)))
             self.index_watchers = [IndexWatcher(os.path.join(d,INDEX_FILENAME)) for d in self.current_image_dirs]
