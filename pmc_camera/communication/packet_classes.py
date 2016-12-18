@@ -140,8 +140,7 @@ class HiratePacket(object):
     _header_format_string = '>4B1H'
     _valid_start_byte = 0x17
 
-    def __init__(self, buffer=None, file_id=None, packet_number=None, total_packet_number=None, payload=None,
-                 greedy=True):
+    def __init__(self, buffer=None, file_id=None, packet_number=None, total_packet_number=None, payload=None):
         """
         Hirate packet. We break data into chunks and send them to the SIP in this packet format.
 
@@ -171,7 +170,7 @@ class HiratePacket(object):
         self._header_length = struct.calcsize(self._header_format_string)
         self._minimum_buffer_length = self._header_length + 1
         if buffer is not None:
-            self.from_buffer(buffer, greedy=greedy)
+            self.from_buffer(buffer)
         else:
             self.file_id = file_id
             self.packet_number = packet_number
@@ -185,7 +184,7 @@ class HiratePacket(object):
         return 'File_id: %d \n Packet Number %d of %d \n First 10 bytes: %s' % (
             self.file_id, self.packet_number, self.total_packet_number, self.payload[:10])
 
-    def from_buffer(self, buffer, greedy=True):
+    def from_buffer(self, buffer):
         """
         Decode and validate the given buffer and update the class attributes accordingly
 
@@ -203,10 +202,7 @@ class HiratePacket(object):
         self.start_byte, self.file_id, self.packet_number, self.total_packet_number, self.payload_length = struct.unpack(
             self._header_format_string, buffer[:self._header_length])
         print self.start_byte, self.file_id, self.packet_number, self.total_packet_number, self.payload_length
-        if greedy:
-            crc_index = -1
-        else:
-            crc_index = self._header_length + self.payload_length
+        crc_index = self._header_length + self.payload_length
         print crc_index
         payload = buffer[self._header_length:crc_index]
         if len(payload) != self.payload_length:
