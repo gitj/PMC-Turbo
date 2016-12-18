@@ -76,7 +76,8 @@ class GSEPacket(object):
             self.origin = origin
             self.payload = payload
             self.payload_length = len(payload)
-            self.payload_checksum = get_checksum(payload)
+            self.checksum = get_checksum(payload) + self.origin + self.payload_length
+            # This could be clearer, but I don't want to convert origin and payload_length to string.
             self.start_byte = self._valid_start_byte
 
     def _repr_(self):
@@ -106,16 +107,16 @@ class GSEPacket(object):
         else:
             checksum_index = self._header_length + self.payload_length + 1
         payload = buffer[self._header_length:checksum_index]
-        if len(payload) != self.length:
+        if len(payload) != self.payload_length:
             raise PacketLengthError("Payload length %d does not match length field value %d" % (len(payload),
-                                                                                                self.length))
+                                                                                                self.payload_length))
 
-        payload_checksum = get_checksum(payload)
-        if payload_checksum != ord(buffer[checksum_index]):
+        checksum = get_checksum(buffer[2:checksum_index])
+        if checksum != ord(buffer[checksum_index]):
             raise PacketChecksumError("Payload checksum %d does not match checksum field value %d" %
-                                      (payload_checksum, ord(buffer[checksum_index])))
+                                      (checksum, ord(buffer[checksum_index])))
         self.payload = payload
-        self.payload_checksum = payload_checksum
+        self.checksum = checksum
         if self.sync2_byte not in self._valid_sync2_bytes:
             self.is_valid = False
         else:
@@ -132,7 +133,7 @@ class GSEPacket(object):
         assert (self.sync2_byte is not None) and (self.origin is not None) and (self.payload is not None)
         header = struct.pack(self._header_format_string, self.start_byte, self.sync2_byte, self.origin, 0,
                              self.payload_length)
-        return header + self.payload + chr(self.payload_checksum)
+        return header + self.payload + chr(self.checksum)
 
 
 class HiratePacket(object):
@@ -206,9 +207,9 @@ class HiratePacket(object):
         else:
             crc_index = self._header_length + self.payload_length + 1
         payload = buffer[self._header_length:checksum_index]
-        if len(payload) != self.length:
+        if len(payload) != self.payload_length:
             raise PacketLengthError("Payload length %d does not match length field value %d" % (len(payload),
-                                                                                                self.length))
+                                                                                                self.payload_length))
 
         payload_crc = get_crc(payload)
         if payload_crc != ord(buffer[crc_index]):
