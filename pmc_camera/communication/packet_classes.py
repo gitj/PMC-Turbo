@@ -76,7 +76,7 @@ class GSEPacket(object):
             self.origin = origin
             self.payload = payload
             self.payload_length = len(payload)
-            self.checksum = get_checksum(payload) + self.origin + self.payload_length
+            self.checksum = get_checksum(struct.pack('>1B1H%ds', self.origin, self.payload_length, payload))
             # This could be clearer, but I don't want to convert origin and payload_length to string.
             self.start_byte = self._valid_start_byte
 
@@ -202,11 +202,12 @@ class HiratePacket(object):
                                     (len(buffer), self._minimum_buffer_length))
         self.start_byte, self.file_id, self.packet_number, self.total_packet_number, self.payload_length = struct.unpack(
             self._header_format_string, buffer[:self._header_length])
+        print self.start_byte, self.file_id, self.packet_number, self.total_packet_number, self.payload_length
         if greedy:
             crc_index = -1
         else:
-            crc_index = self._header_length + self.payload_length + 1
-        payload = buffer[self._header_length:checksum_index]
+            crc_index = self._header_length + self.payload_length
+        payload = buffer[self._header_length:crc_index]
         if len(payload) != self.payload_length:
             raise PacketLengthError("Payload length %d does not match length field value %d" % (len(payload),
                                                                                                 self.payload_length))
@@ -231,4 +232,4 @@ class HiratePacket(object):
         header = struct.pack(self._header_format_string, self.start_byte, self.file_id, self.packet_number,
                              self.total_packet_number,
                              self.payload_length)
-        return header + self.payload + chr(self.payload_crc)
+        return header + self.payload + struct.pack('>1H', self.payload_crc)
