@@ -16,14 +16,13 @@ def send(msg, ip, port):
     sock.close()
 
 
-def data_to_hirate_packets(packet_size, start_byte, file_id, data):
+def data_to_hirate_packets(packet_size, file_id, data):
     packets = []
     num_packets = np.ceil(len(data) / packet_size)
     for i in range(int(num_packets)):
         msg = data[(i * packet_size):((i + 1) * packet_size)]
-        packet = packet_classes.HiratePacket()
-        packet.from_arguments(start_byte=start_byte, file_id=file_id, packet_number=i, total_packet_number=num_packets,
-                              data=msg)
+        packet = packet_classes.HiratePacket(file_id=file_id, packet_number=i, total_packet_number=num_packets,
+                                             payload=msg)
         packets.append(packet)
     return packets
 

@@ -86,8 +86,8 @@ def get_stuff_from_filename(filename, file_id, escape_character):
     jpg_buffer = ''
     for packet in data_packets:
         jpg_buffer += packet.data
-    decoded_jpg_buffer = cobs_encoding.decode_data(jpg_buffer, escape_character=ord(escape_character))
-    return sip_packets, hirate_packets, data_packets, jpg_buffer, decoded_jpg_buffer
+    #decoded_jpg_buffer = cobs_encoding.decode_data(jpg_buffer, escape_character=ord(escape_character))
+    return sip_packets, hirate_packets, data_packets, jpg_buffer#, decoded_jpg_buffer
     # with open('mytest.jpg', 'wb') as f:
     #    f.write(decoded_jpg_buffer)
 
