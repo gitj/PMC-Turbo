@@ -3,6 +3,8 @@ import time
 import logging
 from ground import gse_receiver
 
+# Runs gse_receiver.GSEReceiver
+
 def main():
     g = gse_receiver.GSEReceiver()
     timestamp = time.strftime('%Y-%m-%d_%H%M%S')
