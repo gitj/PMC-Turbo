@@ -7,9 +7,10 @@ import struct
 import threading
 import logging
 import sip_buffer_receiving_methods
-from hirate import hirate_sending_methods, cobs_encoding
+import numpy as np
+from hirate import cobs_encoding, hirate_sending_methods
 
-from pmc_camera.communication import constants
+from pmc_camera.communication import constants, packet_classes
 
 Pyro4.config.SERVERTYPE = "multiplex"
 Pyro4.config.COMMTIMEOUT = 1.0
@@ -170,9 +171,19 @@ class Communicator():
         # buffer = hirate_sending_methods.get_buffer_from_file('cloud_icon.jpg')
         buffer, metadata = self.image_server.get_latest_jpeg()
         print len(buffer)
-        buffer = cobs_encoding.encode_data(buffer, 0xFA)
-        print len(buffer)
-        packets = hirate_sending_methods.data_to_hirate_packets(packet_size, self.file_id, buffer)
+
+        packets = []
+        num_packets = np.ceil(len(buffer) / packet_size)
+        for i in range(int(num_packets)):
+            msg = buffer[(i * packet_size):((i + 1) * packet_size)]
+            encoded_msg = cobs_encoding.encode_data(msg, 0xFA)
+            packet = packet_classes.HiratePacket(file_id=self.file_id, packet_number=i, total_packet_number=num_packets,
+                                                 payload=encoded_msg)
+            packets.append(packet)
+
+
+        #buffer = cobs_encoding.encode_data(buffer, 0xFA)
+
         self.packets_to_send += packets
 
     def start_pyro_thread(self):
