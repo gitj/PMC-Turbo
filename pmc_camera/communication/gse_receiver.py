@@ -75,7 +75,7 @@ def get_hirate_packets_from_buffer(buffer):
             logger.debug(str(e))
             # This comes up occasionally - i need to think about how to handle this
             # Probably just toss the packet... which is what I do already.
-            #remainder = buffer[idx + 6 + 1000 + 2:]
+            # remainder = buffer[idx + 6 + 1000 + 2:]
             remainder = buffer[idx + 6:]
             # This is hardcoded right now because I know these lengths... I need to fix this in the future
             # The problem is I can't use hirate_packet.payload_length, etc. since the packet never gets formed
@@ -101,8 +101,14 @@ def main():
     path = os.path.join(generic_path, timestamp)
     if not os.path.exists(path):
         os.makedirs(path)
-    raw_filename = os.path.join(path, 'raw.log')
-    lowrate_file_name = os.path.join(path, 'lowrate.log')
+    logs_path = os.path.join(path, 'logs')
+    if not os.path.exists(logs_path):
+        os.makedirs(logs_path)
+    image_path = os.path.join(path, 'images')
+    if not os.path.exists(image_path):
+        os.makedirs(image_path)
+    raw_filename = os.path.join(logs_path, 'raw.log')
+    lowrate_filename = os.path.join(logs_path, 'lowrate.log')
 
     files = {}
     hirate_remainder = ''
@@ -118,9 +124,9 @@ def main():
         gse_packets, gse_remainder = get_gse_packets_from_buffer(buffer)
         gse_hirate_packets, gse_lowrate_packets = separate_hirate_and_lowrate_gse_packets(gse_packets)
 
-        f = open(raw_filename, 'ab+')
+        f = open(lowrate_filename, 'ab+')
         for packet in gse_lowrate_packets:
-            # f.write(packet.to_buffer())
+            f.write(packet.to_buffer() + '\n')
             logger.debug('lowrate_received')
         f.close()
 
@@ -130,7 +136,7 @@ def main():
         hirate_packets, remainder = get_hirate_packets_from_buffer(hirate_remainder + gse_hirate_buffer)
         for packet in hirate_packets:
             logger.debug('File_id: %d, Packet Number: %d or %d' % (
-            packet.file_id, packet.packet_number, packet.total_packet_number))
+                packet.file_id, packet.packet_number, packet.total_packet_number))
         hirate_remainder = remainder
 
         for packet in hirate_packets:
@@ -144,7 +150,7 @@ def main():
             if [packet.packet_number for packet in sorted_packets] == range(sorted_packets[0].total_packet_number):
                 logger.debug('Full image received: file id %d' % file_id)
                 jpg_filename = '%d.jpg' % file_id
-                jpg_filename = os.path.join(path, jpg_filename)
+                jpg_filename = os.path.join(image_path, jpg_filename)
                 write_file_from_hirate_packets(sorted_packets, jpg_filename)
                 del files[file_id]
 
