@@ -170,7 +170,7 @@ class Communicator():
         # buffer = hirate_sending_methods.get_buffer_from_file('cloud_icon.jpg')
         buffer, metadata = self.image_server.get_latest_jpeg()
         print len(buffer)
-        buffer = cobs_encoding.encode_data(buffer, constants.TEST_START_BYTE)
+        buffer = cobs_encoding.encode_data(buffer, 0xFA)
         print len(buffer)
         packets = hirate_sending_methods.data_to_hirate_packets(packet_size, self.file_id, buffer)
         self.packets_to_send += packets

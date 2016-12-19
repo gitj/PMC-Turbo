@@ -10,7 +10,7 @@ import logging
 import struct
 
 
-logger = logging.getLogger(__name__)
+#logger = logging.getLogger(__name__)
 
 
 def get_new_data_into_buffer(time_loop, usb_port_address='/dev/ttyUSB0', baudrate=115200):
@@ -19,6 +19,7 @@ def get_new_data_into_buffer(time_loop, usb_port_address='/dev/ttyUSB0', baudrat
     ser.timeout = 1
     start = time.time()
     while (time.time() - start) < time_loop:
+
         data = ser.read(10000)
         buffer += data
     ser.close()
@@ -56,7 +57,8 @@ def get_hirate_packets_from_buffer(buffer):
     hirate_packets = []
     remainder = ''
     while buffer:
-        idx = buffer.find(chr(0x17))
+        idx = buffer.find(chr(0xFA
+                              ))
         if idx == -1:
             logger.debug('no start byte found')
             remainder = buffer
@@ -88,7 +90,7 @@ def write_file_from_hirate_packets(packets, filename):
     data_buffer = ''
     for packet in packets:
         data_buffer += packet.payload
-    data_buffer = cobs_encoding.decode_data(data_buffer, 0x17)
+    data_buffer = cobs_encoding.decode_data(data_buffer, 0xFA)
     with open(filename, 'wb') as f:
         f.write(data_buffer)
         # img = cv2.imread(filename)
@@ -172,7 +174,7 @@ def main():
 if __name__ == "__main__":
     # IPython.embed()
 
-    mylogger = logging.getLogger('pmc_camera')
+    logger = logging.getLogger('pmc_camera')
     default_handler = logging.StreamHandler()
 
     LOG_DIR = '/home/pmc/logs/gse_receiver'
@@ -183,8 +185,8 @@ if __name__ == "__main__":
     default_formatter = logging.Formatter(message_format)
     default_handler.setFormatter(default_formatter)
     default_filehandler.setFormatter(default_formatter)
-    mylogger.addHandler(default_handler)
-    mylogger.addHandler(default_filehandler)
-    mylogger.setLevel(logging.DEBUG)
+    logger.addHandler(default_handler)
+    logger.addHandler(default_filehandler)
+    logger.setLevel(logging.DEBUG)
 
     main()
