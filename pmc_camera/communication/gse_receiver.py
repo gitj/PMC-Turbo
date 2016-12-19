@@ -98,7 +98,7 @@ def write_file_from_hirate_packets(packets, filename):
 
 def log_lowrate_status(packet):
     # Problem: currently communicator aggregates lots of statuses to send down, then sends all... think about this
-    # It is sure to create errors and my fix here is just a hack
+    # It is sure to create errors and my fix here is just a hack right now
     # logger.debug('%r' % packet.payload)
     overall_status, frame_status, acquisition_count, focus_step, aperture_stop, exposure_ms = struct.unpack(
         '>1B1B1L1H1H1H',
