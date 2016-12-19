@@ -138,7 +138,7 @@ class GSEPacket(object):
 
 class HiratePacket(object):
     _header_format_string = '>4B1H'
-    _valid_start_byte = 0x17
+    _valid_start_byte = 0xFA
 
     def __init__(self, buffer=None, file_id=None, packet_number=None, total_packet_number=None, payload=None):
         """
