@@ -104,7 +104,7 @@ class Communicator():
         self.prev_packet_time = 0
         self.hirate_downlink_ip, self.hirate_downlink_port = hirate_downlink_ip, hirate_downlink_port
         self.downlink_speed = downlink_speed
-        self.file_id = 55
+        self.file_id = 12
         Pyro4.config.SERIALIZER = 'pickle'
         self.image_server = Pyro4.Proxy('PYRO:image@192.168.1.30:50001')
         # Format of peers: {cam_id: zmq_socket}
@@ -141,7 +141,15 @@ class Communicator():
     def get_housekeeping(self):
         # Eventually this should query all the subsystems and condense to a housekeeping report.
         # For now we will keep it simple - just returns a 1 for each of the cameras.
-        self.buffer_for_downlink += '\x01\x01\x01\x01\x01\x01\x01'
+        # self.buffer_for_downlink += '\x01\x01\x01\x01\x01\x01\x01'
+        fileinfo = self.image_server.get_latest_fileinfo()
+        frame_status = fileinfo[3]
+        acquisition_count = fileinfo[5]
+        focus_step = fileinfo[7]
+        aperture_stop = fileinfo[8]
+        exposure_ms = int(fileinfo[9] / 1000)
+        self.buffer_for_downlink += struct.pack('>1B1B1L1H1H1H', 255, frame_status, acquisition_count,
+                                                focus_step, aperture_stop, exposure_ms)
 
     def try_to_send_image(self):
         # write something to try to send image down.
@@ -158,12 +166,13 @@ class Communicator():
             self.packets_to_send = self.packets_to_send[1:]
         return
 
-    def get_packets_to_send(self):
+    def get_packets_to_send(self, packet_size=1000):
         # buffer = hirate_sending_methods.get_buffer_from_file('cloud_icon.jpg')
         buffer, metadata = self.image_server.get_latest_jpeg()
+        print len(buffer)
         buffer = cobs_encoding.encode_data(buffer, constants.TEST_START_BYTE)
         print len(buffer)
-        packets = hirate_sending_methods.data_to_hirate_packets(1000, constants.TEST_START_BYTE, self.file_id, buffer)
+        packets = hirate_sending_methods.data_to_hirate_packets(packet_size, self.file_id, buffer)
         self.packets_to_send += packets
 
     def start_pyro_thread(self):
@@ -299,10 +308,10 @@ class Communicator():
             self.sip_leftover_buffer = ''
             while buffer:
                 valid_packet, remainder = sip_buffer_receiving_methods.process_bytes(buffer,
-                                                                    start_byte=chr(
-                                                                        constants.SIP_START_BYTE),
-                                                                    end_byte=chr(
-                                                                        constants.SIP_END_BYTE))
+                                                                                     start_byte=chr(
+                                                                                         constants.SIP_START_BYTE),
+                                                                                     end_byte=chr(
+                                                                                         constants.SIP_END_BYTE))
                 if valid_packet:
                     self.execute_packet(valid_packet)
                     buffer = remainder
