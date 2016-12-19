@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class GSEReceiver():
+    # Class for GSEReceiver
     def __init__(self):
         return
 
