@@ -1,9 +1,8 @@
 import serial
 import os
 import time
-import constants
-from hirate import cobs_encoding
-import packet_classes
+from pmc_camera.communication.hirate import cobs_encoding
+import pmc_camera.communication.packet_classes
 import cv2
 import matplotlib.pyplot
 import IPython
@@ -11,7 +10,7 @@ import logging
 import struct
 
 
-# logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def get_new_data_into_buffer(time_loop, usb_port_address='/dev/ttyUSB0', baudrate=115200):
@@ -36,11 +35,11 @@ def get_gse_packets_from_buffer(buffer):
             remainder = buffer
             break
         try:
-            gse_packet = packet_classes.GSEPacket(buffer=buffer[idx:], greedy=False)
+            gse_packet = pmc_camera.communication.packet_classes.GSEPacket(buffer=buffer[idx:], greedy=False)
             gse_packets.append(gse_packet)
             # print '%r' % buffer[idx + gse_packet._header_length + gse_packet.payload_length + 1:]
             buffer = buffer[idx + gse_packet._header_length + gse_packet.payload_length + 1:]
-        except packet_classes.PacketLengthError:
+        except pmc_camera.communication.packet_classes.PacketLengthError:
             # This triggers when there are insufficient bytes to finish a GSEPacket
             remainder = buffer[idx:]
             break
@@ -63,16 +62,16 @@ def get_hirate_packets_from_buffer(buffer):
             remainder = buffer
             break
         try:
-            hirate_packet = packet_classes.HiratePacket(buffer=buffer[idx:])
+            hirate_packet = pmc_camera.communication.packet_classes.HiratePacket(buffer=buffer[idx:])
             hirate_packets.append(hirate_packet)
             buffer = buffer[idx + hirate_packet._header_length + hirate_packet.payload_length + 2:]
-        except packet_classes.PacketLengthError as e:
+        except pmc_camera.communication.packet_classes.PacketLengthError as e:
             logger.debug(str(e))
             # This triggers when there are insufficient bytes to finish a GSEPacket.
             # This is common - usually just needs to wait for more data.
             remainder = buffer[idx:]
             break
-        except packet_classes.PacketChecksumError as e:
+        except pmc_camera.communication.packet_classes.PacketChecksumError as e:
             logger.debug(str(e))
             # This comes up occasionally - i need to think about how to handle this
             # Probably just toss the packet... which is what I do already.
@@ -99,13 +98,14 @@ def write_file_from_hirate_packets(packets, filename):
 def log_lowrate_status(packet):
     # Problem: currently communicator aggregates lots of statuses to send down, then sends all... think about this
     # It is sure to create errors and my fix here is just a hack right now
-    # logger.debug('%r' % packet.payload)
-    overall_status, frame_status, acquisition_count, focus_step, aperture_stop, exposure_ms = struct.unpack(
-        '>1B1B1L1H1H1H',
-        packet.payload[-12:])
+    # logger.debug('%r' % packet.payload)\
+    format_string = '>1B1L1L1H1H1L'
+    overall_status, frame_status, frame_id, focus_step, aperture_stop, exposure_ms = struct.unpack(
+        format_string,
+        packet.payload[-struct.calcsize(format_string):])
     logger.info(
-        'Overall status: %d \n Frame status: %d \n Acquisition count: %d \n Focus Step: %d \n Aperture stop: %d \n Exposure: %d' % (
-            overall_status, frame_status, acquisition_count, focus_step, aperture_stop, exposure_ms))
+        'Overall status: %d \n Frame status: %d \n Frame id: %d \n Focus Step: %d \n Aperture stop: %d \n Exposure: %d' % (
+            overall_status, frame_status, frame_id, focus_step, aperture_stop, exposure_ms))
 
 
 def main():
@@ -172,7 +172,7 @@ def main():
 if __name__ == "__main__":
     # IPython.embed()
 
-    logger = logging.getLogger('pmc_camera')
+    mylogger = logging.getLogger('pmc_camera')
     default_handler = logging.StreamHandler()
 
     LOG_DIR = '/home/pmc/logs/gse_receiver'
@@ -183,8 +183,8 @@ if __name__ == "__main__":
     default_formatter = logging.Formatter(message_format)
     default_handler.setFormatter(default_formatter)
     default_filehandler.setFormatter(default_formatter)
-    logger.addHandler(default_handler)
-    logger.addHandler(default_filehandler)
-    logger.setLevel(logging.DEBUG)
+    mylogger.addHandler(default_handler)
+    mylogger.addHandler(default_filehandler)
+    mylogger.setLevel(logging.DEBUG)
 
     main()

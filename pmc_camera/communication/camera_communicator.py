@@ -144,11 +144,11 @@ class Communicator():
         # self.buffer_for_downlink += '\x01\x01\x01\x01\x01\x01\x01'
         fileinfo = self.image_server.get_latest_fileinfo()
         frame_status = fileinfo[3]
-        acquisition_count = fileinfo[5]
+        frame_id = fileinfo[4]
         focus_step = fileinfo[7]
         aperture_stop = fileinfo[8]
         exposure_ms = int(fileinfo[9] / 1000)
-        self.buffer_for_downlink += struct.pack('>1B1B1L1H1H1H', 255, frame_status, acquisition_count,
+        self.buffer_for_downlink += struct.pack('>1B1L1L1H1H1L', 255, frame_status, frame_id,
                                                 focus_step, aperture_stop, exposure_ms)
 
     def try_to_send_image(self):
