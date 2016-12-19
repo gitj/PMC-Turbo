@@ -89,8 +89,8 @@ def get_hirate_packets_from_buffer(buffer):
 def write_file_from_hirate_packets(packets, filename):
     data_buffer = ''
     for packet in packets:
-        data_buffer += packet.payload
-    data_buffer = cobs_encoding.decode_data(data_buffer, 0xFA)
+        data_buffer += cobs_encoding.decode_data(packet.payload, 0xFA)
+    #data_buffer = cobs_encoding.decode_data(data_buffer, 0xFA)
     with open(filename, 'wb') as f:
         f.write(data_buffer)
         # img = cv2.imread(filename)
