@@ -8,6 +8,7 @@ import cv2
 import matplotlib.pyplot
 import IPython
 import logging
+import struct
 
 
 # logger = logging.getLogger(__name__)
@@ -95,6 +96,18 @@ def write_file_from_hirate_packets(packets, filename):
         # matplotlib.pyplot.imshow(img)
 
 
+def log_lowrate_status(packet):
+    # Problem: currently communicator aggregates lots of statuses to send down, then sends all... think about this
+    # It is sure to create errors and my fix here is just a hack
+    # logger.debug('%r' % packet.payload)
+    overall_status, frame_status, acquisition_count, focus_step, aperture_stop, exposure_ms = struct.unpack(
+        '>1B1B1L1H1H1H',
+        packet.payload[-12:])
+    logger.info(
+        'Overall status: %d \n Frame status: %d \n Acquisition count: %d \n Focus Step: %d \n Aperture stop: %d \n Exposure: %d' % (
+            overall_status, frame_status, acquisition_count, focus_step, aperture_stop, exposure_ms))
+
+
 def main():
     timestamp = time.strftime('%Y-%m-%d_%H%M%S')
     generic_path = './gse_receiver_data'
@@ -127,7 +140,8 @@ def main():
         f = open(lowrate_filename, 'ab+')
         for packet in gse_lowrate_packets:
             f.write(packet.to_buffer() + '\n')
-            logger.debug('lowrate_received')
+            # logger.debug('lowrate_received')
+            log_lowrate_status(packet)
         f.close()
 
         gse_hirate_buffer = ''
