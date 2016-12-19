@@ -9,6 +9,8 @@ __pycache__/
 *.swp
 *.swo
 
+*.jpg
+
 #cython generated files
 _pyvimba.cpp
 
