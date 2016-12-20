@@ -1,3 +1,4 @@
+from __future__ import division
 import socket
 import time
 import Queue
@@ -8,7 +9,8 @@ import threading
 import logging
 import sip_buffer_receiving_methods
 import numpy as np
-from hirate import cobs_encoding, hirate_sending_methods
+from hirate import cobs_encoding
+from pmc_camera.communication import downlink_classes
 
 from pmc_camera.communication import constants, packet_classes
 
@@ -103,8 +105,8 @@ class Communicator():
         self.packets_to_send = []
         self.prev_packet_size = 0
         self.prev_packet_time = 0
-        self.hirate_downlink_ip, self.hirate_downlink_port = hirate_downlink_ip, hirate_downlink_port
-        self.downlink_speed = downlink_speed
+        self.hirate_downlink = downlink_classes.HirateDownlink(hirate_downlink_ip, hirate_downlink_port, downlink_speed)
+        self.links = [self.hirate_downlink]
         self.file_id = 12
         Pyro4.config.SERIALIZER = 'pickle'
         self.image_server = Pyro4.Proxy('PYRO:image@192.168.1.30:50001')
@@ -133,7 +135,8 @@ class Communicator():
         while True:
             self.get_housekeeping()
             self.get_and_process_sip_bytes()
-            self.try_to_send_image()
+            # self.try_to_send_image()
+            self.send_data_on_downlinks()
             if self.end_loop == True:
                 # Switch this to end the leader loop.
                 return
@@ -152,19 +155,43 @@ class Communicator():
         self.buffer_for_downlink += struct.pack('>1B1L1L1H1H1L', 255, frame_status, frame_id,
                                                 focus_step, aperture_stop, exposure_ms)
 
+    def send_data_on_downlinks(self):
+        for link in self.links:
+            if link.has_bandwidth():
+                next_data = self.get_next_data()
+
+                self.file_id += 1
+                # This will be replaced by (communicators[next_communicator].get_next_data() eventually.
+                link.put_data_into_queue(next_data, self.file_id, file_type=1)
+            else:
+                link.send_data()
+
+    def get_next_data(self):
+        # buffer = hirate_sending_methods.get_buffer_from_file('cloud_icon.jpg')
+        buffer, fileinfo = self.image_server.get_latest_jpeg()
+        print len(buffer)
+        frame_status = fileinfo[3]
+        frame_id = fileinfo[4]
+        focus_step = fileinfo[7]
+        aperture_stop = fileinfo[8]
+        exposure_ms = int(fileinfo[9] / 1000)
+        buffer = struct.pack('>1B1L1L1H1H1L', 255, frame_status, frame_id, focus_step, aperture_stop,
+                             exposure_ms) + buffer
+        return buffer
+
     def try_to_send_image(self):
         # write something to try to send image down.
         if not self.packets_to_send:
             self.file_id += 1
             self.get_packets_to_send()
         wait_time = self.prev_packet_size / self.downlink_speed
-        if time.time() - self.prev_packet_time > wait_time:
-            buffer = self.packets_to_send[0].to_buffer()
-            hirate_sending_methods.send(buffer, self.hirate_downlink_ip,
-                                        self.hirate_downlink_port)
-            self.prev_packet_size = len(buffer)
-            self.prev_packet_time = time.time()
-            self.packets_to_send = self.packets_to_send[1:]
+        # if time.time() - self.prev_packet_time > wait_time:
+        # buffer = self.packets_to_send[0].to_buffer()
+        # hirate_sending_methods.send(buffer, self.hirate_downlink_ip,
+        #                            self.hirate_downlink_port)
+        # self.prev_packet_size = len(buffer)
+        # self.prev_packet_time = time.time()
+        # self.packets_to_send = self.packets_to_send[1:]
         return
 
     def get_packets_to_send(self, packet_size=1000):
