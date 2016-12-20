@@ -177,12 +177,11 @@ class Communicator():
         for i in range(int(num_packets)):
             msg = buffer[(i * packet_size):((i + 1) * packet_size)]
             encoded_msg = cobs_encoding.encode_data(msg, 0xFA)
-            packet = packet_classes.HiratePacket(file_id=self.file_id, packet_number=i, total_packet_number=num_packets,
-                                                 payload=encoded_msg)
+            packet = packet_classes.HiratePacket(file_id=self.file_id, file_type=1, packet_number=i,
+                                                 total_packet_number=num_packets, payload=encoded_msg)
             packets.append(packet)
 
-
-        #buffer = cobs_encoding.encode_data(buffer, 0xFA)
+        # buffer = cobs_encoding.encode_data(buffer, 0xFA)
 
         self.packets_to_send += packets
 
