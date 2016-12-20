@@ -46,6 +46,10 @@ class GSEReceiver():
                 # This triggers when there are insufficient bytes to finish a GSEPacket
                 remainder = buffer[idx:]
                 break
+            except packet_classes.PacketChecksumError as e:
+                logger.debug(str(e))
+                remainder = buffer[idx+6:]
+                break
         return gse_packets, remainder
 
     def separate_hirate_and_lowrate_gse_packets(self, gse_packets):
@@ -84,15 +88,28 @@ class GSEReceiver():
                 break
         return hirate_packets, remainder
 
-    def write_file_from_hirate_packets(self, packets, filename):
+    def write_file_from_hirate_packets(self, packets, filename, file_type):
         data_buffer = ''
         for packet in packets:
             data_buffer += cobs_encoding.decode_data(packet.payload, 0xFA)
-        # data_buffer = cobs_encoding.decode_data(data_buffer, 0xFA)
-        with open(filename, 'wb') as f:
-            f.write(data_buffer)
-            # img = cv2.imread(filename)
-            # matplotlib.pyplot.imshow(img)
+        if file_type == 1:
+            format_string = '>1B1L1L1H1H1L'
+            header_length = struct.calcsize(format_string)
+            overall_status, frame_status, frame_id, focus_step, aperture_stop, \
+            exposure_ms = struct.unpack(format_string, data_buffer[:header_length])
+            img = data_buffer[header_length:]
+            with open(filename + '.jpg', 'wb') as f:
+                f.write(img)
+            with open(filename + '.info', 'w') as f:
+                msg = 'Overall status: %d\nFrame status: %d\nFrame id: %d\nFocus Step: %d\nAperture Stop: %d\nExposure: %d' % (
+                    overall_status, frame_status, frame_id, focus_step, aperture_stop, exposure_ms)
+                f.write(msg)
+
+        else:
+            with open(filename, 'wb') as f:
+                f.write(data_buffer)
+                # img = cv2.imread(filename)
+                # matplotlib.pyplot.imshow(img)
 
     def log_lowrate_status(self, packet):
         # Problem: currently communicator aggregates lots of statuses to send down, then sends all... think about this
