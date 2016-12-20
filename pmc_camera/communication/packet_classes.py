@@ -83,8 +83,8 @@ class GSEPacket(object):
             # This could be clearer, but I don't want to convert origin and payload_length to string.
             self.start_byte = self._valid_start_byte
 
-    def _repr_(self):
-        return 'Sync2: %d \n Origin: %d \n Payload Length %d \n First 10 bytes: %s' % (self.sync2_byte,
+    def __repr__(self):
+        return 'Sync2: 0x%02x \n Origin: %d \n Payload Length %d \n First 10 bytes: %r' % (self.sync2_byte,
                                                                                        self.origin, self.payload_length,
                                                                                        self.payload[:10])
 
@@ -188,8 +188,8 @@ class HiratePacket(object):
             self.start_byte = self._valid_start_byte
         logger.debug('Hirate packet created.')
 
-    def _repr_(self):
-        return 'File_id: %d \n File type: %d \n Packet Number %d of %d \n First 10 bytes: %s' % (
+    def __repr__(self):
+        return 'File_id: %d \n File type: %d \n Packet Number %d of %d \n First 10 bytes: %r' % (
             self.file_id, self.file_type, self.packet_number, self.total_packet_number, self.payload[:10])
 
     def from_buffer(self, buffer):
