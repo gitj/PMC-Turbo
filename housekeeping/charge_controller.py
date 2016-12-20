@@ -141,11 +141,15 @@ class ChargeControllerLogger():
                                 time.time() - self.last_eeprom_measurement['epoch'] > self.eeprom_measurement_interval):
                     if self.eeprom_file is None:
                         self.create_eeprom_file()
-                    self.last_eeprom_measurement = self.charge_controller.measure_eeprom()
-                    line_to_write = '%f,' % self.last_eeprom_measurement.values()[0]
-                    line_to_write += (','.join([('%d' % x) for x in self.last_eeprom_measurement.values()[1:]]) + '\n')
-                    self.eeprom_file.write(line_to_write)
-                    self.eeprom_file.flush()
+                    try:
+                        self.last_eeprom_measurement = self.charge_controller.measure_eeprom()
+                    except AttributeError:
+                        pass
+                    else:
+                        line_to_write = '%f,' % self.last_eeprom_measurement.values()[0]
+                        line_to_write += (','.join([('%d' % x) for x in self.last_eeprom_measurement.values()[1:]]) + '\n')
+                        self.eeprom_file.write(line_to_write)
+                        self.eeprom_file.flush()
 
             while time.time() - self.last_measurement['epoch'] < self.measurement_interval:
                 events, _, _ = select.select(self.daemon.sockets, [], [], 0.1)
