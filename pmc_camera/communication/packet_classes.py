@@ -1,6 +1,9 @@
 import struct
 import numpy as np
 from PyCRC.CRCCCITT import CRCCCITT
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def get_checksum(data):
@@ -137,10 +140,11 @@ class GSEPacket(object):
 
 
 class HiratePacket(object):
-    _header_format_string = '>4B1H'
+    _header_format_string = '>5B1H'
     _valid_start_byte = 0xFA
 
-    def __init__(self, buffer=None, file_id=None, packet_number=None, total_packet_number=None, payload=None):
+    def __init__(self, buffer=None, file_id=None, file_type=None,
+                 packet_number=None, total_packet_number=None, payload=None):
         """
         Hirate packet. We break data into chunks and send them to the SIP in this packet format.
 
@@ -156,6 +160,8 @@ class HiratePacket(object):
             A data buffer to decode as a packet
         file_id : uint8
             file_id assigned to file when breaking it up to send.
+        file_type: uint8
+            file_type denotes what type of file (jpg, log, etc) the packet has for different reconstruction routines.
         packet_number : uint8
             Nth packet in file with file_id
         total_packet_number : uint8
@@ -173,16 +179,18 @@ class HiratePacket(object):
             self.from_buffer(buffer)
         else:
             self.file_id = file_id
+            self.file_type = file_type
             self.packet_number = packet_number
             self.total_packet_number = total_packet_number
             self.payload = payload
             self.payload_length = len(payload)
             self.payload_crc = get_crc(payload)
             self.start_byte = self._valid_start_byte
+        logger.debug('Hirate packet created.')
 
     def _repr_(self):
-        return 'File_id: %d \n Packet Number %d of %d \n First 10 bytes: %s' % (
-            self.file_id, self.packet_number, self.total_packet_number, self.payload[:10])
+        return 'File_id: %d \n File type: %d \n Packet Number %d of %d \n First 10 bytes: %s' % (
+            self.file_id, self.file_type, self.packet_number, self.total_packet_number, self.payload[:10])
 
     def from_buffer(self, buffer):
         """
@@ -199,7 +207,7 @@ class HiratePacket(object):
         if len(buffer) < self._minimum_buffer_length:
             raise PacketLengthError("Buffer of length %d is too short to contain a packet (minimum length is %d)" %
                                     (len(buffer), self._minimum_buffer_length))
-        self.start_byte, self.file_id, self.packet_number, self.total_packet_number, self.payload_length = struct.unpack(
+        self.start_byte, self.file_id, self.file_type, self.packet_number, self.total_packet_number, self.payload_length = struct.unpack(
             self._header_format_string, buffer[:self._header_length])
         crc_index = self._header_length + self.payload_length
         payload = buffer[self._header_length:crc_index]
@@ -228,7 +236,6 @@ class HiratePacket(object):
         """
         assert (self.file_id is not None) and (self.packet_number is not None) and (
             self.total_packet_number is not None) and (self.payload is not None)
-        header = struct.pack(self._header_format_string, self.start_byte, self.file_id, self.packet_number,
-                             self.total_packet_number,
-                             self.payload_length)
+        header = struct.pack(self._header_format_string, self.start_byte, self.file_id, self.file_type,
+                             self.packet_number, self.total_packet_number, self.payload_length)
         return header + self.payload + struct.pack('>1H', self.payload_crc)
