@@ -49,9 +49,14 @@ class ChargeController():
             self.device_name = 'TriStar-MPPT-45'
 
     def measure(self):
-        self.measurement = OrderedDict(epoch=time.time())
-        self.measurement.update(
-            zip(range(NUM_REGISTERS), self.client.read_input_registers(0, NUM_REGISTERS, unit=0x01).registers))
+        measurement = OrderedDict(epoch=time.time())
+        result = self.client.read_input_registers(0, NUM_REGISTERS, unit=0x01)
+        try:
+            measurement.update(zip(range(NUM_REGISTERS), result.registers))
+        except AttributeError as e:
+            print e, result
+            raise
+        self.measurement = measurement
         return self.measurement
 
     def measure_eeprom(self):
@@ -74,7 +79,8 @@ class ChargeController():
 
 @Pyro4.expose
 class ChargeControllerLogger():
-    def __init__(self, host='pmc-charge-controller-0', port=502, measurement_interval=10, record_eeprom=False, eeprom_measurement_interval=60):
+    def __init__(self, host='pmc-charge-controller-0', port=502, measurement_interval=10, record_eeprom=True,
+                 eeprom_measurement_interval=3600):
         try:
             os.makedirs(LOG_DIR)
         except OSError:
@@ -118,17 +124,21 @@ class ChargeControllerLogger():
 
     def run(self):
         while True:
-            self.last_measurement = self.charge_controller.measure()
-            if self.file is None:
-                self.create_file()
-            line_to_write = '%f,' % self.last_measurement.values()[0]
-            line_to_write += (','.join([('%d' % x) for x in self.last_measurement.values()[1:]]) + '\n')
-            self.file.write(line_to_write)
-            self.file.flush()
+            try:
+                self.last_measurement = self.charge_controller.measure()
+            except AttributeError:
+                pass
+            else:
+                if self.file is None:
+                    self.create_file()
+                line_to_write = '%f,' % self.last_measurement.values()[0]
+                line_to_write += (','.join([('%d' % x) for x in self.last_measurement.values()[1:]]) + '\n')
+                self.file.write(line_to_write)
+                self.file.flush()
 
             if self.record_eeprom:
                 if (self.last_eeprom_measurement == None) or (
-                                time.time() - self.last_eeprom_measurement[0] > self.eeprom_measurement_interval):
+                                time.time() - self.last_eeprom_measurement['epoch'] > self.eeprom_measurement_interval):
                     if self.eeprom_file is None:
                         self.create_eeprom_file()
                     self.last_eeprom_measurement = self.charge_controller.measure_eeprom()
@@ -137,7 +147,7 @@ class ChargeControllerLogger():
                     self.eeprom_file.write(line_to_write)
                     self.eeprom_file.flush()
 
-            while time.time() - self.last_measurement[0] < self.measurement_interval:
+            while time.time() - self.last_measurement['epoch'] < self.measurement_interval:
                 events, _, _ = select.select(self.daemon.sockets, [], [], 0.1)
                 if events:
                     self.daemon.events(events)
