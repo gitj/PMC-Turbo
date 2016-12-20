@@ -54,9 +54,12 @@ class SimpleImageServer(object):
         else:
             raise RuntimeError("No candidates for latest file!")
 
-    def get_latest_jpeg(self,scale_by=1/8.,resample=PIL.Image.LANCZOS,**kwargs):
+    def get_latest_jpeg(self,start=(0,0), size=(3232,4864), scale_by=1/8.,resample=PIL.Image.LANCZOS,**kwargs):
         info = self.get_latest_fileinfo()
         image,chunk = load_blosc_image(info.filename)
+        row0,col0 = start
+        nrow,ncol = size
+        image = image[row0:row0+nrow+1,col0:col0+ncol+1]
         return simple_jpeg(image,scale_by=scale_by,resample=resample,**kwargs),info
 
 class IndexWatcher(object):
