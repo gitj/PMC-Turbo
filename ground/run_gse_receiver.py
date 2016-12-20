@@ -3,6 +3,7 @@ import time
 import logging
 from ground import gse_receiver
 
+
 # Runs gse_receiver.GSEReceiver
 
 def main():
@@ -61,9 +62,9 @@ def main():
             sorted_packets = sorted(files[file_id], key=lambda k: k.packet_number)
             if [packet.packet_number for packet in sorted_packets] == range(sorted_packets[0].total_packet_number):
                 logger.debug('Full image received: file id %d' % file_id)
-                jpg_filename = '%d.jpg' % file_id
+                jpg_filename = '%d' % file_id
                 jpg_filename = os.path.join(image_path, jpg_filename)
-                g.write_file_from_hirate_packets(sorted_packets, jpg_filename)
+                g.write_file_from_hirate_packets(sorted_packets, jpg_filename, sorted_packets[0].file_type)
                 del files[file_id]
 
 

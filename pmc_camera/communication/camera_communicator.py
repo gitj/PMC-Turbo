@@ -169,8 +169,15 @@ class Communicator():
 
     def get_packets_to_send(self, packet_size=1000):
         # buffer = hirate_sending_methods.get_buffer_from_file('cloud_icon.jpg')
-        buffer, metadata = self.image_server.get_latest_jpeg()
+        buffer, fileinfo = self.image_server.get_latest_jpeg()
         print len(buffer)
+        frame_status = fileinfo[3]
+        frame_id = fileinfo[4]
+        focus_step = fileinfo[7]
+        aperture_stop = fileinfo[8]
+        exposure_ms = int(fileinfo[9] / 1000)
+        buffer = struct.pack('>1B1L1L1H1H1L', 255, frame_status, frame_id, focus_step, aperture_stop,
+                             exposure_ms) + buffer
 
         packets = []
         num_packets = np.ceil(len(buffer) / packet_size)
