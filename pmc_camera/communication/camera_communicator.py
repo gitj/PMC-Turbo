@@ -9,10 +9,9 @@ import threading
 import logging
 import sip_buffer_receiving_methods
 import numpy as np
-from hirate import cobs_encoding
 from pmc_camera.communication import downlink_classes
 
-from pmc_camera.communication import constants, packet_classes
+from pmc_camera.communication import constants
 
 Pyro4.config.SERVERTYPE = "multiplex"
 Pyro4.config.COMMTIMEOUT = 1.0
@@ -56,8 +55,6 @@ class Communicator():
         }
         self.pyro_daemon = None
         self.sip_uplink_socket = None
-        self.sip_downlink_socket = None
-        self.sip_downlink_ip, self.sip_downlink_port = None, None
         self.pyro_thread = None
         self.leader_thread = None
         self.buffer_for_downlink = ''
@@ -81,8 +78,6 @@ class Communicator():
             self.pyro_daemon.shutdown()
         if self.sip_uplink_socket:
             self.sip_uplink_socket.close()
-        if self.sip_downlink_socket:
-            self.sip_downlink_socket.close()
         logger.debug('Communicator deleted')
 
     def setup_pyro(self):
@@ -95,22 +90,17 @@ class Communicator():
         uri = self.pyro_daemon.register(self, "communicator")
         print uri
 
-    def setup_leader_attributes(self, sip_uplink_ip, sip_uplink_port, sip_downlink_ip, sip_downlink_port,
+    def setup_leader_attributes(self, sip_uplink_ip, sip_uplink_port, lowrate_downlink_ip, lowrate_downlink_port,
                                 hirate_downlink_ip, hirate_downlink_port, downlink_speed):
         self.sip_leftover_buffer = ''
         self.leftover_buffer = ''
         self.setup_sip_uplink_socket(sip_uplink_ip, sip_uplink_port)
-        self.setup_sip_downlink_socket(sip_downlink_ip, sip_downlink_port)
-
-        self.packets_to_send = []
-        self.prev_packet_size = 0
-        self.prev_packet_time = 0
+        self.lowrate_downlink = downlink_classes.LowrateDownlink(lowrate_downlink_ip, lowrate_downlink_port)
         self.hirate_downlink = downlink_classes.HirateDownlink(hirate_downlink_ip, hirate_downlink_port, downlink_speed)
-        self.links = [self.hirate_downlink]
+        self.downlinks = [self.hirate_downlink]
         self.file_id = 12
         Pyro4.config.SERIALIZER = 'pickle'
         self.image_server = Pyro4.Proxy('PYRO:image@192.168.1.30:50001')
-        # Format of peers: {cam_id: zmq_socket}
 
     def get_communicator_handles(self, ip_list, port_list):
         # The ip_list and port_list are lists of strings for the ip addresses and ports where the communicators live.
@@ -145,7 +135,6 @@ class Communicator():
     def get_housekeeping(self):
         # Eventually this should query all the subsystems and condense to a housekeeping report.
         # For now we will keep it simple - just returns a 1 for each of the cameras.
-        # self.buffer_for_downlink += '\x01\x01\x01\x01\x01\x01\x01'
         fileinfo = self.image_server.get_latest_fileinfo()
         frame_status = fileinfo[3]
         frame_id = fileinfo[4]
@@ -156,7 +145,7 @@ class Communicator():
                                                 focus_step, aperture_stop, exposure_ms)
 
     def send_data_on_downlinks(self):
-        for link in self.links:
+        for link in self.downlinks:
             if link.has_bandwidth():
                 next_data = self.get_next_data()
 
@@ -200,7 +189,7 @@ class Communicator():
     def respond_to_science_data_request(self):
         logger.debug("Science data request received.")
         msg = self.package_updates_for_downlink()
-        self.send_message_to_downlink(msg)
+        self.lowrate_downlink.send(msg)
         return
         # return self.send_overall_status()
 
@@ -286,21 +275,6 @@ class Communicator():
         socket_.bind((sip_uplink_ip, sip_uplink_port))
         # socket_.settimeout(0)
         self.sip_uplink_socket = socket_
-
-    def setup_sip_downlink_socket(self, sip_downlink_ip, sip_downlink_port):
-        # sip_downlink_ip='192.168.1.54', sip_downlink_port=4001 in our experimental setup.
-        socket_ = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sip_downlink_ip, self.sip_downlink_port = sip_downlink_ip, sip_downlink_port
-        self.sip_downlink_socket = socket_
-
-    def send_message_to_downlink(self, data):
-        HEADER = '\x10\x53'
-        FOOTER = '\x03'
-        format_string = '1B%ds' % len(data)
-        msg = struct.pack(format_string, len(data), data)
-        msg = HEADER + msg + FOOTER
-        logger.debug('Message to be sent to downlink: %r' % msg)
-        self.sip_downlink_socket.sendto(msg, (self.sip_downlink_ip, self.sip_downlink_port))
 
     def get_and_process_sip_bytes(self):
         self.sip_uplink_socket.settimeout(0)
