@@ -2,7 +2,7 @@ import serial
 import os
 import time
 from pmc_camera.communication.hirate import cobs_encoding
-from pmc_camera.communication import packet_classes
+from pmc_camera.communication import packet_classes, file_format_classes
 import cv2
 import matplotlib.pyplot
 import IPython
@@ -48,7 +48,7 @@ class GSEReceiver():
                 break
             except packet_classes.PacketChecksumError as e:
                 logger.debug(str(e))
-                remainder = buffer[idx+6:]
+                remainder = buffer[idx + 6:]
                 break
         return gse_packets, remainder
 
@@ -93,18 +93,8 @@ class GSEReceiver():
         for packet in packets:
             data_buffer += cobs_encoding.decode_data(packet.payload, 0xFA)
         if file_type == 1:
-            format_string = '>1B1L1L1H1H1L'
-            header_length = struct.calcsize(format_string)
-            overall_status, frame_status, frame_id, focus_step, aperture_stop, \
-            exposure_ms = struct.unpack(format_string, data_buffer[:header_length])
-            img = data_buffer[header_length:]
-            with open(filename + '.jpg', 'wb') as f:
-                f.write(img)
-            with open(filename + '.info', 'w') as f:
-                msg = 'Overall status: %d\nFrame status: %d\nFrame id: %d\nFocus Step: %d\nAperture Stop: %d\nExposure: %d' % (
-                    overall_status, frame_status, frame_id, focus_step, aperture_stop, exposure_ms)
-                f.write(msg)
-
+            jpeg_file_class = file_format_classes.JPEGFile(buffer=data_buffer)
+            jpeg_file_class.write(filename)
         else:
             with open(filename, 'wb') as f:
                 f.write(data_buffer)
