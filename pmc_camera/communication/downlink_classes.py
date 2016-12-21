@@ -1,5 +1,6 @@
 import time
 import socket
+import struct
 import numpy as np
 from pmc_camera.communication import packet_classes
 from pmc_camera.communication.hirate import cobs_encoding
@@ -12,6 +13,7 @@ class HirateDownlink():
         self.prev_packet_size = 0
         self.prev_packet_time = 0
         self.packets_to_send = []
+        self.enabled = True
 
     def put_data_into_queue(self, buffer, file_id, file_type, packet_size=1000):
         packets = []
@@ -39,14 +41,25 @@ class HirateDownlink():
         sock.close()
 
     def has_bandwidth(self):
-        if not self.packets_to_send:
-            return True
-        else:
-            return False
+        return self.enabled and not self.packets_to_send
 
-    def main_loop(self):
-        while True:
-            self.run_pyro_tasks()
-            if self.packets_to_send:
-                self.send_data()
-            time.sleep(0.5)
+
+class LowrateDownlink():
+    HEADER = '\x10\x53'
+    FOOTER = '\x03'
+
+    def __init__(self, downlink_ip, downlink_port):
+        self.downlink_ip, self.downlink_port = downlink_ip, downlink_port
+
+    def _send(self, msg):
+        # sip_downlink_ip='192.168.1.54', sip_downlink_port=4001 in our experimental setup.
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.sendto(msg, (self.downlink_ip, self.downlink_port))
+        sock.close()
+
+    def send(self, msg):
+        format_string = '1B%ds' % len(msg)
+        msg = struct.pack(format_string, len(msg), msg)
+        msg = self.HEADER + msg + self.FOOTER
+        # logger.debug('Message to be sent to downlink: %r' % msg)
+        self._send(msg)
