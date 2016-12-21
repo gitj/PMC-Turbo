@@ -179,46 +179,6 @@ class Communicator():
                              exposure_ms) + buffer
         return buffer
 
-    def try_to_send_image(self):
-        # write something to try to send image down.
-        if not self.packets_to_send:
-            self.file_id += 1
-            self.get_packets_to_send()
-        wait_time = self.prev_packet_size / self.downlink_speed
-        # if time.time() - self.prev_packet_time > wait_time:
-        # buffer = self.packets_to_send[0].to_buffer()
-        # hirate_sending_methods.send(buffer, self.hirate_downlink_ip,
-        #                            self.hirate_downlink_port)
-        # self.prev_packet_size = len(buffer)
-        # self.prev_packet_time = time.time()
-        # self.packets_to_send = self.packets_to_send[1:]
-        return
-
-    def get_packets_to_send(self, packet_size=1000):
-        # buffer = hirate_sending_methods.get_buffer_from_file('cloud_icon.jpg')
-        buffer, fileinfo = self.image_server.get_latest_jpeg()
-        print len(buffer)
-        frame_status = fileinfo[3]
-        frame_id = fileinfo[4]
-        focus_step = fileinfo[7]
-        aperture_stop = fileinfo[8]
-        exposure_ms = int(fileinfo[9] / 1000)
-        buffer = struct.pack('>1B1L1L1H1H1L', 255, frame_status, frame_id, focus_step, aperture_stop,
-                             exposure_ms) + buffer
-
-        packets = []
-        num_packets = np.ceil(len(buffer) / packet_size)
-        for i in range(int(num_packets)):
-            msg = buffer[(i * packet_size):((i + 1) * packet_size)]
-            encoded_msg = cobs_encoding.encode_data(msg, 0xFA)
-            packet = packet_classes.HiratePacket(file_id=self.file_id, file_type=1, packet_number=i,
-                                                 total_packet_number=num_packets, payload=encoded_msg)
-            packets.append(packet)
-
-        # buffer = cobs_encoding.encode_data(buffer, 0xFA)
-
-        self.packets_to_send += packets
-
     def start_pyro_thread(self):
         self.pyro_thread = threading.Thread(target=self.pyro_loop)
         self.pyro_thread.daemon = True
