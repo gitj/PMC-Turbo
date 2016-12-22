@@ -9,7 +9,7 @@ import threading
 import logging
 import sip_buffer_receiving_methods
 import numpy as np
-from pmc_camera.communication import downlink_classes
+from pmc_camera.communication import downlink_classes, uplink_classes
 
 from pmc_camera.communication import constants
 
@@ -54,7 +54,6 @@ class Communicator():
             0x07: self.change_to_preset_acquistion_mode
         }
         self.pyro_daemon = None
-        self.sip_uplink_socket = None
         self.pyro_thread = None
         self.leader_thread = None
         self.buffer_for_downlink = ''
@@ -76,8 +75,6 @@ class Communicator():
             self.leader_thread.join(timeout=0)
         if self.pyro_daemon:
             self.pyro_daemon.shutdown()
-        if self.sip_uplink_socket:
-            self.sip_uplink_socket.close()
         logger.debug('Communicator deleted')
 
     def setup_pyro(self):
@@ -94,7 +91,7 @@ class Communicator():
                                 hirate_downlink_ip, hirate_downlink_port, downlink_speed):
         self.sip_leftover_buffer = ''
         self.leftover_buffer = ''
-        self.setup_sip_uplink_socket(sip_uplink_ip, sip_uplink_port)
+        self.lowrate_uplink = uplink_classes.LowrateUplink(sip_uplink_ip, sip_uplink_port)
         self.lowrate_downlink = downlink_classes.LowrateDownlink(lowrate_downlink_ip, lowrate_downlink_port)
         self.hirate_downlink = downlink_classes.HirateDownlink(hirate_downlink_ip, hirate_downlink_port, downlink_speed)
         self.downlinks = [self.hirate_downlink]
@@ -269,37 +266,12 @@ class Communicator():
 
     ##### SIP socket methods
 
-    def setup_sip_uplink_socket(self, sip_uplink_ip, sip_uplink_port):
-        # sip_ip='192.168.1.137', sip_port=4001 in our experimental setup.
-        socket_ = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        socket_.bind((sip_uplink_ip, sip_uplink_port))
-        # socket_.settimeout(0)
-        self.sip_uplink_socket = socket_
-
     def get_and_process_sip_bytes(self):
-        self.sip_uplink_socket.settimeout(0)
-        try:
-            data = self.sip_uplink_socket.recv(1024)
-            logger.debug('%r' % data)
-
-            buffer = self.sip_leftover_buffer + data
-            self.sip_leftover_buffer = ''
-            while buffer:
-                valid_packet, remainder = sip_buffer_receiving_methods.process_bytes(buffer,
-                                                                                     start_byte=chr(
-                                                                                         constants.SIP_START_BYTE),
-                                                                                     end_byte=chr(
-                                                                                         constants.SIP_END_BYTE))
-                if valid_packet:
-                    self.execute_packet(valid_packet)
-                    buffer = remainder
-                else:
-                    logger.debug('Did not receive valid packet. Remainder is: %r' % remainder)
-                    self.sip_leftover_buffer = remainder
-                    break
-        except socket.error as e:  # This should except a timeouterrror.
-            if e.errno != 11:
-                logger.exception(str(e))
+        valid_packets = self.lowrate_uplink.get_sip_bytes()
+        if valid_packets:
+            for packet in valid_packets:
+                print '%r' % packet
+                self.execute_packet(packet)
 
     def execute_packet(self, packet):
         id_byte = packet[1]
