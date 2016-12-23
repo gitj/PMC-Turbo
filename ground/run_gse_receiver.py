@@ -48,8 +48,9 @@ def main():
             gse_hirate_buffer += packet.payload
         hirate_packets, remainder = g.get_hirate_packets_from_buffer(hirate_remainder + gse_hirate_buffer)
         for packet in hirate_packets:
-            logger.debug('File_id: %d, Packet Number: %d or %d' % (
+            logger.debug('File_id: %d, Packet Number: %d of %d' % (
                 packet.file_id, packet.packet_number, packet.total_packet_number))
+            logger.debug('Packet length: %d' % packet.payload_length)
         hirate_remainder = remainder
 
         for packet in hirate_packets:
