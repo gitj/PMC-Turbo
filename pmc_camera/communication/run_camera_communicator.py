@@ -7,9 +7,8 @@ import time
 
 def main():
     c = camera_communicator.Communicator(0)
-    c.setup_leader_attributes(UPLINK_IP, UPLINK_PORT, DOWNLINK_IP, DOWNLINK_PORT, '192.168.1.54', 4002, 500)
+    c.setup_leader_attributes(UPLINK_IP, UPLINK_PORT, DOWNLINK_IP, DOWNLINK_PORT, '192.168.1.54', 4002, 300)
     c.start_leader_thread()
-    c.start_pyro_thread()
     IPython.embed()
 
 

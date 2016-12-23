@@ -1,3 +1,4 @@
+from __future__ import division
 import time
 import socket
 import struct
@@ -16,6 +17,7 @@ class HirateDownlink():
         self.enabled = True
 
     def put_data_into_queue(self, buffer, file_id, file_type, packet_size=1000):
+        print len(buffer)
         packets = []
         num_packets = np.ceil(len(buffer) / packet_size)
         for i in range(int(num_packets)):
@@ -24,12 +26,17 @@ class HirateDownlink():
             packet = packet_classes.HiratePacket(file_id=file_id, file_type=file_type, packet_number=i,
                                                  total_packet_number=num_packets, payload=encoded_msg)
             packets.append(packet)
+        for packet in packets:
+            print packet.payload_length
+        print np.sum([packet.payload_length for packet in packets])
         self.packets_to_send += packets
 
     def send_data(self):
         wait_time = self.prev_packet_size / self.downlink_speed
         if time.time() - self.prev_packet_time > wait_time:
             buffer = self.packets_to_send[0].to_buffer()
+            if buffer.find(chr(0xFA)):
+                raise AttributeError('Start byte found within buffer.')
             self.send(buffer, self.downlink_ip, self.downlink_port)
             self.prev_packet_size = len(buffer)
             self.prev_packet_time = time.time()
@@ -37,7 +44,8 @@ class HirateDownlink():
 
     def send(self, msg, ip, port):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock.sendto(msg, (ip, port))
+        data = sock.sendto(msg, (ip, port))
+        print data
         sock.close()
 
     def has_bandwidth(self):

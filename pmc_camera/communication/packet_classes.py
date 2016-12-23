@@ -39,6 +39,7 @@ class GSEPacket(object):
     _header_format_string = '>4B1H'
     _valid_start_byte = 0xFA
     _valid_sync2_bytes = [0xFA, 0xFB, 0xFC, 0xFD, 0xFF]
+    header_length = struct.calcsize(_header_format_string)
 
     def __init__(self, buffer=None, sync2_byte=None, origin=None, payload=None, greedy=True):
         """
@@ -69,8 +70,7 @@ class GSEPacket(object):
             If true, assume the buffer contains exactly one packet.
             If false, use the length field of the packet to decide how much of the buffer to interpret.
         """
-        self._header_length = struct.calcsize(self._header_format_string)
-        self._minimum_buffer_length = self._header_length + 1
+        self._minimum_buffer_length = self.header_length + 1
         self.is_valid = False
         if buffer is not None:
             self.from_buffer(buffer, greedy=greedy)
@@ -85,8 +85,9 @@ class GSEPacket(object):
 
     def __repr__(self):
         return 'Sync2: 0x%02x \n Origin: %d \n Payload Length %d \n First 10 bytes: %r' % (self.sync2_byte,
-                                                                                       self.origin, self.payload_length,
-                                                                                       self.payload[:10])
+                                                                                           self.origin,
+                                                                                           self.payload_length,
+                                                                                           self.payload[:10])
 
     def from_buffer(self, buffer, greedy=True):
         """
@@ -104,12 +105,12 @@ class GSEPacket(object):
             raise PacketLengthError("Buffer of length %d is too short to contain a packet (minimum length is %d)" %
                                     (len(buffer), self._minimum_buffer_length))
         self.start_byte, self.sync2_byte, self.origin, _, self.payload_length = struct.unpack(
-            self._header_format_string, buffer[:self._header_length])
+            self._header_format_string, buffer[:self.header_length])
         if greedy:
             checksum_index = -1
         else:
-            checksum_index = self._header_length + self.payload_length
-        payload = buffer[self._header_length:checksum_index]
+            checksum_index = self.header_length + self.payload_length
+        payload = buffer[self.header_length:checksum_index]
         if len(payload) != self.payload_length:
             raise PacketLengthError("Payload length %d does not match length field value %d" % (len(payload),
                                                                                                 self.payload_length))
@@ -142,6 +143,7 @@ class GSEPacket(object):
 class HiratePacket(object):
     _header_format_string = '>5B1H'
     _valid_start_byte = 0xFA
+    header_length = struct.calcsize(_header_format_string)
 
     def __init__(self, buffer=None, file_id=None, file_type=None,
                  packet_number=None, total_packet_number=None, payload=None):
@@ -173,8 +175,8 @@ class HiratePacket(object):
             If true, assume the buffer contains exactly one packet.
             If false, use the length field of the packet to decide how much of the buffer to interpret.
         """
-        self._header_length = struct.calcsize(self._header_format_string)
-        self._minimum_buffer_length = self._header_length + 2
+
+        self._minimum_buffer_length = self.header_length + 2
         if buffer is not None:
             self.from_buffer(buffer)
         else:
@@ -189,8 +191,13 @@ class HiratePacket(object):
         logger.debug('Hirate packet created.')
 
     def __repr__(self):
+        payload = None
+        try:
+            payload = self.payload[:10]
+        except Exception:
+            pass
         return 'File_id: %d \n File type: %d \n Packet Number %d of %d \n First 10 bytes: %r' % (
-            self.file_id, self.file_type, self.packet_number, self.total_packet_number, self.payload[:10])
+            self.file_id, self.file_type, self.packet_number, self.total_packet_number, payload)
 
     def from_buffer(self, buffer):
         """
@@ -208,9 +215,13 @@ class HiratePacket(object):
             raise PacketLengthError("Buffer of length %d is too short to contain a packet (minimum length is %d)" %
                                     (len(buffer), self._minimum_buffer_length))
         self.start_byte, self.file_id, self.file_type, self.packet_number, self.total_packet_number, self.payload_length = struct.unpack(
-            self._header_format_string, buffer[:self._header_length])
-        crc_index = self._header_length + self.payload_length
-        payload = buffer[self._header_length:crc_index]
+            self._header_format_string, buffer[:self.header_length])
+        crc_index = self.header_length + self.payload_length
+        payload = buffer[self.header_length:crc_index]
+
+        if payload.find(chr(self._valid_start_byte)) != -1:
+            raise PacketError("Found valid start byte in payload.")
+
         if len(payload) != self.payload_length:
             raise PacketLengthError("Payload length %d does not match length field value %d" % (len(payload),
                                                                                                 self.payload_length))
@@ -221,8 +232,8 @@ class HiratePacket(object):
             raise PacketLengthError("Buffer length insufficient to contain complete CRC.")
         buffer_crc, = struct.unpack('>1H', crc_bytes)
         if payload_crc != buffer_crc:
-            raise PacketChecksumError("Payload CRC %d does not match CRC field value %d" %
-                                      (payload_crc, buffer_crc))
+            raise PacketChecksumError("Payload CRC %d does not match CRC field value %d \n Packet: %r" %
+                                      (payload_crc, buffer_crc, self))
         self.payload = payload
         self.payload_crc = payload_crc
 

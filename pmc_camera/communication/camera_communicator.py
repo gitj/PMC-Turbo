@@ -14,6 +14,8 @@ from pmc_camera.communication import downlink_classes, uplink_classes
 from pmc_camera.communication import constants
 
 Pyro4.config.SERVERTYPE = "multiplex"
+Pyro4.config.SERIALIZER = 'pickle'
+Pyro4.config.SERIALIZERS_ACCEPTED = ['pickle', ]
 Pyro4.config.COMMTIMEOUT = 1.0
 # Tests show COMMTIMEOUT works.
 # Note that there is another timeout POLLTIMEOUT
@@ -96,7 +98,7 @@ class Communicator():
         self.hirate_downlink = downlink_classes.HirateDownlink(hirate_downlink_ip, hirate_downlink_port, downlink_speed)
         self.downlinks = [self.hirate_downlink]
         self.file_id = 12
-        Pyro4.config.SERIALIZER = 'pickle'
+
         self.image_server = Pyro4.Proxy('PYRO:image@192.168.1.30:50001')
 
     def get_communicator_handles(self, ip_list, port_list):
@@ -116,6 +118,7 @@ class Communicator():
     def start_leader_thread(self):
         self.leader_thread = threading.Thread(target=self.leader_loop)
         self.leader_thread.daemon = True
+        logger.debug('Starting leader thread')
         self.leader_thread.start()
 
     def leader_loop(self):
@@ -144,7 +147,8 @@ class Communicator():
     def send_data_on_downlinks(self):
         for link in self.downlinks:
             if link.has_bandwidth():
-                next_data = self.get_next_data()
+                next_data = self.peers[0].get_next_data()
+                #next_data = self.get_next_data()
 
                 self.file_id += 1
                 # This will be replaced by (communicators[next_communicator].get_next_data() eventually.
@@ -155,19 +159,19 @@ class Communicator():
     def get_next_data(self):
         # buffer = hirate_sending_methods.get_buffer_from_file('cloud_icon.jpg')
         buffer, fileinfo = self.image_server.get_latest_jpeg()
-        print len(buffer)
         frame_status = fileinfo[3]
         frame_id = fileinfo[4]
         focus_step = fileinfo[7]
         aperture_stop = fileinfo[8]
         exposure_ms = int(fileinfo[9] / 1000)
-        buffer = struct.pack('>1B1L1L1H1H1L', 255, frame_status, frame_id, focus_step, aperture_stop,
+        buffer = struct.pack('>1L1L1H1H1L', frame_status, frame_id, focus_step, aperture_stop,
                              exposure_ms) + buffer
         return buffer
 
     def start_pyro_thread(self):
         self.pyro_thread = threading.Thread(target=self.pyro_loop)
         self.pyro_thread.daemon = True
+        logger.debug('Stating pyro thread')
         self.pyro_thread.start()
 
     def pyro_loop(self):
