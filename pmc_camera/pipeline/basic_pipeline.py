@@ -18,6 +18,8 @@ acquire: processing disk0:waiting disk1:processing disk2:waiting disk3:waiting
 In [9]: bpl.close() # cleanly shutdown the threads to exit (otherwise ipython will hang)
 
 """
+import tempfile
+
 import numpy as np
 import multiprocessing as mp
 import time
@@ -236,7 +238,7 @@ class AcquireImagesProcess:
         except OSError:
             pass
 
-        self.temperature_log_filename = os.path.join(LOG_DIR,(time.strftime('%Y-%m-%d_%H%M%S.csv')))
+        self.temperature_log_filename = os.path.join(log_dir,(time.strftime('%Y-%m-%d_%H%M%S.csv')))
         self.temperature_log_file = open(self.temperature_log_filename,'a')
 
     def write_temperature_log(self):
@@ -268,7 +270,11 @@ class AcquireImagesProcess:
         self.payload_size = int(self.pc.get_parameter('PayloadSize'))
         logger.debug("payload size: %d" % self.payload_size)
 
-        self.create_log_file()
+        if self.use_simulated_camera:
+            log_dir = tempfile.mkdtemp("simulated_camera_logs")
+        else:
+            log_dir = LOG_DIR
+        self.create_log_file(log_dir=log_dir)
         self.temperature_log_file.write('# %s %s %s %s\n' %
                                         (self.pc.get_parameter("DeviceModelName"),
                                          self.pc.get_parameter("DeviceID"),
