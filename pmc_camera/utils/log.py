@@ -2,7 +2,7 @@ import os
 import time
 import logging
 
-LOG_DIR='/home/pmc/logs'
+LOG_DIR = '/home/pmc/logs'
 
 long_message_format = '%(levelname)-8.8s %(asctime)s - %(name)s.%(funcName)s:%(lineno)d  %(message)s'
 short_message_format = '%(levelname)-4.4s %(asctime)s - %(funcName)s:%(lineno)d  %(message)s'
@@ -12,24 +12,29 @@ long_formatter = logging.Formatter(long_message_format)
 default_handler.setFormatter(default_formatter)
 
 pmc_camera_logger = logging.getLogger('pmc_camera')
+ground_logger = logging.getLogger('ground')
+
 
 def setup_stream_handler(level=logging.INFO):
-    if default_handler not in pmc_camera_logger.handlers:
-        pmc_camera_logger.addHandler(default_handler)
-        default_handler.setLevel(level)
-        pmc_camera_logger.setLevel(level)
-    pmc_camera_logger.info("Stream handler initialized")
+    for logger in [pmc_camera_logger, ground_logger]:
+        if default_handler not in logger.handlers:
+            logger.addHandler(default_handler)
+            default_handler.setLevel(level)
+            logger.setLevel(level)
+        logger.info("Stream handler initialized")
 
-def setup_file_handler(name='general',level=logging.DEBUG):
-    has_file_handler = False
-    for handler in pmc_camera_logger.handlers:
-        if issubclass(handler.__class__,logging.FileHandler):
-            has_file_handler=True
-    if not has_file_handler:
-        pmc_camera_logger.addHandler(file_handler(name,level))
-        pmc_camera_logger.info("File handler added")
-        pmc_camera_logger.setLevel(level)
-    pmc_camera_logger.info("File handler initialized")
+
+def setup_file_handler(level=logging.DEBUG):
+    for name,logger in [('pmc_camera',pmc_camera_logger), ('ground',ground_logger)]:
+        has_file_handler = False
+        for handler in logger.handlers:
+            if issubclass(handler.__class__, logging.FileHandler):
+                has_file_handler = True
+        if not has_file_handler:
+            logger.addHandler(file_handler(name, level))
+            logger.info("File handler added")
+            logger.setLevel(level)
+        logger.info("File handler initialized")
 
 
 def file_handler(name='', level=logging.DEBUG):
@@ -47,7 +52,7 @@ def file_handler(name='', level=logging.DEBUG):
     -------
     logging.FileHandler
     """
-    fh = logging.FileHandler(os.path.join(LOG_DIR, '.'.join([time.strftime('%Y-%m-%d_%H%M%S'), name.replace('/','.'),
+    fh = logging.FileHandler(os.path.join(LOG_DIR, '.'.join([time.strftime('%Y-%m-%d_%H%M%S'), name.replace('/', '.'),
                                                              'log'])))
     fh.setFormatter(long_formatter)
     fh.setLevel(level)

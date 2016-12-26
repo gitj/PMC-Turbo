@@ -105,7 +105,7 @@ class BasicPipeline:
         self.status_dict = {}
 
         ip = Pyro4.socketutil.getInterfaceAddress('192.168.1.1')
-        self.daemon = Pyro4.Daemon(host=ip,port=50000)
+        self.daemon = Pyro4.Daemon(host='0.0.0.0',port=50000)
         uri = self.daemon.register(self,"pipeline")
         print uri
 
@@ -170,8 +170,8 @@ class BasicPipeline:
     def get_camera_command_result(self,command_tag):
         while not self.acquire_image_command_results_queue.empty():
             try:
-                tag,name,value,result = self.acquire_image_command_results_queue.get_nowait()
-                self.acquire_image_command_results_dict[tag] = (name,value,result)
+                tag,name,value,result,gate_time = self.acquire_image_command_results_queue.get_nowait()
+                self.acquire_image_command_results_dict[tag] = (name,value,result,gate_time)
             except EmptyException:
                 break
         if command_tag in self.acquire_image_command_results_dict:
@@ -310,6 +310,7 @@ class AcquireImagesProcess:
             if exit_request:
                 break
             if time.time() > last_trigger + 0.5:
+                gate_time = int(time.time()+1)
                 if not self.command_queue.empty():
                     name,value,tag = self.command_queue.get()
                     self.status.value = "sending command"
@@ -317,13 +318,14 @@ class AcquireImagesProcess:
                         result = self.pc.run_feature_command(name)
                     else:
                         result = self.pc.set_parameter(name,value)
-                    self.command_result_queue.put((tag,name,value,result))
+                    gate_time = int(time.time()+1)  # update gate time in case some time has elapsed while executing
+                    # command
+                    self.command_result_queue.put((tag,name,value,result,gate_time))
                 self.status.value = "arming camera"
-                start_time = int(time.time()+1)
-                self.pc.set_parameter('PtpAcquisitionGateTime',str(int(start_time*1e9)))
+                self.pc.set_parameter('PtpAcquisitionGateTime',str(int(gate_time*1e9)))
                 time.sleep(0.1)
                 self.pc.run_feature_command("AcquisitionStart")
-                last_trigger = start_time
+                last_trigger = gate_time
 
             if not buffers_on_camera:
                 self.status.value = "waiting for buffer on camera"
@@ -335,6 +337,7 @@ class AcquireImagesProcess:
                 npy_info_buffer = np.frombuffer(self.info_buffer[buffer_id].get_obj(),dtype=frame_info_dtype)
                 if npy_info_buffer[0]['is_filled']:
                     self.status.value = 'buffer %d was filled by camera' % buffer_id
+                    logger.debug(self.status.value)
                     self.output_queue.put(buffer_id)
                     buffers_on_camera.remove(buffer_id)
                     frame_number += 1
@@ -361,6 +364,8 @@ class AcquireImagesProcess:
                     self.status.value = "waiting"
         #if we get here, we were kindly asked to exit
         self.status.value = "exiting"
+        if self.use_simulated_camera:
+            self.pc._pc.quit()
         return None
 
 class WriteImageProcess(object):
@@ -440,6 +445,7 @@ class WriteImageProcess(object):
                 self.status.value = "waiting for lock"
                 with self.data_buffers[process_me].get_lock():
                     self.status.value = "processing %d" % process_me
+                    logger.debug(self.status.value)
                     #t0 = timeit.default_timer()
                     image_buffer = np.frombuffer(self.data_buffers[process_me].get_obj(), dtype='uint16')
                     #image_buffer.shape=self.dimensions
