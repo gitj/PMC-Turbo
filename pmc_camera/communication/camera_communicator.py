@@ -7,7 +7,6 @@ import select
 import struct
 import threading
 import logging
-import sip_buffer_receiving_methods
 import numpy as np
 from pmc_camera.communication import downlink_classes, uplink_classes
 
