@@ -1,7 +1,6 @@
 import time
 import threading
 from pmc_camera.pipeline import basic_pipeline
-__test__=False
 def test_pipeline_runs():
     bpl = basic_pipeline.BasicPipeline(disks_to_use=['/tmp'],use_simulated_camera=True)
     thread = threading.Thread(target=bpl.run_pyro_loop)
