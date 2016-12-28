@@ -18,21 +18,20 @@ acquire: processing disk0:waiting disk1:processing disk2:waiting disk3:waiting
 In [9]: bpl.close() # cleanly shutdown the threads to exit (otherwise ipython will hang)
 
 """
-import tempfile
-
-import numpy as np
+import ctypes
+import logging
 import multiprocessing as mp
-import time
 import os
 import sys
-import ctypes
+import tempfile
+import time
 from Queue import Empty as EmptyException
-import logging
 
-import Pyro4, Pyro4.socketutil
-import select
-import signal
+import Pyro4
+import Pyro4.socketutil
+import numpy as np
 
+from pmc_camera.image_processing.blosc_file import write_image_blosc
 from pmc_camera.pycamera.dtypes import frame_info_dtype,chunk_dtype, chunk_num_bytes
 
 index_file_name = 'index.csv'
@@ -170,16 +169,19 @@ class BasicPipeline:
         return tag
 
     def get_camera_command_result(self,command_tag):
+        self.update_command_results()
+        if command_tag in self.acquire_image_command_results_dict:
+            return self.acquire_image_command_results_dict.pop(command_tag)
+        else:
+            raise KeyError("Result of command tag %r not found" % command_tag)
+
+    def update_command_results(self):
         while not self.acquire_image_command_results_queue.empty():
             try:
                 tag,name,value,result,gate_time = self.acquire_image_command_results_queue.get_nowait()
                 self.acquire_image_command_results_dict[tag] = (name,value,result,gate_time)
             except EmptyException:
                 break
-        if command_tag in self.acquire_image_command_results_dict:
-            return self.acquire_image_command_results_dict.pop(command_tag)
-        else:
-            raise KeyError("Result of command tag %r not found" % command_tag)
 
     def send_camera_command_get_result(self,name,value,timeout=1):
         tag = self.send_camera_command(name,value)
@@ -469,7 +471,7 @@ class WriteImageProcess(object):
                     lens_status = chunk_data['lens_status_focus'] >> 10
                     focus_step = chunk_data['lens_status_focus'] & 0x3FF
                     if self.write_enable.value:
-                        write_image_blosc(fname,image_buffer) # fast and good lossless compression
+                        write_image_blosc(fname, image_buffer) # fast and good lossless compression
                         with open(os.path.join(dirname,index_file_name),'a') as fh:
                             fh.write('%d,%f,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%s\n' %
                                      (frame_indexes[dirname],
@@ -494,19 +496,14 @@ class WriteImageProcess(object):
         self.status.value = "exiting"
         return None
 
-import netCDF4
+# import netCDF4
+#
+# def write_image_to_netcdf(filename,data):
+#     ds = netCDF4.Dataset(filename,mode='w')
+#     dimx = ds.createDimension('x',size=data.shape[0])
+#     dimy = ds.createDimension('y',size=data.shape[1])
+#     var = ds.createVariable('image',dimensions=('x','y'),datatype=data.dtype,zlib=True,complevel=1)#,contiguous=True)
+#     var[:] = data[:]
+#     ds.sync()
+#     ds.close()
 
-def write_image_to_netcdf(filename,data):
-    ds = netCDF4.Dataset(filename,mode='w')
-    dimx = ds.createDimension('x',size=data.shape[0])
-    dimy = ds.createDimension('y',size=data.shape[1])
-    var = ds.createVariable('image',dimensions=('x','y'),datatype=data.dtype,zlib=True,complevel=1)#,contiguous=True)
-    var[:] = data[:]
-    ds.sync()
-    ds.close()
-
-import blosc
-def write_image_blosc(filename,data):
-    fh = open(filename,'wb')
-    fh.write(blosc.compress(data,shuffle=blosc.BITSHUFFLE,cname='lz4'))
-    fh.close()
