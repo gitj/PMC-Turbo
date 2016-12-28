@@ -43,4 +43,4 @@ script:
   - pushd pmc_camera/pycamera/_pyvimba
   - make
   - popd
-  - nosetests -v --with-coverage --cover-erase --cover-xml --cover-inclusive --cover-package=pmc_camera --cover-package=housekeeping
+  - nosetests -v -s --with-coverage --cover-erase --cover-xml --cover-inclusive --cover-package=pmc_camera --cover-package=housekeeping
