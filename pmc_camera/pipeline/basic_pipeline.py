@@ -473,6 +473,7 @@ class WriteImageProcess(object):
                     lens_status = chunk_data['lens_status_focus'] >> 10
                     focus_step = chunk_data['lens_status_focus'] & 0x3FF
                     if self.write_enable.value:
+                        self.status.value = "writing %d" % process_me
                         write_image_blosc(fname, image_buffer) # fast and good lossless compression
                         with open(os.path.join(dirname,index_file_name),'a') as fh:
                             fh.write('%d,%f,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%s\n' %
@@ -493,6 +494,7 @@ class WriteImageProcess(object):
                     self.disk_to_use = (self.disk_to_use + 1) % len(self.output_dirs) # if this thread is cycling
                     frame_indexes[dirname] = frame_indexes[dirname] + 1
                     # between disks, do the cycling here.
+                    self.status.value = "finishing %d" % process_me
                     self.output_queue.put(process_me)
 
         self.status.value = "exiting"
