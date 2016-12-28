@@ -1,11 +1,14 @@
 import time
 import threading
+import tempfile
+import shutil
 from nose.tools import timed
 from pmc_camera.pipeline import basic_pipeline
 
 @timed(20)
 def test_pipeline_runs():
-    bpl = basic_pipeline.BasicPipeline(disks_to_use=['/tmp'],use_simulated_camera=True)
+    tempdir = tempfile.mkdtemp()
+    bpl = basic_pipeline.BasicPipeline(disks_to_use=[tempdir],use_simulated_camera=True)
     thread = threading.Thread(target=bpl.run_pyro_loop)
     thread.daemon=True
     thread.start()
@@ -21,11 +24,13 @@ def test_pipeline_runs():
     print "got command result"
     time.sleep(1)
     bpl.close()
+    shutil.rmtree(tempdir)
     print "shut down"
 
 @timed(20)
 def test_pipeline_runs_no_disk():
-    bpl = basic_pipeline.BasicPipeline(disks_to_use=['/tmp'],use_simulated_camera=True,default_write_enable=0)
+    tempdir = tempfile.mkdtemp()
+    bpl = basic_pipeline.BasicPipeline(disks_to_use=[tempdir],use_simulated_camera=True,default_write_enable=0)
     thread = threading.Thread(target=bpl.run_pyro_loop)
     thread.daemon=True
     thread.start()
@@ -33,6 +38,7 @@ def test_pipeline_runs_no_disk():
     bpl.get_status()
     time.sleep(1)
     bpl.close()
+    shutil.rmtree(tempdir)
 
 if __name__ == "__main__":
     import pmc_camera.utils.log
