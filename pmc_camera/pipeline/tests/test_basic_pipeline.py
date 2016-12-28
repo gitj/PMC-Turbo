@@ -1,6 +1,9 @@
 import time
 import threading
+from nose.tools import timed
 from pmc_camera.pipeline import basic_pipeline
+
+@timed(20)
 def test_pipeline_runs():
     bpl = basic_pipeline.BasicPipeline(disks_to_use=['/tmp'],use_simulated_camera=True)
     thread = threading.Thread(target=bpl.run_pyro_loop)
@@ -20,6 +23,7 @@ def test_pipeline_runs():
     bpl.close()
     print "shut down"
 
+@timed(20)
 def test_pipeline_runs_no_disk():
     bpl = basic_pipeline.BasicPipeline(disks_to_use=['/tmp'],use_simulated_camera=True,default_write_enable=0)
     thread = threading.Thread(target=bpl.run_pyro_loop)
