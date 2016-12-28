@@ -214,6 +214,7 @@ class BasicPipeline:
         for k,writer in enumerate(self.writers):
             writer.child.join(timeout=1)
             print "writer status:",self.disk_statuses[k].value
+            writer.child.terminate()
         self.daemon.shutdown()
     def exit(self,signum,frame):
         print "exiting with signum",signum,frame
