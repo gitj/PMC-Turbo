@@ -70,6 +70,9 @@ class SimpleImageServer(object):
                 name,value,result,gate_time = self.pipeline.get_camera_command_result(tag)
                 logger.debug("Command %s:%s completed with gate_time %f" % (name,value,gate_time))
                 index = self.merged_index.get_index_of_timestamp(gate_time)
+                if index is None:
+                    logger.warning("No index available, is the pipeline writing? Looking for gate_time %d" % gate_time)
+                    continue
                 row = self.merged_index.df.iloc[index]
                 timestamp = row.frame_timestamp_ns/1e9
                 if abs(gate_time-timestamp) < self.gate_time_error_threshold:
@@ -205,7 +208,10 @@ class MergedIndex(object):
     def get_index_of_timestamp(self, timestamp, update=True):
         if update:
             self.update()
-        return self.df.frame_timestamp_ns.searchsorted(timestamp * 1e9, side='right')[0]
+        if self.df is None:
+            return None
+        else:
+            return self.df.frame_timestamp_ns.searchsorted(timestamp * 1e9, side='right')[0]
 
 
 class IndexWatcher(object):
