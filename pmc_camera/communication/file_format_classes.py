@@ -17,6 +17,7 @@ class ImageFile(object):
                        ('1H','gain_db',),
                        ('1H','focal_length_mm',),
                        ]
+    file_type = 3
     def __init__(self,buffer=None,**kwargs):
         self._metadata_format_string = '>' + ''.join([format_ for format_,name in self._metadata_table])
         self._metadata_length = struct.calcsize(self._metadata_format_string)
