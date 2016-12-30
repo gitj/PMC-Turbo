@@ -9,7 +9,7 @@ def numpy_to_image(array):
     return Image.fromarray(array.astype('int32'),mode='I')
 
 def simple_jpeg(array,scale_by=1,resample=0,**kwargs):
-    _ = kwargs.pop('format') # remove duplicate format speicifier
+    _ = kwargs.pop('format',None) # remove duplicate format speicifier
     img = Image.fromarray(array.astype('int32'),mode='I')
     if scale_by != 1:
         x,y = array.shape
