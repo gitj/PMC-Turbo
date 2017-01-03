@@ -123,6 +123,7 @@ class Communicator():
     def leader_loop(self):
         while True:
             self.get_housekeeping()
+            logger.debug('Housekeeping acquired')
             self.get_and_process_sip_bytes()
             # self.try_to_send_image()
             self.send_data_on_downlinks()
@@ -158,11 +159,11 @@ class Communicator():
     def get_next_data(self):
         # buffer = hirate_sending_methods.get_buffer_from_file('cloud_icon.jpg')
         buffer, fileinfo = self.image_server.get_latest_jpeg()
-        frame_status = fileinfo[3]
-        frame_id = fileinfo[4]
-        focus_step = fileinfo[7]
-        aperture_stop = fileinfo[8]
-        exposure_ms = int(fileinfo[9] / 1000)
+        frame_status = fileinfo['frame_status']
+        frame_id = fileinfo['frame_id']
+        focus_step = fileinfo['focus_step']
+        aperture_stop = fileinfo['aperture_stop']
+        exposure_ms = int(fileinfo['exposure_us']/1000)
         buffer = struct.pack('>1L1L1H1H1L', frame_status, frame_id, focus_step, aperture_stop,
                              exposure_ms) + buffer
         return buffer
