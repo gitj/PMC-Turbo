@@ -3,6 +3,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# TODO Add a general "decode_file_from_buffer" function
+
 class ImageFile(object):
     _metadata_table = [('1L','frame_status'),
                        ('1L','frame_id'),
