@@ -4,6 +4,7 @@ import tempfile
 import threading
 import time
 
+import pmc_camera.pipeline.indexer
 from pmc_camera.pipeline import simple_image_server
 from pmc_camera.pipeline import basic_pipeline
 
@@ -38,7 +39,7 @@ class TestMultiIndex(object):
         for k,data_dir in enumerate(self.data_dirs):
             shutil.copy(os.path.join(test_data_path,('index_%d.csv' % (k+1))),
                         os.path.join(data_dir,self.subdir,'index.csv'))
-        mi = simple_image_server.MergedIndex(subdirectory_name=self.subdir,data_dirs=self.data_dirs)
+        mi = pmc_camera.pipeline.indexer.MergedIndex(subdirectory_name=self.subdir, data_dirs=self.data_dirs)
         result = mi.get_latest(update=True)
         assert result['frame_id'] == 422
         assert mi.get_index_of_timestamp(1482246746.160007500) == 416
