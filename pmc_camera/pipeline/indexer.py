@@ -2,7 +2,8 @@ import os
 
 import pandas as pd
 
-from pmc_camera.pipeline.simple_image_server import DEFAULT_DATA_DIRS, INDEX_FILENAME
+DEFAULT_DATA_DIRS = ['/data1', '/data2', '/data3', '/data4']
+INDEX_FILENAME = 'index.csv'
 
 
 class MergedIndex(object):
@@ -83,3 +84,4 @@ class IndexWatcher(object):
         else:
             if fragment is not None and fragment.shape[0] > 0:
                 self.df = pd.concat((self.df, fragment), ignore_index=True)
+
