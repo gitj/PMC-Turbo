@@ -2,40 +2,43 @@ from __future__ import division
 import time
 import socket
 import struct
+import constants
 import numpy as np
 from pmc_camera.communication import packet_classes
 from pmc_camera.communication.hirate import cobs_encoding
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class HirateDownlink():
-    def __init__(self, downlink_ip, downlink_port, downlink_speed):
+    def __init__(self, downlink_ip, downlink_port, downlink_speed_bytes):
         self.downlink_ip, self.downlink_port = downlink_ip, downlink_port
-        self.downlink_speed = downlink_speed
+        self.downlink_speed_bytes = downlink_speed_bytes
         self.prev_packet_size = 0
         self.prev_packet_time = 0
         self.packets_to_send = []
         self.enabled = True
 
     def put_data_into_queue(self, buffer, file_id, file_type, packet_size=1000):
-        print len(buffer)
+        logger.debug('Buffer length: %d' % len(buffer))
         packets = []
-        num_packets = np.ceil(len(buffer) / packet_size)
-        for i in range(int(num_packets)):
+        num_packets = int(np.ceil(len(buffer) / packet_size))
+        for i in range(num_packets):
             msg = buffer[(i * packet_size):((i + 1) * packet_size)]
-            encoded_msg = cobs_encoding.encode_data(msg, 0xFA)
+            encoded_msg = cobs_encoding.encode_data(msg, constants.SYNC_BYTE)
             packet = packet_classes.HiratePacket(file_id=file_id, file_type=file_type, packet_number=i,
                                                  total_packet_number=num_packets, payload=encoded_msg)
             packets.append(packet)
-        for packet in packets:
-            print packet.payload_length
-        print np.sum([packet.payload_length for packet in packets])
+        packet_length_debug_string = ','.join([packet.payload_length for packet in packets])
+        logger.debug('Packet payload lengths: %s' % packet_length_debug_string)
         self.packets_to_send += packets
 
     def send_data(self):
-        wait_time = self.prev_packet_size / self.downlink_speed
+        wait_time = self.prev_packet_size / self.downlink_speed_bytes
         if time.time() - self.prev_packet_time > wait_time:
             buffer = self.packets_to_send[0].to_buffer()
-            if buffer.find(chr(0xFA)):
+            if buffer.find(chr(constants.SYNC_BYTE)):
                 raise AttributeError('Start byte found within buffer.')
             self.send(buffer, self.downlink_ip, self.downlink_port)
             self.prev_packet_size = len(buffer)
@@ -44,8 +47,8 @@ class HirateDownlink():
 
     def send(self, msg, ip, port):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        data = sock.sendto(msg, (ip, port))
-        print data
+        bytes_sent = sock.sendto(msg, (ip, port))
+        logger.debug('Bytes sent on hirate downlink: %d' % bytes_sent)
         sock.close()
 
     def has_bandwidth(self):
@@ -66,8 +69,6 @@ class LowrateDownlink():
         sock.close()
 
     def send(self, msg):
-        format_string = '1B%ds' % len(msg)
-        msg = struct.pack(format_string, len(msg), msg)
-        msg = self.HEADER + msg + self.FOOTER
-        # logger.debug('Message to be sent to downlink: %r' % msg)
+        packed_length = struct.pack('>1B', len(msg))
+        msg = self.HEADER + packed_length + msg + self.FOOTER
         self._send(msg)
