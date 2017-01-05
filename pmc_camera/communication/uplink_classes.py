@@ -6,39 +6,38 @@ import socket
 # end_byte = chr(constants.SIP_END_BYTE)
 
 class LowrateUplink():
-    def __init__(self, uplink_ip, uplink_port):
-        self.uplink_ip, self.uplink_port = uplink_ip, uplink_port
+    def __init__(self, uplink_port):
+        self.uplink_port = uplink_port
         # sip_ip='192.168.1.137', sip_port=4001 in our experimental setup.
         socket_ = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        socket_.bind((self.uplink_ip, self.uplink_port))
-        # socket_.settimeout(0)
+        socket_.bind(('0.0.0.0', self.uplink_port))
+        socket_.settimeout(0)
         self.uplink_socket = socket_
         self.sip_leftover_buffer = None
 
-    def get_sip_bytes(self):
+    def get_sip_packets(self):
         valid_packets = []
-        self.uplink_socket.settimeout(0)
         try:
             data = self.uplink_socket.recv(1024)
-            #logger.debug('%r' % data)
+            # logger.debug('%r' % data)
 
-            #buffer = self.sip_leftover_buffer + data
+            # buffer = self.sip_leftover_buffer + data
             buffer = data
             self.sip_leftover_buffer = ''
             while buffer:
-                valid_packet, remainder = process_bytes(buffer,start_byte=chr(0x10),end_byte=chr(0x03))
+                valid_packet, remainder = process_bytes(buffer, start_byte=chr(0x10), end_byte=chr(0x03))
                 print '%r' % valid_packet
                 if valid_packet:
                     valid_packets.append(valid_packet)
                     buffer = remainder
                 else:
-                    #logger.debug('Did not receive valid packet. Remainder is: %r' % remainder)
+                    # logger.debug('Did not receive valid packet. Remainder is: %r' % remainder)
                     self.sip_leftover_buffer = remainder
                     break
             return valid_packets
         except socket.error as e:  # This should except a timeouterrror.
             if e.errno != 11:
-                pass#logger.exception(str(e))
+                pass  # logger.exception(str(e))
             return valid_packets
 
 
