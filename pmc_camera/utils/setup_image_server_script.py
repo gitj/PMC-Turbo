@@ -1,4 +1,4 @@
-from pmc_camera.pipeline import simple_image_server
+from pmc_camera.pipeline import controller
 import Pyro4
 import logging
 
@@ -13,7 +13,7 @@ def setup_image_server(port=50001):
         print "failed to connect to pipeline:", e
         pipeline = None
 
-    server = simple_image_server.SimpleImageServer(pipeline)
+    server = controller.Controller(pipeline)
     daemon = Pyro4.Daemon(host='0.0.0.0', port=port)
     uri = daemon.register(server, "image")
     print uri
