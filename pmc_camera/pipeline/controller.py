@@ -33,7 +33,7 @@ def require_pipeline(func):
 
 
 @Pyro4.expose
-class SimpleImageServer(object):
+class Controller(object):
     def __init__(self, pipeline, data_dirs=DEFAULT_DATA_DIRS, gate_time_error_threshold=2e-3):
         self.data_dirs = data_dirs
         self.pipeline = pipeline
@@ -153,7 +153,7 @@ class SimpleImageServer(object):
 
     def request_specific_images(self, timestamp, num_images=1, offset=(0, 0), size=(3232, 4864), scale_by=1 / 8.,
                                 quality=75,
-                                format='jepg', step=-1):
+                                format='jpeg', step=-1):
         last_index = self.merged_index.get_index_of_timestamp(timestamp)
         first_index = last_index + step * num_images
         logger.debug("request timestamp %f, num_images %d, step %d -> first index: %d, last index: %d, total rows: %d"
@@ -195,7 +195,7 @@ if __name__ == "__main__":
     except Exception as e:
         print "failed to connect to pipeline:",e
         pipeline = None
-    server = SimpleImageServer(pipeline)
+    server = Controller(pipeline)
     ip = Pyro4.socketutil.getInterfaceAddress('192.168.1.1')
     daemon = Pyro4.Daemon(host='0.0.0.0', port=50001)
     uri = daemon.register(server, "image")

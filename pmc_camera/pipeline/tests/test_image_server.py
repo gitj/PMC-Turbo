@@ -5,7 +5,7 @@ import threading
 import time
 
 import pmc_camera.pipeline.indexer
-from pmc_camera.pipeline import simple_image_server
+from pmc_camera.pipeline import controller
 from pmc_camera.pipeline import basic_pipeline
 
 test_data_path = os.path.join(os.path.split(os.path.abspath(__file__))[0],'test_data')
@@ -52,7 +52,7 @@ class TestMultiIndex(object):
         thread.daemon=True
         thread.start()
         time.sleep(1)
-        sis = simple_image_server.SimpleImageServer(pipeline=bpl,data_dirs=self.data_dirs)
+        sis = controller.Controller(pipeline=bpl, data_dirs=self.data_dirs)
         sis.run_focus_sweep(request_params=dict())
         time.sleep(1)
         sis.check_for_completed_commands()
