@@ -32,7 +32,7 @@ END_BYTE = chr(constants.SIP_END_BYTE)
 
 @Pyro4.expose
 class Communicator():
-    def __init__(self, cam_id):
+    def __init__(self, cam_id, peers, image_server):
         self.port = base_port + cam_id
         logger.debug('Communicator initialized')
         self.cam_id = cam_id
@@ -42,6 +42,7 @@ class Communicator():
         self.command_queue = Queue.Queue()
         self.leader_handle = None
         self.peers = []
+        self.next_peer = 0
         self.end_loop = False
 
         self.science_data_commands = {
@@ -63,9 +64,11 @@ class Communicator():
         self.ip_list = None
         self.port_list = None
 
+        self.peers = peers
+        self.image_server = image_server
+
         self.setup_pyro()
         self.start_pyro_thread()
-        self.get_communicator_handles(self.ip_list, self.port_list)
 
     def __del__(self):
         self.end_loop = True
@@ -84,7 +87,8 @@ class Communicator():
         self.ip_list = [ip] * num_cameras
         self.port_list = [base_port + i for i in range(num_cameras)]
 
-        self.pyro_daemon = Pyro4.Daemon(host=ip, port=self.port)
+        # self.pyro_daemon = Pyro4.Daemon(host=ip, port=self.port)
+        self.pyro_daemon = Pyro4.Daemon(host='0.0.0.0', port=self.port)
         uri = self.pyro_daemon.register(self, "communicator")
         print uri
 
@@ -97,15 +101,6 @@ class Communicator():
         self.hirate_downlink = downlink_classes.HirateDownlink(hirate_downlink_ip, hirate_downlink_port, downlink_speed)
         self.downlinks = [self.hirate_downlink]
         self.file_id = 12
-
-        self.image_server = Pyro4.Proxy('PYRO:image@192.168.1.30:50001')
-
-    def get_communicator_handles(self, ip_list, port_list):
-        # The ip_list and port_list are lists of strings for the ip addresses and ports where the communicators live.
-        # Grabs all the other peers.
-        for i in range(len(ip_list)):
-            peer_handle = Pyro4.Proxy('PYRO:communicator@%s:%s' % (ip_list[i], port_list[i]))
-            self.peers.append(peer_handle)
 
     ### Loops to continually be run
 
@@ -145,25 +140,29 @@ class Communicator():
                                                 focus_step, aperture_stop, exposure_ms)
 
     def send_data_on_downlinks(self):
+        if not self.peers:
+            logger.debug('No peers')
+            return
         for link in self.downlinks:
             if link.has_bandwidth():
-                next_data = self.peers[0].get_next_data()
-                #next_data = self.get_next_data()
+                next_data = self.peers[self.next_peer].get_next_data()
+                self.next_peer = (self.next_peer + 1) % len(self.peers)
+                # next_data = self.get_next_data()
 
                 self.file_id += 1
-                # This will be replaced by (communicators[next_communicator].get_next_data() eventually.
                 link.put_data_into_queue(next_data, self.file_id, file_type=1)
             else:
                 link.send_data()
 
     def get_next_data(self):
         # buffer = hirate_sending_methods.get_buffer_from_file('cloud_icon.jpg')
+        logger.debug('Getting next data')
         buffer, fileinfo = self.image_server.get_latest_jpeg()
         frame_status = fileinfo['frame_status']
         frame_id = fileinfo['frame_id']
         focus_step = fileinfo['focus_step']
         aperture_stop = fileinfo['aperture_stop']
-        exposure_ms = int(fileinfo['exposure_us']/1000)
+        exposure_ms = int(fileinfo['exposure_us'] / 1000)
         buffer = struct.pack('>1L1L1H1H1L', frame_status, frame_id, focus_step, aperture_stop,
                              exposure_ms) + buffer
         return buffer
