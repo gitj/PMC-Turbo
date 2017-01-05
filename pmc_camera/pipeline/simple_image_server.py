@@ -46,6 +46,7 @@ class SimpleImageServer(object):
         self.merged_index = None
         self.sequence_data = []
         self.outstanding_command_tags = {}
+        self.completed_command_tags = {}
         self.camera_id = get_camera_id()
         self.update_current_image_dirs()
         self.set_standard_image_paramters()
@@ -69,20 +70,32 @@ class SimpleImageServer(object):
             try:
                 name,value,result,gate_time = self.pipeline.get_camera_command_result(tag)
                 logger.debug("Command %s:%s completed with gate_time %f" % (name,value,gate_time))
-                index = self.merged_index.get_index_of_timestamp(gate_time)
-                if index is None:
-                    logger.warning("No index available, is the pipeline writing? Looking for gate_time %d" % gate_time)
-                    continue
-                row = self.merged_index.df.iloc[index]
-                timestamp = row.frame_timestamp_ns/1e9
-                if abs(gate_time-timestamp) < self.gate_time_error_threshold:
-                    request_params = self.outstanding_command_tags.pop(tag)
-                    logger.info("Command tag %f - %s:%s retired" % (tag,name,value))
-                    logger.debug("Command %s:%s with request_params %r retired by image %r" %(name,value,
-                                                                                             request_params,dict(row)))
-                    self.request_image_by_index(index,request_params)
+                self.completed_command_tags[tag] = (name,value,result,gate_time)
             except KeyError:
                 pass
+
+        for tag in self.completed_command_tags.keys():
+            name,value,result,gate_time = self.completed_command_tags[tag]
+            index = self.merged_index.get_index_of_timestamp(gate_time)
+            if index is None:
+                logger.warning("No index available, is the pipeline writing? Looking for gate_time %d" % gate_time)
+                continue
+            if index == len(self.merged_index.df):
+                logger.info("Command tag %f - %s:%s complete, but image data not yet available" % (tag,name,value))
+                continue
+            row = self.merged_index.df.iloc[index]
+            timestamp = row.frame_timestamp_ns/1e9
+            if abs(gate_time-timestamp) < self.gate_time_error_threshold:
+                request_params = self.outstanding_command_tags.pop(tag)
+                _ = self.completed_command_tags.pop(tag)
+                logger.info("Command tag %f - %s:%s retired" % (tag,name,value))
+                logger.debug("Command %s:%s with request_params %r retired by image %r" %(name,value,
+                                                                                         request_params,dict(row)))
+                self.request_image_by_index(index,request_params)
+            else:
+                logger.warning("Command tag %f - %s:%s complete, but image timestamp %f does not match "
+                               "gate_timestamp %f to within specified threshold %f. Is something wrong with PTP?"
+                               % (tag,name,value,gate_time,timestamp,self.gate_time_error_threshold))
 
     def update_current_image_dirs(self):
         all_dirs = []
