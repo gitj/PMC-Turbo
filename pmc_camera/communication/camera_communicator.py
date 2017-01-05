@@ -1,5 +1,4 @@
 from __future__ import division
-import socket
 import time
 import Queue
 import Pyro4, Pyro4.socketutil, Pyro4.errors
@@ -36,12 +35,8 @@ class Communicator():
         self.port = base_port + cam_id
         logger.debug('Communicator initialized')
         self.cam_id = cam_id
-        self.kvdb = dict(value=4.6)
-        self.command_dict = {}
-        # dict(give_kvdb=self.send_kvdb)
-        self.command_queue = Queue.Queue()
-        self.leader_handle = None
-        self.peers = []
+        self.peers = peers
+        self.image_server = image_server
         self.next_peer = 0
         self.end_loop = False
 
@@ -55,17 +50,12 @@ class Communicator():
             0x06: self.run_linux_command,
             0x07: self.change_to_preset_acquistion_mode
         }
+
         self.pyro_daemon = None
         self.pyro_thread = None
         self.leader_thread = None
         self.buffer_for_downlink = ''
         # We will instantiate these later
-
-        self.ip_list = None
-        self.port_list = None
-
-        self.peers = peers
-        self.image_server = image_server
 
         self.setup_pyro()
         self.start_pyro_thread()
@@ -82,32 +72,21 @@ class Communicator():
         logger.debug('Communicator deleted')
 
     def setup_pyro(self):
-        ip = Pyro4.socketutil.getInterfaceAddress('192.168.1.1')
-
-        self.ip_list = [ip] * num_cameras
-        self.port_list = [base_port + i for i in range(num_cameras)]
-
-        # self.pyro_daemon = Pyro4.Daemon(host=ip, port=self.port)
         self.pyro_daemon = Pyro4.Daemon(host='0.0.0.0', port=self.port)
         uri = self.pyro_daemon.register(self, "communicator")
         print uri
 
-    def setup_leader_attributes(self, sip_uplink_ip, sip_uplink_port, lowrate_downlink_ip, lowrate_downlink_port,
-                                hirate_downlink_ip, hirate_downlink_port, downlink_speed):
+    def setup_leader_attributes(self, sip_uplink_port, lowrate_downlink_ip, lowrate_downlink_port, hirate_downlink_ip,
+                                hirate_downlink_port, downlink_speed):
         self.sip_leftover_buffer = ''
         self.leftover_buffer = ''
-        self.lowrate_uplink = uplink_classes.LowrateUplink(sip_uplink_ip, sip_uplink_port)
+        self.lowrate_uplink = uplink_classes.LowrateUplink(sip_uplink_port)
         self.lowrate_downlink = downlink_classes.LowrateDownlink(lowrate_downlink_ip, lowrate_downlink_port)
         self.hirate_downlink = downlink_classes.HirateDownlink(hirate_downlink_ip, hirate_downlink_port, downlink_speed)
-        self.downlinks = [self.hirate_downlink]
-        self.file_id = 12
+        self.downlinks = [self.hirate_downlink]  # Eventually this will also include Openport downlink
+        self.file_id = 0
 
     ### Loops to continually be run
-
-    def run_peer_tasks(self):
-        self.identify_leader()
-        # self.run_pyro_tasks()
-        self.reconcile_kvdb_and_pipeline()
 
     def start_leader_thread(self):
         self.leader_thread = threading.Thread(target=self.leader_loop)
@@ -118,12 +97,9 @@ class Communicator():
     def leader_loop(self):
         while True:
             self.get_housekeeping()
-            logger.debug('Housekeeping acquired')
             self.get_and_process_sip_bytes()
-            # self.try_to_send_image()
             self.send_data_on_downlinks()
-            if self.end_loop == True:
-                # Switch this to end the leader loop.
+            if self.end_loop == True:  # Switch this to end the leader loop.
                 return
             time.sleep(1)
 
@@ -141,22 +117,22 @@ class Communicator():
 
     def send_data_on_downlinks(self):
         if not self.peers:
-            logger.debug('No peers')
-            return
+            raise RuntimeError(
+                'Communicator has no peers. This should never happen; leader at minimum has self as peer.')
         for link in self.downlinks:
             if link.has_bandwidth():
                 next_data = self.peers[self.next_peer].get_next_data()
                 self.next_peer = (self.next_peer + 1) % len(self.peers)
-                # next_data = self.get_next_data()
-
+                link.put_data_into_queue(next_data, self.file_id,
+                                         file_type=1)  # file type should be included in next data
                 self.file_id += 1
-                link.put_data_into_queue(next_data, self.file_id, file_type=1)
             else:
                 link.send_data()
 
     def get_next_data(self):
-        # buffer = hirate_sending_methods.get_buffer_from_file('cloud_icon.jpg')
         logger.debug('Getting next data')
+        # replace withl return self.image_server.get_next_data_for_downlink(), which will just be the buffer after
+        # file_format definition.
         buffer, fileinfo = self.image_server.get_latest_jpeg()
         frame_status = fileinfo['frame_status']
         frame_id = fileinfo['frame_id']
@@ -175,28 +151,21 @@ class Communicator():
 
     def pyro_loop(self):
         while True:
-            events, _, _ = select.select(self.pyro_daemon.sockets, [], [], 0)
-            # Check this carefully for bugs - I think I eliminated them but make sure.
+            events, _, _ = select.select(self.pyro_daemon.sockets, [], [], 0.01)
             if events:
                 self.pyro_daemon.events(events)
             if self.end_loop == True:
-                # Switch this to end the pyro loop.
                 return
-            time.sleep(0.01)
 
-    ### leader methods
+    ### The following two functions respond to SIP requests
 
     def respond_to_science_data_request(self):
         logger.debug("Science data request received.")
         msg = self.package_updates_for_downlink()
         self.lowrate_downlink.send(msg)
-        return
-        # return self.send_overall_status()
 
     def respond_to_science_command(self, msg):
         logger.debug('%r' % msg)
-        self.buffer_for_downlink += msg
-        #   # Just echo the message back into the buffer right now
         format_string = '<5B%ds' % (len(msg) - 5)
         length, sequence, verify, which, command, args = struct.unpack(format_string, msg)
         logger.debug('sequence: %d verify: %d which: %d command: %d' % (sequence, verify, which, command))
@@ -270,13 +239,15 @@ class Communicator():
     ##### SIP socket methods
 
     def get_and_process_sip_bytes(self):
-        valid_packets = self.lowrate_uplink.get_sip_bytes()
+        valid_packets = self.lowrate_uplink.get_sip_packets()
         if valid_packets:
             for packet in valid_packets:
                 print '%r' % packet
                 self.execute_packet(packet)
 
     def execute_packet(self, packet):
+        # Improve readability here - constants in uplink classes
+        # id_byte to packet_type, 'x\13' to science_request, etc.
         id_byte = packet[1]
         logger.debug('Got packet with id %r' % id_byte)
         if id_byte == '\x13':
@@ -302,9 +273,6 @@ class Communicator():
                 self.determine_leader()
         if not self.leader_handle:
             self.determine_leader()
-
-    # Decide how to do this - I don't want a wait.
-    # I think I want to check if the leader pinged back last time I checked - a queue?
 
     def determine_leader(self):
         for i in range(num_cameras)[:self.cam_id]:
