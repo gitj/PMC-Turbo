@@ -9,16 +9,13 @@ import Pyro4
 from pmc_camera.communication import file_format_classes
 from pmc_camera.image_processing.blosc_file import load_blosc_image
 from pmc_camera.image_processing.jpeg import simple_jpeg
-from pmc_camera.pipeline.indexer import MergedIndex
+from pmc_camera.pipeline.indexer import MergedIndex, DEFAULT_DATA_DIRS
 from pmc_camera.utils.camera_id import get_camera_id
 
 logger = logging.getLogger(__name__)
 
 Pyro4.config.SERIALIZER = 'pickle'
 Pyro4.config.SERIALIZERS_ACCEPTED = ['pickle', ]
-
-DEFAULT_DATA_DIRS = ['/data1', '/data2', '/data3', '/data4']
-INDEX_FILENAME = 'index.csv'
 
 
 class ImageParameters(object):
