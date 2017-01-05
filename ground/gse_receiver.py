@@ -1,8 +1,9 @@
 import serial
 import os
+import socket
 import time
 from pmc_camera.communication.hirate import cobs_encoding
-from pmc_camera.communication import packet_classes, file_format_classes
+from pmc_camera.communication import packet_classes, file_format_classes, constants
 
 import logging
 import struct
@@ -11,15 +12,30 @@ logger = logging.getLogger(__name__)
 
 
 class GSEReceiver():
-    # Class for GSEReceiver
-    def __init__(self, usb_port_address='/dev/ttyUSB0', baudrate=115200):
-        self.ser = serial.Serial(usb_port_address, baudrate=baudrate)
-        self.ser.timeout = 1
+    def __init__(self, serial_port_or_socket_port='/dev/ttyUSB0', baudrate=115200, timeout=1):
+        '''
+
+        Parameters
+        ----------
+        serial_port_or_socket_port: int or string
+            if int, used as datagram socket, if string, used as seral port
+        baudrate: int
+        timeout:int
+
+
+        '''
+        if type(serial_port_or_socket_port) is int:
+            self.port = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            self.port.bind(('0.0.0.0', serial_port_or_socket_port))
+            self.port.settimeout(timeout)
+        else:
+            self.port = serial.Serial(serial_port_or_socket_port, baudrate=baudrate)
+            self.port.timeout = timeout
         return
 
     def __del__(self):
         try:
-            self.ser.close()
+            self.port.close()
         except Exception:
             pass
 
@@ -27,7 +43,7 @@ class GSEReceiver():
         buffer = ''
         start = time.time()
         while (time.time() - start) < time_loop:
-            data = self.ser.read(10000)
+            data = self.port.read(10000)
             buffer += data
         if buffer:
             logger.debug('Received %d bytes from serial port' % len(buffer))
@@ -37,7 +53,7 @@ class GSEReceiver():
         gse_packets = []
         remainder = ''
         while buffer:
-            idx = buffer.find(chr(0xFA))
+            idx = buffer.find(chr(constants.SYNC_BYTE))
             if idx == -1:
                 # There's no GSE start byte in the buffer
                 remainder = buffer
@@ -47,8 +63,8 @@ class GSEReceiver():
                 gse_packets.append(gse_packet)
                 # print '%r' % buffer[idx + gse_packet._header_length + gse_packet.payload_length + 1:]
                 buffer = buffer[idx + gse_packet.header_length + gse_packet.payload_length + 1:]
-                if len(buffer) and buffer[0] != chr(0xFA):
-                    idx = buffer.find(chr(0xFA))
+                if len(buffer) and buffer[0] != chr(constants.SYNC_BYTE):
+                    idx = buffer.find(chr(constants.SYNC_BYTE))
                     if idx != -1:
                         idx += 1
                     logger.warning('Bad data: %r' % buffer[0:idx])
@@ -71,7 +87,7 @@ class GSEReceiver():
         hirate_packets = []
         remainder = ''
         while buffer:
-            idx = buffer.find(chr(0xFA))
+            idx = buffer.find(chr(constants.SYNC_BYTE))
             if idx == -1:
                 logger.debug('no start byte found')
                 remainder = buffer
@@ -101,15 +117,15 @@ class GSEReceiver():
     def write_file_from_hirate_packets(self, packets, filename, file_type):
         data_buffer = ''
         for packet in packets:
-            data_buffer += cobs_encoding.decode_data(packet.payload, 0xFA)
+            data_buffer += cobs_encoding.decode_data(packet.payload, constants.SYNC_BYTE)
         if file_type == 1:
             jpeg_file_class = file_format_classes.JPEGFile(buffer=data_buffer)
             jpeg_file_class.write(filename)
-            #img = cv2.imread(filename + '.jpg')
-            #self.ax.cla()
-            #self.ax.imshow(img)
-            #self.ax.set_title(filename)
-            #self.fig.canvas.draw()
+            # img = cv2.imread(filename + '.jpg')
+            # self.ax.cla()
+            # self.ax.imshow(img)
+            # self.ax.set_title(filename)
+            # self.fig.canvas.draw()
         else:
             with open(filename, 'wb') as f:
                 f.write(data_buffer)

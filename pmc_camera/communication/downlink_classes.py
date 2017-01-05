@@ -30,7 +30,7 @@ class HirateDownlink():
             packet = packet_classes.HiratePacket(file_id=file_id, file_type=file_type, packet_number=i,
                                                  total_packet_number=num_packets, payload=encoded_msg)
             packets.append(packet)
-        packet_length_debug_string = ','.join([packet.payload_length for packet in packets])
+        packet_length_debug_string = ','.join([str(packet.payload_length) for packet in packets])
         logger.debug('Packet payload lengths: %s' % packet_length_debug_string)
         self.packets_to_send += packets
 
