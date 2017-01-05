@@ -177,6 +177,7 @@ class SimpleImageServer(object):
                                               file_type=file_format_classes.GeneralFile.file_type)))
 
     def get_next_data_for_downlink(self):
+        #TODO: this should return a data buffer ready to downlink
         if self.sequence_data:
             result = self.sequence_data[0]
             self.sequence_data = self.sequence_data[1:]
