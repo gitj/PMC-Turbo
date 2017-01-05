@@ -21,42 +21,23 @@ In [9]: bpl.close() # cleanly shutdown the threads to exit (otherwise ipython wi
 import ctypes
 import logging
 import multiprocessing as mp
-import os
 import sys
-import tempfile
 import time
 from Queue import Empty as EmptyException
 
 import Pyro4
 import Pyro4.socketutil
-import numpy as np
 
-from pmc_camera.image_processing.blosc_file import write_image_blosc
-from pmc_camera.pycamera.dtypes import frame_info_dtype,chunk_dtype, chunk_num_bytes
-
-index_file_name = 'index.csv'
-index_file_header = ",".join(['file_index',
-                              'write_timestamp',
-                              'frame_timestamp_ns',
-                              'frame_status',
-                              'frame_id',
-                              'acquisition_count',
-                              'lens_status',
-                              'focus_step',
-                              'aperture_stop',
-                              'exposure_us',
-                              'gain_db',
-                              'focal_length_mm',
-                              'filename']) + '\n'
+from pmc_camera.pipeline.acquire_images import AcquireImagesProcess
+from pmc_camera.pipeline.write_images import WriteImageProcess
+from pmc_camera.pycamera.dtypes import frame_info_dtype
 
 Pyro4.config.SERVERTYPE = 'multiplex'
 Pyro4.config.SERIALIZERS_ACCEPTED = {'pickle','json'}
 Pyro4.config.SERIALIZER = 'pickle'
 
 logger = logging.getLogger(__name__)
-LOG_DIR='/home/pmc/logs/housekeeping/camera'
 
-DISK_MIN_BYTES_AVAILABLE = 100*1024*1024 # 100 MiB
 
 @Pyro4.expose
 class BasicPipeline:
@@ -117,7 +98,7 @@ class BasicPipeline:
         self.writers = [WriteImageProcess(input_buffers=self.raw_image_buffers,
                                           input_queue=self.acquire_image_output_queue,
                                           output_queue = self.acquire_image_input_queue,
-                                          info_buffer=self.info_buffer,dimensions=dimensions,
+                                          info_buffer=self.info_buffer, dimensions=dimensions,
                                           status = self.disk_statuses[k],
                                           output_dir=output_dir,
                                           available_disks=[disks_to_use[k]],
@@ -126,11 +107,11 @@ class BasicPipeline:
                         for k in range(num_writers)]
 
         self.acquire_images = AcquireImagesProcess(raw_image_buffers=self.raw_image_buffers,
-                                                              acquire_image_output_queue=self.acquire_image_output_queue,
-                                                              acquire_image_input_queue=self.acquire_image_input_queue,
+                                                   acquire_image_output_queue=self.acquire_image_output_queue,
+                                                   acquire_image_input_queue=self.acquire_image_input_queue,
                                                    command_queue=self.acquire_image_command_queue,
                                                    command_result_queue=self.acquire_image_command_results_queue,
-                                                              info_buffer=self.info_buffer,
+                                                   info_buffer=self.info_buffer,
                                                    status=self.acquire_status,
                                                    use_simulated_camera=use_simulated_camera,
                                                    uri=uri)
@@ -220,286 +201,6 @@ class BasicPipeline:
         print "exiting with signum",signum,frame
         self.close()
         sys.exit(0)
-
-class AcquireImagesProcess:
-    def __init__(self, raw_image_buffers, acquire_image_output_queue, acquire_image_input_queue,
-                 command_queue, command_result_queue, info_buffer,status,use_simulated_camera,uri):
-        self.data_buffers = raw_image_buffers
-        self.input_queue = acquire_image_input_queue
-        self.output_queue = acquire_image_output_queue
-        self.command_queue = command_queue
-        self.command_result_queue = command_result_queue
-        self.info_buffer = info_buffer
-        self.use_simulated_camera = use_simulated_camera
-        self.uri = uri
-        self.status = status
-        self.status.value="starting"
-        self.child = mp.Process(target=self.run)
-        #self.child.start()
-
-    def create_log_file(self,log_dir=LOG_DIR):
-        try:
-            os.makedirs(log_dir)
-        except OSError:
-            pass
-
-        self.temperature_log_filename = os.path.join(log_dir,(time.strftime('%Y-%m-%d_%H%M%S.csv')))
-        self.temperature_log_file = open(self.temperature_log_filename,'a')
-
-    def write_temperature_log(self):
-        epoch = time.time()
-        self.pc.set_parameter("DeviceTemperatureSelector","Main")
-        main = self.pc.get_parameter("DeviceTemperature")
-        self.pc.set_parameter("DeviceTemperatureSelector","Sensor")
-        sensor = self.pc.get_parameter("DeviceTemperature")
-        self.temperature_log_file.write("%f,%s,%s\n" % (epoch,main,sensor))
-        self.temperature_log_file.flush()
-
-    def run(self):
-        self.pipeline = Pyro4.Proxy(uri=self.uri)
-        self.pipeline._pyroTimeout = 0
-        # Setup
-        frame_number = 0
-        import pmc_camera
-        self.status.value = "initializing camera"
-        self.pc = pmc_camera.PyCamera("10.0.0.2",use_simulated_camera=self.use_simulated_camera)
-        self.pc.set_parameter("PtpMode","Slave")
-        self.pc.set_parameter("ChunkModeActive","1")
-        self.pc.set_parameter("AcquisitionFrameCount","2")
-        self.pc.set_parameter('AcquisitionMode',"MultiFrame")
-        self.pc.set_parameter("StreamFrameRateConstrain","0")
-        self.pc.set_parameter('AcquisitionFrameRateAbs',"6.25")
-        self.pc.set_parameter('TriggerSource','FixedRate')
-        self.pc.set_parameter('ExposureTimeAbs',"100000")
-        self.pc.set_parameter('EFLensFocusCurrent',"4800")
-        self.payload_size = int(self.pc.get_parameter('PayloadSize'))
-        logger.debug("payload size: %d" % self.payload_size)
-
-        if self.use_simulated_camera:
-            log_dir = tempfile.mkdtemp("simulated_camera_logs")
-        else:
-            log_dir = LOG_DIR
-        self.create_log_file(log_dir=log_dir)
-        self.temperature_log_file.write('# %s %s %s %s\n' %
-                                        (self.pc.get_parameter("DeviceModelName"),
-                                         self.pc.get_parameter("DeviceID"),
-                                         self.pc.get_parameter("DeviceFirmwareVersion"),
-                                         self.pc.get_parameter("GevDeviceMACAddress")))
-        self.temperature_log_file.write("epoch,sensor,main\n")
-
-        self.pc._pc.start_capture()
-
-        camera_parameters_last_updated = 0
-
-        last_trigger = int(time.time()+1)
-        buffers_on_camera = set()
-        self.acquisition_start_time = time.time()
-        # Run loop
-        exit_request = False
-        self.status.value = "idle"
-
-        last_camera_status = {}
-
-        while True:
-            while True:
-                try:
-                    ready_to_queue = self.input_queue.get_nowait()
-                except EmptyException:
-                    break
-                if ready_to_queue is None:
-                    exit_request = True
-                    break
-                self.status.value = "queueing buffer %d" % ready_to_queue
-                image_buffer = np.frombuffer(self.data_buffers[ready_to_queue].get_obj(), dtype='uint8')
-                #cast the buffer array using the compound data type that has a spot for each info field
-                npy_info_buffer = np.frombuffer(self.info_buffer[ready_to_queue].get_obj(),dtype=frame_info_dtype)
-                result = self.pc._pc.queue_buffer(image_buffer,npy_info_buffer)
-                if result != 0:
-                    print "Errorcode while queueing buffer:",result
-                else:
-                    buffers_on_camera.add(ready_to_queue)
-            if exit_request:
-                break
-            if time.time() > last_trigger + 0.5:
-                gate_time = int(time.time()+1)
-                if not self.command_queue.empty():
-                    name,value,tag = self.command_queue.get()
-                    self.status.value = "sending command"
-                    if value is None:
-                        result = self.pc.run_feature_command(name)
-                    else:
-                        result = self.pc.set_parameter(name,value)
-                    gate_time = int(time.time()+1)  # update gate time in case some time has elapsed while executing
-                    # command
-                    self.command_result_queue.put((tag,name,value,result,gate_time))
-                self.status.value = "arming camera"
-                self.pc.set_parameter('PtpAcquisitionGateTime',str(int(gate_time*1e9)))
-                time.sleep(0.1)
-                self.pc.run_feature_command("AcquisitionStart")
-                last_trigger = gate_time
-
-            if not buffers_on_camera:
-                self.status.value = "waiting for buffer on camera"
-                time.sleep(0.001)
-            else:
-                self.status.value = "checking buffers"
-            num_buffers_filled = 0
-            for buffer_id in list(buffers_on_camera):
-                npy_info_buffer = np.frombuffer(self.info_buffer[buffer_id].get_obj(),dtype=frame_info_dtype)
-                if npy_info_buffer[0]['is_filled']:
-                    self.status.value = 'buffer %d was filled by camera' % buffer_id
-                    logger.debug(self.status.value)
-                    self.output_queue.put(buffer_id)
-                    buffers_on_camera.remove(buffer_id)
-                    frame_number += 1
-                    num_buffers_filled +=1
-            if num_buffers_filled == 0:
-                self.status.value = "waiting for buffer to be filled"
-                update_at = time.time()
-                if update_at - camera_parameters_last_updated > 1.0:
-                    self.status.value = "getting camera parameters"
-                    status = self.pc.get_all_parameters()
-                    self.write_temperature_log()
-                    camera_parameters_last_updated = update_at
-                    last_camera_status = status
-
-                    self.status.value = "updating status"
-                    timestamp_comparison = self.pc.compare_timestamps()*1e6
-                    self.pipeline.update_status(dict(all_camera_parameters=status,
-                                                camera_status_update_at=update_at,
-                                                camera_timestamp_offset=timestamp_comparison,
-                                                total_frames=frame_number,
-                                                     ))
-                else:
-                    time.sleep(0.001)
-                    self.status.value = "waiting"
-        #if we get here, we were kindly asked to exit
-        self.status.value = "exiting"
-        if self.use_simulated_camera:
-            self.pc._pc.quit()
-        return None
-
-class WriteImageProcess(object):
-    def __init__(self,input_buffers, input_queue, output_queue, info_buffer, dimensions, status, output_dir,
-                 available_disks, write_enable, uri):
-        self.data_buffers = input_buffers
-        self.input_queue = input_queue
-        self.output_queue = output_queue
-        self.info_buffer = info_buffer
-        self.original_disks = available_disks
-        disks_with_free_space = []
-        for disk in available_disks:
-            stats = os.statvfs(disk)
-            bytes_available = stats.f_bavail*stats.f_frsize
-            if bytes_available > DISK_MIN_BYTES_AVAILABLE:
-                disks_with_free_space.append(disk)
-            else:
-                logger.warning("Insufficient disk space available on %s, only %d MiB" % (disk,bytes_available//2**20))
-        self.available_disks = disks_with_free_space
-        self.dimensions=dimensions
-        self.write_enable = write_enable
-        self.uri = uri
-        self.output_dirs = [os.path.join(rpath,output_dir) for rpath in self.available_disks]
-        for dname in self.output_dirs:
-            try:
-                os.mkdir(dname)
-            except OSError:
-                logger.exception("Error creating data directory %s" % dname)
-        self.disk_to_use = 0
-        self.status = status
-        if self.output_dirs:
-            self.status.value = "starting"
-        else:
-            self.status.value = "no disk space"
-            self.write_enable.value = False
-        self.child = mp.Process(target=self.run)
-        #self.child.start()
-
-    def run(self):
-        if not self.available_disks:
-            logger.warning("No disk space available on any of %s, exiting" % (' '.join(self.original_disks)))
-            return
-        process_me = -1
-        frame_indexes = dict([(dirname,0) for dirname in self.output_dirs])
-        for dirname in self.output_dirs:
-            with open(os.path.join(dirname,index_file_name),'w') as fh:
-                fh.write(index_file_header)
-        while True:
-            try:
-                process_me = self.input_queue.get_nowait()
-            except EmptyException:
-                self.status.value = "waiting"
-                time.sleep(0.1)
-                continue
-            if process_me is None:
-                self.status.value = "exiting"
-                logger.info("Exiting normally")
-                break
-            else:
-                self.status.value = "checking disk"
-                available_output_dirs = []
-                for output_dir in self.output_dirs:
-                    stats = os.statvfs(output_dir)
-                    bytes_available = stats.f_bavail*stats.f_frsize
-                    if bytes_available > DISK_MIN_BYTES_AVAILABLE:
-                        available_output_dirs.append(output_dir)
-                    else:
-                        logger.warning("Insufficient disk space available on %s, only %d MiB" %
-                                       (output_dir,bytes_available//2**20))
-                self.output_dirs = available_output_dirs
-                if not self.output_dirs:
-                    self.status.value = "no disk space"
-                    logger.warning("No disk space available on any of %s, exiting" % (' '.join(self.original_disks)))
-                    break
-                if self.disk_to_use >= len(self.output_dirs):
-                    self.disk_to_use = 0
-                self.status.value = "waiting for lock"
-                with self.data_buffers[process_me].get_lock():
-                    self.status.value = "processing %d" % process_me
-                    logger.debug(self.status.value)
-                    #t0 = timeit.default_timer()
-                    image_buffer = np.frombuffer(self.data_buffers[process_me].get_obj(), dtype='uint16')
-                    #image_buffer.shape=self.dimensions
-                    npy_info_buffer = np.frombuffer(self.info_buffer[process_me].get_obj(),dtype=frame_info_dtype)
-                    info = dict([(k,npy_info_buffer[0][k]) for k in frame_info_dtype.fields.keys()])
-                    chunk_data = image_buffer.view('uint8')[-chunk_num_bytes:].view(chunk_dtype)[0]
-                    ts = time.strftime("%Y-%m-%d_%H%M%S")
-                    info_str = '_'.join([('%s=%r' % (k,v)) for (k,v) in info.items()])
-                    #print process_me, self.available_disks[self.disk_to_use], info['frame_id'], info['size']#, info_str
-                    ts = ts + '_' + info_str
-                    dirname = self.output_dirs[self.disk_to_use]
-                    fname = os.path.join(dirname,ts)
-                    #'file_index,write_timestamp,frame_timestamp_ns,frame_status,frame_id,acquisition_count,lens_status,
-                    # focus_step,aperture_stop,exposure_us,gain_db,focal_length_mm,filename'
-                    lens_status = chunk_data['lens_status_focus'] >> 10
-                    focus_step = chunk_data['lens_status_focus'] & 0x3FF
-                    if self.write_enable.value:
-                        self.status.value = "writing %d" % process_me
-                        write_image_blosc(fname, image_buffer) # fast and good lossless compression
-                        with open(os.path.join(dirname,index_file_name),'a') as fh:
-                            fh.write('%d,%f,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%s\n' %
-                                     (frame_indexes[dirname],
-                                      time.time(),
-                                      info['timestamp'],
-                                      info['frame_status'],
-                                      info['frame_id'],
-                                      chunk_data['acquisition_count'],
-                                      lens_status,
-                                      focus_step,
-                                      chunk_data['lens_aperture'],
-                                      chunk_data['exposure_us'],
-                                      chunk_data['gain_db'],
-                                      chunk_data['lens_focal_length'],
-                                      fname
-                                      ))
-                    self.disk_to_use = (self.disk_to_use + 1) % len(self.output_dirs) # if this thread is cycling
-                    frame_indexes[dirname] = frame_indexes[dirname] + 1
-                    # between disks, do the cycling here.
-                    self.status.value = "finishing %d" % process_me
-                    self.output_queue.put(process_me)
-
-        self.status.value = "exiting"
-        return None
 
 # import netCDF4
 #
