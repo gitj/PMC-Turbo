@@ -3,28 +3,18 @@ import os
 import time
 from pmc_camera.communication.hirate import cobs_encoding
 from pmc_camera.communication import packet_classes, file_format_classes
-import cv2
-import matplotlib
 
-print matplotlib.get_backend()
-
-matplotlib.use('TkAgg')
-from matplotlib import pyplot as plt
-import IPython
 import logging
 import struct
 
 logger = logging.getLogger(__name__)
-plt.ion()
 
 
 class GSEReceiver():
     # Class for GSEReceiver
     def __init__(self, usb_port_address='/dev/ttyUSB0', baudrate=115200):
-        self.fig, self.ax = plt.subplots(1, 1)
         self.ser = serial.Serial(usb_port_address, baudrate=baudrate)
         self.ser.timeout = 1
-        plt.show()
         return
 
     def __del__(self):
@@ -115,16 +105,14 @@ class GSEReceiver():
         if file_type == 1:
             jpeg_file_class = file_format_classes.JPEGFile(buffer=data_buffer)
             jpeg_file_class.write(filename)
-            img = cv2.imread(filename + '.jpg')
-            self.ax.cla()
-            self.ax.imshow(img)
-            self.ax.set_title(filename)
-            self.fig.canvas.draw()
+            #img = cv2.imread(filename + '.jpg')
+            #self.ax.cla()
+            #self.ax.imshow(img)
+            #self.ax.set_title(filename)
+            #self.fig.canvas.draw()
         else:
             with open(filename, 'wb') as f:
                 f.write(data_buffer)
-                # img = cv2.imread(filename)
-                # matplotlib.pyplot.imshow(img)
 
     def log_lowrate_status(self, packet):
         # Problem: currently communicator aggregates lots of statuses to send down, then sends all... think about this
