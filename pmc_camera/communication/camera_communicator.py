@@ -31,12 +31,12 @@ END_BYTE = chr(constants.SIP_END_BYTE)
 
 @Pyro4.expose
 class Communicator():
-    def __init__(self, cam_id, peers, image_server):
+    def __init__(self, cam_id, peers, controller):
         self.port = base_port + cam_id
         logger.debug('Communicator initialized')
         self.cam_id = cam_id
         self.peers = peers
-        self.image_server = image_server
+        self.controller = controller
         self.next_peer = 0
         self.end_loop = False
 
@@ -106,7 +106,7 @@ class Communicator():
     def get_housekeeping(self):
         # Eventually this should query all the subsystems and condense to a housekeeping report.
         # For now we will keep it simple - just returns a 1 for each of the cameras.
-        fileinfo = self.image_server.get_latest_fileinfo()
+        fileinfo = self.controller.get_latest_fileinfo()
         frame_status = fileinfo[3]
         frame_id = fileinfo[4]
         focus_step = fileinfo[7]
@@ -133,7 +133,7 @@ class Communicator():
         logger.debug('Getting next data')
         # replace withl return self.image_server.get_next_data_for_downlink(), which will just be the buffer after
         # file_format definition.
-        buffer, fileinfo = self.image_server.get_latest_jpeg()
+        buffer, fileinfo = self.controller.get_latest_jpeg()
         frame_status = fileinfo['frame_status']
         frame_id = fileinfo['frame_id']
         focus_step = fileinfo['focus_step']
