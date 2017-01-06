@@ -119,7 +119,7 @@ class GSEReceiver():
         for packet in packets:
             data_buffer += cobs_encoding.decode_data(packet.payload, constants.SYNC_BYTE)
         if file_type == 1:
-            jpeg_file_class = file_format_classes.JPEGFile(buffer=data_buffer)
+            jpeg_file_class = file_format_classes.OldJPEGFile(buffer=data_buffer)
             jpeg_file_class.write(filename)
             # img = cv2.imread(filename + '.jpg')
             # self.ax.cla()
