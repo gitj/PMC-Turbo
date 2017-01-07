@@ -1,7 +1,9 @@
 import unittest
 import tempfile
 import os
+import copy
 import shutil
+import inspect
 from pmc_camera.communication import file_format_classes
 
 def test_unique_file_types():
@@ -42,3 +44,25 @@ def test_file_round_trips():
     for instance,from_file_method in [(general_file,file_format_classes.GeneralFile.from_file),
                                       (jpeg_file,file_format_classes.JPEGFile.from_file)]:
         yield check_file_round_trip, instance, from_file_method
+
+def check_same_attributes(c1):
+    c2 = copy.deepcopy(c1)
+    dir1 = dir(c1)
+    _ = c1.to_buffer()
+    dir2 = dir(c1)
+    assert dir1 == dir2
+    public_attributes = [x for x in dir1 if not x.startswith('__')]
+    for attr in public_attributes:
+        if inspect.ismethod(getattr(c1,attr)):
+            continue
+        assert getattr(c1,attr) == getattr(c2,attr)
+
+def test_to_buffer_idempotent():
+    general_file = file_format_classes.GeneralFile(payload='blah',filename='hello.txt',timestamp=123.1,request_id=535)
+    jpeg_file = file_format_classes.JPEGFile(payload='d'*1000,frame_status=2**31,frame_id=100,frame_timestamp_ns=2**38,
+                                             focus_step=987,aperture_stop=789,exposure_us=int(100e3),file_index=12345,
+                                             write_timestamp=1233.3333,acquisition_count=2,lens_status=0x6523,
+                                             gain_db=300,focal_length_mm=135,row_offset=1,column_offset=2,
+                                             num_rows=3232,num_columns=4864,scale_by=1/8.,quality=75,request_id=7766)
+    for instance in [general_file,jpeg_file]:
+        yield check_same_attributes, instance

@@ -111,9 +111,35 @@ class JPEGFile(ImageFileBase):
     file_type = 1
 
 class GeneralFile(FileBase):
-    _metadata_table = (FileBase._metadata_table+[('256s','filename'),
+    _metadata_table = (FileBase._metadata_table+[('1H','filename_length'),
                        ('1f','timestamp')])
     file_type = 2
+    def from_values(self,payload,**kwargs):
+        try:
+            filename = kwargs.pop('filename')
+        except KeyError:
+            raise ValueError("filename must be specified")
+        kwargs['filename_length'] = len(filename)
+        super(GeneralFile,self).from_values(payload,**kwargs)
+        self.filename = filename
+
+    def from_buffer(self,buffer):
+        super(GeneralFile,self).from_buffer(buffer)
+        payload_with_filename = self.payload
+        if len(payload_with_filename) < self.filename_length:
+            raise ValueError("Error decoding file, payload length %d is not long enough to contain filename of length %d"
+                             % (len(payload_with_filename),self.filename_length))
+        self.filename = payload_with_filename[:self.filename_length]
+        self.payload = payload_with_filename[self.filename_length:]
+
+    def to_buffer(self):
+        original_payload = self.payload
+        self.payload = self.filename + original_payload
+        try:
+            result = super(GeneralFile,self).to_buffer()
+        finally:
+            self.payload = original_payload
+        return result
 
 class UnixCommandFile(FileBase):
     _metadata_table = (FileBase._metadata_table +
