@@ -28,10 +28,10 @@ def check_file_round_trip(instance,from_file_method):
     tempdir = tempfile.mkdtemp()
     filename = os.path.join(tempdir,'blah')
     instance.write_buffer_to_file(filename)
-    output = from_file_method(filename)
-    for attr in instance._metadata_parameter_names:
-        assert file_format_classes.equal_or_close(getattr(instance,attr), getattr(output,attr))
-    assert instance.payload == output.payload
+    output1 = from_file_method(filename)
+    output2 = file_format_classes.load_and_decode_file(filename)
+    for output in [output1,output2]:
+        check_same_attributes(instance,output)
     shutil.rmtree(tempdir,ignore_errors=True)
 
 def test_file_round_trips():
@@ -70,8 +70,7 @@ def test_to_buffer_idempotent():
 
 def check_from_buffer(instance):
     buffer = instance.to_buffer()
-    type_code = chr(instance.file_type)
-    result = file_format_classes.decode_file_from_buffer(type_code+buffer)
+    result = file_format_classes.decode_file_from_buffer(buffer)
     check_same_attributes(instance,result)
 
 def test_from_buffer():

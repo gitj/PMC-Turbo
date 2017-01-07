@@ -20,7 +20,7 @@ class FileBase(object):
         self._metadata_name_to_format = dict([(name,format_) for format_,name in self._metadata_table])
         self._metadata_parameter_names = [name for (format_,name) in self._metadata_table]
         if buffer is not None:
-            self.from_buffer(buffer)
+            self._from_buffer(buffer)
         else:
             self.from_values(payload,**kwargs)
 
@@ -28,6 +28,12 @@ class FileBase(object):
     def from_file(cls,filename):
         with open(filename,'r') as fh:
             buffer = fh.read()
+        file_type, = struct.unpack('>1B',buffer[0])
+        buffer = buffer[1:]
+        if file_type != cls.file_type:
+            raise RuntimeError("File %s contains file type code %d, which does not match type code %d ofthe class you "
+                               "are trying to read with. try using load_load_and_decode_file instead"
+                               % (filename, file_type, cls.file_type))
         return cls(buffer=buffer)
 
     def from_values(self,payload,**kwargs):
@@ -46,7 +52,7 @@ class FileBase(object):
             else:
                 raise ValueError("Received parameter %s that is not expected for this file type" % key)
 
-    def from_buffer(self,buffer):
+    def _from_buffer(self, buffer):
         if len(buffer) <= self._metadata_length:
             raise ValueError("Cannot decode this buffer; the buffer length %d is not long enough. The metadata length is %d" %
                              (len(buffer), self._metadata_length))
@@ -60,7 +66,7 @@ class FileBase(object):
         values = []
         for name in self._metadata_parameter_names:
             values.append(getattr(self,name))
-        header = struct.pack(self._metadata_format_string,*values)
+        header = struct.pack('>1B',self.file_type) + struct.pack(self._metadata_format_string,*values)
         if self.payload is not None:
             result = header + self.payload
         else:
@@ -118,8 +124,8 @@ class GeneralFile(FileBase):
         super(GeneralFile,self).from_values(payload,**kwargs)
         self.filename = filename
 
-    def from_buffer(self,buffer):
-        super(GeneralFile,self).from_buffer(buffer)
+    def _from_buffer(self, buffer):
+        super(GeneralFile,self)._from_buffer(buffer)
         payload_with_filename = self.payload
         if len(payload_with_filename) < self.filename_length:
             raise ValueError("Error decoding file, payload length %d is not long enough to contain filename of length %d"
@@ -202,5 +208,14 @@ except Exception as e:
 def decode_file_from_buffer(buffer):
     file_type, = struct.unpack('>1B',buffer[0])
     buffer = buffer[1:]
-    file_class = file_type_to_class[file_type]
+    try:
+        file_class = file_type_to_class[file_type]
+    except KeyError:
+        raise RuntimeError("This buffer claims to be file_type %d, which doesn't exist. Known file_types: %r. Next "
+                           "few bytes of offending buffer %r" % (file_type,file_type_to_class,buffer[:10]))
     return file_class(buffer=buffer)
+
+def load_and_decode_file(filename):
+    with open(filename,'r') as fh:
+        buffer = fh.read()
+    return decode_file_from_buffer(buffer)
