@@ -39,14 +39,9 @@ class FileBase(object):
             if key in self._metadata_name_to_format:
                 format_ = self._metadata_name_to_format[key]
                 formatted_value, = struct.unpack('>'+format_,struct.pack('>'+format_,value))
-                if type(value) is str:
-                    formatted_value = formatted_value[:formatted_value.find('\x00')]
                 if not equal_or_close(value,formatted_value):
                     logger.critical("Formatting parameter %s as '%s' results in loss of information!\nOriginal value "
                                     "%r   Formatted value %r" % (key,format_,value,formatted_value))
-                    if type(value) is str:
-                        value = value[-256:]
-
                 setattr(self,key,value)
             else:
                 raise ValueError("Received parameter %s that is not expected for this file type" % key)
