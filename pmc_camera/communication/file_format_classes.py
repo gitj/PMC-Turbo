@@ -6,8 +6,8 @@ logger = logging.getLogger(__name__)
 def equal_or_close(value1,value2):
     if type(value1) is float:
         return np.allclose(value1,value2)
-    if type(value1) is str:
-        return value1 == value2[:value2.find('\x00')]
+#    if type(value1) is str:
+#        return value1 == value2[:value2.find('\x00')]
     else:
         return value1 == value2
 
@@ -205,7 +205,7 @@ except Exception as e:
     raise RuntimeError("Problem in file_format_classes.py: couldn't extract file_types from all file_classes %r" % e)
 
 def decode_file_from_buffer(buffer):
-    file_type = struct.unpack('>1B',buffer[0])
+    file_type, = struct.unpack('>1B',buffer[0])
     buffer = buffer[1:]
     file_class = file_type_to_class[file_type]
     return file_class(buffer=buffer)
