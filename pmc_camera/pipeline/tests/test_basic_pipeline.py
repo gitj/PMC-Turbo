@@ -5,10 +5,13 @@ import shutil
 from nose.tools import timed
 from pmc_camera.pipeline import basic_pipeline
 
+fake_pipeline_port = 45677
+
 @timed(20)
 def test_pipeline_runs():
     tempdir = tempfile.mkdtemp()
-    bpl = basic_pipeline.BasicPipeline(disks_to_use=[tempdir],use_simulated_camera=True)
+    bpl = basic_pipeline.BasicPipeline(disks_to_use=[tempdir],use_simulated_camera=True,
+                                       pipeline_port=fake_pipeline_port)
     thread = threading.Thread(target=bpl.run_pyro_loop)
     thread.daemon=True
     thread.start()
@@ -30,7 +33,8 @@ def test_pipeline_runs():
 @timed(20)
 def test_pipeline_runs_no_disk():
     tempdir = tempfile.mkdtemp()
-    bpl = basic_pipeline.BasicPipeline(disks_to_use=[tempdir],use_simulated_camera=True,default_write_enable=0)
+    bpl = basic_pipeline.BasicPipeline(disks_to_use=[tempdir],use_simulated_camera=True,default_write_enable=0,
+                                       pipeline_port=fake_pipeline_port)
     thread = threading.Thread(target=bpl.run_pyro_loop)
     thread.daemon=True
     thread.start()

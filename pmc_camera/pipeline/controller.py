@@ -169,14 +169,22 @@ class Controller(object):
                                                              quality=quality, format=format))
 
 
-    def request_specific_file(self, filename, max_num_bytes, file_id, from_end=False):
+    def request_specific_file(self, filename, max_num_bytes, request_id):
+        #TODO: What do do when file doesn't exist. Special error file type?
         timestamp = time.time()
-        with open(filename, 'r') as fh:
-            if from_end:
-                fh.seek(-max_num_bytes, os.SEEK_END)
-            data = fh.read(max_num_bytes)
-        self.sequence_data.append((data, dict(filename=filename, timestamp=timestamp, file_id=file_id,
-                                              file_type=file_format_classes.GeneralFile.file_type)))
+        try:
+            with open(filename, 'r') as fh:
+                if max_num_bytes < 0:
+                    fh.seek(max_num_bytes, os.SEEK_END)
+                data = fh.read(max_num_bytes)
+        except IOError as e:
+            data = repr(e)
+        file_object = file_format_classes.GeneralFile(payload=data,
+                                                      timestamp=timestamp,
+                                                      request_id=request_id,
+                                                      filename=filename,
+                                                      camera_id=self.camera_id)
+        self.sequence_data.append(file_object.to_buffer())
 
     def get_next_data_for_downlink(self):
         #TODO: this should return a data buffer ready to downlink
