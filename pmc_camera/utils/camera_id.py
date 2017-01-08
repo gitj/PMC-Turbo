@@ -8,4 +8,4 @@ def get_camera_id():
         except Exception:
             pass
     #raise RuntimeError("Could not determine camera id from hostname %s" % hostname)
-    return -1
+    return 255
