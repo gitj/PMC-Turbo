@@ -12,7 +12,8 @@ def equal_or_close(value1,value2):
         return value1 == value2
 
 class FileBase(object):
-    _metadata_table = [('1I','request_id')]
+    _metadata_table = [('1I','request_id'),
+                       ('1B','camera_id')]
 
     def __init__(self,buffer=None,payload=None,**kwargs):
         self._metadata_format_string = '>' + ''.join([format_ for format_,name in self._metadata_table])
