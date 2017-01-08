@@ -43,7 +43,7 @@ logger = logging.getLogger(__name__)
 class BasicPipeline:
     def __init__(self, dimensions=(3232,4864), num_data_buffers=16,
                  disks_to_use = ['/data1','/data2','/data3','/data4'],
-                 use_simulated_camera=False, default_write_enable=1):
+                 use_simulated_camera=False, default_write_enable=1, pipeline_port=50000):
         image_size_bytes = 31440952 # dimensions[0]*dimensions[1]*2  # Need to figure out how to not hard code this
         self.num_data_buffers = num_data_buffers
         self.raw_image_buffers = [mp.Array(ctypes.c_uint8, image_size_bytes) for b in range(num_data_buffers)]
@@ -87,7 +87,7 @@ class BasicPipeline:
         self.status_dict = {}
 
         ip = Pyro4.socketutil.getInterfaceAddress('192.168.1.1')
-        self.daemon = Pyro4.Daemon(host='0.0.0.0',port=50000)
+        self.daemon = Pyro4.Daemon(host='0.0.0.0',port=pipeline_port)
         uri = self.daemon.register(self,"pipeline")
         print uri
 
