@@ -114,32 +114,32 @@ class Controller(object):
         else:
             raise RuntimeError("No candidates for latest file!")
 
-    def get_latest_jpeg(self, offset=(0, 0), size=(3232, 4864), scale_by=1 / 8., **kwargs):
+    def get_latest_jpeg(self, row_offset=0, column_offset=0, num_rows=3232, num_columns=4864, scale_by=1 / 8., **kwargs):
         info = self.get_latest_fileinfo()
-        return self.get_image_by_info(info, offset=offset, size=size, scale_by=scale_by,
+        return self.get_image_by_info(info, row_offset=row_offset, column_offset=column_offset, num_rows=num_rows, num_columns=num_columns, scale_by=scale_by,
                                      format='jpeg', **kwargs)
 
     def request_image_by_index(self,index,request_params):
         request_params.update(dict(self.merged_index.df.iloc[index]))
         self.sequence_data.append(self.get_image_by_info(request_params))
 
-    def get_image_by_info(self, request_params, offset=(0, 0), size=(3232, 4864), scale_by=1 / 8.,**kwargs):
+    def get_image_by_info(self, request_params, row_offset=0, column_offset=0, num_rows=3232, num_columns=4864, scale_by=1 / 8.,**kwargs):
         request_params['camera_id'] = self.camera_id
         image, chunk = load_blosc_image(request_params['filename'])
-        row0, col0 = offset
-        nrow, ncol = size
-        image = image[row0:row0 + nrow + 1, col0:col0 + ncol + 1]
+        image = image[row_offset:row_offset + num_rows + 1, column_offset:column_offset + num_columns + 1]
         params = dict(request_params)
-        params['offset'] = offset
-        params['size'] = size
+        params['row_offset'] = row_offset
+        params['column_offset'] = column_offset
+        params['num_rows'] = num_rows
+        params['num_columns'] = num_columns
         params['scale_by'] = scale_by
-        params['file_type'] = file_format_classes.JPEGFile.file_type  # fixed to JPEG for now
+        params['file_type'] = file_format_classes.OldJPEGFile.file_type  # fixed to JPEG for now
         return simple_jpeg(image, scale_by=scale_by, **kwargs), params
 
-    def set_standard_image_paramters(self, offset=(0, 0), size=(3232, 4864), scale_by=1 / 8., quality=75,
+    def set_standard_image_paramters(self, row_offset=0, column_offset=0, num_rows=3232, num_columns=4864, scale_by=1 / 8., quality=75,
                                      format='jpeg'):
-        self.standard_image_parameters = dict(offset=offset,
-                                              size=size,
+        self.standard_image_parameters = dict(row_offset=row_offset, column_offset=column_offset,
+                                              num_rows=num_rows, num_columns=num_columns,
                                               scale_by=scale_by,
                                               quality=quality,
                                               format=format)
@@ -151,7 +151,7 @@ class Controller(object):
         params['format'] = format
         return jpg, params
 
-    def request_specific_images(self, timestamp, num_images=1, offset=(0, 0), size=(3232, 4864), scale_by=1 / 8.,
+    def request_specific_images(self, timestamp, num_images=1, row_offset=0, column_offset=0, num_rows=3232, num_columns=4864, scale_by=1 / 8.,
                                 quality=75,
                                 format='jpeg', step=-1):
         last_index = self.merged_index.get_index_of_timestamp(timestamp)
@@ -162,19 +162,29 @@ class Controller(object):
             first_index, last_index = last_index, first_index
         selection = self.merged_index.df.iloc[first_index, last_index, abs(step)]
         logger.debug("selected %d rows" % selection.shape[0])
-        for _,row in selection.iterrows():
-            self.sequence_data.append(self.get_image_by_info(row, offset=offset, size=size, scale_by=scale_by,
+        for _,index_row in selection.iterrows():
+            self.sequence_data.append(self.get_image_by_info(index_row, row_offset=row_offset,
+                                                             column_offset=column_offset,
+                                                             num_rows=num_rows, num_columns=num_columns, scale_by=scale_by,
                                                              quality=quality, format=format))
 
 
-    def request_specific_file(self, filename, max_num_bytes, file_id, from_end=False):
+    def request_specific_file(self, filename, max_num_bytes, request_id):
+        #TODO: What do do when file doesn't exist. Special error file type?
         timestamp = time.time()
-        with open(filename, 'r') as fh:
-            if from_end:
-                fh.seek(-max_num_bytes, os.SEEK_END)
-            data = fh.read(max_num_bytes)
-        self.sequence_data.append((data, dict(filename=filename, timestamp=timestamp, file_id=file_id,
-                                              file_type=file_format_classes.GeneralFile.file_type)))
+        try:
+            with open(filename, 'r') as fh:
+                if max_num_bytes < 0:
+                    fh.seek(max_num_bytes, os.SEEK_END)
+                data = fh.read(max_num_bytes)
+        except IOError as e:
+            data = repr(e)
+        file_object = file_format_classes.GeneralFile(payload=data,
+                                                      timestamp=timestamp,
+                                                      request_id=request_id,
+                                                      filename=filename,
+                                                      camera_id=self.camera_id)
+        self.sequence_data.append(file_object.to_buffer())
 
     def get_next_data_for_downlink(self):
         #TODO: this should return a data buffer ready to downlink
