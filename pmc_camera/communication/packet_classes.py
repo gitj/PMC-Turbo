@@ -35,6 +35,13 @@ class PacketChecksumError(PacketError):
     pass
 
 
+class PacketValidityError(PacketError):
+    """
+    Exception for packets which are clearly not valid
+    """
+    pass
+
+
 class GSEPacket(object):
     _header_format_string = '>4B1H'
     _valid_start_byte = 0xFA
@@ -216,6 +223,14 @@ class HiratePacket(object):
                                     (len(buffer), self._minimum_buffer_length))
         self.start_byte, self.file_id, self.file_type, self.packet_number, self.total_packet_number, self.payload_length = struct.unpack(
             self._header_format_string, buffer[:self.header_length])
+
+        print '%d %d %d %d %d %d' % (
+            self.start_byte, self.file_id, self.file_type, self.packet_number, self.total_packet_number,
+            self.payload_length)
+
+        if self.payload_length > 1500:
+            raise PacketValidityError("Payload length is clearly wrong.")
+
         crc_index = self.header_length + self.payload_length
         payload = buffer[self.header_length:crc_index]
 
