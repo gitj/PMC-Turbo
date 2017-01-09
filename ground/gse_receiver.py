@@ -111,6 +111,10 @@ class GSEReceiver():
                 # The problem is I can't use hirate_packet.payload_length, etc. since the packet never gets formed
                 # It raises this exception instead - possible to pass arguments in exception?
                 break
+            except packet_classes.PacketValidityError as e:
+                logger.warning(str(e))
+                remainder = buffer[idx + 1:]
+                break
         return hirate_packets, remainder
 
     def write_file_from_hirate_packets(self, packets, filename, file_type):
