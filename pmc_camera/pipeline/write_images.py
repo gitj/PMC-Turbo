@@ -13,19 +13,20 @@ from pmc_camera.image_processing.blosc_file import write_image_blosc
 from pmc_camera.pycamera.dtypes import frame_info_dtype, chunk_num_bytes, chunk_dtype
 
 index_file_name = 'index.csv'
-index_file_header = ",".join(['file_index',
-                              'write_timestamp',
-                              'frame_timestamp_ns',
-                              'frame_status',
-                              'frame_id',
-                              'acquisition_count',
-                              'lens_status',
-                              'focus_step',
-                              'aperture_stop',
-                              'exposure_us',
-                              'gain_db',
-                              'focal_length_mm',
-                              'filename']) + '\n'
+index_keys = ['file_index',
+              'write_timestamp',
+              'frame_timestamp_ns',
+              'frame_status',
+              'frame_id',
+              'acquisition_count',
+              'lens_status',
+              'focus_step',
+              'aperture_stop',
+              'exposure_us',
+              'gain_db',
+              'focal_length_mm',
+              'filename']
+index_file_header = ",".join(index_keys) + '\n'
 
 Pyro4.config.SERVERTYPE = 'multiplex'
 Pyro4.config.SERIALIZERS_ACCEPTED = {'pickle','json'}
