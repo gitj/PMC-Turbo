@@ -99,7 +99,7 @@ class GSEReceiver():
                 logger.debug(str(e))
                 # This triggers when there are insufficient bytes to finish a GSEPacket.
                 # This is common - usually just needs to wait for more data.
-                remainder = buffer[idx +1:]
+                remainder = buffer[idx:]
                 break
             except packet_classes.PacketChecksumError as e:
                 logger.warning(str(e))
