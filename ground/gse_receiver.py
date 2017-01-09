@@ -2,7 +2,6 @@ import serial
 import os
 import socket
 import time
-from pmc_camera.communication.hirate import cobs_encoding
 from pmc_camera.communication import packet_classes, file_format_classes, constants
 
 import logging
@@ -117,7 +116,7 @@ class GSEReceiver():
     def write_file_from_hirate_packets(self, packets, filename, file_type):
         data_buffer = ''
         for packet in packets:
-            data_buffer += cobs_encoding.decode_data(packet.payload, constants.SYNC_BYTE)
+            data_buffer += packet.payload
         if file_type == 1:
             jpeg_file_class = file_format_classes.JPEGFile(buffer=data_buffer)
             jpeg_file_class.write(filename)

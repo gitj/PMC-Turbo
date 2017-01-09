@@ -5,7 +5,6 @@ import struct
 import constants
 import numpy as np
 from pmc_camera.communication import packet_classes
-from pmc_camera.communication.hirate import cobs_encoding
 import logging
 
 logger = logging.getLogger(__name__)
@@ -26,9 +25,8 @@ class HirateDownlink():
         num_packets = int(np.ceil(len(buffer) / packet_size))
         for i in range(num_packets):
             msg = buffer[(i * packet_size):((i + 1) * packet_size)]
-            encoded_msg = cobs_encoding.encode_data(msg, constants.SYNC_BYTE)
             packet = packet_classes.HiratePacket(file_id=file_id, file_type=file_type, packet_number=i,
-                                                 total_packet_number=num_packets, payload=encoded_msg)
+                                                 total_packet_number=num_packets, payload=msg)
             packets.append(packet)
         packet_length_debug_string = ','.join([str(packet.payload_length) for packet in packets])
         logger.debug('Packet payload lengths: %s' % packet_length_debug_string)
