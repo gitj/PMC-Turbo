@@ -219,9 +219,6 @@ class HiratePacket(object):
         crc_index = self.header_length + self.payload_length
         payload = buffer[self.header_length:crc_index]
 
-        if payload.find(chr(self._valid_start_byte)) != -1:
-            raise PacketError("Found valid start byte in payload.")
-
         if len(payload) != self.payload_length:
             raise PacketLengthError("Payload length %d does not match length field value %d" % (len(payload),
                                                                                                 self.payload_length))
