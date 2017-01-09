@@ -37,7 +37,8 @@ class Communicator():
         self.cam_id = cam_id
         self.peers = peers
         self.controller = controller
-        self.next_peer = 0
+        self.peer_polling_order_idx = 0
+        self.peer_polling_order = [0]
         self.end_loop = False
 
         self.science_data_commands = {
@@ -121,8 +122,8 @@ class Communicator():
                 'Communicator has no peers. This should never happen; leader at minimum has self as peer.')
         for link in self.downlinks:
             if link.has_bandwidth():
-                next_data = self.peers[self.next_peer].get_next_data()
-                self.next_peer = (self.next_peer + 1) % len(self.peers)
+                next_data = self.peers[self.peer_polling_order[self.peer_polling_order_idx]].get_next_data()
+                self.peer_polling_order_idx = (self.peer_polling_order_idx + 1) % len(self.peer_polling_order)
                 link.put_data_into_queue(next_data, self.file_id,
                                          file_type=1)  # file type should be included in next data
                 self.file_id += 1
@@ -142,6 +143,10 @@ class Communicator():
         buffer = struct.pack('>1L1L1H1H1L', frame_status, frame_id, focus_step, aperture_stop,
                              exposure_ms) + buffer
         return buffer
+
+    def set_peer_polling_order(self, new_peer_polling_order):
+        self.peer_polling_order = new_peer_polling_order
+        self.peer_polling_order_idx = 0
 
     def start_pyro_thread(self):
         self.pyro_thread = threading.Thread(target=self.pyro_loop)
