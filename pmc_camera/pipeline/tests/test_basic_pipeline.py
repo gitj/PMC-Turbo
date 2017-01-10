@@ -2,6 +2,7 @@ import time
 import threading
 import tempfile
 import shutil
+import subprocess
 from nose.tools import timed
 from pmc_camera.pipeline import basic_pipeline
 
@@ -27,6 +28,7 @@ def test_pipeline_runs():
     print "got command result"
     time.sleep(1)
     bpl.close()
+    print subprocess.check_output(('ls -R %s' % tempdir),shell=True)
     shutil.rmtree(tempdir)
     print "shut down"
 
