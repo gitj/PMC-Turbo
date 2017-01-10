@@ -124,8 +124,7 @@ class Communicator():
             if link.has_bandwidth():
                 next_data = self.peers[self.peer_polling_order[self.peer_polling_order_idx]].get_next_data()
                 self.peer_polling_order_idx = (self.peer_polling_order_idx + 1) % len(self.peer_polling_order)
-                link.put_data_into_queue(next_data, self.file_id,
-                                         file_type=1)  # file type should be included in next data
+                link.put_data_into_queue(next_data, self.file_id)
                 self.file_id += 1
             else:
                 link.send_data()

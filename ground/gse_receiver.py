@@ -117,21 +117,17 @@ class GSEReceiver():
                 break
         return hirate_packets, remainder
 
-    def write_file_from_hirate_packets(self, packets, filename, file_type):
+    def write_file_from_hirate_packets(self, packets, filename):
+        data_buffer = ''
         data_buffer = ''
         for packet in packets:
             data_buffer += packet.payload
-        if file_type == 1:
-            jpeg_file_class = file_format_classes.OldJPEGFile(buffer=data_buffer)
-            jpeg_file_class.write(filename)
-            # img = cv2.imread(filename + '.jpg')
-            # self.ax.cla()
-            # self.ax.imshow(img)
-            # self.ax.set_title(filename)
-            # self.fig.canvas.draw()
-        else:
-            with open(filename, 'wb') as f:
-                f.write(data_buffer)
+        # if file_type == 1:
+        jpeg_file_class = file_format_classes.OldJPEGFile(buffer=data_buffer)
+        jpeg_file_class.write(filename)
+        # else:
+        #    with open(filename, 'wb') as f:
+        #        f.write(data_buffer)
 
     def log_lowrate_status(self, packet):
         # Problem: currently communicator aggregates lots of statuses to send down, then sends all... think about this
