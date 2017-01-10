@@ -55,7 +55,7 @@ class Communicator():
         self.pyro_daemon = None
         self.pyro_thread = None
         self.leader_thread = None
-        self.buffer_for_downlink = ''
+        self.buffer_for_downlink = struct.pack('>255B', *([0] * 255))
         # We will instantiate these later
 
         self.setup_pyro()
@@ -97,7 +97,7 @@ class Communicator():
 
     def leader_loop(self):
         while True:
-            self.get_housekeeping()
+
             self.get_and_process_sip_bytes()
             self.send_data_on_downlinks()
             if self.end_loop == True:  # Switch this to end the leader loop.
@@ -106,15 +106,17 @@ class Communicator():
 
     def get_housekeeping(self):
         # Eventually this should query all the subsystems and condense to a housekeeping report.
-        # For now we will keep it simple - just returns a 1 for each of the cameras.
+        # For now I will add some filler data.
         fileinfo = self.controller.get_latest_fileinfo()
         frame_status = fileinfo[3]
         frame_id = fileinfo[4]
         focus_step = fileinfo[7]
         aperture_stop = fileinfo[8]
         exposure_ms = int(fileinfo[9] / 1000)
-        self.buffer_for_downlink += struct.pack('>1B1L1L1H1H1L', 255, frame_status, frame_id,
-                                                focus_step, aperture_stop, exposure_ms)
+        camera0_status = struct.pack('>1B1L1L1H1H1L', 255, frame_status, frame_id,
+                                     focus_step, aperture_stop, exposure_ms)
+        self.buffer_for_downlink = camera0_status + self.buffer_for_downlink[
+                                                    struct.calcsize('>1B1L1L1H1H1L'):]  # just overwrite old status
 
     def send_data_on_downlinks(self):
         if not self.peers:
@@ -165,8 +167,8 @@ class Communicator():
 
     def respond_to_science_data_request(self):
         logger.debug("Science data request received.")
-        msg = self.package_updates_for_downlink()
-        self.lowrate_downlink.send(msg)
+        self.get_housekeeping()
+        self.lowrate_downlink.send(self.buffer_for_downlink)
 
     def respond_to_science_command(self, msg):
         logger.debug('%r' % msg)
@@ -174,20 +176,6 @@ class Communicator():
         length, sequence, verify, which, command, args = struct.unpack(format_string, msg)
         logger.debug('sequence: %d verify: %d which: %d command: %d' % (sequence, verify, which, command))
         self.science_data_commands[command](which, sequence, verify, args)
-
-    def package_updates_for_downlink(self):
-        # Constantly keep a buffer of stuff I want to send on downlink.
-        # When this function is called, package that stuff as a 255 byte package to be sent on downlink
-        # Then clear the buffer.
-        buffer = self.buffer_for_downlink
-        logger.debug('Packaging buffer for downlink: %r' % buffer)
-        if len(buffer) > 255:
-            logger.error('Buffer length %d. Buffer: %r' % (len(buffer), buffer))
-            buffer = buffer[:256]
-        if len(buffer) == 0:
-            logger.warning('Empty buffer')
-        self.buffer_for_downlink = ''
-        return buffer
 
     def process_gps_position(self, gps_position_dict):
         return

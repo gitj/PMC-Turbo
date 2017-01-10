@@ -136,7 +136,7 @@ class GSEReceiver():
         format_string = '>1B1L1L1H1H1L'
         overall_status, frame_status, frame_id, focus_step, aperture_stop, exposure_ms = struct.unpack(
             format_string,
-            packet.payload[-struct.calcsize(format_string):])
+            packet.payload[:struct.calcsize(format_string)])
         logger.info(
             'Overall status: %d \n Frame status: %d \n Frame id: %d \n Focus Step: %d \n Aperture stop: %d \n Exposure: %d' % (
                 overall_status, frame_status, frame_id, focus_step, aperture_stop, exposure_ms))
