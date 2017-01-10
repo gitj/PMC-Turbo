@@ -12,7 +12,7 @@ fake_pipeline_port = 45677
 def test_pipeline_runs():
     tempdir = tempfile.mkdtemp()
     bpl = basic_pipeline.BasicPipeline(disks_to_use=[tempdir],use_simulated_camera=True,
-                                       pipeline_port=fake_pipeline_port)
+                                       pipeline_port=fake_pipeline_port,num_data_buffers=1)
     thread = threading.Thread(target=bpl.run_pyro_loop)
     thread.daemon=True
     thread.start()
