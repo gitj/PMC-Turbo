@@ -30,3 +30,9 @@ class TestBloscFiles(object):
         assert np.all(image == image2)
         assert np.all(chunk2 == chunk)
         assert image.dtype == image2.dtype
+
+    def test_blosc_image_write(self):
+        filename = os.path.join(self.temp_dir,'blah3.blosc')
+        image = np.random.random_integers(0,2**14-1,size=(31440952//2,)).astype('uint16')
+        blosc_file.write_image_blosc(filename,image)
+        image2,chunk2 = blosc_file.load_blosc_image(filename)
