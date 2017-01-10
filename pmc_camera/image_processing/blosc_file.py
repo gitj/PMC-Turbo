@@ -5,6 +5,9 @@ from pmc_camera.pycamera import dtypes
 import logging
 logger = logging.getLogger(__name__)
 
+original_nthreads = blosc.set_nthreads(1)
+logger.debug("Set blosc to use 1 thread, originally was using %d" % original_nthreads)
+
 def load_blosc_file(filename):
     logger.debug("Reading blosc file from %s" % filename)
     with open(filename, 'rb') as fh:
@@ -20,13 +23,7 @@ def load_blosc_image(filename):
 
 
 def write_image_blosc(filename,data):
-    print "write_image_blosc"
     fh = open(filename,'w')
-    print "opened", filename
-    compressed_data = blosc.compress(data[:])
-    print "compressed small data"
     compressed_data = blosc.compress(data,shuffle=blosc.BITSHUFFLE,cname='lz4')
-    print "compressed"
     fh.write(compressed_data)
-    print "wrote compressed data"
     fh.close()

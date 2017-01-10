@@ -130,12 +130,10 @@ class WriteImageProcess(object):
                     focus_step = chunk_data['lens_status_focus'] & 0x3FF
                     if self.write_enable.value:
                         self.status.value = "writing %d" % process_me
-                        print image_buffer.shape, image_buffer.dtype, image_buffer.flags
-                        print repr(image_buffer)
-                        write_image_blosc(fname, image_buffer) # fast and good lossless compression
-                        self.status.value = "writing %d metadata" % process_me
+                        write_image_blosc(fname, image_buffer)
+#                        self.status.value = "writing %d metadata" % process_me
                         with open(os.path.join(dirname,index_file_name),'a') as fh:
-                            self.status.value = "index file opened"
+#                            self.status.value = "index file opened"
                             fh.write('%d,%f,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%s\n' %
                                      (frame_indexes[dirname],
                                       time.time(),
