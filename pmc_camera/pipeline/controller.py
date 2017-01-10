@@ -10,6 +10,7 @@ from pmc_camera.communication import file_format_classes
 from pmc_camera.image_processing.blosc_file import load_blosc_image
 from pmc_camera.image_processing.jpeg import simple_jpeg
 from pmc_camera.pipeline.indexer import MergedIndex, DEFAULT_DATA_DIRS
+from pmc_camera.pipeline.write_images import index_keys
 from pmc_camera.utils.camera_id import get_camera_id
 
 logger = logging.getLogger(__name__)
@@ -87,7 +88,7 @@ class Controller(object):
                 logger.info("Command tag %f - %s:%s retired" % (tag,name,value))
                 logger.debug("Command %s:%s with request_params %r retired by image %r" %(name,value,
                                                                                          request_params,dict(row)))
-                self.request_image_by_index(index,request_params)
+                self.request_image_by_index(index,**request_params)
             else:
                 logger.warning("Command tag %f - %s:%s complete, but image timestamp %f does not match "
                                "gate_timestamp %f to within specified threshold %f. Is something wrong with PTP?"
@@ -114,27 +115,17 @@ class Controller(object):
         else:
             raise RuntimeError("No candidates for latest file!")
 
+    def get_latest_standard_image(self):
+        params = self.standard_image_parameters.copy()
+        format = params.pop('format',None)  # not used yet
+        jpg, params = self.get_latest_jpeg(**params)
+        params['format'] = format
+        return jpg, params
+
     def get_latest_jpeg(self, row_offset=0, column_offset=0, num_rows=3232, num_columns=4864, scale_by=1 / 8., **kwargs):
         info = self.get_latest_fileinfo()
         return self.get_image_by_info(info, row_offset=row_offset, column_offset=column_offset, num_rows=num_rows, num_columns=num_columns, scale_by=scale_by,
                                      format='jpeg', **kwargs)
-
-    def request_image_by_index(self,index,request_params):
-        request_params.update(dict(self.merged_index.df.iloc[index]))
-        self.sequence_data.append(self.get_image_by_info(request_params))
-
-    def get_image_by_info(self, request_params, row_offset=0, column_offset=0, num_rows=3232, num_columns=4864, scale_by=1 / 8.,**kwargs):
-        request_params['camera_id'] = self.camera_id
-        image, chunk = load_blosc_image(request_params['filename'])
-        image = image[row_offset:row_offset + num_rows + 1, column_offset:column_offset + num_columns + 1]
-        params = dict(request_params)
-        params['row_offset'] = row_offset
-        params['column_offset'] = column_offset
-        params['num_rows'] = num_rows
-        params['num_columns'] = num_columns
-        params['scale_by'] = scale_by
-        params['file_type'] = file_format_classes.OldJPEGFile.file_type  # fixed to JPEG for now
-        return simple_jpeg(image, scale_by=scale_by, **kwargs), params
 
     def set_standard_image_paramters(self, row_offset=0, column_offset=0, num_rows=3232, num_columns=4864, scale_by=1 / 8., quality=75,
                                      format='jpeg'):
@@ -144,14 +135,12 @@ class Controller(object):
                                               quality=quality,
                                               format=format)
 
-    def get_latest_standard_image(self):
-        params = self.standard_image_parameters.copy()
-        format = params.pop('format',None)  # not used yet
-        jpg, params = self.get_latest_jpeg(**params)
-        params['format'] = format
-        return jpg, params
+    def request_image_by_index(self,index,**kwargs):
+        index_row_data =dict(self.merged_index.df.iloc[index])
+        self.sequence_data.append(self.get_image_by_info(index_row_data,**kwargs).to_buffer())
 
-    def request_specific_images(self, timestamp, num_images=1, row_offset=0, column_offset=0, num_rows=3232, num_columns=4864, scale_by=1 / 8.,
+    def request_specific_images(self, timestamp, request_id, num_images=1, row_offset=0, column_offset=0,
+                                num_rows=3232, num_columns=4864, scale_by=1 / 8.,
                                 quality=75,
                                 format='jpeg', step=-1):
         last_index = self.merged_index.get_index_of_timestamp(timestamp)
@@ -162,11 +151,33 @@ class Controller(object):
             first_index, last_index = last_index, first_index
         selection = self.merged_index.df.iloc[first_index, last_index, abs(step)]
         logger.debug("selected %d rows" % selection.shape[0])
-        for _,index_row in selection.iterrows():
+        for _, index_row in selection.iterrows():
             self.sequence_data.append(self.get_image_by_info(index_row, row_offset=row_offset,
                                                              column_offset=column_offset,
-                                                             num_rows=num_rows, num_columns=num_columns, scale_by=scale_by,
-                                                             quality=quality, format=format))
+                                                             num_rows=num_rows, num_columns=num_columns,
+                                                             scale_by=scale_by, quality=quality, format=format,
+                                                             request_id=request_id).to_buffer())
+
+    def get_image_by_info(self, index_row_data, request_id, row_offset=0, column_offset=0, num_rows=3232,
+                          num_columns=4864, scale_by=1 / 8., quality=75, format='jpeg'):
+        image, chunk = load_blosc_image(index_row_data['filename'])
+        image = image[row_offset:row_offset + num_rows + 1, column_offset:column_offset + num_columns + 1]
+        params = dict()
+        for key in index_keys:
+            params[key] = index_row_data[key]
+        params['camera_id'] = self.camera_id
+        params['request_id'] = request_id
+        params['row_offset'] = row_offset
+        params['column_offset'] = column_offset
+        params['num_rows'] = num_rows
+        params['num_columns'] = num_columns
+        params['scale_by'] = scale_by
+        if format == 'jpeg':
+            payload = simple_jpeg(image, scale_by=scale_by, quality=quality)
+            file_obj = file_format_classes.JPEGFile(payload=payload,**params)
+        else:
+            raise ValueError("Unsupported format requested %r" % format)
+        return file_obj
 
 
     def request_specific_file(self, filename, max_num_bytes, request_id):

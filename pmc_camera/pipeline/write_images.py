@@ -131,7 +131,9 @@ class WriteImageProcess(object):
                     if self.write_enable.value:
                         self.status.value = "writing %d" % process_me
                         write_image_blosc(fname, image_buffer) # fast and good lossless compression
+                        self.status.value = "writing %d metadata" % process_me
                         with open(os.path.join(dirname,index_file_name),'a') as fh:
+                            self.status.value = "index file opened" % process_me
                             fh.write('%d,%f,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%s\n' %
                                      (frame_indexes[dirname],
                                       time.time(),
