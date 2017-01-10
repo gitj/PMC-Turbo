@@ -14,35 +14,34 @@ test_data_path = os.path.join(os.path.split(os.path.abspath(__file__))[0],'test_
 test_pipeline_port = 47563
 
 class TestMultiIndex(object):
-    @classmethod
-    def setup(cls):
-        cls.top_dir = tempfile.mkdtemp('server_test')
-        cls.data_dirs = [os.path.join(cls.top_dir,'data%d' %k) for k in range(1,5)]
-        for data_dir in cls.data_dirs:
+    def setup(self):
+        self.top_dir = tempfile.mkdtemp('server_test')
+        self.data_dirs = [os.path.join(self.top_dir,'data%d' %k) for k in range(1,5)]
+        for data_dir in self.data_dirs:
             os.mkdir(data_dir)
-        cls.all_subdirs = ['lost+found','2016-10-25_195422',
+        self.all_subdirs = ['lost+found','2016-10-25_195422',
                            '2016-11-29_112233',
                            '2016-12-08_231459','2016-12-20_100727']
-        for data_dir in cls.data_dirs:
-            for subdir in cls.all_subdirs:
+        for data_dir in self.data_dirs:
+            for subdir in self.all_subdirs:
                 subdir_path = os.path.join(data_dir,subdir)
                 os.mkdir(subdir_path)
                 if subdir_path.startswith('20'):
                     open(os.path.join(subdir_path,'index.csv'),'w').close()
 
-        cls.subdir = '2016-12-20_100727'
-        cls.general_filename = os.path.join(cls.top_dir,'a_file.txt')
-        cls.general_file_contents = np.random.random_sample((1024,)).tostring()
-        with open(cls.general_filename,'w') as fh:
-            fh.write(cls.general_file_contents)
+        self.subdir = '2016-12-20_100727'
+        
+        self.general_filename = os.path.join(self.top_dir,'a_file.txt')
+        self.general_file_contents = np.random.random_sample((1024,)).tostring()
+        with open(self.general_filename,'w') as fh:
+            fh.write(self.general_file_contents)
             
-        cls.controller_no_pipeline = controller.Controller(pipeline=None,data_dirs=cls.data_dirs)
+        self.controller_no_pipeline = controller.Controller(pipeline=None,data_dirs=self.data_dirs)
 
         
 
-    @classmethod
-    def teardown(cls):
-        shutil.rmtree(cls.top_dir,ignore_errors=True)
+    def teardown(self):
+        shutil.rmtree(self.top_dir,ignore_errors=True)
 
     def test_all_data(self):
         for k,data_dir in enumerate(self.data_dirs):
@@ -55,7 +54,7 @@ class TestMultiIndex(object):
         for k,data_dir in enumerate(self.data_dirs):
             open(os.path.join(data_dir,self.subdir,'index.csv'),'w').close()
 
-    def test_image_server(self):
+    def test_controller_basic_function(self):
         bpl = basic_pipeline.BasicPipeline(disks_to_use=self.data_dirs,use_simulated_camera=True,
                                            default_write_enable=0,pipeline_port=test_pipeline_port)
         thread = threading.Thread(target=bpl.run_pyro_loop)
@@ -67,6 +66,12 @@ class TestMultiIndex(object):
         time.sleep(1)
         sis.check_for_completed_commands()
         bpl.close()
+        
+    def test_controller_get_image(self):
+        subdir1 = os.path.join(self.data_dirs[0],self.subdir)
+
+        
+        
 
     def test_full_file_access(self):
         
