@@ -23,6 +23,8 @@ def write_image_blosc(filename,data):
     print "write_image_blosc"
     fh = open(filename,'w')
     print "opened", filename
+    compressed_data = blosc.compress(data[:1000])
+    print "compressed small data"
     compressed_data = blosc.compress(data,shuffle=blosc.BITSHUFFLE,cname='lz4')
     print "compressed"
     fh.write(compressed_data)
