@@ -190,11 +190,11 @@ class BasicPipeline:
         for k in range(8):
             self.acquire_image_output_queue.put(None)
         self.acquire_images.child.join(timeout=1)
-        print "acquire process status:",self.acquire_status.value
+        logger.debug("acquire process status at exit: %s" % self.acquire_status.value)
         #self.write_images.child.join()
         for k,writer in enumerate(self.writers):
             writer.child.join(timeout=1)
-            print "writer status:",self.disk_statuses[k].value
+            logger.debug("writer process status at exit: %s" % self.disk_statuses[k].value)
             writer.child.terminate()
         self.daemon.shutdown()
     def exit(self,signum,frame):
