@@ -10,7 +10,7 @@ def test_gse_packet_roundtrip():
     assert packet.payload == packet2.payload
 
 def test_hirate_packet_roundtrip():
-    packet = packet_classes.HiratePacket(file_id=99,file_type=89,packet_number=1,total_packet_number=10,
+    packet = packet_classes.HiratePacket(file_id=99,packet_number=1,total_packet_number=10,
                                          payload="the payload is long")
     packet2 = packet_classes.HiratePacket(buffer=packet.to_buffer())
     assert packet.file_type == packet2.file_type

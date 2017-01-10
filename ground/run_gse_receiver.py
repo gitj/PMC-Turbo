@@ -65,7 +65,7 @@ def main():
                 logger.debug('Full image received: file id %d' % file_id)
                 jpg_filename = '%d' % file_id
                 jpg_filename = os.path.join(image_path, jpg_filename)
-                g.write_file_from_hirate_packets(sorted_packets, jpg_filename, sorted_packets[0].file_type)
+                g.write_file_from_hirate_packets(sorted_packets, jpg_filename)
                 del files[file_id]
 
 
