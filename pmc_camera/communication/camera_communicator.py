@@ -7,7 +7,7 @@ import struct
 import threading
 import logging
 import numpy as np
-from pmc_camera.communication import downlink_classes, uplink_classes
+from pmc_camera.communication import downlink_classes, uplink_classes, aggregator
 
 from pmc_camera.communication import constants
 
@@ -86,6 +86,7 @@ class Communicator():
         self.hirate_downlink = downlink_classes.HirateDownlink(hirate_downlink_ip, hirate_downlink_port, downlink_speed)
         self.downlinks = [self.hirate_downlink]  # Eventually this will also include Openport downlink
         self.file_id = 0
+        #self.peer_aggregator = aggregator.PeerAggregator()
 
     ### Loops to continually be run
 
@@ -117,6 +118,7 @@ class Communicator():
                                      focus_step, aperture_stop, exposure_ms)
         self.buffer_for_downlink = camera0_status + self.buffer_for_downlink[
                                                     struct.calcsize('>1B1L1L1H1H1L'):]  # just overwrite old status
+        #self.buffer_for_downlink = self.peer_aggregator.aggregate_peer_status(self.peers)
 
     def send_data_on_downlinks(self):
         if not self.peers:
@@ -239,12 +241,11 @@ class Communicator():
 
     def execute_packet(self, packet):
         # Improve readability here - constants in uplink classes
-        # id_byte to packet_type, 'x\13' to science_request, etc.
         id_byte = packet[1]
         logger.debug('Got packet with id %r' % id_byte)
-        if id_byte == '\x13':
+        if id_byte == chr(constants.SCIENCE_DATA_REQUEST_BYTE):
             self.respond_to_science_data_request()
-        if id_byte == '\x14':
+        if id_byte == chr(constants.SCIENCE_COMMAND_BYTE):
             self.respond_to_science_command(packet[2:-1])  ### peer methods
 
     def ping(self):

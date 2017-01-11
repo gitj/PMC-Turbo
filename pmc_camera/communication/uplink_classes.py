@@ -1,5 +1,6 @@
 import struct
 import socket
+from pmc_camera.communication import constants
 
 
 # start_byte = chr(constants.SIP_START_BYTE)
@@ -25,7 +26,7 @@ class LowrateUplink():
             buffer = data
             self.sip_leftover_buffer = ''
             while buffer:
-                valid_packet, remainder = process_bytes(buffer, start_byte=chr(0x10), end_byte=chr(0x03))
+                valid_packet, remainder = process_bytes(buffer)
                 print '%r' % valid_packet
                 if valid_packet:
                     valid_packets.append(valid_packet)
@@ -41,7 +42,11 @@ class LowrateUplink():
             return valid_packets
 
 
-def process_bytes(buffer, start_byte, end_byte, logger=None):
+def process_bytes(buffer, logger=None):
+    start_byte = chr(constants.SIP_START_BYTE)
+    end_byte = chr(constants.SIP_END_BYTE)
+    science_data_request_byte = chr(constants.SCIENCE_DATA_REQUEST_BYTE)
+    science_command_byte = chr(constants.SCIENCE_COMMAND_BYTE)
     packet = None
     remainder = buffer
     while buffer:
@@ -57,11 +62,11 @@ def process_bytes(buffer, start_byte, end_byte, logger=None):
             remainder = buffer[idx:]
             break
         id_byte = buffer[idx + 1]
-        if not id_byte in ['\x13', '\x14']:
+        if not id_byte in [science_data_request_byte, science_command_byte]:
             # If the id_byte is not valid, we cut off the junk and continue the loop.
             buffer = buffer[idx + 2:]
             continue
-        if id_byte == '\x13':
+        if id_byte == science_data_request_byte:
             # Science data request
             if logger:
                 logger.debug('%d' % len(buffer[idx:]))
@@ -85,7 +90,7 @@ def process_bytes(buffer, start_byte, end_byte, logger=None):
                 else:
                     break
 
-        if id_byte == '\x14':
+        if id_byte == science_command_byte:
             if logger:
                 logger.debug('Id byte 14 found')
             if len(buffer[idx:]) < 3:
