@@ -106,6 +106,8 @@ class TestMultiIndex(object):
                 print attr, getattr(result,attr), getattr(result2,attr)
                 assert False
 
+        result = sis.get_latest_jpeg(request_id=999)
+
         bpl.close()
         time.sleep(1)
 

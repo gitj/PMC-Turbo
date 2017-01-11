@@ -124,9 +124,10 @@ class Controller(object):
         file_obj = self.get_latest_jpeg(**params)
         return file_obj
 
-    def get_latest_jpeg(self, row_offset=0, column_offset=0, num_rows=3232, num_columns=4864, scale_by=1 / 8., **kwargs):
+    def get_latest_jpeg(self, request_id, row_offset=0, column_offset=0, num_rows=3232, num_columns=4864, scale_by=1 /
+                                                                                                                 8., **kwargs):
         info = self.get_latest_fileinfo()
-        return self.get_image_by_info(info, row_offset=row_offset, column_offset=column_offset,
+        return self.get_image_by_info(info, request_id=request_id, row_offset=row_offset, column_offset=column_offset,
                                       num_rows=num_rows, num_columns=num_columns, scale_by=scale_by,
                                       **kwargs)
 
