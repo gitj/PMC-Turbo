@@ -5,6 +5,8 @@ from pmc_camera.pycamera import dtypes
 import logging
 logger = logging.getLogger(__name__)
 
+# We need to ensure blosc uses just 1 thread so that it is always compatible with multiprocessing. This is true as of
+#  blosc 1.4.4, but may improve in the future.
 original_nthreads = blosc.set_nthreads(1)
 logger.debug("Set blosc to use 1 thread, originally was using %d" % original_nthreads)
 

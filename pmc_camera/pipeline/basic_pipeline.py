@@ -95,16 +95,12 @@ class BasicPipeline:
         # in general, make sure to instantiate the Acquire process last; that way no data starts flowing through the
         # system until all threads have started running.
         output_dir = time.strftime("%Y-%m-%d_%H%M%S")
-        self.writers = [WriteImageProcess(input_buffers=self.raw_image_buffers,
-                                          input_queue=self.acquire_image_output_queue,
-                                          output_queue = self.acquire_image_input_queue,
-                                          info_buffer=self.info_buffer, dimensions=dimensions,
-                                          status = self.disk_statuses[k],
-                                          output_dir=output_dir,
-                                          available_disks=[disks_to_use[k]],
-                                          write_enable=self.disk_write_enables[k],
-                                          uri=uri)
-                        for k in range(num_writers)]
+        self.writers = [
+            WriteImageProcess(input_buffers=self.raw_image_buffers, input_queue=self.acquire_image_output_queue,
+                              output_queue=self.acquire_image_input_queue, info_buffer=self.info_buffer,
+                              dimensions=dimensions, status=self.disk_statuses[k], output_dir=output_dir,
+                              available_disks=[disks_to_use[k]], write_enable=self.disk_write_enables[k])
+            for k in range(num_writers)]
 
         self.acquire_images = AcquireImagesProcess(raw_image_buffers=self.raw_image_buffers,
                                                    acquire_image_output_queue=self.acquire_image_output_queue,

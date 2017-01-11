@@ -6,7 +6,7 @@ from Queue import Empty as EmptyException
 
 logger = logging.getLogger(__name__)
 
-import Pyro4
+
 import numpy as np
 
 from pmc_camera.image_processing.blosc_file import write_image_blosc
@@ -28,15 +28,13 @@ index_keys = ['file_index',
               'filename']
 index_file_header = ",".join(index_keys) + '\n'
 
-Pyro4.config.SERVERTYPE = 'multiplex'
-Pyro4.config.SERIALIZERS_ACCEPTED = {'pickle','json'}
-Pyro4.config.SERIALIZER = 'pickle'
+DISK_MIN_BYTES_AVAILABLE = 100*1024*1024 # 100 MiB
 
 
 
 class WriteImageProcess(object):
-    def __init__(self,input_buffers, input_queue, output_queue, info_buffer, dimensions, status, output_dir,
-                 available_disks, write_enable, uri):
+    def __init__(self, input_buffers, input_queue, output_queue, info_buffer, dimensions, status, output_dir,
+                 available_disks, write_enable):
         self.data_buffers = input_buffers
         self.input_queue = input_queue
         self.output_queue = output_queue
@@ -53,7 +51,6 @@ class WriteImageProcess(object):
         self.available_disks = disks_with_free_space
         self.dimensions=dimensions
         self.write_enable = write_enable
-        self.uri = uri
         self.output_dirs = [os.path.join(rpath,output_dir) for rpath in self.available_disks]
         for dname in self.output_dirs:
             try:
@@ -68,13 +65,11 @@ class WriteImageProcess(object):
             self.status.value = "no disk space"
             self.write_enable.value = False
         self.child = mp.Process(target=self.run)
-        #self.child.start()
 
     def run(self):
         if not self.available_disks:
             logger.warning("No disk space available on any of %s, exiting" % (' '.join(self.original_disks)))
             return
-        process_me = -1
         frame_indexes = dict([(dirname,0) for dirname in self.output_dirs])
         for dirname in self.output_dirs:
             with open(os.path.join(dirname,index_file_name),'w') as fh:
@@ -133,7 +128,7 @@ class WriteImageProcess(object):
                         write_image_blosc(fname, image_buffer)
 #                        self.status.value = "writing %d metadata" % process_me
                         with open(os.path.join(dirname,index_file_name),'a') as fh:
-#                            self.status.value = "index file opened"
+                            #  self.status.value = "index file opened"
                             fh.write('%d,%f,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%s\n' %
                                      (frame_indexes[dirname],
                                       time.time(),
@@ -159,4 +154,3 @@ class WriteImageProcess(object):
         return None
 
 
-DISK_MIN_BYTES_AVAILABLE = 100*1024*1024 # 100 MiB
