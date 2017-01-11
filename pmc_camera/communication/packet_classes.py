@@ -201,7 +201,7 @@ class HiratePacket(object):
             payload = self.payload[:10]
         except Exception:
             pass
-        return 'File_id: %d \n File type: %d \n Packet Number %d of %d \n First 10 bytes: %r' % (
+        return 'File_id: %r \n Packet Number %r of %r \n First 10 bytes: %r' % (
             self.file_id, self.packet_number, self.total_packet_number, payload)
 
     def from_buffer(self, buffer):

@@ -8,12 +8,12 @@ if __name__=="__main__":
     pc = pmc_camera.PyCamera()
 
 
-    output_dir = '/data4/2016-10-12_135mm_focus_test_100_ms_dusk_no_sim_sky'
+    output_dir = '/data1/2016-11-18_135mm_focus_test_100_ms_night_window_closed'
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
 #    start_at = time.mktime((2016,8,8,4,0,0,0,0,1))
-    #start_at = time.time()
-    start_at = time.mktime((2016,10,13,05,00,0,0,0,1))
+    start_at = time.time()
+    #start_at = time.mktime((2016,10,13,05,00,0,0,0,1))
     print ""
     while time.time() < start_at:
         print ("\rWaiting to start at %s, in %.2f hours" % (time.ctime(start_at),((start_at-time.time())/3600.))),
@@ -28,7 +28,8 @@ if __name__=="__main__":
         # For 50 mm
         #pc.set_focus(2025)
         # For 135 mm
-        for focus_step in range(1975, 2011):
+        #for focus_step in range(1975, 2011):
+        for focus_step in range(2035, 2060):
             pc.set_focus(focus_step)
 #            print focus_step,
             sys.stdout.flush()

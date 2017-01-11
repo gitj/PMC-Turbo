@@ -122,12 +122,9 @@ class GSEReceiver():
         data_buffer = ''
         for packet in packets:
             data_buffer += packet.payload
-        # if file_type == 1:
-        jpeg_file_class = file_format_classes.OldJPEGFile(buffer=data_buffer)
-        jpeg_file_class.write(filename)
-        # else:
-        #    with open(filename, 'wb') as f:
-        #        f.write(data_buffer)
+
+        file_class = file_format_classes.decode_file_from_buffer(data_buffer)
+        file_class.write_buffer_to_file(filename + '_buffer')
 
     def log_lowrate_status(self, packet):
         # Problem: currently communicator aggregates lots of statuses to send down, then sends all... think about this

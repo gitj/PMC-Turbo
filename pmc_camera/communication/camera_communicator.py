@@ -1,7 +1,7 @@
 from __future__ import division
 import time
 import Queue
-import Pyro4, Pyro4.socketutil, Pyro4.errors
+import Pyro4, Pyro4.socketutil, Pyro4.errors, Pyro4.util
 import select
 import struct
 import threading
@@ -86,7 +86,7 @@ class Communicator():
         self.hirate_downlink = downlink_classes.HirateDownlink(hirate_downlink_ip, hirate_downlink_port, downlink_speed)
         self.downlinks = [self.hirate_downlink]  # Eventually this will also include Openport downlink
         self.file_id = 0
-        #self.peer_aggregator = aggregator.PeerAggregator()
+        # self.peer_aggregator = aggregator.PeerAggregator()
 
     ### Loops to continually be run
 
@@ -118,7 +118,7 @@ class Communicator():
                                      focus_step, aperture_stop, exposure_ms)
         self.buffer_for_downlink = camera0_status + self.buffer_for_downlink[
                                                     struct.calcsize('>1B1L1L1H1H1L'):]  # just overwrite old status
-        #self.buffer_for_downlink = self.peer_aggregator.aggregate_peer_status(self.peers)
+        # self.buffer_for_downlink = self.peer_aggregator.aggregate_peer_status(self.peers)
 
     def send_data_on_downlinks(self):
         if not self.peers:
@@ -126,6 +126,7 @@ class Communicator():
                 'Communicator has no peers. This should never happen; leader at minimum has self as peer.')
         for link in self.downlinks:
             if link.has_bandwidth():
+                logger.debug('Getting next data from camera %d' % self.peer_polling_order[self.peer_polling_order_idx])
                 next_data = self.peers[self.peer_polling_order[self.peer_polling_order_idx]].get_next_data()
                 self.peer_polling_order_idx = (self.peer_polling_order_idx + 1) % len(self.peer_polling_order)
                 link.put_data_into_queue(next_data, self.file_id)
@@ -134,18 +135,10 @@ class Communicator():
                 link.send_data()
 
     def get_next_data(self):
-        logger.debug('Getting next data')
-        # replace withl return self.image_server.get_next_data_for_downlink(), which will just be the buffer after
-        # file_format definition.
-        buffer, fileinfo = self.controller.get_latest_jpeg()
-        frame_status = fileinfo['frame_status']
-        frame_id = fileinfo['frame_id']
-        focus_step = fileinfo['focus_step']
-        aperture_stop = fileinfo['aperture_stop']
-        exposure_ms = int(fileinfo['exposure_us'] / 1000)
-        buffer = struct.pack('>1L1L1H1H1L', frame_status, frame_id, focus_step, aperture_stop,
-                             exposure_ms) + buffer
-        return buffer
+        try:
+            return self.controller.get_next_data_for_downlink()
+        except Exception:
+            raise Exception("".join(Pyro4.util.getPyroTraceback()))
 
     def set_peer_polling_order(self, new_peer_polling_order):
         self.peer_polling_order = new_peer_polling_order
