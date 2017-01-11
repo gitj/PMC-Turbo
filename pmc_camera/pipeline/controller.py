@@ -18,6 +18,8 @@ logger = logging.getLogger(__name__)
 Pyro4.config.SERIALIZER = 'pickle'
 Pyro4.config.SERIALIZERS_ACCEPTED = ['pickle', ]
 
+DEFAULT_REQUEST_ID = 2**32-1
+
 
 class ImageParameters(object):
     pass
@@ -101,11 +103,13 @@ class Controller(object):
             all_dirs.extend(image_dirs)
         all_dirs = list(set(all_dirs))  # get just the unique names
         all_dirs.sort()
+        logger.debug("Found these dirs: %r" % all_dirs)
         latest = all_dirs[-1]
+        logger.debug("latest: %r" % latest)
         if latest != self.latest_image_subdir:
             logger.info("Found new image directory %s" % latest)
             self.latest_image_subdir = latest
-            self.merged_index = MergedIndex(self.latest_image_subdir)
+            self.merged_index = MergedIndex(self.latest_image_subdir,data_dirs=self.data_dirs)
 
     def get_latest_fileinfo(self):
         if self.merged_index is None:
@@ -117,15 +121,15 @@ class Controller(object):
 
     def get_latest_standard_image(self):
         params = self.standard_image_parameters.copy()
-        format = params.pop('format',None)  # not used yet
-        jpg, params = self.get_latest_jpeg(**params)
-        params['format'] = format
-        return jpg, params
+        file_obj = self.get_latest_jpeg(**params)
+        return file_obj
 
-    def get_latest_jpeg(self, row_offset=0, column_offset=0, num_rows=3232, num_columns=4864, scale_by=1 / 8., **kwargs):
+    def get_latest_jpeg(self, request_id, row_offset=0, column_offset=0, num_rows=3232, num_columns=4864, scale_by=1 /
+                                                                                                                 8., **kwargs):
         info = self.get_latest_fileinfo()
-        return self.get_image_by_info(info, row_offset=row_offset, column_offset=column_offset, num_rows=num_rows, num_columns=num_columns, scale_by=scale_by,
-                                     format='jpeg', **kwargs)
+        return self.get_image_by_info(info, request_id=request_id, row_offset=row_offset, column_offset=column_offset,
+                                      num_rows=num_rows, num_columns=num_columns, scale_by=scale_by,
+                                      **kwargs)
 
     def set_standard_image_paramters(self, row_offset=0, column_offset=0, num_rows=3232, num_columns=4864, scale_by=1 / 8., quality=75,
                                      format='jpeg'):
@@ -133,9 +137,21 @@ class Controller(object):
                                               num_rows=num_rows, num_columns=num_columns,
                                               scale_by=scale_by,
                                               quality=quality,
-                                              format=format)
+                                              format=format, request_id=DEFAULT_REQUEST_ID)
 
     def request_image_by_index(self,index,**kwargs):
+        """
+
+        Parameters
+        ----------
+        index
+
+        Required kwargs
+        ---------------
+        request_id
+
+        """
+        self.merged_index.update()
         index_row_data =dict(self.merged_index.df.iloc[index])
         self.sequence_data.append(self.get_image_by_info(index_row_data,**kwargs).to_buffer())
 
@@ -164,6 +180,8 @@ class Controller(object):
         image = image[row_offset:row_offset + num_rows + 1, column_offset:column_offset + num_columns + 1]
         params = dict()
         for key in index_keys:
+            if key =='filename':
+                continue
             params[key] = index_row_data[key]
         params['camera_id'] = self.camera_id
         params['request_id'] = request_id
@@ -172,6 +190,7 @@ class Controller(object):
         params['num_rows'] = num_rows
         params['num_columns'] = num_columns
         params['scale_by'] = scale_by
+        params['quality'] = quality
         if format == 'jpeg':
             payload = simple_jpeg(image, scale_by=scale_by, quality=quality)
             file_obj = file_format_classes.JPEGFile(payload=payload,**params)
@@ -203,7 +222,7 @@ class Controller(object):
             result = self.sequence_data[0]
             self.sequence_data = self.sequence_data[1:]
         else:
-            result = self.get_latest_standard_image()
+            result = self.get_latest_standard_image().to_buffer()
         return result
 
 

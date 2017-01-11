@@ -95,16 +95,12 @@ class BasicPipeline:
         # in general, make sure to instantiate the Acquire process last; that way no data starts flowing through the
         # system until all threads have started running.
         output_dir = time.strftime("%Y-%m-%d_%H%M%S")
-        self.writers = [WriteImageProcess(input_buffers=self.raw_image_buffers,
-                                          input_queue=self.acquire_image_output_queue,
-                                          output_queue = self.acquire_image_input_queue,
-                                          info_buffer=self.info_buffer, dimensions=dimensions,
-                                          status = self.disk_statuses[k],
-                                          output_dir=output_dir,
-                                          available_disks=[disks_to_use[k]],
-                                          write_enable=self.disk_write_enables[k],
-                                          uri=uri)
-                        for k in range(num_writers)]
+        self.writers = [
+            WriteImageProcess(input_buffers=self.raw_image_buffers, input_queue=self.acquire_image_output_queue,
+                              output_queue=self.acquire_image_input_queue, info_buffer=self.info_buffer,
+                              dimensions=dimensions, status=self.disk_statuses[k], output_dir=output_dir,
+                              available_disks=[disks_to_use[k]], write_enable=self.disk_write_enables[k])
+            for k in range(num_writers)]
 
         self.acquire_images = AcquireImagesProcess(raw_image_buffers=self.raw_image_buffers,
                                                    acquire_image_output_queue=self.acquire_image_output_queue,
@@ -190,12 +186,13 @@ class BasicPipeline:
         for k in range(8):
             self.acquire_image_output_queue.put(None)
         self.acquire_images.child.join(timeout=1)
-        print "acquire process status:",self.acquire_status.value
+        logger.debug("acquire process status at exit: %s" % self.acquire_status.value)
         #self.write_images.child.join()
         for k,writer in enumerate(self.writers):
             writer.child.join(timeout=1)
-            print "writer status:",self.disk_statuses[k].value
+            logger.debug("writer process status at exit: %s" % self.disk_statuses[k].value)
             writer.child.terminate()
+        self.acquire_images.child.terminate()
         self.daemon.shutdown()
     def exit(self,signum,frame):
         print "exiting with signum",signum,frame
