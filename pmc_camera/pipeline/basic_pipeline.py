@@ -192,6 +192,7 @@ class BasicPipeline:
             writer.child.join(timeout=1)
             logger.debug("writer process status at exit: %s" % self.disk_statuses[k].value)
             writer.child.terminate()
+        self.acquire_images.child.terminate()
         self.daemon.shutdown()
     def exit(self,signum,frame):
         print "exiting with signum",signum,frame

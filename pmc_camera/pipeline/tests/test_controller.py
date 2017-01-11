@@ -3,12 +3,14 @@ import shutil
 import tempfile
 import threading
 import time
+import subprocess
+import inspect
 import numpy as np
 
 import pmc_camera.pipeline.indexer
 from pmc_camera.pipeline import controller
 from pmc_camera.pipeline import basic_pipeline
-from pmc_camera.communication.file_format_classes import decode_file_from_buffer, GeneralFile
+from pmc_camera.communication.file_format_classes import decode_file_from_buffer, GeneralFile, JPEGFile
 
 test_data_path = os.path.join(os.path.split(os.path.abspath(__file__))[0],'test_data')
 test_pipeline_port = 47563
@@ -17,6 +19,7 @@ class TestMultiIndex(object):
     def setup(self):
         self.top_dir = tempfile.mkdtemp('server_test')
         self.data_dirs = [os.path.join(self.top_dir,'data%d' %k) for k in range(1,5)]
+        #print self.data_dirs
         for data_dir in self.data_dirs:
             os.mkdir(data_dir)
         self.all_subdirs = ['lost+found','2016-10-25_195422',
@@ -68,10 +71,43 @@ class TestMultiIndex(object):
         bpl.close()
         
     def test_controller_get_image(self):
-        subdir1 = os.path.join(self.data_dirs[0],self.subdir)
+        bpl = basic_pipeline.BasicPipeline(disks_to_use=self.data_dirs,use_simulated_camera=True,
+                                           default_write_enable=1,pipeline_port=test_pipeline_port)
+        thread = threading.Thread(target=bpl.run_pyro_loop)
+        thread.daemon=True
+        thread.start()
+        time.sleep(1)
+#        for dd in self.data_dirs:
+#            print subprocess.check_output(("ls -Rhl %s" % dd),shell=True)
+        sis = controller.Controller(pipeline=bpl, data_dirs=self.data_dirs)
+        if sis.merged_index.df is None:
+            bpl.close()
+            raise Exception("No index!!!")
+        result = sis.get_next_data_for_downlink()
+        result = decode_file_from_buffer(result)
+        assert result.file_type == JPEGFile.file_type
+        assert result.request_id == controller.DEFAULT_REQUEST_ID
+        time.sleep(1)
+        sis.request_image_by_index(2,request_id=128)
+        result = sis.get_next_data_for_downlink()
+        result = decode_file_from_buffer(result)
+        assert result.request_id == 128
 
-        
-        
+        sis.request_image_by_index(2,request_id=129)
+        result2 = sis.get_next_data_for_downlink()
+        result2 = decode_file_from_buffer(result2)
+        for attr in dir(result):
+            if attr[:2]=='__' or inspect.ismethod(getattr(result,attr)):
+                continue
+            if attr == 'request_id':
+                assert result.request_id==128
+                assert result2.request_id==129
+            elif getattr(result,attr) != getattr(result2,attr):
+                print attr, getattr(result,attr), getattr(result2,attr)
+                assert False
+
+        bpl.close()
+        time.sleep(1)
 
     def test_full_file_access(self):
         
