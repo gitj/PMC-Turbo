@@ -7,7 +7,7 @@ import struct
 import threading
 import logging
 import numpy as np
-from pmc_camera.communication import downlink_classes, uplink_classes, aggregator
+from pmc_camera.communication import downlink_classes, uplink_classes  # aggregator
 
 from pmc_camera.communication import constants
 
