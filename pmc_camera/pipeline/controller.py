@@ -115,7 +115,11 @@ class Controller(object):
         if self.merged_index is None:
             self.update_current_image_dirs()
         if self.merged_index is not None:
-            return self.merged_index.get_latest()
+            result = self.merged_index.get_latest()
+            if result is None:
+                raise RuntimeError("No candidates for latest file!")
+            else:
+                return result
         else:
             raise RuntimeError("No candidates for latest file!")
 

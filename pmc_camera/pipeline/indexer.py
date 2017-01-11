@@ -1,6 +1,9 @@
 import os
 
 import pandas as pd
+import logging
+
+logger = logging.getLogger(__name__)
 
 DEFAULT_DATA_DIRS = ['/data1', '/data2', '/data3', '/data4']
 INDEX_FILENAME = 'index.csv'
@@ -19,6 +22,7 @@ class MergedIndex(object):
         for watcher in self.watchers:
             fragment = watcher.get_fragment()
             if fragment is not None and fragment.shape[0] > 0:
+                logger.debug("Found %d new rows" % fragment.shape[0])
                 new_rows = True
                 if self.df is None:
                     self.df = fragment
@@ -26,6 +30,13 @@ class MergedIndex(object):
                     self.df = pd.concat((self.df, fragment), ignore_index=True)
         if new_rows:
             self.df.sort_values('frame_timestamp_ns', inplace=True)
+            logger.debug("index updated with new rows, %d total rows" % self.df.shape[0])
+        else:
+            if self.df is None:
+                msg = "index is empty"
+            else:
+                msg = "%d total rows" % self.df.shape[0]
+            logger.debug("index updated, no new rows, "+ msg)
 
     def get_latest(self, update=True):
         if update:
