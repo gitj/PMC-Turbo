@@ -55,6 +55,7 @@ class Communicator():
         self.pyro_daemon = None
         self.pyro_thread = None
         self.leader_thread = None
+        self.lowrate_uplink = None
         self.buffer_for_downlink = struct.pack('>255B', *([0] * 255))
         # We will instantiate these later
 
@@ -62,14 +63,23 @@ class Communicator():
         self.start_pyro_thread()
 
     def __del__(self):
+        self.close()
+
+    def close(self):
         self.end_loop = True
         time.sleep(0.01)
         if self.pyro_thread and self.pyro_thread.is_alive():
             self.pyro_thread.join(timeout=0)
         if self.leader_thread and self.leader_thread.is_alive():
             self.leader_thread.join(timeout=0)
-        if self.pyro_daemon:
+        try:
             self.pyro_daemon.shutdown()
+        except Exception:
+            pass
+        try:
+            self.lowrate_uplink.uplink_socket.close()
+        except Exception:
+            pass
         logger.debug('Communicator deleted')
 
     def setup_pyro(self):
