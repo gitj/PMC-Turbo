@@ -43,7 +43,12 @@ class PacketValidityError(PacketError):
 
 
 class GSEPacket(object):
-    _header_format_string = '>4B1H'
+    _metadata_table = [('1B', 'start_byte'),
+                       ('1B', 'sync2_byte'),
+                       ('1B', 'origin_byte'),
+                       ('1B', 'unused_zero'),
+                       ('1H', 'payload_length')]
+    _header_format_string = '>' + ''.join([format for format, name in _metadata_table])
     _valid_start_byte = 0xFA
     _valid_sync2_bytes = [0xFA, 0xFB, 0xFC, 0xFD, 0xFF]
     header_length = struct.calcsize(_header_format_string)
@@ -148,7 +153,12 @@ class GSEPacket(object):
 
 
 class HiratePacket(object):
-    _header_format_string = '>1B1L2B1H'
+    _metadata_table = [('1B', 'start_byte'),
+                       ('1L', 'file_id'),
+                       ('1B', 'packet_number'),
+                       ('1B', 'total_packet_number'),
+                       ('1H', 'payload_length')]
+    _header_format_string = '>' + ''.join([format for format, name in _metadata_table])
     _valid_start_byte = 0xFA
     header_length = struct.calcsize(_header_format_string)
     _max_payload_size = 1500
