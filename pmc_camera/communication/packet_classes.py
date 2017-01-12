@@ -126,13 +126,14 @@ class GSEPacket(object):
             If true, assume the buffer contains exactly one packet.
             If false, use the length field of the packet to decide how much of the buffer to interpret.
         """
-        if buffer[0] != chr(self._valid_start_byte):
-            raise PacketValidityError("First byte is not valid start byte. First byte is %r" % buffer[0])
+
         if len(buffer) < self._minimum_buffer_length:
             raise PacketLengthError("Buffer of length %d is too short to contain a packet (minimum length is %d)" %
                                     (len(buffer), self._minimum_buffer_length))
         self.start_byte, self.sync2_byte, self.origin, _, self.payload_length = struct.unpack(
             self._header_format_string, buffer[:self.header_length])
+        if self.start_byte != self._valid_start_byte:
+            raise PacketValidityError("First byte is not valid start byte. First byte is %r" % buffer[0])
         if greedy:
             checksum_index = -1
         else:
@@ -149,9 +150,7 @@ class GSEPacket(object):
         self.payload = payload
         self.checksum = checksum
         if self.sync2_byte not in self._valid_sync2_bytes:
-            self.is_valid = False
-        else:
-            self.is_valid = True
+            raise PacketValidityError('Sync2_byte not in valid_sync2_bytes. Sync2 byte is %r' % self.sync2_byte)
 
     def to_buffer(self):
         """
