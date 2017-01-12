@@ -1,6 +1,7 @@
+from nose.tools import assert_raises
 from pmc_camera.communication import packet_classes
 
-def test_gse_packet_roundtrip():
+def test_gse_short_packet_roundtrip():
     packet = packet_classes.GSEPacket(sync2_byte=0xFA,origin=1,payload='hi there!')
     packet2 = packet_classes.GSEPacket(buffer=packet.to_buffer())
     assert packet.sync2_byte == packet2.sync2_byte
@@ -8,6 +9,25 @@ def test_gse_packet_roundtrip():
     assert packet.payload_length == packet2.payload_length
     assert packet.checksum == packet2.checksum
     assert packet.payload == packet2.payload
+
+def test_gse_long_packet_roundtrip():
+    packet = packet_classes.GSEPacket(sync2_byte=0xFA,origin=1,payload='hi there!'*300)
+    packet2 = packet_classes.GSEPacket(buffer=packet.to_buffer())
+    assert packet.sync2_byte == packet2.sync2_byte
+    assert packet.origin == packet2.origin
+    assert packet.payload_length == packet2.payload_length
+    assert packet.checksum == packet2.checksum
+    assert packet.payload == packet2.payload
+
+def test_invalid_gse_packet_params():
+    # bad sync2 byte
+    with assert_raises(ValueError):
+        packet = packet_classes.GSEPacket(sync2_byte=12,origin=1,payload='hi there')
+
+    #bad origin byte
+    with assert_raises(ValueError):
+        packet = packet_classes.GSEPacket(sync2_byte=0xFA,origin=1023,payload='hi there')
+
 
 def test_hirate_packet_roundtrip():
     packet = packet_classes.HiratePacket(file_id=99,packet_number=1,total_packet_number=10,
