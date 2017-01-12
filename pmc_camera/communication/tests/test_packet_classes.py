@@ -28,13 +28,17 @@ def test_invalid_gse_packet_params():
     with assert_raises(ValueError):
         packet = packet_classes.GSEPacket(sync2_byte=0xFA,origin=1023,payload='hi there')
 
+def test_insufficient_init_args():
+    with assert_raises(ValueError):
+        messed_up_packet = packet_classes.GSEPacket(payload='hi there!')
+
 def test_gse_repr_doesnt_fail():
-    messed_up_packet = packet_classes.GSEPacket(payload='hi there!')
+    messed_up_packet = packet_classes.GSEPacket(sync2_byte=0xFA,origin=1,payload='hi there!')
     messed_up_packet.sync2_byte = None
     messed_up_packet.origin = None
     messed_up_packet.__repr__()
 
-    messed_up_packet = packet_classes.GSEPacket(payload='hi there!')
+    messed_up_packet = packet_classes.GSEPacket(sync2_byte=0xFA,origin=1,payload='hi there!')
     messed_up_packet.payload = None
     messed_up_packet.sync2_byte = None
     messed_up_packet.origin = None

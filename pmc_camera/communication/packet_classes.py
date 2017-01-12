@@ -1,4 +1,6 @@
 import struct
+from multiprocessing import Value
+
 import numpy as np
 from PyCRC.CRCCCITT import CRCCCITT
 import logging
@@ -87,19 +89,30 @@ class GSEPacket(object):
         if buffer is not None:
             self.from_buffer(buffer, greedy=greedy)
         else:
+            if (sync2_byte is None) or (origin is None) or (payload is None):
+                raise ValueError('All parameters must be specified'
+                                 '\n Sync2_byte was %r, Origin was %r, Payload was %r' % (sync2_byte, origin, payload))
+            if sync2_byte not in self._valid_sync2_bytes:
+                raise ValueError('sync2_byte not in valid_sync2_bytes \n Sync2 byte is %r' % sync2_byte)
+            if origin >= 16:
+                raise ValueError('origin not valid \n Origin is %r' % origin)
             self.sync2_byte = sync2_byte
             self.origin = origin
             self.payload = payload
             self.payload_length = len(payload)
-            self.checksum = (get_checksum(payload) + self.origin + self.payload_length) % 256
-            # This could be clearer, but I don't want to convert origin and payload_length to string.
+            origin_payload_length_string = struct.pack('>1B1H', self.origin, self.payload_length)
+            # Checksum includes origin and payload length; need to put these into the the byte string for calculation.
+            self.checksum = get_checksum(payload + origin_payload_length_string)
             self.start_byte = self._valid_start_byte
 
     def __repr__(self):
-        return 'Sync2: 0x%02x \n Origin: %d \n Payload Length %d \n First 10 bytes: %r' % (self.sync2_byte,
-                                                                                           self.origin,
-                                                                                           self.payload_length,
-                                                                                           self.payload[:10])
+        try:
+            return 'Sync2: 0x%02x \n Origin: %d \n Payload Length %d \n First 10 bytes: %r' % (self.sync2_byte,
+                                                                                               self.origin,
+                                                                                               self.payload_length,
+                                                                                               self.payload[:10])
+        except Exception:
+            return '[Invalid Packet]'
 
     def from_buffer(self, buffer, greedy=True):
         """
@@ -113,6 +126,8 @@ class GSEPacket(object):
             If true, assume the buffer contains exactly one packet.
             If false, use the length field of the packet to decide how much of the buffer to interpret.
         """
+        if buffer[0] != chr(self._valid_start_byte):
+            raise PacketValidityError("First byte is not valid start byte. First byte is %r" % buffer[0])
         if len(buffer) < self._minimum_buffer_length:
             raise PacketLengthError("Buffer of length %d is too short to contain a packet (minimum length is %d)" %
                                     (len(buffer), self._minimum_buffer_length))
@@ -199,8 +214,15 @@ class HiratePacket(object):
             self.file_id = file_id
             self.packet_number = packet_number
             self.total_packet_number = total_packet_number
+            if self.packet_number >= self.total_packet_number:
+                raise ValueError('Packet number is greater or equal to total packet number.\n'
+                                 'Packet number is %r. Total packet number is %r'
+                                 % (self.packet_number, self.total_packet_number))
             self.payload = payload
             self.payload_length = len(payload)
+            if self.payload_length > self._max_payload_size:
+                raise ValueError('Payload length is greater than max_payload_size. \n Length is %r'
+                                 % self.payload_length)
             self.payload_crc = get_crc(payload)
             self.start_byte = self._valid_start_byte
         logger.debug('Hirate packet created.')
