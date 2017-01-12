@@ -85,7 +85,7 @@ class Communicator():
         self.lowrate_downlink = downlink_classes.LowrateDownlink(lowrate_downlink_ip, lowrate_downlink_port)
         self.hirate_downlink = downlink_classes.HirateDownlink(hirate_downlink_ip, hirate_downlink_port, downlink_speed)
         self.downlinks = [self.hirate_downlink]  # Eventually this will also include Openport downlink
-        self.file_id = 0
+        self.file_id = 254
         # self.peer_aggregator = aggregator.PeerAggregator()
 
     ### Loops to continually be run

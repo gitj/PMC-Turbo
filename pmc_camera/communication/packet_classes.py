@@ -148,7 +148,7 @@ class GSEPacket(object):
 
 
 class HiratePacket(object):
-    _header_format_string = '>4B1H'
+    _header_format_string = '>1B1L2B1H'
     _valid_start_byte = 0xFA
     header_length = struct.calcsize(_header_format_string)
     _max_payload_size = 1500
