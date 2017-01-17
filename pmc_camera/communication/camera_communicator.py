@@ -62,9 +62,6 @@ class Communicator():
         self.setup_pyro()
         self.start_pyro_thread()
 
-    def __del__(self):
-        self.close()
-
     def close(self):
         self.end_loop = True
         time.sleep(0.01)
