@@ -1,15 +1,10 @@
 import logging
 import struct
-import numpy as np
+
+from pmc_camera.utils.comparisons import equal_or_close
+
 logger = logging.getLogger(__name__)
 
-def equal_or_close(value1,value2):
-    if type(value1) is float:
-        return np.allclose(value1,value2)
-#    if type(value1) is str:
-#        return value1 == value2[:value2.find('\x00')]
-    else:
-        return value1 == value2
 
 class FileBase(object):
     _metadata_table = [('1I','request_id'),
@@ -46,7 +41,7 @@ class FileBase(object):
             if key in self._metadata_name_to_format:
                 format_ = self._metadata_name_to_format[key]
                 formatted_value, = struct.unpack('>'+format_,struct.pack('>'+format_,value))
-                if not equal_or_close(value,formatted_value):
+                if not equal_or_close(value, formatted_value):
                     logger.critical("Formatting parameter %s as '%s' results in loss of information!\nOriginal value "
                                     "%r   Formatted value %r" % (key,format_,value,formatted_value))
                 setattr(self,key,value)

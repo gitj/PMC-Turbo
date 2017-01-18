@@ -4,6 +4,8 @@ import os
 import copy
 import shutil
 import inspect
+
+import pmc_camera.utils.comparisons
 from pmc_camera.communication import file_format_classes
 
 def test_unique_file_types():
@@ -56,7 +58,7 @@ def check_same_attributes(c1,c2=None):
     for attr in public_attributes:
         if inspect.ismethod(getattr(c1,attr)):
             continue
-        assert file_format_classes.equal_or_close(getattr(c1,attr),getattr(c2,attr))
+        assert pmc_camera.utils.comparisons.equal_or_close(getattr(c1, attr), getattr(c2, attr))
 
 def test_to_buffer_idempotent():
     general_file = file_format_classes.GeneralFile(payload='blah',filename='hello.txt',timestamp=123.1,camera_id=2, request_id=535)
