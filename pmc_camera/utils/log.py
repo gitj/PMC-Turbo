@@ -1,7 +1,7 @@
 import os
 import time
 import logging
-
+import subprocess
 LOG_DIR = '/home/pmc/logs'
 
 long_message_format = '%(levelname)-8.8s %(asctime)s - %(name)s.%(funcName)s:%(lineno)d  %(message)s'
@@ -57,3 +57,30 @@ def file_handler(name='', level=logging.DEBUG):
     fh.setFormatter(long_formatter)
     fh.setLevel(level)
     return fh
+
+def git_log():
+    code_directory = os.path.dirname(os.path.abspath(__file__))
+    try:
+        return subprocess.check_output(("cd {}; git log -1".format(code_directory)), shell=True)
+    except Exception as e:
+        return str(e)
+
+
+def git_status():
+    code_directory = os.path.dirname(os.path.abspath(__file__))
+    try:
+        return subprocess.check_output(("cd {}; git status --porcelain".format(code_directory)), shell=True)
+    except Exception as e:
+        return str(e)
+
+def git_hash(short=True):
+    if short:
+        short_param = '--short'
+    else:
+        short_param = ''
+    code_directory = os.path.dirname(os.path.abspath(__file__))
+    try:
+        return subprocess.check_output(("cd {}; git rev-parse {} HEAD".format(code_directory,short_param)),
+                                       shell=True).strip()
+    except Exception as e:
+        return str(e)
