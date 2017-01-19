@@ -57,6 +57,11 @@ class Controller(object):
         return tag
 
     @require_pipeline
+    def set_exposure(self,exposure_time_us):
+        tag = self.pipeline.send_camera_command("ExposureTimeAbs",str(exposure_time_us))
+        return tag
+
+    @require_pipeline
     def run_focus_sweep(self,request_params,start=1950,stop=2150,step=10):
         focus_steps = range(start,stop,step)
         tags = [self.set_focus(focus_step) for focus_step in focus_steps]

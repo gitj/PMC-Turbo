@@ -287,3 +287,70 @@ class HiratePacket(object):
         header = struct.pack(self._header_format_string, self.start_byte, self.file_id,
                              self.packet_number, self.total_packet_number, self.payload_length)
         return header + self.payload + struct.pack('>1H', self.payload_crc)
+
+class CommandPacket(object):
+    _header_format_table = [('1B','start_byte'),
+                            ('1B','identifier'),
+                            ('1B','length'),
+                            ]
+    _header_format_string = '>' + ''.join([format_ for format_, _ in _header_format_table])
+    header_length = struct.calcsize(_header_format_string)
+    
+    _subheader_format_table = [('1H', 'sequence_number'),
+                           ('1B', 'destination')]
+    _subheader_format_string = '>' + ''.join([format_ for format_, _ in _subheader_format_table])
+    subheader_length = struct.calcsize(_subheader_format_string)
+    _footer_format_table = [('1H', 'crc'),
+                            ('1B', 'end_byte')]
+    _crc_length = 2
+    _footer_format_string = '>' + ''.join([format_ for format_, _ in _footer_format_table])
+    footer_length = struct.calcsize(_footer_format_string)
+    _valid_start_byte = 0x10   # LDB 3.1.2.1
+    _valid_end_byte = 0x03
+    _valid_identifier = 0x14  # LDB 3.1.3.6
+    def __init__(self,buffer=None,payload=None,sequence_number=None,destination=None):
+        self._minimum_buffer_length = self.header_length + self.subheader_length + self.footer_length
+        if buffer is not None:
+            if len(buffer) < self._minimum_buffer_length:
+                raise PacketLengthError("Cannot decode %r as CommandPacket because length %d is less than minimum %d"
+                                 % (buffer,len(buffer),self._minimum_buffer_length))
+            self.from_buffer(buffer)
+        else:
+            self.payload = payload
+            self.sequence_number = sequence_number
+            self.destination = destination
+            if self.payload is None:
+                raise ValueError("Payload cannot be None")
+            if self.destination > 255 or self.destination < 0:
+                raise ValueError("Destination must be 0-255, got %d" % self.destination)
+            if self.sequence_number > 2**16-1 or self.sequence_number < 0:
+                raise ValueError("Sequence number must be 0-65535, got %d" % self.sequence_number)
+    def to_buffer(self):
+        enclosure_length = self.subheader_length + len(self.payload) + self._crc_length
+        header = struct.pack(self._header_format_string,self._valid_start_byte,self._valid_identifier,enclosure_length)
+        subheader = struct.pack(self._subheader_format_string,self.sequence_number,self.destination)
+        crc_payload = subheader + self.payload
+        crc = get_crc(crc_payload)
+        footer = struct.pack(self._footer_format_string,crc,self._valid_end_byte)
+        return header + crc_payload + footer
+
+    def from_buffer(self,buffer):
+        start_byte,identifier,length = struct.unpack(self._header_format_string,buffer[:self.header_length])
+        remainder = buffer[self.header_length:]
+        crc_payload = remainder[self.header_length:-self.footer_length]
+        self.seqeunce_number,self.destination = struct.unpack(self._subheader_format_string,remainder[:self.subheader_length])
+        self.payload = remainder[self.subheader_length:-self.footer_length]
+        crc,end_byte = struct.unpack(self._footer_format_string,remainder[-self.footer_length:])
+        if start_byte != self._valid_start_byte:
+            raise PacketValidityError("Got invalid start byte 0x%02X" % start_byte)
+        if identifier != self._valid_identifier:
+            raise PacketValidityError("Got invalid identifier byte 0x%02X" % identifier)
+        if end_byte != self._valid_end_byte:
+            raise PacketValidityError("Got invalid end byte 0x%02X" % end_byte)
+        this_crc = get_crc(crc_payload)
+        if this_crc != crc:
+            raise PacketChecksumError("Bad CRC: got %d, expected %d" % (crc,this_crc))
+        if length != len(crc_payload):
+            raise PacketLengthError("Bad length:, got %d, expected %d" % (length,len(crc_payload)))
+
+

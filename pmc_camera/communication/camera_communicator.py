@@ -1,13 +1,18 @@
 from __future__ import division
 import time
-import Queue
+import traceback
+
 import Pyro4, Pyro4.socketutil, Pyro4.errors, Pyro4.util
 import select
 import struct
 import threading
 import logging
-import numpy as np
+
+import pmc_camera.communication.command_classes
+import pmc_camera.communication.packet_classes
 from pmc_camera.communication import downlink_classes, uplink_classes  # aggregator
+from pmc_camera.communication.command_table import command_dict, decode_commands_from_string, CommandStatus
+from pmc_camera.communication import command_table
 
 from pmc_camera.communication import constants
 
@@ -31,7 +36,7 @@ END_BYTE = chr(constants.SIP_END_BYTE)
 
 @Pyro4.expose
 class Communicator():
-    def __init__(self, cam_id, peers, controller):
+    def __init__(self, cam_id, peers, controller, start_pyro=True):
         self.port = base_port + cam_id
         logger.debug('Communicator initialized')
         self.cam_id = cam_id
@@ -41,26 +46,36 @@ class Communicator():
         self.peer_polling_order = [0]
         self.end_loop = False
 
-        self.science_data_commands = {
-            0x00: self.request_autoexposure,
-            0x01: self.request_autofocus,
-            0x02: self.request_postage_stamp,
-            0x03: self.send_overall_status,
-            0x04: self.send_specific_status,
-            0x05: self.run_python_command,
-            0x06: self.run_linux_command,
-            0x07: self.change_to_preset_acquistion_mode
-        }
-
         self.pyro_daemon = None
         self.pyro_thread = None
         self.leader_thread = None
         self.lowrate_uplink = None
         self.buffer_for_downlink = struct.pack('>255B', *([0] * 255))
-        # We will instantiate these later
 
-        self.setup_pyro()
-        self.start_pyro_thread()
+        self.command_logger = pmc_camera.communication.command_classes.CommandLogger()
+
+        #TODO: Set up proper destination lists, including LIDAR, narrow field, wide field, and all
+        self.destination_lists = dict(enumerate([[peer] for peer in peers]))
+        self.destination_lists[command_table.DESTINATION_ALL_CAMERAS] = peers
+
+        # We will instantiate these later
+        if start_pyro:
+            self.setup_pyro()
+            self.start_pyro_thread()
+
+    def validate_command_table(self):
+        """
+        Ensure that all available commands defined in command_table are actually implemented by the communicator
+
+        Raises
+        -------
+        AttributeError if a command in the table is not implemented
+        """
+        for command in command_dict.values():
+            try:
+                function = getattr(self,command.name)
+            except AttributeError:
+                raise AttributeError("Command %s is not implemented by communicator!" % command.name)
 
     def close(self):
         self.end_loop = True
@@ -147,10 +162,6 @@ class Communicator():
         except Exception:
             raise Exception("".join(Pyro4.util.getPyroTraceback()))
 
-    def set_peer_polling_order(self, new_peer_polling_order):
-        self.peer_polling_order = new_peer_polling_order
-        self.peer_polling_order_idx = 0
-
     def start_pyro_thread(self):
         self.pyro_thread = threading.Thread(target=self.pyro_loop)
         self.pyro_thread.daemon = True
@@ -165,46 +176,62 @@ class Communicator():
             if self.end_loop == True:
                 return
 
-    ### The following two functions respond to SIP requests
 
+
+    ### The following two functions respond to SIP requests
     def respond_to_science_data_request(self):
         logger.debug("Science data request received.")
         self.get_housekeeping()
         self.lowrate_downlink.send(self.buffer_for_downlink)
 
-    def respond_to_science_command(self, msg):
-        logger.debug('%r' % msg)
-        format_string = '<5B%ds' % (len(msg) - 5)
-        length, sequence, verify, which, command, args = struct.unpack(format_string, msg)
-        logger.debug('sequence: %d verify: %d which: %d command: %d' % (sequence, verify, which, command))
-        self.science_data_commands[command](which, sequence, verify, args)
+    def process_science_command_packet(self, msg):
+        try:
+            command_packet = pmc_camera.communication.packet_classes.CommandPacket(buffer=msg)
+        except (pmc_camera.communication.packet_classes.PacketError, ValueError) as e:
+            logger.exception("Failed to decode command packet")
+            return
+        destinations = self.destination_lists[command_packet.destination]
+        for number, destination in enumerate(destinations):
+            try:
+                destination.ping()
+            except Exception as e:
+                details = "Ping failure for destination %d, member %d\n" % (command_packet.destination,number)
+                details += traceback.format_exc()
+                pyro_details = ''.join(Pyro4.util.getPyroTraceback())
+                details = details + pyro_details
+                self.command_logger.add_command_result(command_packet.sequence_number,CommandStatus.failed_to_ping_destination,
+                                                       details)
+                return
 
-    def process_gps_position(self, gps_position_dict):
-        return
+        command_name = "None"
+        number = 0
+        kwargs = {}
+        try:
+            commands = decode_commands_from_string(command_packet.payload)
+            for number,destination in enumerate(destinations):
+                for command_name,kwargs in commands:
+                    function = getattr(destination,command_name)
+                    function(**kwargs)
+        except Exception as e:
+            details = ("Failure while executing command %s at destination %d member %d with arguments %r\n"
+                       % (command_name, command_packet.destination, number, kwargs))
+            details += traceback.format_exc()
+            pyro_details = ''.join(Pyro4.util.getPyroTraceback())
+            details = details + pyro_details
+            self.command_logger.add_command_result(command_packet.sequence_number,CommandStatus.command_error,details)
+            return
+        self.command_logger.add_command_result(command_packet.sequence_number,CommandStatus.command_ok,'')
 
-    def process_gps_time(self, gps_time_dict):
-        return
 
-    def process_mks_pressure_altitude(self, mks_pressure_altitude_dict):
-        return
+    def set_peer_polling_order(self, new_peer_polling_order):
+        self.peer_polling_order = new_peer_polling_order
+        self.peer_polling_order_idx = 0
 
-    def request_autoexposure(self, which, sequence, verify, args):
-        format_string = '<3B%ds' % (len(args) - 3)
-        start, stop, step, padding = struct.unpack(format_string, args)
-        if True:
-            print 'Autofocus command received'
-            print 'which: %d, sequence: %d, verify: %d' % (which, sequence, verify)
-            print 'start: %d, stop: %d, step: %d' % (start, stop, step)
-            # return self.peers[which].run_autoexposure(start, stop, step)
+    def set_focus(self, focus_step):
+        self.controller.set_focus(focus_step)
 
-    def request_autofocus(self, which, sequence, verify, args):
-        format_string = '<3B%ds' % (len(args) - 3)
-        start, stop, step, padding = struct.unpack(format_string, args)
-        if True:
-            logger.debug('Autofocus command received')
-            logger.debug('which: %d, sequence: %d, verify: %d' % (which, sequence, verify))
-            logger.debug('start: %d, stop: %d, step: %d' % (start, stop, step))
-            # return self.peers[which].run_autofocus(start, stop, step)
+    def set_exposure(self, exposure_time_us):
+        self.controller.set_exposure(exposure_time_us)
 
     def request_postage_stamp(self, which, sequence, verify, args):
         compression_factor = args[0]
@@ -220,15 +247,6 @@ class Communicator():
 
     def send_specific_status(self, which, sequence, verify, args):
         return self.peers[which].get_detailed_status()
-
-    def run_python_command(self, which, sequence, verify, args):
-        return
-
-    def run_linux_command(self, which, sequence, verify, args):
-        return
-
-    def change_to_preset_acquistion_mode(self, which, sequence, verify, args):
-        return
 
     ##### SIP socket methods
 
@@ -246,7 +264,7 @@ class Communicator():
         if id_byte == chr(constants.SCIENCE_DATA_REQUEST_BYTE):
             self.respond_to_science_data_request()
         if id_byte == chr(constants.SCIENCE_COMMAND_BYTE):
-            self.respond_to_science_command(packet[2:-1])  ### peer methods
+            self.process_science_command_packet(packet)  ### peer methods
 
     def ping(self):
         return True

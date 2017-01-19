@@ -2,6 +2,9 @@ import unittest
 import socket
 from pmc_camera.communication import camera_communicator
 
+def test_valid_command_table():
+    cc = camera_communicator.Communicator(cam_id=0,peers=[],controller=None,start_pyro=False)
+    cc.validate_command_table()
 
 class FakeLowrateUplink():
     def __init__(self):
