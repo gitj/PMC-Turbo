@@ -87,7 +87,7 @@ class Range():
 
     def __contains__(self, item):
         for range_ in self.ranges:
-            if range_[0] < item <= range_[1]:
+            if range_[0] <= item <= range_[1]:
                 return True
         return False
 
