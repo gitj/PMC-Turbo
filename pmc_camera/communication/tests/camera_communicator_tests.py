@@ -16,19 +16,19 @@ def test_basic_command_path():
     cc1.destination_lists = {0:[cc1],1:[cc2]}
     command = command_table.command_list[0].encode_command(focus_step=1000)
     command_packet = packet_classes.CommandPacket(payload=command,sequence_number=1,destination=1)
-    cc1.process_science_command_packet(command_packet.to_buffer())
+    cc1.execute_packet(command_packet.to_buffer())
 
 
     bad_buffer = command_packet.to_buffer()[:-2] + 'AA'
-    cc1.process_science_command_packet(bad_buffer)
+    cc1.execute_packet(bad_buffer)
 
     bad_crc_buffer = command_packet.to_buffer()[:-2] + 'A\x03'
-    cc1.process_science_command_packet(bad_crc_buffer)
+    cc1.execute_packet(bad_crc_buffer)
 
-    cc1.process_science_command_packet('bad packet')
+    cc1.execute_packet('bad packet')
 
     non_existant_command = '\xfe' + command
-    cc1.process_science_command_packet(packet_classes.CommandPacket(payload=non_existant_command,sequence_number=1,
+    cc1.execute_packet(packet_classes.CommandPacket(payload=non_existant_command,sequence_number=1,
                                                                     destination=1).to_buffer())
 
 
