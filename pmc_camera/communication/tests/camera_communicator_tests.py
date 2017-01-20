@@ -1,10 +1,22 @@
 import unittest
 import socket
 from pmc_camera.communication import camera_communicator
+from pmc_camera.communication import packet_classes,command_table
+from pmc_camera.pipeline import controller
 
 def test_valid_command_table():
     cc = camera_communicator.Communicator(cam_id=0,peers=[],controller=None,start_pyro=False)
     cc.validate_command_table()
+
+def test_basic_command_path():
+    cont = controller.Controller(None)
+    cc1 = camera_communicator.Communicator(cam_id=0,peers=[],controller=cont,start_pyro=False)
+    cc2 = camera_communicator.Communicator(cam_id=1,peers=[],controller=cont,start_pyro=False)
+    cc1.peers = [cc1,cc2]
+    cc1.destination_lists = {0:[cc1],1:[cc2]}
+    command = command_table.command_list[0].encode_command(focus_step=1000)
+    command_packet = packet_classes.CommandPacket(payload=command,sequence_number=1,destination=1)
+    cc1.process_science_command_packet(command_packet.to_buffer())
 
 class FakeLowrateUplink():
     def __init__(self):
