@@ -5,8 +5,9 @@ import tempfile
 
 class StatusDictTest(unittest.TestCase):
     def test_item(self):
-        item = status_dict.StatusItem(name='test_item', value=0, nominal_range=status_dict.Range(0, 1),
-                                      good_range=status_dict.Range(1, 2), warning_range=status_dict.Range(2, 3))
+        item = status_dict.FloatStatusItem(name='test_item', column_name='test_item',
+                                           nominal_range=status_dict.Range(0, 1),
+                                           good_range=status_dict.Range(1, 2), warning_range=status_dict.Range(2, 3))
         item.update_value(0.5)
         assert (item.get_status_summary() == status_dict.NOMINAL)
         item.update_value(1.5)
@@ -21,13 +22,14 @@ class StatusDictTest(unittest.TestCase):
             f.write('data0,data1\n')
             f.write('1,5\n')
 
-        item0 = status_dict.StatusItem(name='data0', value=0, nominal_range=status_dict.Range(0, 1),
-                                       good_range=status_dict.Range(1, 2), warning_range=status_dict.Range(2, 3))
-        item1 = status_dict.StatusItem(name='data1', value=0, nominal_range=status_dict.Range(0, 1),
-                                       good_range=status_dict.Range(1, 2), warning_range=status_dict.Range(2, 3))
+        item0 = status_dict.FloatStatusItem(name='data0', column_name='data0', nominal_range=status_dict.Range(0, 1),
+                                            good_range=status_dict.Range(1, 2), warning_range=status_dict.Range(2, 3))
+        item1 = status_dict.FloatStatusItem(name='data1', column_name='data1', nominal_range=status_dict.Range(0, 1),
+                                            good_range=status_dict.Range(1, 2), warning_range=status_dict.Range(2, 3))
         items = [item0, item1]
         filewatcher = status_dict.StatusFileWatcher(name='test_filewatcher', items=items, filename=tfile.name)
         filewatcher.update()
+
         assert (item0.value == 1)
         assert (item1.value == 5)
         assert filewatcher.get_status_summary() == [('data1', status_dict.CRITICAL)]
@@ -44,17 +46,17 @@ class StatusDictTest(unittest.TestCase):
             f.write('data2,data3\n')
             f.write('5,5\n')
 
-        item0 = status_dict.StatusItem(name='data0', value=0, nominal_range=status_dict.Range(0, 1),
-                                       good_range=status_dict.Range(1, 2), warning_range=status_dict.Range(2, 3))
-        item1 = status_dict.StatusItem(name='data1', value=0, nominal_range=status_dict.Range(0, 1),
-                                       good_range=status_dict.Range(1, 2), warning_range=status_dict.Range(2, 3))
+        item0 = status_dict.FloatStatusItem(name='data0', column_name='data0', nominal_range=status_dict.Range(0, 1),
+                                            good_range=status_dict.Range(1, 2), warning_range=status_dict.Range(2, 3))
+        item1 = status_dict.FloatStatusItem(name='data1', column_name='data1', nominal_range=status_dict.Range(0, 1),
+                                            good_range=status_dict.Range(1, 2), warning_range=status_dict.Range(2, 3))
         items0 = [item0, item1]
         filewatcher0 = status_dict.StatusFileWatcher(name='test_filewatcher0', items=items0, filename=tfile0.name)
 
-        item2 = status_dict.StatusItem(name='data2', value=0, nominal_range=status_dict.Range(0, 1),
-                                       good_range=status_dict.Range(1, 2), warning_range=status_dict.Range(2, 3))
-        item3 = status_dict.StatusItem(name='data3', value=0, nominal_range=status_dict.Range(0, 1),
-                                       good_range=status_dict.Range(1, 2), warning_range=status_dict.Range(2, 3))
+        item2 = status_dict.FloatStatusItem(name='data2', column_name='data2', nominal_range=status_dict.Range(0, 1),
+                                            good_range=status_dict.Range(1, 2), warning_range=status_dict.Range(2, 3))
+        item3 = status_dict.FloatStatusItem(name='data3', column_name='data3', nominal_range=status_dict.Range(0, 1),
+                                            good_range=status_dict.Range(1, 2), warning_range=status_dict.Range(2, 3))
         items1 = [item2, item3]
         filewatcher1 = status_dict.StatusFileWatcher(name='test_filewatcher1', items=items1, filename=tfile1.name)
 
