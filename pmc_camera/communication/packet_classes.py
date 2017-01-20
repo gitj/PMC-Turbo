@@ -337,8 +337,9 @@ class CommandPacket(object):
     def from_buffer(self,buffer):
         start_byte,identifier,length = struct.unpack(self._header_format_string,buffer[:self.header_length])
         remainder = buffer[self.header_length:]
-        crc_payload = remainder[self.header_length:-self.footer_length]
-        self.seqeunce_number,self.destination = struct.unpack(self._subheader_format_string,remainder[:self.subheader_length])
+        crc_payload = buffer[self.header_length:-self.footer_length]
+        self.sequence_number,self.destination = struct.unpack(self._subheader_format_string,remainder[
+                                                                                           :self.subheader_length])
         self.payload = remainder[self.subheader_length:-self.footer_length]
         crc,end_byte = struct.unpack(self._footer_format_string,remainder[-self.footer_length:])
         if start_byte != self._valid_start_byte:
@@ -350,7 +351,7 @@ class CommandPacket(object):
         this_crc = get_crc(crc_payload)
         if this_crc != crc:
             raise PacketChecksumError("Bad CRC: got %d, expected %d" % (crc,this_crc))
-        if length != len(crc_payload):
-            raise PacketLengthError("Bad length:, got %d, expected %d" % (length,len(crc_payload)))
+        if length != len(crc_payload)+2:
+            raise PacketLengthError("Bad length:, got %d, expected %d" % (length,len(crc_payload)+2))
 
 
