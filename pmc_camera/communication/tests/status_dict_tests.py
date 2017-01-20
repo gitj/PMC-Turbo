@@ -8,19 +8,19 @@ class StatusDictTest(unittest.TestCase):
         item = status_dict.FloatStatusItem(name='test_item', column_name='test_item',
                                            nominal_range=status_dict.Range(0, 1),
                                            good_range=status_dict.Range(1, 2), warning_range=status_dict.Range(2, 3))
-        item.update_value(0.5)
+        item.update_value(0.5, 1000)
         assert (item.get_status_summary() == status_dict.NOMINAL)
-        item.update_value(1.5)
+        item.update_value(1.5, 1000)
         assert (item.get_status_summary() == status_dict.GOOD)
-        item.update_value(2.5)
+        item.update_value(2.5, 1000)
         assert (item.get_status_summary() == status_dict.WARNING)
 
     def test_filewatcher(self):
         tfile = tempfile.NamedTemporaryFile()
 
         with open(tfile.name, 'w') as f:
-            f.write('data0,data1\n')
-            f.write('1,5\n')
+            f.write('epoch,data0,data1\n')
+            f.write('1000,1,5\n')
 
         item0 = status_dict.FloatStatusItem(name='data0', column_name='data0', nominal_range=status_dict.Range(0, 1),
                                             good_range=status_dict.Range(1, 2), warning_range=status_dict.Range(2, 3))
@@ -30,6 +30,7 @@ class StatusDictTest(unittest.TestCase):
         filewatcher = status_dict.StatusFileWatcher(name='test_filewatcher', items=items, filename=tfile.name)
         filewatcher.update()
 
+        print item0.value
         assert (item0.value == 1)
         assert (item1.value == 5)
         assert filewatcher.get_status_summary() == [('data1', status_dict.CRITICAL)]
@@ -39,12 +40,12 @@ class StatusDictTest(unittest.TestCase):
         tfile1 = tempfile.NamedTemporaryFile()
 
         with open(tfile0.name, 'w') as f:
-            f.write('data0,data1\n')
-            f.write('1,5\n')
+            f.write('epoch,data0,data1\n')
+            f.write('1000,1,5\n')
 
         with open(tfile1.name, 'w') as f:
-            f.write('data2,data3\n')
-            f.write('5,5\n')
+            f.write('epoch,data2,data3\n')
+            f.write('1000,5,5\n')
 
         item0 = status_dict.FloatStatusItem(name='data0', column_name='data0', nominal_range=status_dict.Range(0, 1),
                                             good_range=status_dict.Range(1, 2), warning_range=status_dict.Range(2, 3))

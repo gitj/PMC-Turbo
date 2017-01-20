@@ -53,13 +53,18 @@ class StatusFileWatcher(dict):
             with open(self.source_file, 'r') as f:
                 f.seek(0, 0)
                 self.names = (f.readline().strip('\n')).split(DELIMITER)
+                if self.names[0] != 'epoch':
+                    raise ValueError('First column of file %r is not epoch' % self.source_file)
         last_update = os.path.getctime(self.source_file)
         if not last_update == self.last_update:  # if the file has changed since last check
             last_line = file_reading.read_last_line(self.source_file)
             values = last_line.split(DELIMITER)
-        for i, item_name in enumerate(self.names):
-            if item_name in self:
-                self[item_name].update_value(values[i])
+
+        value_dict = dict(zip(self.names, values))
+
+        for key in value_dict.keys():
+            if key in self:
+                self[key].update_value(value_dict[key], value_dict['epoch'])
 
 
 class FloatStatusItem():
@@ -68,6 +73,7 @@ class FloatStatusItem():
         self.name = name
         self.column_name = column_name
         self.value = None
+        self.epoch = None
         self.nominal_range = nominal_range
         self.good_range = good_range
         self.warning_range = warning_range
@@ -75,8 +81,9 @@ class FloatStatusItem():
 
     # Add silence, epoch
 
-    def update_value(self, value):
+    def update_value(self, value, epoch):
         self.value = float(value)
+        self.epoch = float(epoch)
 
     def get_status_summary(self):
         if self.silenced:
