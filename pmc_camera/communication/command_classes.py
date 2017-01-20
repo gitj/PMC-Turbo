@@ -1,6 +1,7 @@
 import struct
 import logging
 import numpy as np
+from collections import OrderedDict
 
 import time
 
@@ -57,6 +58,9 @@ class Command(object):
 
     def encode_command(self,**kwargs):
         values = [self._command_number]
+        for key in kwargs:
+            if key not in self._argument_names:
+                raise ValueError("Command %s does not take argument '%s'" % (self.name, key))
         for argument_name in self._argument_names:
             if not argument_name in kwargs:
                 raise ValueError("Parameter %s missing when encoding %s" % (argument_name,self.name))
@@ -69,6 +73,9 @@ class Command(object):
             values.append(value)
         encoded_command = struct.pack(self._command_format_prefix+self._argument_format_string,*values)
         return encoded_command
+
+    def __call__(self, **kwargs):
+        return self.encode_command(**kwargs)
 
 class ListArgumentCommand(Command):
     def __init__(self,name,argument_format):
@@ -122,3 +129,31 @@ class CommandLogger(object):
         sequence_numbers = [sequence_number for _,sequence_number,_,_ in self.command_history]
         index = np.argmax(sequence_numbers)
         return self.command_history[index]
+
+class CommandManager(object):
+    def __init__(self):
+        self._command_dict = OrderedDict()
+        self._next_command_number = 0
+    def add_command(self,command):
+        command._command_number = self._next_command_number
+        self._command_dict[command._command_number] = command
+        setattr(self,command.name,command)
+        self._next_command_number += 1
+    def __getitem__(self, item):
+        return self._command_dict[item]
+    @property
+    def commands(self):
+        return self._command_dict.values()
+    @property
+    def total_commands(self):
+        return self._next_command_number
+
+    def decode_commands(self,data):
+        remainder = data
+        commands = []
+        while remainder:
+            command_number, = struct.unpack(COMMAND_FORMAT_PREFIX,data[:1])
+            command = self[command_number]
+            kwargs, remainder = command.decode_command_and_arguments(data)
+            commands.append((command.name,kwargs))
+        return commands

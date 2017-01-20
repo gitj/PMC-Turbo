@@ -14,7 +14,7 @@ def test_basic_command_path():
     cc2 = camera_communicator.Communicator(cam_id=1,peers=[],controller=cont,start_pyro=False)
     cc1.peers = [cc1,cc2]
     cc1.destination_lists = {0:[cc1],1:[cc2]}
-    command = command_table.command_list[0].encode_command(focus_step=1000)
+    command = command_table.command_manager.set_focus(focus_step=1000)
     command_packet = packet_classes.CommandPacket(payload=command,sequence_number=1,destination=1)
     cc1.execute_packet(command_packet.to_buffer())
 

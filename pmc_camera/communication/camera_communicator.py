@@ -11,7 +11,7 @@ import logging
 import pmc_camera.communication.command_classes
 import pmc_camera.communication.packet_classes
 from pmc_camera.communication import downlink_classes, uplink_classes  # aggregator
-from pmc_camera.communication.command_table import command_dict, decode_commands_from_string, CommandStatus
+from pmc_camera.communication.command_table import command_manager, CommandStatus
 from pmc_camera.communication import command_table
 
 from pmc_camera.communication import constants
@@ -71,7 +71,7 @@ class Communicator():
         -------
         AttributeError if a command in the table is not implemented
         """
-        for command in command_dict.values():
+        for command in command_manager.commands:
             try:
                 function = getattr(self,command.name)
             except AttributeError:
@@ -209,7 +209,7 @@ class Communicator():
         number = 0
         kwargs = {}
         try:
-            commands = decode_commands_from_string(command_packet.payload)
+            commands = command_manager.decode_commands(command_packet.payload)
             for number,destination in enumerate(destinations):
                 for command_name,kwargs in commands:
                     logger.debug("Executing command %s at destination %d member %d with kwargs %r" % (command_name,
