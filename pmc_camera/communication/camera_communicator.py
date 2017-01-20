@@ -193,6 +193,7 @@ class Communicator():
         destinations = self.destination_lists[command_packet.destination]
         for number, destination in enumerate(destinations):
             try:
+                logger.debug("pinging destination %d member %d" % (command_packet.destination,number))
                 destination.ping()
             except Exception as e:
                 details = "Ping failure for destination %d, member %d\n" % (command_packet.destination,number)
@@ -201,6 +202,7 @@ class Communicator():
                 details = details + pyro_details
                 self.command_logger.add_command_result(command_packet.sequence_number,CommandStatus.failed_to_ping_destination,
                                                        details)
+                logger.warning(details)
                 return
 
         command_name = "None"
@@ -210,6 +212,9 @@ class Communicator():
             commands = decode_commands_from_string(command_packet.payload)
             for number,destination in enumerate(destinations):
                 for command_name,kwargs in commands:
+                    logger.debug("Executing command %s at destination %d member %d with kwargs %r" % (command_name,
+                                                                                                      command_packet.destination,
+                                                                                                      number, kwargs))
                     function = getattr(destination,command_name)
                     function(**kwargs)
         except Exception as e:
@@ -219,6 +224,7 @@ class Communicator():
             pyro_details = ''.join(Pyro4.util.getPyroTraceback())
             details = details + pyro_details
             self.command_logger.add_command_result(command_packet.sequence_number,CommandStatus.command_error,details)
+            logger.warning(details)
             return
         self.command_logger.add_command_result(command_packet.sequence_number,CommandStatus.command_ok,'')
 

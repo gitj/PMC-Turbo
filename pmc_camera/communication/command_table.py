@@ -28,7 +28,7 @@ def decode_commands_from_string(data):
     remainder = data
     commands = []
     while remainder:
-        command_number = struct.unpack(COMMAND_FORMAT_PREFIX,data[:1])
+        command_number, = struct.unpack(COMMAND_FORMAT_PREFIX,data[:1])
         command = command_dict[command_number]
         kwargs, remainder = command.decode_command_and_arguments(data)
         commands.append((command.name,kwargs))
