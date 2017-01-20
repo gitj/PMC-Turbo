@@ -109,7 +109,13 @@ class Controller(object):
         all_dirs = list(set(all_dirs))  # get just the unique names
         all_dirs.sort()
         logger.debug("Found these dirs: %r" % all_dirs)
-        latest = all_dirs[-1]
+        try:
+            latest = all_dirs[-1]
+        except IndexError:
+            logger.warning("No data directories found under %r" % self.data_dirs)
+            self.merged_index = None
+            self.latest_image_subdir =''
+            return
         logger.debug("latest: %r" % latest)
         if latest != self.latest_image_subdir:
             logger.info("Found new image directory %s" % latest)
