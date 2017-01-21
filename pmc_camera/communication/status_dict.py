@@ -1,5 +1,8 @@
 import os
+import logging
 from pmc_camera.utils import file_reading
+
+logger = logging.getLogger(__name__)
 
 # These can go into constants file in the future.
 from pip._vendor.pyparsing import col
@@ -40,7 +43,7 @@ class StatusFileWatcher(dict):
 
         self.names = None
         for item in items:
-            self[item.name] = item
+            self[item.column_name] = item
 
     def get_status_summary(self):
         values = [self[key].get_status_summary() for key in self.keys()]
@@ -62,8 +65,12 @@ class StatusFileWatcher(dict):
 
         value_dict = dict(zip(self.names, values))
 
+        logger.debug('Value dict: %r' % value_dict)
+
         for key in value_dict.keys():
+
             if key in self:
+                logger.debug('updating filewatcher %r, attribute %r with value %r' % (self.name, key, value_dict[key]))
                 self[key].update_value(value_dict[key], value_dict['epoch'])
 
 
