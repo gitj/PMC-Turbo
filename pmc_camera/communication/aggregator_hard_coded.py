@@ -2,27 +2,29 @@ from pmc_camera.communication import status_dict
 import logging
 import time
 
-year_month_day = time.strftime('%Y-%m-%d')
 
-voltage_12v_item = status_dict.FloatStatusItem(name='vim_voltage-12V', column_name='value',
-                                               nominal_range=status_dict.Range(10, 15), good_range=None,
-                                               warning_range=None)
+def setup_group():
+    year_month_day = time.strftime('%Y-%m-%d')
 
-path = '/var/lib/collectd/csv/pmc-camera-0.unassigned-domain/ipmi/voltage-12V system_board (7.17)-' + year_month_day  # 2017-01-21'
+    voltage_12v_item = status_dict.FloatStatusItem(name='vim_voltage-12V', column_name='value',
+                                                   nominal_range=status_dict.Range(10, 15), good_range=None,
+                                                   warning_range=None)
 
-voltage_12v_filewatcher = status_dict.StatusFileWatcher(name='voltage_12v_filewatcher', items=[voltage_12v_item],
-                                                        filename=path)
+    path = '/var/lib/collectd/csv/pmc-camera-0.unassigned-domain/ipmi/voltage-12V system_board (7.17)-' + year_month_day  # 2017-01-21'
 
-temp_cpu_item = status_dict.FloatStatusItem(name='temp_cpu', column_name='value',
-                                            nominal_range=status_dict.Range(20, 60), good_range=None,
-                                            warning_range=None)
+    voltage_12v_filewatcher = status_dict.StatusFileWatcher(name='voltage_12v_filewatcher', items=[voltage_12v_item],
+                                                            filename=path)
 
-path = '/var/lib/collectd/csv/pmc-camera-0.unassigned-domain/ipmi/temperature-CPU Temp processor (3.1)-' + year_month_day  # 2017-01-21'
+    temp_cpu_item = status_dict.FloatStatusItem(name='temp_cpu', column_name='value',
+                                                nominal_range=status_dict.Range(20, 60), good_range=None,
+                                                warning_range=None)
 
-temp_cpu_filewatcher = status_dict.StatusFileWatcher(name='temp_cpu_filewatcher', items=[temp_cpu_item],
-                                                     filename=path)
+    path = '/var/lib/collectd/csv/pmc-camera-0.unassigned-domain/ipmi/temperature-CPU Temp processor (3.1)-' + year_month_day  # 2017-01-21'
 
-mygroup = status_dict.StatusGroup('mygroup', [temp_cpu_filewatcher, voltage_12v_filewatcher])
+    temp_cpu_filewatcher = status_dict.StatusFileWatcher(name='temp_cpu_filewatcher', items=[temp_cpu_item],
+                                                         filename=path)
+
+    return status_dict.StatusGroup('mygroup', [temp_cpu_filewatcher, voltage_12v_filewatcher])
 
 
 def setup_logger():
@@ -39,6 +41,7 @@ def setup_logger():
 
 def main():
     logger = setup_logger()
+    mygroup = setup_group()
     while True:
         mygroup.update()
         logger.debug('%r' % mygroup.get_status_summary())
