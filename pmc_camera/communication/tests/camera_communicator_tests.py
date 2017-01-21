@@ -1,23 +1,24 @@
 import unittest
 import socket
 from pmc_camera.communication import camera_communicator
-from pmc_camera.communication import packet_classes,command_table
+from pmc_camera.communication import packet_classes, command_table
 from pmc_camera.pipeline import controller
 
+
 def test_valid_command_table():
-    cc = camera_communicator.Communicator(cam_id=0,peers=[],controller=None,start_pyro=False)
+    cc = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, start_pyro=False)
     cc.validate_command_table()
+
 
 def test_basic_command_path():
     cont = controller.Controller(None)
-    cc1 = camera_communicator.Communicator(cam_id=0,peers=[],controller=cont,start_pyro=False)
-    cc2 = camera_communicator.Communicator(cam_id=1,peers=[],controller=cont,start_pyro=False)
-    cc1.peers = [cc1,cc2]
-    cc1.destination_lists = {0:[cc1],1:[cc2]}
+    cc1 = camera_communicator.Communicator(cam_id=0, peers=[], controller=cont, start_pyro=False)
+    cc2 = camera_communicator.Communicator(cam_id=1, peers=[], controller=cont, start_pyro=False)
+    cc1.peers = [cc1, cc2]
+    cc1.destination_lists = {0: [cc1], 1: [cc2]}
     command = command_table.command_manager.set_focus(focus_step=1000)
-    command_packet = packet_classes.CommandPacket(payload=command,sequence_number=1,destination=1)
+    command_packet = packet_classes.CommandPacket(payload=command, sequence_number=1, destination=1)
     cc1.execute_packet(command_packet.to_buffer())
-
 
     bad_buffer = command_packet.to_buffer()[:-2] + 'AA'
     cc1.execute_packet(bad_buffer)
@@ -28,10 +29,8 @@ def test_basic_command_path():
     cc1.execute_packet('bad packet')
 
     non_existant_command = '\xfe' + command
-    cc1.execute_packet(packet_classes.CommandPacket(payload=non_existant_command,sequence_number=1,
-                                                                    destination=1).to_buffer())
-
-
+    cc1.execute_packet(packet_classes.CommandPacket(payload=non_existant_command, sequence_number=1,
+                                                    destination=1).to_buffer())
 
 
 class FakeLowrateUplink():
@@ -90,7 +89,8 @@ class NoPeersTest(unittest.TestCase):
 
         self.c.get_and_process_sip_bytes()
 
-        self.c.lowrate_downlink.retrieve_message()
+        msg = self.c.lowrate_downlink.retrieve_msg()
+        assert (msg == ('\xff' + ('\x00' * 254)))
 
         '''
         UPLINK_PORT = 4001
