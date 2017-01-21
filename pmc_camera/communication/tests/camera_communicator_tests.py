@@ -53,6 +53,11 @@ class FakeLowrateDownlink():
         return self.buffer
 
 
+class FakeController():
+    def get_latest_fileinfo(self):
+        return [0] * 20
+
+
 class NoPeersTest(unittest.TestCase):
     def setUp(self):
         self.c = camera_communicator.Communicator(cam_id=0, peers=[], controller=None)
@@ -77,7 +82,16 @@ class NoPeersTest(unittest.TestCase):
         valid_packets = self.c.lowrate_uplink.get_sip_packets()
         assert (valid_packets == ['\x10\x13\x03'])
 
-    #def get_and_process_bytes_test(self):
+    def get_and_process_bytes_test(self):
+        self.c.lowrate_uplink = FakeLowrateUplink()
+        self.c.lowrate_uplink.assign_bytes_to_get('\x10\x13\x03')
+        self.c.controller = FakeController()
+        self.c.lowrate_downlink = FakeLowrateDownlink()
+
+        self.c.get_and_process_sip_bytes()
+
+        self.c.lowrate_downlink.retrieve_message()
+
         '''
         UPLINK_PORT = 4001
         LOWRATE_DOWNLINK_IP = '0.0.0.0'
