@@ -4,6 +4,7 @@ from pmc_camera.utils import file_reading
 import json
 import glob
 import time
+from pmc_camera.communication import file_format_classes
 
 logger = logging.getLogger(__name__)
 
@@ -45,8 +46,12 @@ class StatusGroup(dict):
                 buffer += '\n'
         return buffer
 
-    def to_json(self):
-        return json.dumps(self.convert_to_string())
+    def to_json_file(self):
+        payload = json.dumps(self.convert_to_string())
+        json_file = file_format_classes.GeneralFile(payload=payload, filename='json_file.json', timestamp=time.time(),
+                                                    camera_id=0,
+                                                    request_id=000)
+        return json_file
 
 
 class StatusFileWatcher(dict):

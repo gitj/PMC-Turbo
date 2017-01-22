@@ -15,6 +15,7 @@ from pmc_camera.communication.command_table import command_manager, CommandStatu
 from pmc_camera.communication import command_table
 
 from pmc_camera.communication import constants
+from pmc_camera.communication import aggregator_hard_coded
 
 Pyro4.config.SERVERTYPE = "multiplex"
 Pyro4.config.SERIALIZER = 'pickle'
@@ -52,9 +53,11 @@ class Communicator():
         self.lowrate_uplink = None
         self.buffer_for_downlink = struct.pack('>255B', *([0] * 255))
 
+        self.aggregator = aggregator_hard_coded.setup_group()
+
         self.command_logger = pmc_camera.communication.command_classes.CommandLogger()
 
-        #TODO: Set up proper destination lists, including LIDAR, narrow field, wide field, and all
+        # TODO: Set up proper destination lists, including LIDAR, narrow field, wide field, and all
         self.destination_lists = dict(enumerate([[peer] for peer in peers]))
         self.destination_lists[command_table.DESTINATION_ALL_CAMERAS] = peers
 
@@ -73,7 +76,7 @@ class Communicator():
         """
         for command in command_manager.commands:
             try:
-                function = getattr(self,command.name)
+                function = getattr(self, command.name)
             except AttributeError:
                 raise AttributeError("Command %s is not implemented by communicator!" % command.name)
 
@@ -142,6 +145,12 @@ class Communicator():
                                                     struct.calcsize('>1B1L1L1H1H1L'):]  # just overwrite old status
         # self.buffer_for_downlink = self.peer_aggregator.aggregate_peer_status(self.peers)
 
+    def send_detailed_housekeeping(self):
+        self.aggregator.update()
+        json_file = self.aggregator.to_json_file()
+        self.downlinks[0].put_data_into_queue(json_file.to_buffer(), self.file_id)
+        self.file_id += 1
+
     def send_data_on_downlinks(self):
         if not self.peers:
             raise RuntimeError(
@@ -176,8 +185,6 @@ class Communicator():
             if self.end_loop == True:
                 return
 
-
-
     ### The following two functions respond to SIP requests
     def respond_to_science_data_request(self):
         logger.debug("Science data request received.")
@@ -193,14 +200,15 @@ class Communicator():
         destinations = self.destination_lists[command_packet.destination]
         for number, destination in enumerate(destinations):
             try:
-                logger.debug("pinging destination %d member %d" % (command_packet.destination,number))
+                logger.debug("pinging destination %d member %d" % (command_packet.destination, number))
                 destination.ping()
             except Exception as e:
-                details = "Ping failure for destination %d, member %d\n" % (command_packet.destination,number)
+                details = "Ping failure for destination %d, member %d\n" % (command_packet.destination, number)
                 details += traceback.format_exc()
                 pyro_details = ''.join(Pyro4.util.getPyroTraceback())
                 details = details + pyro_details
-                self.command_logger.add_command_result(command_packet.sequence_number,CommandStatus.failed_to_ping_destination,
+                self.command_logger.add_command_result(command_packet.sequence_number,
+                                                       CommandStatus.failed_to_ping_destination,
                                                        details)
                 logger.warning(details)
                 return
@@ -210,12 +218,12 @@ class Communicator():
         kwargs = {}
         try:
             commands = command_manager.decode_commands(command_packet.payload)
-            for number,destination in enumerate(destinations):
-                for command_name,kwargs in commands:
+            for number, destination in enumerate(destinations):
+                for command_name, kwargs in commands:
                     logger.debug("Executing command %s at destination %d member %d with kwargs %r" % (command_name,
                                                                                                       command_packet.destination,
                                                                                                       number, kwargs))
-                    function = getattr(destination,command_name)
+                    function = getattr(destination, command_name)
                     function(**kwargs)
         except Exception as e:
             details = ("Failure while executing command %s at destination %d member %d with arguments %r\n"
@@ -223,11 +231,10 @@ class Communicator():
             details += traceback.format_exc()
             pyro_details = ''.join(Pyro4.util.getPyroTraceback())
             details = details + pyro_details
-            self.command_logger.add_command_result(command_packet.sequence_number,CommandStatus.command_error,details)
+            self.command_logger.add_command_result(command_packet.sequence_number, CommandStatus.command_error, details)
             logger.warning(details)
             return
-        self.command_logger.add_command_result(command_packet.sequence_number,CommandStatus.command_ok,'')
-
+        self.command_logger.add_command_result(command_packet.sequence_number, CommandStatus.command_ok, '')
 
     def set_peer_polling_order(self, new_peer_polling_order):
         self.peer_polling_order = new_peer_polling_order
