@@ -1,6 +1,9 @@
 import os
 import logging
 from pmc_camera.utils import file_reading
+import json
+import glob
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -31,19 +34,43 @@ class StatusGroup(dict):
         for key in self.keys():
             self[key].update()
 
+    def convert_to_string(self):
+        buffer = ''
+        for file_key in self.keys():
+            for item_key in self[file_key].keys():
+                buffer += 'File: %s, item: %s, value: %0.2f, epoch: %0.0f' % (self[file_key].name,
+                                                                              self[file_key][item_key].name,
+                                                                              self[file_key][item_key].value,
+                                                                              self[file_key][item_key].epoch)
+                buffer += '\n'
+        return buffer
+
+    def to_json(self):
+        return json.dumps(self.convert_to_string())
+
 
 class StatusFileWatcher(dict):
-    def __init__(self, name, items, filename):
+    def __init__(self, name, items, filename_glob):
         # example, charge_controller.csv, charge_controller
-        if not os.path.exists(filename):
-            raise ValueError('File %r does not exist' % filename)
-        self.source_file = filename
+
+        self.glob = filename_glob + '*'
+
+        self.assign_file(self.glob)
+
         self.last_update = None
         self.name = name
 
         self.names = None
         for item in items:
             self[item.column_name] = item
+
+    def assign_file(self, filename_glob):
+        files = glob.glob(filename_glob)
+        if len(files) == 0:
+            raise ValueError('No files found with filename_glob %r' % filename_glob)
+        files.sort()
+        self.source_file = files[-1]
+        logger.debug('File %r set' % self.source_file)
 
     def get_status_summary(self):
         values = [self[key].get_status_summary() for key in self.keys()]
@@ -59,9 +86,22 @@ class StatusFileWatcher(dict):
                 if self.names[0] != 'epoch':
                     raise ValueError('First column of file %r is not epoch' % self.source_file)
         last_update = os.path.getctime(self.source_file)
-        if not last_update == self.last_update:  # if the file has changed since last check
+        if last_update == self.last_update:  # if the file not has changed since last check
+
+            logger.debug('File up to date.')
+            return
+
+        else:
+
+            if self.last_update and not (
+                        time.localtime(last_update).tm_mday == time.localtime(self.last_update).tm_mday):
+                # Flips over to new file for a new day.
+                logger.debug('New day, new file')
+                self.assign_file(self.glob)
+
             last_line = file_reading.read_last_line(self.source_file)
             values = last_line.split(DELIMITER)
+            self.last_update = last_update
 
         value_dict = dict(zip(self.names, values))
 
