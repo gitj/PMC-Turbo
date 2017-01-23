@@ -5,14 +5,17 @@ import tempfile
 
 class StatusDictTest(unittest.TestCase):
     def test_item(self):
-        item = status_dict.FloatStatusItem(name='test_item', column_name='test_item',
+        item = status_dict.FloatStatusItem(name='test_item', column_name='value',
                                            nominal_range=status_dict.Range(0, 1),
                                            good_range=status_dict.Range(1, 2), warning_range=status_dict.Range(2, 3))
-        item.update_value(0.5, 1000)
+        value_dict = {'epoch': 1000, 'value':0.5}
+        item.update_value(value_dict)
         assert (item.get_status_summary() == status_dict.NOMINAL)
-        item.update_value(1.5, 1000)
+        value_dict = {'epoch': 1000, 'value':1.5}
+        item.update_value(value_dict)
         assert (item.get_status_summary() == status_dict.GOOD)
-        item.update_value(2.5, 1000)
+        value_dict = {'epoch': 1000, 'value':2.5}
+        item.update_value(value_dict)
         assert (item.get_status_summary() == status_dict.WARNING)
 
     def test_filewatcher(self):
