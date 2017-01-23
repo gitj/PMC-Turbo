@@ -18,6 +18,9 @@ def setup_group():
     temp_cpu_filewatcher = status_dict.StatusFileWatcher(name='temp_cpu_filewatcher', items=[temp_cpu_item],
                                                          filename_glob=path)
 
+    test_multifilewatcher = status_dict.MultiStatusFileWatcher('test_multi_filewatcher',
+                                                              [voltage_12v_filewatcher, temp_cpu_filewatcher])
+
     path = '/home/pmc/logs/housekeeping/charge_controller/pmc-charge-controller-?_*[!eeprom].csv'
 
     battery_voltage = status_dict.FloatStatusItem(name='battery_voltage', column_name='register_25',
@@ -30,8 +33,8 @@ def setup_group():
                                                                   items=[battery_voltage, array_voltage],
                                                                   filename_glob=path)
 
-    return status_dict.StatusGroup('mygroup',
-                                   [temp_cpu_filewatcher, voltage_12v_filewatcher, charge_controller_filewatcher])
+    return status_dict.StatusGroup('mygroup', [test_multifilewatcher, charge_controller_filewatcher])
+    # [temp_cpu_filewatcher, voltage_12v_filewatcher, charge_controller_filewatcher])
 
 
 def setup_logger():

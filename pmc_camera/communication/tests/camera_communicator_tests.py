@@ -1,8 +1,11 @@
 import unittest
 import socket
+import Pyro4
 from pmc_camera.communication import camera_communicator
 from pmc_camera.communication import packet_classes, command_table
 from pmc_camera.pipeline import controller
+from nose.tools import timed
+import time
 
 
 def test_valid_command_table():
@@ -92,19 +95,18 @@ class NoPeersTest(unittest.TestCase):
         msg = self.c.lowrate_downlink.retrieve_msg()
         assert (msg == ('\xff' + ('\x00' * 254)))
 
-        '''
-        UPLINK_PORT = 4001
-        LOWRATE_DOWNLINK_IP = '0.0.0.0'
-        LOWRATE_DOWNLINK_PORT = 4001
-        HIRATE_DOWNLINK_IP = '0.0.0.0'
-        HIRATE_DOWNLINK_PORT = 4002
-        DOWNLINK_SPEED = 700
 
-        self.c.setup_leader_attributes(UPLINK_PORT, LOWRATE_DOWNLINK_PORT, LOWRATE_DOWNLINK_IP,
-                                       HIRATE_DOWNLINK_IP, HIRATE_DOWNLINK_PORT, DOWNLINK_SPEED)
+class PeersTest(unittest.TestCase):
+    def setUp(self):
+        # Set up port manually.
+        proxy = Pyro4.Proxy('PYRO:communicator@0.0.0.0:40001')
+        self.c = camera_communicator.Communicator(cam_id=0, peers=[proxy], controller=None)
 
-        sip_bytes_to_process = '\x10\x13\x03'
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock.sendto(sip_bytes_to_process, ('0.0.0.0', UPLINK_PORT))
-        sock.close()
-                '''
+    def tearDown(self):
+        self.c.close()
+
+    @timed(20)
+    def ping_peer_test(self):
+        peer = camera_communicator.Communicator(cam_id=1, peers=[], controller=None)
+        result = self.c.peers[0].ping()
+        assert (result == True)

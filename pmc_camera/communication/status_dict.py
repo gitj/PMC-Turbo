@@ -59,8 +59,25 @@ class StatusGroup(dict):
     def get_status(self):
         if len(self.keys()) == 0:
             raise ValueError('No keys - filewatcher is empty.')
-        entries = (self[key].get_status() for key in self.keys())
-        return dict(zip(self.keys(), entries))
+        entries = {key: self[key].get_status() for key in self.keys()}
+        return entries
+
+
+class MultiStatusFileWatcher(dict):
+    def __init__(self, name, filewatchers):
+        self.name = name
+        self.filewatchers = filewatchers
+
+    def update(self):
+        for filewatcher in self.filewatchers:
+            filewatcher.update()
+
+    def get_status(self):
+        statuses = [filewatcher.get_status() for filewatcher in self.filewatchers]
+        mydict = {}
+        for status in statuses:
+            mydict.update(status)
+        return mydict
 
 
 class StatusFileWatcher(dict):
@@ -133,16 +150,9 @@ class StatusFileWatcher(dict):
             raise ValueError('Number of values and column names mismatch. %d Values, %d column names' %
                              (len(values), len(self.column_names)))
         value_dict = dict(zip(self.column_names, values))
-        item_column_names = [self[key].column_name for key in self.keys()]
-        column_to_key = dict(zip(item_column_names, self.keys()))
 
-        print value_dict.keys()
-        print column_to_key.keys()
-
-        for column_key in value_dict.keys():
-            if column_key in column_to_key.keys():
-                key = column_to_key[column_key]
-                self[key].update_value(value_dict[column_key], value_dict['epoch'])
+        for key in self.keys():
+            self[key].update_value(value_dict)
 
 
 class FloatStatusItem():
@@ -159,11 +169,11 @@ class FloatStatusItem():
 
     # Add silence, epoch
 
-    def update_value(self, value, epoch):
-        logger.debug('Updated %r' % self.name)
-        self.value = float(value)
-        self.epoch = float(epoch)
-        logger.debug('Item %r updated with value %r' % (self.name, self.value))
+    def update_value(self, value_dict):
+        if self.column_name in value_dict:
+            self.value = float(value_dict[self.column_name])
+            self.epoch = float(value_dict['epoch'])
+            logger.debug('Item %r updated with value %r' % (self.name, self.value))
 
     def get_status_summary(self):
         if self.silenced:
@@ -180,7 +190,7 @@ class FloatStatusItem():
         return CRITICAL
 
     def get_status(self):
-        return dict(name=self.name, column_name=self.column_name, value=self.value, epoch=self.epoch)
+        return dict(column_name=self.column_name, value=self.value, epoch=self.epoch)
 
 
 class Range():

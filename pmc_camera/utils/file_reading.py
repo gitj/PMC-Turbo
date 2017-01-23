@@ -1,6 +1,6 @@
 import os
 
-BLOCK_SIZE = 50
+BLOCK_SIZE = 1024
 
 
 def read_last_line(file_):
