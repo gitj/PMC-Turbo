@@ -55,9 +55,23 @@ class FakeLowrateDownlink():
         return self.buffer
 
 
+class FakeHirateDownlink():
+    def __init__(self):
+        self.queue = None
+
+    def has_bandwidth(self):
+        return True
+
+    def put_data_into_queue(self, data, file_id):
+        self.queue = data
+
+
 class FakeController():
     def get_latest_fileinfo(self):
         return [0] * 20
+
+    def get_next_data_for_downlink(self):
+        return '\x00' * 1024
 
 
 class NoPeersTest(unittest.TestCase):
@@ -99,14 +113,28 @@ class NoPeersTest(unittest.TestCase):
 class PeersTest(unittest.TestCase):
     def setUp(self):
         # Set up port manually.
-        proxy = Pyro4.Proxy('PYRO:communicator@0.0.0.0:40001')
-        self.c = camera_communicator.Communicator(cam_id=0, peers=[proxy], controller=None)
+        self.base_port = 46788
+        proxy = Pyro4.Proxy('PYRO:communicator@0.0.0.0:%d' % (self.base_port + 1))
+        self.c = camera_communicator.Communicator(cam_id=0, peers=[proxy], controller=None, base_port=self.base_port)
+        self.c.file_id = 0
+        self.peer = camera_communicator.Communicator(cam_id=1, peers=[], controller=None, base_port=self.base_port)
 
     def tearDown(self):
         self.c.close()
+        self.peer.close()
 
     @timed(20)
     def ping_peer_test(self):
-        peer = camera_communicator.Communicator(cam_id=1, peers=[], controller=None)
         result = self.c.peers[0].ping()
         assert (result == True)
+
+    @timed(20)
+    def send_data_on_downlinks_test(self):
+        self.peer.controller = FakeController()
+        print self.c.peers
+        print self.c.peer_polling_order
+        self.hirate_downlink = FakeHirateDownlink()
+        self.c.downlinks = [self.hirate_downlink]
+        self.c.send_data_on_downlinks()
+        print '%r' % self.hirate_downlink.queue
+        assert (self.hirate_downlink.queue == ('\x00' * 1024))

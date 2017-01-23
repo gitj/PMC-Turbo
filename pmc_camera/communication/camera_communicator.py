@@ -25,10 +25,10 @@ Pyro4.config.COMMTIMEOUT = 1.0
 # Note that there is another timeout POLLTIMEOUT
 # "For the multiplexing server only: the timeout of the select or poll calls"
 
-base_port = 40000  # Change this const when a base port is decided upon.
+BASE_PORT = 40000  # Change this const when a base port is decided upon.
 num_cameras = 2
 
-port_list = [base_port + i for i in range(num_cameras)]  # Ditto for the IP list and ports.
+port_list = [BASE_PORT + i for i in range(num_cameras)]  # Ditto for the IP list and ports.
 logger = logging.getLogger(__name__)
 
 START_BYTE = chr(constants.SIP_START_BYTE)
@@ -37,7 +37,7 @@ END_BYTE = chr(constants.SIP_END_BYTE)
 
 @Pyro4.expose
 class Communicator():
-    def __init__(self, cam_id, peers, controller, start_pyro=True):
+    def __init__(self, cam_id, peers, controller, base_port=BASE_PORT, start_pyro=True):
         self.port = base_port + cam_id
         logger.debug('Communicator initialized')
         self.cam_id = cam_id
@@ -52,7 +52,6 @@ class Communicator():
         self.leader_thread = None
         self.lowrate_uplink = None
         self.buffer_for_downlink = struct.pack('>255B', *([0] * 255))
-
 
         self.command_logger = pmc_camera.communication.command_classes.CommandLogger()
 
