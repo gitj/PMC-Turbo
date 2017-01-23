@@ -53,7 +53,6 @@ class Communicator():
         self.lowrate_uplink = None
         self.buffer_for_downlink = struct.pack('>255B', *([0] * 255))
 
-        self.aggregator = aggregator_hard_coded.setup_group()
 
         self.command_logger = pmc_camera.communication.command_classes.CommandLogger()
 
@@ -144,6 +143,9 @@ class Communicator():
         self.buffer_for_downlink = camera0_status + self.buffer_for_downlink[
                                                     struct.calcsize('>1B1L1L1H1H1L'):]  # just overwrite old status
         # self.buffer_for_downlink = self.peer_aggregator.aggregate_peer_status(self.peers)
+
+    def setup_aggregator(self, aggregator):
+        self.aggregator = aggregator
 
     def send_detailed_housekeeping(self):
         self.aggregator.update()

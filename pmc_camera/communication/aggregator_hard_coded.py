@@ -4,27 +4,34 @@ import time
 
 
 def setup_group():
-    # year_month_day = time.strftime('%Y-%m-%d')
-
-    voltage_12v_item = status_dict.FloatStatusItem(name='vim_voltage-12V', column_name='value',
+    path = '/var/lib/collectd/csv/pmc-camera-?.unassigned-domain/ipmi/voltage-12V system_board (7.17)-*'
+    voltage_12v_item = status_dict.FloatStatusItem(name='voltage-12V', column_name='value',
                                                    nominal_range=status_dict.Range(10, 15), good_range=None,
                                                    warning_range=None)
-
-    path = '/var/lib/collectd/csv/pmc-camera-0.unassigned-domain/ipmi/voltage-12V system_board (7.17)-'  # + year_month_day  # 2017-01-21'
-
     voltage_12v_filewatcher = status_dict.StatusFileWatcher(name='voltage_12v_filewatcher', items=[voltage_12v_item],
                                                             filename_glob=path)
 
+    path = '/var/lib/collectd/csv/pmc-camera-?.unassigned-domain/ipmi/temperature-CPU Temp processor (3.1)-*'
     temp_cpu_item = status_dict.FloatStatusItem(name='temp_cpu', column_name='value',
                                                 nominal_range=status_dict.Range(20, 60), good_range=None,
                                                 warning_range=None)
-
-    path = '/var/lib/collectd/csv/pmc-camera-0.unassigned-domain/ipmi/temperature-CPU Temp processor (3.1)-'  # + year_month_day  # 2017-01-21'
-
     temp_cpu_filewatcher = status_dict.StatusFileWatcher(name='temp_cpu_filewatcher', items=[temp_cpu_item],
                                                          filename_glob=path)
 
-    return status_dict.StatusGroup('mygroup', [temp_cpu_filewatcher, voltage_12v_filewatcher])
+    path = '/home/pmc/logs/housekeeping/charge_controller/pmc-charge-controller-?_*[!eeprom].csv'
+
+    battery_voltage = status_dict.FloatStatusItem(name='battery_voltage', column_name='register_25',
+                                                  nominal_range=status_dict.Range(0, 1000), good_range=None,
+                                                  warning_range=None)
+    array_voltage = status_dict.FloatStatusItem(name='array_voltage', column_name='register_28',
+                                                nominal_range=status_dict.Range(0, 1000), good_range=None,
+                                                warning_range=None)
+    charge_controller_filewatcher = status_dict.StatusFileWatcher(name='charge_controller_filewatcher',
+                                                                  items=[battery_voltage, array_voltage],
+                                                                  filename_glob=path)
+
+    return status_dict.StatusGroup('mygroup',
+                                   [temp_cpu_filewatcher, voltage_12v_filewatcher, charge_controller_filewatcher])
 
 
 def setup_logger():
@@ -44,7 +51,7 @@ def main():
     mygroup = setup_group()
     while True:
         mygroup.update()
-        logger.debug('%r' % mygroup.get_status_summary())
+        logger.debug('%r' % mygroup.get_status())
         time.sleep(5)
 
 

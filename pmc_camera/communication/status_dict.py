@@ -26,12 +26,15 @@ class StatusGroup(dict):
             self[group.name] = group
 
     def get_status_summary(self):
+        if len(self.keys()) == 0:
+            raise ValueError('No keys - group is empty.')
         values = [self[key].get_status_summary()[0][1] for key in self.keys()]
         max_value = max(values)
         max_indices = [i for i, value in enumerate(values) if value == max_value]
         return [(self.keys()[i], self[self.keys()[i]].get_status_summary()) for i in max_indices]
 
     def update(self):
+        logger.debug('Updating %r' % self.name)
         for key in self.keys():
             self[key].update()
 
@@ -47,27 +50,33 @@ class StatusGroup(dict):
         return buffer
 
     def to_json_file(self):
-        payload = json.dumps(self.convert_to_string())
+        payload = json.dumps(self.get_status())
         json_file = file_format_classes.GeneralFile(payload=payload, filename='json_file.json', timestamp=time.time(),
                                                     camera_id=0,
                                                     request_id=000)
         return json_file
+
+    def get_status(self):
+        if len(self.keys()) == 0:
+            raise ValueError('No keys - filewatcher is empty.')
+        entries = (self[key].get_status() for key in self.keys())
+        return dict(zip(self.keys(), entries))
 
 
 class StatusFileWatcher(dict):
     def __init__(self, name, items, filename_glob):
         # example, charge_controller.csv, charge_controller
 
-        self.glob = filename_glob + '*'
+        self.glob = filename_glob
 
         self.assign_file(self.glob)
 
         self.last_update = None
         self.name = name
 
-        self.names = None
+        self.column_names = None
         for item in items:
-            self[item.column_name] = item
+            self[item.name] = item
 
     def assign_file(self, filename_glob):
         files = glob.glob(filename_glob)
@@ -78,26 +87,38 @@ class StatusFileWatcher(dict):
         logger.debug('File %r set' % self.source_file)
 
     def get_status_summary(self):
+        if len(self.keys()) == 0:
+            raise ValueError('No keys - filewatcher is empty.')
         values = [self[key].get_status_summary() for key in self.keys()]
         max_value = max(values)
         max_indices = [i for i, value in enumerate(values) if (value == max_value)]
         return [(self.keys()[i], values[i]) for i in max_indices]
 
+    def get_status(self):
+        if len(self.keys()) == 0:
+            raise ValueError('No keys - filewatcher is empty.')
+        entries = (self[key].get_status() for key in self.keys())
+        return dict(zip(self.keys(), entries))
+
     def update(self):
-        if self.names is None:
+        logger.debug('Updating %r' % self.name)
+        if self.column_names is None:
+            logger.debug('Getting column names')
             with open(self.source_file, 'r') as f:
                 f.seek(0, 0)
-                self.names = (f.readline().strip('\n')).split(DELIMITER)
-                if self.names[0] != 'epoch':
-                    raise ValueError('First column of file %r is not epoch' % self.source_file)
+                name_line = f.readline()
+                if name_line.startswith('#'):
+                    # Ignore headers
+                    name_line = f.readline()
+                self.column_names = (name_line.strip('\n')).split(DELIMITER)
+                if self.column_names[0] != 'epoch':
+                    raise ValueError(
+                        'First column of file %r is not epoch, it is %r' % (self.source_file, self.column_names[0]))
         last_update = os.path.getctime(self.source_file)
         if last_update == self.last_update:  # if the file not has changed since last check
-
             logger.debug('File up to date.')
             return
-
         else:
-
             if self.last_update and not (
                         time.localtime(last_update).tm_mday == time.localtime(self.last_update).tm_mday):
                 # Flips over to new file for a new day.
@@ -108,15 +129,20 @@ class StatusFileWatcher(dict):
             values = last_line.split(DELIMITER)
             self.last_update = last_update
 
-        value_dict = dict(zip(self.names, values))
+        if len(values) != len(self.column_names):
+            raise ValueError('Number of values and column names mismatch. %d Values, %d column names' %
+                             (len(values), len(self.column_names)))
+        value_dict = dict(zip(self.column_names, values))
+        item_column_names = [self[key].column_name for key in self.keys()]
+        column_to_key = dict(zip(item_column_names, self.keys()))
 
-        logger.debug('Value dict: %r' % value_dict)
+        print value_dict.keys()
+        print column_to_key.keys()
 
-        for key in value_dict.keys():
-
-            if key in self:
-                logger.debug('updating filewatcher %r, attribute %r with value %r' % (self.name, key, value_dict[key]))
-                self[key].update_value(value_dict[key], value_dict['epoch'])
+        for column_key in value_dict.keys():
+            if column_key in column_to_key.keys():
+                key = column_to_key[column_key]
+                self[key].update_value(value_dict[column_key], value_dict['epoch'])
 
 
 class FloatStatusItem():
@@ -134,8 +160,10 @@ class FloatStatusItem():
     # Add silence, epoch
 
     def update_value(self, value, epoch):
+        logger.debug('Updated %r' % self.name)
         self.value = float(value)
         self.epoch = float(epoch)
+        logger.debug('Item %r updated with value %r' % (self.name, self.value))
 
     def get_status_summary(self):
         if self.silenced:
@@ -150,6 +178,9 @@ class FloatStatusItem():
             if self.value in self.warning_range:
                 return WARNING
         return CRITICAL
+
+    def get_status(self):
+        return dict(name=self.name, column_name=self.column_name, value=self.value, epoch=self.epoch)
 
 
 class Range():
