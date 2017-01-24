@@ -26,12 +26,13 @@ class StatusGroup(dict):
             self[group.name] = group
 
     def get_status_summary(self):
-        if len(self.keys()) == 0:
-            raise ValueError('No keys - group is empty.')
-        values = [self[key].get_status_summary()[0][1] for key in self.keys()]
-        max_value = max(values)
-        max_indices = [i for i, value in enumerate(values) if value == max_value]
-        return [(self.keys()[i], self[self.keys()[i]].get_status_summary()) for i in max_indices]
+        status_summaries = [self[key].get_status_summary() for key in self.keys()]
+        max_value = max([status_summary[0] for status_summary in status_summaries])
+        name_list = []
+        for status_summary in status_summaries:
+            if status_summary[0] == max_value:
+                name_list += status_summary[1]
+        return (max_value, name_list)
 
     def update(self):
         logger.debug('Updating %r' % self.name)
@@ -81,16 +82,13 @@ class MultiStatusFileWatcher(dict):
         return mydict
 
     def get_status_summary(self):
-        values = [self[key].get_status_summary()[0][1] for key in self.keys()]
-        max_value = max(values)
-        max_indices = [i for i, value in enumerate(values) if value == max_value]
-
-        sublists = [self[self.keys()[i]].get_status_summary() for i in max_indices]
-        flat_list = []
-        for sublist in sublists:
-            flat_list += sublist
-
-        return [(self.name, flat_list)]
+        status_summaries = [self[key].get_status_summary() for key in self.keys()]
+        max_value = max([status_summary[0] for status_summary in status_summaries])
+        name_list = []
+        for status_summary in status_summaries:
+            if status_summary[0] == max_value:
+                name_list += status_summary[1]
+        return (max_value, name_list)
 
 
 class StatusFileWatcher(dict):
@@ -122,7 +120,7 @@ class StatusFileWatcher(dict):
         values = [self[key].get_status_summary() for key in self.keys()]
         max_value = max(values)
         max_indices = [i for i, value in enumerate(values) if (value == max_value)]
-        return [(self.keys()[i], values[i]) for i in max_indices]
+        return (max_value, [self.keys()[i] for i in max_indices])
 
     def get_status(self):
         if len(self.keys()) == 0:

@@ -56,7 +56,7 @@ def main():
     while True:
         mygroup.update()
         logger.debug('%r' % mygroup.get_status())
-        logger.debug('%r' % mygroup.get_status_summary())
+        logger.debug('Status summary value %r, subsystems with this value: %r' % (mygroup.get_status_summary()))
         time.sleep(5)
 
 

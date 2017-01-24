@@ -36,7 +36,7 @@ class StatusDictTest(unittest.TestCase):
         print item0.value
         assert (item0.value == 1)
         assert (item1.value == 5)
-        assert filewatcher.get_status_summary() == [('data1', status_dict.CRITICAL)]
+        assert (filewatcher.get_status_summary() == (status_dict.CRITICAL, ['data1']))
 
     def test_status_group(self):
         tfile0 = tempfile.NamedTemporaryFile()
@@ -67,6 +67,7 @@ class StatusDictTest(unittest.TestCase):
         status_group = status_dict.StatusGroup('test_group', [filewatcher0, filewatcher1])
         status_group.update()
 
-        assert (status_group.get_status_summary() == [('test_filewatcher0', [('data1', status_dict.CRITICAL)]),
-                                                      ('test_filewatcher1', [('data3', status_dict.CRITICAL),
-                                                                             ('data2', status_dict.CRITICAL)])])
+        print status_group.get_status_summary()
+        assert (status_group.get_status_summary() == (status_dict.CRITICAL, ['data1', 'data3', 'data2']))
+        # Error here - I don't want the order to matter
+        # assert (status_group.get_status_summary() == (status_dict.CRITICAL, ['data1', 'data2', 'data3']))
