@@ -19,22 +19,23 @@ def setup_group():
                                                          filename_glob=path)
 
     test_multifilewatcher = status_dict.MultiStatusFileWatcher('test_multi_filewatcher',
-                                                              [voltage_12v_filewatcher, temp_cpu_filewatcher])
+                                                               [voltage_12v_filewatcher, temp_cpu_filewatcher])
 
     path = '/home/pmc/logs/housekeeping/charge_controller/pmc-charge-controller-?_*[!eeprom].csv'
 
     battery_voltage = status_dict.FloatStatusItem(name='battery_voltage', column_name='register_25',
-                                                  nominal_range=status_dict.Range(0, 1000), good_range=None,
+                                                  nominal_range=status_dict.Range(0, 10000), good_range=None,
                                                   warning_range=None)
     array_voltage = status_dict.FloatStatusItem(name='array_voltage', column_name='register_28',
-                                                nominal_range=status_dict.Range(0, 1000), good_range=None,
+                                                nominal_range=status_dict.Range(0, 10000), good_range=None,
                                                 warning_range=None)
     charge_controller_filewatcher = status_dict.StatusFileWatcher(name='charge_controller_filewatcher',
                                                                   items=[battery_voltage, array_voltage],
                                                                   filename_glob=path)
 
     return status_dict.StatusGroup('mygroup', [test_multifilewatcher, charge_controller_filewatcher])
-    # [temp_cpu_filewatcher, voltage_12v_filewatcher, charge_controller_filewatcher])
+
+    #return status_dict.StatusGroup('mygroup', [temp_cpu_filewatcher, voltage_12v_filewatcher, charge_controller_filewatcher])
 
 
 def setup_logger():
@@ -55,6 +56,7 @@ def main():
     while True:
         mygroup.update()
         logger.debug('%r' % mygroup.get_status())
+        logger.debug('%r' % mygroup.get_status_summary())
         time.sleep(5)
 
 

@@ -66,18 +66,31 @@ class StatusGroup(dict):
 class MultiStatusFileWatcher(dict):
     def __init__(self, name, filewatchers):
         self.name = name
-        self.filewatchers = filewatchers
+        for filewatcher in filewatchers:
+            self[filewatcher.name] = filewatcher
 
     def update(self):
-        for filewatcher in self.filewatchers:
-            filewatcher.update()
+        for key in self.keys():
+            self[key].update()
 
     def get_status(self):
-        statuses = [filewatcher.get_status() for filewatcher in self.filewatchers]
+        statuses = [self[key].get_status() for key in self.keys()]
         mydict = {}
         for status in statuses:
             mydict.update(status)
         return mydict
+
+    def get_status_summary(self):
+        values = [self[key].get_status_summary()[0][1] for key in self.keys()]
+        max_value = max(values)
+        max_indices = [i for i, value in enumerate(values) if value == max_value]
+
+        sublists = [self[self.keys()[i]].get_status_summary() for i in max_indices]
+        flat_list = []
+        for sublist in sublists:
+            flat_list += sublist
+
+        return [(self.name, flat_list)]
 
 
 class StatusFileWatcher(dict):
