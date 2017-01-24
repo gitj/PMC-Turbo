@@ -10,7 +10,7 @@ import numpy as np
 import pmc_camera.pipeline.indexer
 from pmc_camera.pipeline import controller
 from pmc_camera.pipeline import basic_pipeline
-from pmc_camera.communication.file_format_classes import decode_file_from_buffer, GeneralFile, JPEGFile
+from pmc_camera.communication.file_format_classes import decode_file_from_buffer, GeneralFile, JPEGFile, ShellCommandFile
 
 test_data_path = os.path.join(os.path.split(os.path.abspath(__file__))[0],'test_data')
 test_pipeline_port = 47563
@@ -143,4 +143,40 @@ class TestMultiIndex(object):
 
     def test_access_non_existant_file(self):
         self.controller_no_pipeline.request_specific_file(filename="doesnt_exist",max_num_bytes=2**20,request_id=123)
+
+    def test_simple_shell_command(self):
+        self.controller_no_pipeline.run_shell_command(command_line="ls -lhtr", max_num_bytes_returned=int(1e6),
+                                                      request_id=124,timeout=10.0)
+        buffer = self.controller_no_pipeline.get_next_data_for_downlink()
+        fileobj = decode_file_from_buffer(buffer)
+        assert fileobj.file_type == ShellCommandFile.file_type
+        assert fileobj.returncode == 0
+        assert fileobj.timed_out == 0
+        assert fileobj.request_id == 124
+
+    def test_shell_command_size_limit(self):
+        self.controller_no_pipeline.run_shell_command(command_line="ls -lhtr", max_num_bytes_returned=2,
+                                                      request_id=124,timeout=10.0)
+        buffer = self.controller_no_pipeline.get_next_data_for_downlink()
+        fileobj = decode_file_from_buffer(buffer)
+        print fileobj.payload
+        assert fileobj.file_type == ShellCommandFile.file_type
+        assert fileobj.returncode == 0
+        assert fileobj.timed_out == 0
+        assert fileobj.request_id == 124
+        assert len(fileobj.payload) < 50
+
+    def test_shell_command_timeout(self):
+        self.controller_no_pipeline.run_shell_command(command_line="sleep 10", max_num_bytes_returned=int(1e6),
+                                                      request_id=124,timeout=1.0)
+        buffer = self.controller_no_pipeline.get_next_data_for_downlink()
+        fileobj = decode_file_from_buffer(buffer)
+        print fileobj.payload
+        assert fileobj.file_type == ShellCommandFile.file_type
+        assert fileobj.returncode == -9
+        assert fileobj.timed_out == 1
+        assert fileobj.request_id == 124
+
+
+
 

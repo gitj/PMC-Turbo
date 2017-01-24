@@ -138,80 +138,34 @@ class GeneralFile(FileBase):
             self.payload = original_payload
         return result
 
-class UnixCommandFile(FileBase):
+
+class ShellCommandFile(FileBase):
     _metadata_table = (FileBase._metadata_table +
-                       [('1f','timestamp'),
-                       ('1f','walltime'),
-                       ('1i','exit_status')])
-    file_type=3
-
-class OldJPEGFile():
-    _metadata_format_string = '>1L1L1H1H1L'
-    file_type = 99
-
-    def __init__(self, buffer=None, payload=None, frame_status=None, frame_id=None,
-                 focus_step=None, aperture_stop=None, exposure_ms=None):
-
-        self._metadata_length = struct.calcsize(self._metadata_format_string)
-        if buffer is not None:
-            self.from_buffer(buffer)
-        else:
-            self.payload = payload
-            self.frame_status = frame_status
-            self.frame_id = frame_id
-            self.focus_step = focus_step
-            self.aperture_stop = aperture_stop
-            self.exposure_ms = exposure_ms
-
-    def from_buffer(self, buffer):
-        """
-        Decode and validate the given buffer and update the class attributes accordingly
-
-        Parameters
-        ----------
-        buffer : str
-            buffer to decode as a packet
-        """
-
-        self.payload = buffer[self._metadata_length:]
-        self.frame_status, self.frame_id, self.focus_step, self.aperture_stop, self.exposure_ms = struct.unpack(
-            self._metadata_format_string, buffer[:self._metadata_length])
-
-    def to_buffer(self):
-        metadata_buffer = struct.pack(self._metadata_format_string, self.frame_status,
-                                      self.frame_id, self.focus_step,
-                                      self.aperture_stop, self.exposure_ms)
-
-        return metadata_buffer + self.payload
-
-    def write(self, filename):
-        with open(filename + '.jpg', 'wb') as f:
-            f.write(self.payload)
-        with open(filename + '.info', 'w') as f:
-            msg = 'Frame status: %d\nFrame id: %d\nFocus Step: %d\nAperture Stop: %d\nExposure: %d' % (
-                self.frame_status, self.frame_id, self.focus_step, self.aperture_stop,
-                self.exposure_ms)
-            f.write(msg)
-
+                       [('1f', 'timestamp'),
+                        ('1B', 'timed_out'),
+                        ('1i', 'returncode')])
+    file_type = 3
 
 
 try:
     file_classes = [eval(k) for k in dir() if k.endswith('File')]
-    file_type_to_class = dict([(k.file_type,k) for k in file_classes])
+    file_type_to_class = dict([(k.file_type, k) for k in file_classes])
 except Exception as e:
     raise RuntimeError("Problem in file_format_classes.py: couldn't extract file_types from all file_classes %r" % e)
 
+
 def decode_file_from_buffer(buffer):
-    file_type, = struct.unpack('>1B',buffer[0])
+    file_type, = struct.unpack('>1B', buffer[0])
     buffer = buffer[1:]
     try:
         file_class = file_type_to_class[file_type]
     except KeyError:
         raise RuntimeError("This buffer claims to be file_type %d, which doesn't exist. Known file_types: %r. Next "
-                           "few bytes of offending buffer %r" % (file_type,file_type_to_class,buffer[:10]))
+                           "few bytes of offending buffer %r" % (file_type, file_type_to_class, buffer[:10]))
     return file_class(buffer=buffer)
 
+
 def load_and_decode_file(filename):
-    with open(filename,'r') as fh:
+    with open(filename, 'r') as fh:
         buffer = fh.read()
     return decode_file_from_buffer(buffer)
