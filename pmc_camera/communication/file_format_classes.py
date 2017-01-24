@@ -138,12 +138,13 @@ class GeneralFile(FileBase):
             self.payload = original_payload
         return result
 
-class UnixCommandFile(FileBase):
+class ShellCommandFile(FileBase):
     _metadata_table = (FileBase._metadata_table +
                        [('1f','timestamp'),
-                       ('1f','walltime'),
-                       ('1i','exit_status')])
+                       ('1B','timed_out'),
+                       ('1i','returncode')])
     file_type=3
+
 
 class OldJPEGFile():
     _metadata_format_string = '>1L1L1H1H1L'

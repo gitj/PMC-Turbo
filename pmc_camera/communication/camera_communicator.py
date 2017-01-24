@@ -247,6 +247,12 @@ class Communicator():
     def set_exposure(self, exposure_time_us):
         self.controller.set_exposure(exposure_time_us)
 
+    def request_specific_file(self, filename, max_num_bytes, request_id):
+        self.controller.request_specific_file(filename, max_num_bytes, request_id)
+
+    def run_shell_command(self, command_line, max_num_bytes_returned, request_id, timeout):
+        self.controller.run_shell_command(command_line, max_num_bytes_returned, request_id, timeout)
+
     def request_postage_stamp(self, which, sequence, verify, args):
         compression_factor = args[0]
         return self.peers[which].get_postage_stamp(compression_factor)

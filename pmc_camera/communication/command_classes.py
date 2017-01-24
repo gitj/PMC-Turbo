@@ -111,6 +111,47 @@ class ListArgumentCommand(Command):
                                 "%r   Formatted value %r" % (self._argument_format,value,formatted_value))
         encoded_list = struct.pack(('>' + self._argument_format*number),*list_argument)
         return start_of_encoded_command + encoded_list
+    def __call__(self, list_argument):
+        return self.encode_command(list_argument)
+
+class StringArgumentCommand(Command):
+    def __init__(self,name, argument_table):
+        self.validate_argument_table(argument_table)
+        argument_subtable = argument_table[:-1]
+        argument_subtable.append(('string_length', '1B'))
+        self._string_argument_name = argument_table[-1][0]
+        super(StringArgumentCommand,self).__init__(name,argument_subtable)
+    def validate_argument_table(self,argument_table):
+        last_argument_name,last_argument_format = argument_table[-1]
+        if last_argument_format != 's':
+            raise ValueError("Last argument of a StringArgumentCommand must have type specifier 's'")
+        num_strings = 0
+        for index,(name,format_) in enumerate(argument_table):
+            if index == len(argument_table)-1:
+                if format_ != 's':
+                    raise ValueError("Last argument of a StringArgumentCommand must have type specifier 's'")
+            else:
+                if format == 's':
+                    raise ValueError("Only one argument can have type specifier 's'")
+    def decode_command_and_arguments(self, data):
+        kwargs,remainder = super(StringArgumentCommand,self).decode_command_and_arguments(data)
+        string_length = kwargs.pop('string_length')
+        if len(remainder) < string_length:
+            raise ValueError(("Received command string has length %d which is not long enough for "
+                              "string of length %d") % (len(data),string_length))
+        kwargs[self._string_argument_name] = remainder[:string_length]
+        remainder = remainder[string_length:]
+        return kwargs,remainder
+
+    def encode_command(self,**kwargs):
+        try:
+            string_argument = kwargs.pop(self._string_argument_name)
+        except KeyError:
+            raise ValueError("Argument %s was not specified" % self._string_argument_name)
+        kwargs['string_length'] = len(string_argument)
+        start_of_encoded_command = super(StringArgumentCommand,self).encode_command(**kwargs)
+        return start_of_encoded_command + string_argument
+
 
 class CommandLogger(object):
     def __init__(self,log_dir=''):

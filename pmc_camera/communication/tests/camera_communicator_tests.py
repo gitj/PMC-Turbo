@@ -35,6 +35,8 @@ def test_basic_command_path():
     cc1.execute_packet(packet_classes.CommandPacket(payload=non_existant_command, sequence_number=1,
                                                     destination=1).to_buffer())
 
+    #command = command_table.command_manager.
+
 
 class FakeLowrateUplink():
     def __init__(self):
