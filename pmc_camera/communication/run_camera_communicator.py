@@ -1,5 +1,5 @@
 import IPython
-from pmc_camera.communication import camera_communicator
+from pmc_camera.communication import camera_communicator, aggregator_hard_coded
 import logging
 import os
 import time
@@ -31,6 +31,7 @@ def run_communicator(cam_id, peers, controller, leader, peer_polling_order=[]):
         c.set_peer_polling_order(peer_polling_order)
     if leader:
         c.setup_leader_attributes(UPLINK_PORT, DOWNLINK_IP, DOWNLINK_PORT, '192.168.1.54', 4002, 700)
+        c.setup_aggregator(aggregator_hard_coded.setup_group())
         c.start_leader_thread()
 
 

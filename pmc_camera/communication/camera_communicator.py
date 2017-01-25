@@ -34,6 +34,13 @@ logger = logging.getLogger(__name__)
 START_BYTE = chr(constants.SIP_START_BYTE)
 END_BYTE = chr(constants.SIP_END_BYTE)
 
+ALL_ID_CODES = {
+    'array_voltage': 1,
+    'battery_voltage': 2,
+    'temp_cpu': 3,
+    'voltage-12V': 4
+}
+
 
 @Pyro4.expose
 class Communicator():
@@ -43,6 +50,7 @@ class Communicator():
         self.cam_id = cam_id
         self.peers = peers
         self.controller = controller
+        self.aggregator = None
         self.peer_polling_order_idx = 0
         self.peer_polling_order = [0]
         self.end_loop = False
@@ -128,7 +136,7 @@ class Communicator():
                 return
             time.sleep(1)
 
-    def get_housekeeping(self):
+    def old_get_housekeeping(self):
         # Eventually this should query all the subsystems and condense to a housekeeping report.
         # For now I will add some filler data.
         fileinfo = self.controller.get_latest_fileinfo()
@@ -142,6 +150,20 @@ class Communicator():
         self.buffer_for_downlink = camera0_status + self.buffer_for_downlink[
                                                     struct.calcsize('>1B1L1L1H1H1L'):]  # just overwrite old status
         # self.buffer_for_downlink = self.peer_aggregator.aggregate_peer_status(self.peers)
+
+    def get_housekeeping(self):
+        if not self.aggregator:
+            pass
+        self.aggregator.update()
+        value, names = self.aggregator.get_status_summary()
+        id_codes = []
+        for name in names:
+            id_codes.append(ALL_ID_CODES[name])
+        if len(id_codes) > 254:
+            id_codes = id_codes[:254]
+        format_string = '>1B%dB' % len(id_codes)
+        camera_status = struct.pack(format_string, value, *id_codes)
+        self.buffer_for_downlink = camera_status + self.buffer_for_downlink[struct.calcsize(format_string):]
 
     def setup_aggregator(self, aggregator):
         self.aggregator = aggregator
@@ -296,23 +318,3 @@ class Communicator():
         except (Pyro4.errors.CommunicationError, Pyro4.errors.TimeoutError) as e:
             print e
             return False
-
-    def identify_leader(self):
-        if self.leader_handle:
-            response = self.ping_other(self.leader_handle)
-            if not response:
-                self.determine_leader()
-        if not self.leader_handle:
-            self.determine_leader()
-
-    def determine_leader(self):
-        for i in range(num_cameras)[:self.cam_id]:
-            if i < self.cam_id:
-                response = self.ping_other(self.peers[i])
-                if response:
-                    self.leader_handle = self.peers[i]
-                    return True
-        self.leader_handle = self.peers[self.cam_id]
-        return True
-        # Note that this is self.
-        # If the camera can't find a lower cam_id, it is the leader.
