@@ -16,12 +16,32 @@ Pyro4.config.SERIALIZER = 'pickle'
 
 from pmc_camera.pycamera.dtypes import frame_info_dtype
 
+camera_status_columns = ["total_frames", "camera_timestamp_offset", "main_temperature", "sensor_temperature",
+                         "AcquisitionFrameCount", "AcquisitionFrameRateAbs", "AcquisitionFrameRateLimit",
+                         "AcquisitionMode", "ChunkModeActive",
+                         "DeviceTemperature", "DeviceTemperatureSelector", "EFLensFStopCurrent",
+                         "EFLensFStopMax", "EFLensFStopMin", "EFLensFStopStepSize",
+                         "EFLensFocusCurrent", "EFLensFocusMax", "EFLensFocusMin", "EFLensFocusSwitch", "EFLensID",
+                         "EFLensLastError", "EFLensState",
+                         "ExposureAuto", "ExposureAutoAdjustTol", "ExposureAutoAlg", "ExposureAutoMax",
+                         "ExposureAutoMin",
+                         "ExposureAutoOutliers", "ExposureAutoRate", "ExposureAutoTarget", "ExposureMode",
+                         "ExposureTimeAbs",
+                         "Gain", "GainAuto", "GevTimestampValue", "PixelFormat", "PtpAcquisitionGateTime",
+                         "PtpMode", "PtpStatus",
+                         "StatFrameDelivered", "StatFrameDropped", "StatFrameRate", "StatFrameRescued",
+                         "StatFrameShoved", "StatFrameUnderrun", "StatLocalRate", "StatPacketErrors",
+                         "StatPacketMissed",
+                         "StatPacketReceived", "StatPacketRequested", "StatPacketResent", "StatTimeElapsed",
+                         "StreamAnnouncedBufferCount", "StreamBytesPerSecond",
+                         "StreamHoldEnable", "StreamID", "StreamType", "TriggerMode", "TriggerSource"]
+
 
 LOG_DIR='/home/pmc/logs/housekeeping/camera'
 
 class AcquireImagesProcess:
     def __init__(self, raw_image_buffers, acquire_image_output_queue, acquire_image_input_queue,
-                 command_queue, command_result_queue, info_buffer,status,use_simulated_camera,uri):
+                 command_queue, command_result_queue, info_buffer,status,use_simulated_camera,uri,log_dir = LOG_DIR):
         self.data_buffers = raw_image_buffers
         self.input_queue = acquire_image_input_queue
         self.output_queue = acquire_image_output_queue
@@ -30,28 +50,59 @@ class AcquireImagesProcess:
         self.info_buffer = info_buffer
         self.use_simulated_camera = use_simulated_camera
         self.uri = uri
+        if self.use_simulated_camera:
+            self.log_dir = tempfile.mkdtemp("simulated_camera_logs")
+        else:
+            self.log_dir = log_dir
         self.status = status
         self.status.value="starting"
+        self.status_log_filename = None
+        self.status_log_file = None
+        self.status_log_last_update = 0
+        self.status_log_update_interval = 10
+        self.columns = camera_status_columns
         self.child = mp.Process(target=self.run)
         #self.child.start()
 
-    def create_log_file(self,log_dir=LOG_DIR):
+    def create_log_file(self,columns):
         try:
-            os.makedirs(log_dir)
+            os.makedirs(self.log_dir)
         except OSError:
             pass
 
-        self.temperature_log_filename = os.path.join(log_dir,(time.strftime('%Y-%m-%d_%H%M%S.csv')))
-        self.temperature_log_file = open(self.temperature_log_filename,'a')
+        self.status_log_filename = os.path.join(self.log_dir, (time.strftime('%Y-%m-%d_%H%M%S.csv')))
+        self.status_log_file = open(self.status_log_filename, 'a')
+        self.status_log_file.write('# %s %s %s %s\n' %
+                                   (self.pc.get_parameter("DeviceModelName"),
+                                    self.pc.get_parameter("DeviceID"),
+                                    self.pc.get_parameter("DeviceFirmwareVersion"),
+                                    self.pc.get_parameter("GevDeviceMACAddress")))
+        self.status_log_file.write(','.join(['epoch'] + columns) + '\n')
 
-    def write_temperature_log(self):
-        epoch = time.time()
+
+    def get_temperatures(self):
         self.pc.set_parameter("DeviceTemperatureSelector","Main")
         main = self.pc.get_parameter("DeviceTemperature")
         self.pc.set_parameter("DeviceTemperatureSelector","Sensor")
         sensor = self.pc.get_parameter("DeviceTemperature")
-        self.temperature_log_file.write("%f,%s,%s\n" % (epoch,main,sensor))
-        self.temperature_log_file.flush()
+        return dict(main_temperature=main,sensor_temperature=sensor)
+
+    def log_status(self,status_update):
+        if time.time() - self.status_log_last_update < self.status_log_update_interval:
+            return
+        self.status_log_last_update = time.time()
+        status_update = status_update.copy()
+        camera_status = status_update.pop('all_camera_parameters')
+        status_update.update(camera_status)
+        if self.status_log_file is None:
+            self.create_log_file(self.columns)
+        values = [status_update['camera_status_update_at']]
+        for column in self.columns:
+            values.append(status_update[column])
+        self.status_log_file.write(','.join(['%s' % value for value in values]) + '\n')
+        self.status_log_file.flush()
+
+
 
     def run(self):
         self.pipeline = Pyro4.Proxy(uri=self.uri)
@@ -73,17 +124,6 @@ class AcquireImagesProcess:
         self.payload_size = int(self.pc.get_parameter('PayloadSize'))
         logger.debug("payload size: %d" % self.payload_size)
 
-        if self.use_simulated_camera:
-            log_dir = tempfile.mkdtemp("simulated_camera_logs")
-        else:
-            log_dir = LOG_DIR
-        self.create_log_file(log_dir=log_dir)
-        self.temperature_log_file.write('# %s %s %s %s\n' %
-                                        (self.pc.get_parameter("DeviceModelName"),
-                                         self.pc.get_parameter("DeviceID"),
-                                         self.pc.get_parameter("DeviceFirmwareVersion"),
-                                         self.pc.get_parameter("GevDeviceMACAddress")))
-        self.temperature_log_file.write("epoch,sensor,main\n")
 
         self.pc._pc.start_capture()
 
@@ -155,16 +195,19 @@ class AcquireImagesProcess:
                 if update_at - camera_parameters_last_updated > 1.0:
                     self.status.value = "getting camera parameters"
                     status = self.pc.get_all_parameters()
-                    self.write_temperature_log()
+                    temperatures = self.get_temperatures()
                     camera_parameters_last_updated = update_at
 
                     self.status.value = "updating status"
                     timestamp_comparison = self.pc.compare_timestamps()*1e6
-                    self.pipeline.update_status(dict(all_camera_parameters=status,
-                                                camera_status_update_at=update_at,
-                                                camera_timestamp_offset=timestamp_comparison,
-                                                total_frames=frame_number,
-                                                     ))
+                    status_update = dict(all_camera_parameters=status,
+                                         camera_status_update_at=update_at,
+                                         camera_timestamp_offset=timestamp_comparison,
+                                         total_frames=frame_number,
+                                         )
+                    status_update.update(temperatures)
+                    self.log_status(status_update)
+                    self.pipeline.update_status(status_update)
                 else:
                     time.sleep(0.001)
                     self.status.value = "waiting"
