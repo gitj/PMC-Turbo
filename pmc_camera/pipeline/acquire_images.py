@@ -96,8 +96,6 @@ class AcquireImagesProcess:
         exit_request = False
         self.status.value = "idle"
 
-        last_camera_status = {}
-
         while True:
             while True:
                 try:
@@ -159,7 +157,6 @@ class AcquireImagesProcess:
                     status = self.pc.get_all_parameters()
                     self.write_temperature_log()
                     camera_parameters_last_updated = update_at
-                    last_camera_status = status
 
                     self.status.value = "updating status"
                     timestamp_comparison = self.pc.compare_timestamps()*1e6
