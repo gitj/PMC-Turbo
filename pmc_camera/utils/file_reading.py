@@ -15,7 +15,7 @@ def read_last_line(file_):
                 buffer = f.read(BLOCK_SIZE) + buffer
             else:
                 # File is too small to include full block
-                f.seek(0, 0)
+                f.seek(0)
                 buffer += f.read(block_end_byte)
                 return buffer.split('\n')[-2]
                 # We don't really have an option here to do anything else.

@@ -167,7 +167,7 @@ class StatusFileWatcher(dict):
 
 
 class FloatStatusItem():
-    def __init__(self, name, column_name, nominal_range, good_range, warning_range):
+    def __init__(self, name, column_name, scaling, nominal_range, good_range, warning_range):
         # Example solar cell voltage
         self.name = name
         self.column_name = column_name
@@ -177,12 +177,15 @@ class FloatStatusItem():
         self.good_range = good_range
         self.warning_range = warning_range
         self.silenced = False
+        self.scaling = scaling
 
     # Add silence, epoch
 
     def update_value(self, value_dict):
         if self.column_name in value_dict:
             self.value = float(value_dict[self.column_name])
+            if self.scaling:
+                self.value *= self.scaling
             self.epoch = float(value_dict['epoch'])
             logger.debug('Item %r updated with value %r' % (self.name, self.value))
 
@@ -197,6 +200,44 @@ class FloatStatusItem():
                 return GOOD
         if self.warning_range:
             if self.value in self.warning_range:
+                return WARNING
+        return CRITICAL
+
+    def get_status(self):
+        return dict(column_name=self.column_name, value=self.value, epoch=self.epoch)
+
+
+class StringStatusItem():
+    def __init__(self, name, column_name, nominal_string, good_string, warning_string):
+        # Example solar cell voltage
+        self.name = name
+        self.column_name = column_name
+        self.value = None
+        self.epoch = None
+        self.nominal_string = nominal_string
+        self.good_string = good_string
+        self.warning_string = warning_string
+        self.silenced = False
+
+    # Add silence, epoch
+
+    def update_value(self, value_dict):
+        if self.column_name in value_dict:
+            self.value = str(value_dict[self.column_name])
+            self.epoch = float(value_dict['epoch'])
+            logger.debug('Item %r updated with value %r' % (self.name, self.value))
+
+    def get_status_summary(self):
+        if self.silenced:
+            return SILENCE
+        if self.nominal_string:
+            if self.value is self.nominal_string:
+                return NOMINAL
+        if self.good_string:
+            if self.value is self.good_string:
+                return GOOD
+        if self.warning_string:
+            if self.value is self.warning_string:
                 return WARNING
         return CRITICAL
 
