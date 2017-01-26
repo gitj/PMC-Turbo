@@ -118,7 +118,8 @@ class NoPeersTest(unittest.TestCase):
         self.c.get_and_process_sip_bytes()
 
         msg = self.c.lowrate_downlink.retrieve_msg()
-        assert (msg == ('\xff' + ('\x00' * 254)))
+        print '%r' % msg
+        assert (msg == ('\xff\x00\x01\x01\x02' + '\x00' * 250))
 
 
 class PeersTest(unittest.TestCase):
