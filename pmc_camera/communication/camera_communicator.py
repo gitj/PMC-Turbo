@@ -13,6 +13,7 @@ import pmc_camera.communication.packet_classes
 from pmc_camera.communication import downlink_classes, uplink_classes  # aggregator
 from pmc_camera.communication.command_table import command_manager, CommandStatus
 from pmc_camera.communication import command_table
+from pmc_camera.communication import housekeeping_format_classes
 
 from pmc_camera.communication import constants
 from pmc_camera.communication import aggregator_hard_coded
@@ -34,12 +35,7 @@ logger = logging.getLogger(__name__)
 START_BYTE = chr(constants.SIP_START_BYTE)
 END_BYTE = chr(constants.SIP_END_BYTE)
 
-ALL_ID_CODES = {
-    'array_voltage': 1,
-    'battery_voltage': 2,
-    'temp_cpu': 3,
-    'voltage-12V': 4
-}
+
 
 
 @Pyro4.expose
@@ -152,18 +148,14 @@ class Communicator():
         # self.buffer_for_downlink = self.peer_aggregator.aggregate_peer_status(self.peers)
 
     def get_housekeeping(self):
-        if not self.aggregator:
-            pass
+        if self.aggregator == None:
+            raise RuntimeError('Communicator has no aggregator.')
         self.aggregator.update()
-        value, names = self.aggregator.get_status_summary()
-        id_codes = []
-        for name in names:
-            id_codes.append(ALL_ID_CODES[name])
-        if len(id_codes) > 254:
-            id_codes = id_codes[:254]
-        format_string = '>1B%dB' % len(id_codes)
-        camera_status = struct.pack(format_string, value, *id_codes)
-        self.buffer_for_downlink = camera_status + self.buffer_for_downlink[struct.calcsize(format_string):]
+        status_summary = self.aggregator.get_status_summary()
+        short_housekeeping = housekeeping_format_classes.ShortHousekeeping()
+        short_housekeeping.from_values([self.cam_id], [status_summary])
+        camera_status = short_housekeeping.to_buffer()
+        self.buffer_for_downlink = camera_status + self.buffer_for_downlink[len(camera_status):]
 
     def setup_aggregator(self, aggregator):
         self.aggregator = aggregator

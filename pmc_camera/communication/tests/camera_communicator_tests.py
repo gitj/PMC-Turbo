@@ -35,7 +35,7 @@ def test_basic_command_path():
     cc1.execute_packet(packet_classes.CommandPacket(payload=non_existant_command, sequence_number=1,
                                                     destination=1).to_buffer())
 
-    #command = command_table.command_manager.
+    # command = command_table.command_manager.
 
 
 class FakeLowrateUplink():
@@ -76,6 +76,14 @@ class FakeController():
         return '\x00' * 1024
 
 
+class FakeAggregator():
+    def update(self):
+        return
+
+    def get_status_summary(self):
+        return (1, ['array_voltage', 'battery_voltage'])
+
+
 class NoPeersTest(unittest.TestCase):
     def setUp(self):
         self.c = camera_communicator.Communicator(cam_id=0, peers=[], controller=None)
@@ -102,6 +110,7 @@ class NoPeersTest(unittest.TestCase):
 
     def get_and_process_bytes_test(self):
         self.c.lowrate_uplink = FakeLowrateUplink()
+        self.c.aggregator = FakeAggregator()
         self.c.lowrate_uplink.assign_bytes_to_get('\x10\x13\x03')
         self.c.controller = FakeController()
         self.c.lowrate_downlink = FakeLowrateDownlink()
@@ -138,5 +147,5 @@ class PeersTest(unittest.TestCase):
         self.hirate_downlink = FakeHirateDownlink()
         self.c.downlinks = [self.hirate_downlink]
         self.c.send_data_on_downlinks()
-        print '%r' % self.hirate_downlink.queue
+        print '%r' % self.hirate_downlink.queue[0]
         assert (self.hirate_downlink.queue == ('\x00' * 1024))

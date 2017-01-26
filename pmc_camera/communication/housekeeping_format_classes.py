@@ -4,6 +4,12 @@ import struct
 logger = logging.getLogger(__name__)
 
 ESCAPE_CHAR = 0xFF
+ALL_ID_CODES = {
+    'array_voltage': 1,
+    'battery_voltage': 2,
+    'temp_cpu': 3,
+    'voltage-12V': 4
+}
 
 
 # Since we assign ids to the cameras and attributes, we can just use 255 as our escape character.
@@ -40,4 +46,8 @@ class ShortHousekeeping(object):
         for key in self.statuses.keys():
             id_byte, status_value, attributes = key, self.statuses[key][0], self.statuses[key][1]
             format_string = '>1B1B1B%dB' % (len(attributes))
-            buffer += struct.pack(format_string, ESCAPE_CHAR, id_byte, status_value, *attributes)
+            print format_string, ESCAPE_CHAR, id_byte
+            print '%r, %r' % (status_value, attributes)
+            attribute_id_bytes = [ALL_ID_CODES[attribute] for attribute in attributes]
+            buffer += struct.pack(format_string, ESCAPE_CHAR, id_byte, status_value, *attribute_id_bytes)
+        return buffer
