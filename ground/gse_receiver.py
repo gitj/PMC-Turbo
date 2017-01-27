@@ -32,7 +32,7 @@ class GSEReceiver():
             self.port.timeout = timeout
         return
 
-    def __del__(self):
+    def close(self):
         try:
             self.port.close()
         except Exception:
