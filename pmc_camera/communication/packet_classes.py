@@ -325,27 +325,35 @@ class CommandPacket(object):
                 raise ValueError("Destination must be 0-255, got %d" % self.destination)
             if self.sequence_number > 2**16-1 or self.sequence_number < 0:
                 raise ValueError("Sequence number must be 0-65535, got %d" % self.sequence_number)
+
+    def _pack_header(self,enclosure_length):
+        return struct.pack(self._header_format_string,self._valid_start_byte,self._valid_identifier,enclosure_length)
+
     def to_buffer(self):
         enclosure_length = self.subheader_length + len(self.payload) + self._crc_length
-        header = struct.pack(self._header_format_string,self._valid_start_byte,self._valid_identifier,enclosure_length)
+        header = self._pack_header(enclosure_length)
         subheader = struct.pack(self._subheader_format_string,self.sequence_number,self.destination)
         crc_payload = subheader + self.payload
         crc = get_crc(crc_payload)
         footer = struct.pack(self._footer_format_string,crc,self._valid_end_byte)
         return header + crc_payload + footer
 
+    def _unpack_header(self,header):
+        start_byte,identifier,length = struct.unpack(self._header_format_string,header)
+        if start_byte != self._valid_start_byte:
+            raise PacketValidityError("Got invalid start byte 0x%02X" % start_byte)
+        if identifier != self._valid_identifier:
+            raise PacketValidityError("Got invalid identifier byte 0x%02X" % identifier)
+        return length
+
     def from_buffer(self,buffer):
-        start_byte,identifier,length = struct.unpack(self._header_format_string,buffer[:self.header_length])
+        length = self._unpack_header(buffer[:self.header_length])
         remainder = buffer[self.header_length:]
         crc_payload = buffer[self.header_length:-self.footer_length]
         self.sequence_number,self.destination = struct.unpack(self._subheader_format_string,remainder[
                                                                                            :self.subheader_length])
         self.payload = remainder[self.subheader_length:-self.footer_length]
         crc,end_byte = struct.unpack(self._footer_format_string,remainder[-self.footer_length:])
-        if start_byte != self._valid_start_byte:
-            raise PacketValidityError("Got invalid start byte 0x%02X" % start_byte)
-        if identifier != self._valid_identifier:
-            raise PacketValidityError("Got invalid identifier byte 0x%02X" % identifier)
         if end_byte != self._valid_end_byte:
             raise PacketValidityError("Got invalid end byte 0x%02X" % end_byte)
         this_crc = get_crc(crc_payload)
@@ -354,4 +362,38 @@ class CommandPacket(object):
         if length != len(crc_payload)+2:
             raise PacketLengthError("Bad length:, got %d, expected %d" % (length,len(crc_payload)+2))
 
+
+class GSECommandPacket(CommandPacket):
+    _header_format_table = [('1B','start_byte'),
+                            ('1B','link'),
+                            ('1B','routing'),
+                            ('1B','length'),
+                            ]
+    _header_format_string = '>' + ''.join([format_ for format_, _ in _header_format_table])
+    header_length = struct.calcsize(_header_format_string)
+    LOS1 = (0x00, 0x09)
+    LOS2 = (0x00, 0x0C)
+    TDRSS = (0x01, 0x09)
+    IRIDIUM = (0x02, 0x0C)
+    _valid_link_tuples = [LOS1, LOS2, TDRSS,IRIDIUM]
+    def __init__(self,buffer=None,payload=None,sequence_number=None,destination=None, link_tuple=None):
+        if payload is not None:
+            if link_tuple not in self._valid_link_tuples:
+                raise ValueError("link_tuple %r not valid, valid options are %r" % (link_tuple,self._valid_link_tuples))
+            else:
+                self.link_tuple = link_tuple
+        super(GSECommandPacket,self).__init__(buffer=buffer,payload=payload,sequence_number=sequence_number,
+                                              destination=destination)
+
+    def _pack_header(self,enclosure_length):
+        return struct.pack(self._header_format_string,self._valid_start_byte,self.link_tuple[0],self.link_tuple[1],
+                           enclosure_length)
+
+    def _unpack_header(self,header):
+        start_byte,identifier,length = struct.unpack(self._header_format_string,header)
+        if start_byte != self._valid_start_byte:
+            raise PacketValidityError("Got invalid start byte 0x%02X" % start_byte)
+        if identifier != self._valid_identifier:
+            raise PacketValidityError("Got invalid identifier byte 0x%02X" % identifier)
+        return length
 
