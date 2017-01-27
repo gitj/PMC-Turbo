@@ -33,7 +33,9 @@ NUM_COIL_REGISTERS = 26
 @Pyro4.expose
 class ChargeController():
     def __init__(self, host='pmc-charge-controller-0', port=502):
-        self.client = ModbusTcpClient(host=host, port=port)
+        self.host = host
+        self.port = port
+#        self.client = ModbusTcpClient(host=host, port=port)
         self.update_serial_number_and_device_name()
         self.readable_values = {}
         self.coil_register_indices = range(1, NUM_COIL_REGISTERS + 1)
@@ -49,6 +51,7 @@ class ChargeController():
             self.device_name = 'TriStar-MPPT-45'
 
     def measure(self):
+        self.client = ModbusTcpClient(host=self.host, port=self.port)
         measurement = OrderedDict(epoch=time.time())
         result = self.client.read_input_registers(0, NUM_REGISTERS, unit=0x01)
         try:
@@ -57,9 +60,11 @@ class ChargeController():
             print e, result
             raise
         self.measurement = measurement
+        self.client.close()
         return self.measurement
 
     def measure_eeprom(self):
+        self.client = ModbusTcpClient(host=self.host, port=self.port)
         self.eeprom_measurement = OrderedDict(epoch=time.time())
         eeprom_measurement = self.client.read_input_registers(EEPROM_BATCH_1[0], EEPROM_BATCH_1[1] - EEPROM_BATCH_1[0],
                                                               unit=0x01).registers
@@ -68,6 +73,7 @@ class ChargeController():
         eeprom_measurement += self.client.read_input_registers(EEPROM_BATCH_3[0], EEPROM_BATCH_3[1] - EEPROM_BATCH_3[0],
                                                                unit=0x01).registers
         self.eeprom_measurement.update(zip(EEPROM_REGISTER_INDICES, eeprom_measurement))
+        self.client.close()
         return self.eeprom_measurement
 
     def measure_coils(self):
@@ -80,7 +86,7 @@ class ChargeController():
 @Pyro4.expose
 class ChargeControllerLogger():
     def __init__(self, host='pmc-charge-controller-0', port=502, measurement_interval=10, record_eeprom=True,
-                 eeprom_measurement_interval=3600):
+                 eeprom_measurement_interval=3600, pyro_port=42000):
         try:
             os.makedirs(LOG_DIR)
         except OSError:
@@ -98,7 +104,7 @@ class ChargeControllerLogger():
             self.eeprom_filename = None
             self.eeprom_file = None
         ip = Pyro4.socketutil.getInterfaceAddress('192.168.1.1')
-        self.daemon = Pyro4.Daemon(host=ip, port=42000)
+        self.daemon = Pyro4.Daemon(host='0.0.0.0', port=pyro_port)
         print self.daemon.register(self, objectId='chargecontroller')
 
     def create_file(self, log_dir=LOG_DIR):
@@ -175,6 +181,12 @@ def populate_human_readable_dict(measurement_array):
 
     return priority_values
 
+
+def run_charge_controller_logger(host='pmc-charge-controller-0', port=502, measurement_interval=10, record_eeprom=True,
+                 eeprom_measurement_interval=3600, pyro_port=42000):
+    ccl = ChargeControllerLogger(host=host,port=port,measurement_interval=measurement_interval,record_eeprom=record_eeprom,
+                                 eeprom_measurement_interval=eeprom_measurement_interval,pyro_port=pyro_port)
+    ccl.run()
 
 if __name__ == "__main__":
     ccl = ChargeControllerLogger()
