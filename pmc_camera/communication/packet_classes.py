@@ -397,3 +397,22 @@ class GSECommandPacket(CommandPacket):
             raise PacketValidityError("Got invalid identifier byte 0x%02X" % identifier)
         return length
 
+gse_acknowledgment_codes = {0x00: "command transmitted successfully",
+                            0x0A: "0x0A: GSE operator disabled science from sending commands",
+                            0x0B: "0x0B: Routing address does not match the selected link",
+                            0x0C: "0x0C: The link selected was not enabled",
+                            0x0D: "0x0D: Some other error"}
+def decode_gse_acknowledgement(data):
+    if len(data) < 3:
+        raise PacketLengthError("GSE Acknowledgement must be 3 bytes, only got %d" % len(data))
+    sync1,sync2,ack = struct.unpack('>3B',data[:3])
+    if sync1 != 0xFA:
+        raise PacketValidityError("GSE Acknowledgement must start with 0xFA, got 0x%02X" % sync1)
+    if sync2 != 0xF3:
+        raise PacketValidityError("GSE Acknowledgement byte 2 must be 0xF3, got 0x%02X" % sync2)
+    if ack not in gse_acknowledgment_codes:
+        raise PacketValidityError("GSE Acknowledgement byte not recognized, got 0x%02X" % ack)
+    return ack,data[3:]
+
+def encode_gse_acknowledgement(ack_byte):
+    return struct.pack('>3B',0xFA,0xF3,ack_byte)

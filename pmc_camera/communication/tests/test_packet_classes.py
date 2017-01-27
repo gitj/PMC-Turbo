@@ -69,3 +69,13 @@ def test_hirate_packet_roundtrip():
     assert packet.payload == packet2.payload
     assert packet.packet_number == packet2.packet_number
     assert packet.total_packet_number == packet2.total_packet_number
+
+def test_gse_acknowledgements():
+    for ack in [0x00, 0x0A, 0x0B, 0x0C, 0x0D]:
+        assert ack == packet_classes.decode_gse_acknowledgement(packet_classes.encode_gse_acknowledgement(ack))[0]
+    valid = packet_classes.encode_gse_acknowledgement(0x00)
+    for index in range(3):
+        bytes = list(valid)
+        bytes[index] = 'a'
+        with assert_raises(packet_classes.PacketValidityError):
+            packet_classes.decode_gse_acknowledgement(''.join(bytes))
