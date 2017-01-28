@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class GSEReceiver():
-    def __init__(self, serial_port_or_socket_port='/dev/ttyUSB0', baudrate=115200, timeout=1):
+    def __init__(self, path, serial_port_or_socket_port='/dev/ttyUSB0', baudrate=115200, timeout=1):
         '''
 
         Parameters
@@ -32,6 +32,7 @@ class GSEReceiver():
             self.port.timeout = timeout
         self.files = {}
         self.hirate_file_packet_remainder = ''
+        self.setup_directory(path)
         return
 
     def close(self):
@@ -128,9 +129,6 @@ class GSEReceiver():
         file_class.write_buffer_to_file(filename + '_buffer')
 
     def log_lowrate_status(self, packet):
-        # Problem: currently communicator aggregates lots of statuses to send down, then sends all... think about this
-        # It is sure to create errors and my fix here is just a hack right now
-        # logger.debug('%r' % packet.payload)\
         format_string = '>1B1L1L1H1H1L'
         overall_status, frame_status, frame_id, focus_step, aperture_stop, exposure_ms = struct.unpack(
             format_string,
@@ -191,13 +189,6 @@ class GSEReceiver():
                 g.write_file_from_file_packets(sorted_packets, jpg_filename)
                 del self.files[file_id]
 
-    def run(self):
-        path = '/home/pmc/gse_receiver_data'
-        path = os.path.join(path, time.strftime('%Y-%m-%d'))
-        self.setup_directory(path)
-
-        self.main_loop()
-
     def main_loop(self):
         while True:
             buffer = g.get_new_data_into_buffer(1)
@@ -232,5 +223,6 @@ if __name__ == "__main__":
     logger.addHandler(default_filehandler)
     logger.setLevel(logging.DEBUG)
 
-    g = GSEReceiver()
-    g.run()
+    path = os.path.join('/home/pmc/pmchome/gse_receiver_data', time.strftime('%Y-%m-%d_%H:%M:%S'))
+    g = GSEReceiver(path=path)
+    g.main_loop()
