@@ -16,9 +16,9 @@ def main():
     logs_path = os.path.join(path, 'logs')
     if not os.path.exists(logs_path):
         os.makedirs(logs_path)
-    image_path = os.path.join(path, 'images')
-    if not os.path.exists(image_path):
-        os.makedirs(image_path)
+    file_path = os.path.join(path, 'images')
+    if not os.path.exists(file_path):
+        os.makedirs(file_path)
     raw_filename = os.path.join(logs_path, 'raw.log')
     lowrate_filename = os.path.join(logs_path, 'lowrate.log')
 
@@ -34,7 +34,7 @@ def main():
         f.close()
 
         gse_packets, gse_remainder = g.get_gse_packets_from_buffer(buffer)
-        gse_hirate_packets, gse_lowrate_packets = g.separate_hirate_and_lowrate_gse_packets(gse_packets)
+        gse_hirate_packets, gse_lowrate_packets = g.separate_gse_packets_by_origin(gse_packets)
 
         f = open(lowrate_filename, 'ab+')
         for packet in gse_lowrate_packets:
@@ -64,7 +64,7 @@ def main():
             if [packet.packet_number for packet in sorted_packets] == range(sorted_packets[0].total_packet_number):
                 logger.debug('Full image received: file id %d' % file_id)
                 jpg_filename = '%d' % file_id
-                jpg_filename = os.path.join(image_path, jpg_filename)
+                jpg_filename = os.path.join(file_path, jpg_filename)
                 g.write_file_from_hirate_packets(sorted_packets, jpg_filename)
                 del files[file_id]
 

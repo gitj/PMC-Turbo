@@ -49,7 +49,7 @@ def main(data_length, chunk_size, downlink_bytes_per_sec):
     gr = gse_receiver.GSEReceiver()
     buffer = send_and_receive_loop(DATA, chunk_size, downlink_bytes_per_sec)
     gse_packets, _ = gr.get_gse_packets_from_buffer(buffer)
-    hi, low = gr.separate_hirate_and_lowrate_gse_packets(gse_packets)
+    hi, low = gr.separate_gse_packets_by_origin(gse_packets)
     data_buffer = ''
     for p in hi:
         data_buffer += p.payload
