@@ -99,8 +99,8 @@ class NoPeersTest(unittest.TestCase):
         HIRATE_DOWNLINK_PORT = 4002
         DOWNLINK_SPEED = 700
 
-        self.c.setup_leader_attributes(UPLINK_PORT, LOWRATE_DOWNLINK_PORT, LOWRATE_DOWNLINK_IP,
-                                       HIRATE_DOWNLINK_IP, HIRATE_DOWNLINK_PORT, DOWNLINK_SPEED)
+        self.c.setup_links(UPLINK_PORT, LOWRATE_DOWNLINK_PORT, LOWRATE_DOWNLINK_IP,
+                           HIRATE_DOWNLINK_IP, HIRATE_DOWNLINK_PORT, DOWNLINK_SPEED)
 
     def get_bytes_test(self):
         self.c.lowrate_uplink = FakeLowrateUplink()

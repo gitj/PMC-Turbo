@@ -104,16 +104,15 @@ class Communicator():
         uri = self.pyro_daemon.register(self, "communicator")
         print uri
 
-    def setup_leader_attributes(self, sip_uplink_port, lowrate_downlink_ip, lowrate_downlink_port, hirate_downlink_ip,
-                                hirate_downlink_port, downlink_speed):
+    def setup_links(self, sip_uplink_port, lowrate_downlink_ip, lowrate_downlink_port, hirate_downlink_ip,
+                    hirate_downlink_port, downlink_speed):
         self.sip_leftover_buffer = ''
         self.leftover_buffer = ''
         self.lowrate_uplink = uplink_classes.LowrateUplink(sip_uplink_port)
         self.lowrate_downlink = downlink_classes.LowrateDownlink(lowrate_downlink_ip, lowrate_downlink_port)
         self.hirate_downlink = downlink_classes.HirateDownlink(hirate_downlink_ip, hirate_downlink_port, downlink_speed)
         self.downlinks = [self.hirate_downlink]  # Eventually this will also include Openport downlink
-        self.file_id = 254
-        # self.peer_aggregator = aggregator.PeerAggregator()
+        self.file_id = 0
 
     ### Loops to continually be run
 
@@ -131,21 +130,6 @@ class Communicator():
             if self.end_loop == True:  # Switch this to end the leader loop.
                 return
             time.sleep(1)
-
-    def old_get_housekeeping(self):
-        # Eventually this should query all the subsystems and condense to a housekeeping report.
-        # For now I will add some filler data.
-        fileinfo = self.controller.get_latest_fileinfo()
-        frame_status = fileinfo[3]
-        frame_id = fileinfo[4]
-        focus_step = fileinfo[7]
-        aperture_stop = fileinfo[8]
-        exposure_ms = int(fileinfo[9] / 1000)
-        camera0_status = struct.pack('>1B1L1L1H1H1L', 255, frame_status, frame_id,
-                                     focus_step, aperture_stop, exposure_ms)
-        self.buffer_for_downlink = camera0_status + self.buffer_for_downlink[
-                                                    struct.calcsize('>1B1L1L1H1H1L'):]  # just overwrite old status
-        # self.buffer_for_downlink = self.peer_aggregator.aggregate_peer_status(self.peers)
 
     def get_housekeeping(self):
         if self.aggregator == None:
@@ -267,20 +251,7 @@ class Communicator():
     def run_shell_command(self, command_line, max_num_bytes_returned, request_id, timeout):
         self.controller.run_shell_command(command_line, max_num_bytes_returned, request_id, timeout)
 
-    def request_postage_stamp(self, which, sequence, verify, args):
-        compression_factor = args[0]
-        return self.peers[which].get_postage_stamp(compression_factor)
 
-    def send_overall_status(self, which=None, sequence=None, verify=None, args=None):
-        # Need to decide what to do heres
-        # Send 1 for everything that's okay, 0 for everything that isn't
-        status_summaries = []
-        for peer in self.peers:
-            status_summaries.append(peer.give_status_summary())
-        return status_summaries
-
-    def send_specific_status(self, which, sequence, verify, args):
-        return self.peers[which].get_detailed_status()
 
     ##### SIP socket methods
 

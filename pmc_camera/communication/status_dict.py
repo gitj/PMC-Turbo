@@ -167,7 +167,7 @@ class StatusFileWatcher(dict):
 
 
 class FloatStatusItem():
-    def __init__(self, name, column_name, scaling, nominal_range, good_range, warning_range):
+    def __init__(self, name, column_name, nominal_range, good_range, warning_range, scaling=1):
         # Example solar cell voltage
         self.name = name
         self.column_name = column_name
@@ -184,10 +184,9 @@ class FloatStatusItem():
     def update_value(self, value_dict):
         if self.column_name in value_dict:
             self.value = float(value_dict[self.column_name])
-            if self.scaling:
-                self.value *= self.scaling
-            self.epoch = float(value_dict['epoch'])
-            logger.debug('Item %r updated with value %r' % (self.name, self.value))
+            self.value *= self.scaling
+        self.epoch = float(value_dict['epoch'])
+        logger.debug('Item %r updated with value %r' % (self.name, self.value))
 
     def get_status_summary(self):
         if self.silenced:
@@ -231,13 +230,13 @@ class StringStatusItem():
         if self.silenced:
             return SILENCE
         if self.nominal_string:
-            if self.value is self.nominal_string:
+            if self.nominal_string in self.value:
                 return NOMINAL
         if self.good_string:
-            if self.value is self.good_string:
+            if self.good_string in self.value:
                 return GOOD
         if self.warning_string:
-            if self.value is self.warning_string:
+            if self.warning_string in self.value:
                 return WARNING
         return CRITICAL
 
