@@ -25,8 +25,8 @@ class HirateDownlink():
         num_packets = int(np.ceil(len(buffer) / packet_size))
         for i in range(num_packets):
             msg = buffer[(i * packet_size):((i + 1) * packet_size)]
-            packet = packet_classes.HiratePacket(file_id=file_id, packet_number=i,
-                                                 total_packet_number=num_packets, payload=msg)
+            packet = packet_classes.FilePacket(file_id=file_id, packet_number=i,
+                                               total_packet_number=num_packets, payload=msg)
             packets.append(packet)
         packet_length_debug_string = ','.join([str(packet.payload_length) for packet in packets])
         logger.debug('Packet payload lengths: %s' % packet_length_debug_string)

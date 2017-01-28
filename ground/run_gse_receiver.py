@@ -46,7 +46,7 @@ def main():
         gse_hirate_buffer = ''
         for packet in gse_hirate_packets:
             gse_hirate_buffer += packet.payload
-        hirate_packets, remainder = g.get_hirate_packets_from_buffer(hirate_remainder + gse_hirate_buffer)
+        hirate_packets, remainder = g.get_file_packets_from_buffer(hirate_remainder + gse_hirate_buffer)
         for packet in hirate_packets:
             logger.debug('File_id: %d, Packet Number: %d of %d' % (
                 packet.file_id, packet.packet_number, packet.total_packet_number))
@@ -65,7 +65,7 @@ def main():
                 logger.debug('Full image received: file id %d' % file_id)
                 jpg_filename = '%d' % file_id
                 jpg_filename = os.path.join(file_path, jpg_filename)
-                g.write_file_from_hirate_packets(sorted_packets, jpg_filename)
+                g.write_file_from_file_packets(sorted_packets, jpg_filename)
                 del files[file_id]
 
 

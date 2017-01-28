@@ -60,7 +60,7 @@ def get_hirate_packets_from_buffer(buffer, start_byte):
         if len(buffer) < idx + 6 + length + 2:
             print '3'
             return packets
-        packet = packet_classes.HiratePacket()
+        packet = packet_classes.FilePacket()
         packet.from_buffer(buffer[idx:idx + 6 + length + 2])
         packets.append(packet)
         buffer = buffer[idx + 6 + length + 2:]

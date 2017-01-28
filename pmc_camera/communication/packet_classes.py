@@ -166,7 +166,7 @@ class GSEPacket(object):
         return header + self.payload + chr(self.checksum)
 
 
-class HiratePacket(object):
+class FilePacket(object):
     _metadata_table = [('1B', 'start_byte'),
                        ('1L', 'file_id'),
                        ('1B', 'packet_number'),
@@ -180,7 +180,7 @@ class HiratePacket(object):
     def __init__(self, buffer=None, file_id=None,
                  packet_number=None, total_packet_number=None, payload=None):
         """
-        Hirate packet. We break data into chunks and send them to the SIP in this packet format.
+        File packet. We break data into chunks and send them to the SIP in this packet format.
 
         To decode a packet, use as HiratePacket(data), and access the payload attribute.
 

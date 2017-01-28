@@ -21,8 +21,8 @@ def data_to_hirate_packets(packet_size, file_id, data):
     num_packets = np.ceil(len(data) / packet_size)
     for i in range(int(num_packets)):
         msg = data[(i * packet_size):((i + 1) * packet_size)]
-        packet = packet_classes.HiratePacket(file_id=file_id, packet_number=i, total_packet_number=num_packets,
-                                             payload=msg)
+        packet = packet_classes.FilePacket(file_id=file_id, packet_number=i, total_packet_number=num_packets,
+                                           payload=msg)
         packets.append(packet)
     return packets
 

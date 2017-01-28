@@ -31,7 +31,7 @@ class GSEReceiver():
             self.port = serial.Serial(serial_port_or_socket_port, baudrate=baudrate)
             self.port.timeout = timeout
         self.files = {}
-        self.hirate_remainder = ''
+        self.hirate_file_packet_remainder = ''
         return
 
     def close(self):
@@ -84,8 +84,8 @@ class GSEReceiver():
         hirate_gse_packets = [packet for packet in gse_packets if packet.origin == 2]
         return hirate_gse_packets, lowrate_gse_packets
 
-    def get_hirate_packets_from_buffer(self, buffer):
-        hirate_packets = []
+    def get_file_packets_from_buffer(self, buffer):
+        file_packets = []
         remainder = ''
         while buffer:
             idx = buffer.find(chr(constants.SYNC_BYTE))
@@ -94,9 +94,9 @@ class GSEReceiver():
                 remainder = buffer
                 break
             try:
-                hirate_packet = packet_classes.HiratePacket(buffer=buffer[idx:])
-                hirate_packets.append(hirate_packet)
-                buffer = buffer[idx + hirate_packet.header_length + hirate_packet.payload_length + 2:]
+                file_packet = packet_classes.FilePacket(buffer=buffer[idx:])
+                file_packets.append(file_packet)
+                buffer = buffer[idx + file_packet.header_length + file_packet.payload_length + 2:]
             except packet_classes.PacketLengthError as e:
                 logger.debug(str(e))
                 # This triggers when there are insufficient bytes to finish a GSEPacket.
@@ -107,19 +107,18 @@ class GSEReceiver():
                 logger.warning(str(e))
                 # This comes up occasionally - i need to think about how to handle this
                 # Probably just toss the packet... which is what I do already.
-                # remainder = buffer[idx + 6 + 1000 + 2:]
                 remainder = buffer[idx + 1:]
                 # This is hardcoded right now because I know these lengths... I need to fix this in the future
-                # The problem is I can't use hirate_packet.payload_length, etc. since the packet never gets formed
+                # The problem is I can't use file_packet.payload_length, etc. since the packet never gets formed
                 # It raises this exception instead - possible to pass arguments in exception?
                 break
             except packet_classes.PacketValidityError as e:
                 logger.warning(str(e))
                 remainder = buffer[idx + 1:]
                 break
-        return hirate_packets, remainder
+        return file_packets, remainder
 
-    def write_file_from_hirate_packets(self, packets, filename):
+    def write_file_from_file_packets(self, packets, filename):
         data_buffer = ''
         data_buffer = ''
         for packet in packets:
@@ -164,20 +163,20 @@ class GSEReceiver():
             self.log_lowrate_status(packet)
         f.close()
 
-    def get_hirate_packets_and_remainder_from_gse_packets_and_remainder(self, gse_hirate_packets):
+    def get_file_packets_and_remainder_from_gse_packets_hirate_origin(self, gse_hirate_packets):
         gse_hirate_buffer = ''
         for packet in gse_hirate_packets:
             gse_hirate_buffer += packet.payload
-        hirate_packets, remainder = g.get_hirate_packets_from_buffer(self.hirate_remainder + gse_hirate_buffer)
-        for packet in hirate_packets:
+        file_packets, remainder = g.get_file_packets_from_buffer(self.hirate_file_packet_remainder + gse_hirate_buffer)
+        for packet in file_packets:
             logger.debug('File_id: %d, Packet Number: %d of %d' % (
                 packet.file_id, packet.packet_number, packet.total_packet_number))
             logger.debug('Packet length: %d' % packet.payload_length)
-        self.hirate_remainder = remainder
-        return hirate_packets
+        self.hirate_file_packet_remainder = remainder
+        return file_packets
 
-    def gather_files_from_hirate_packets(self, hirate_packets):
-        for packet in hirate_packets:
+    def gather_files_from_file_packets(self, file_packets):
+        for packet in file_packets:
             if packet.file_id in self.files.keys():
                 self.files[packet.file_id].append(packet)
             else:
@@ -189,7 +188,7 @@ class GSEReceiver():
                 logger.debug('Full image received: file id %d' % file_id)
                 jpg_filename = '%d' % file_id
                 jpg_filename = os.path.join(self.file_path, jpg_filename)
-                g.write_file_from_hirate_packets(sorted_packets, jpg_filename)
+                g.write_file_from_file_packets(sorted_packets, jpg_filename)
                 del self.files[file_id]
 
     def run(self):
@@ -211,8 +210,8 @@ class GSEReceiver():
 
             self.write_gse_packet_payloads_to_disk(gse_lowrate_packets)
 
-            hirate_packets = self.get_hirate_packets_and_remainder_from_gse_packets_and_remainder(gse_hirate_packets)
-            self.gather_files_from_hirate_packets(hirate_packets)
+            hirate_packets = self.get_file_packets_and_remainder_from_gse_packets_hirate_origin(gse_hirate_packets)
+            self.gather_files_from_file_packets(hirate_packets)
 
 
 if __name__ == "__main__":

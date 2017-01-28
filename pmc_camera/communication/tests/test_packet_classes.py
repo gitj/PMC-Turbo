@@ -46,12 +46,12 @@ def test_gse_repr_doesnt_fail():
 
 def test_long_hirate_packet():
     with assert_raises(ValueError):
-        packet = packet_classes.HiratePacket(file_id=12,packet_number=1,total_packet_number=8,
-                                             payload='a'*(packet_classes.HiratePacket._max_payload_size+1))
+        packet = packet_classes.FilePacket(file_id=12, packet_number=1, total_packet_number=8,
+                                           payload='a'*(packet_classes.FilePacket._max_payload_size + 1))
 
 def test_invalid_packet_number():
     with assert_raises(ValueError):
-        packet = packet_classes.HiratePacket(file_id=12,packet_number=10,total_packet_number=3,payload='hello')
+        packet = packet_classes.FilePacket(file_id=12, packet_number=10, total_packet_number=3, payload='hello')
 
 def test_invalid_start_byte():
     packet = packet_classes.GSEPacket(sync2_byte=0xFA,origin=1,payload='hi there!')
@@ -60,9 +60,9 @@ def test_invalid_start_byte():
     with assert_raises(packet_classes.PacketValidityError):
         _ = packet_classes.GSEPacket(buffer=buffer)
 def test_hirate_packet_roundtrip():
-    packet = packet_classes.HiratePacket(file_id=99,packet_number=1,total_packet_number=10,
-                                         payload="the payload is long")
-    packet2 = packet_classes.HiratePacket(buffer=packet.to_buffer())
+    packet = packet_classes.FilePacket(file_id=99, packet_number=1, total_packet_number=10,
+                                       payload="the payload is long")
+    packet2 = packet_classes.FilePacket(buffer=packet.to_buffer())
     assert packet.file_id == packet2.file_id
     assert packet.payload_crc == packet2.payload_crc
     assert packet.payload_length == packet2.payload_length
