@@ -19,11 +19,28 @@ CRITICAL = 4
 DELIMITER = ','
 
 
+def construct_status_group_from_csv(csv_path, name):
+    status_group = StatusGroup(name, filewatchers=[])
+    with open(csv_path, 'r') as f:
+        lines = f.readlines()
+    column_names = lines[0]
+    for line in lines[1:]:
+        values = line.split(',')
+        filename = glob.glob(values[0]).sort()
+        if not filename in status_group.keys():
+            status_filewatcher = StatusFileWatcher(name=filename, items=[], filename_glob=values[0])
+            status_group[filename] = status_filewatcher
+        status_item = FloatStatusItem(name=values[1], column_name=values[1], scaling=values[6],
+                                      good_range=values[8], nominal_range=values[9], warning_range=values[10])
+        status_group[filename][status_item.name] = status_item
+    return status_group
+
+
 class StatusGroup(dict):
-    def __init__(self, name, groups):
+    def __init__(self, name, filewatchers):
         self.name = name
-        for group in groups:
-            self[group.name] = group
+        for filewatcher in filewatchers:
+            self[filewatcher.name] = filewatcher
 
     def get_status_summary(self):
         status_summaries = [self[key].get_status_summary() for key in self.keys()]
@@ -177,7 +194,7 @@ class FloatStatusItem():
         self.good_range = good_range
         self.warning_range = warning_range
         self.silenced = False
-        self.scaling = scaling
+        self.scaling = float(scaling)
 
     # Add silence, epoch
 
