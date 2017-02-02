@@ -7,13 +7,14 @@ import select
 import struct
 import threading
 import logging
+import json
 
 import pmc_camera.communication.command_classes
 import pmc_camera.communication.packet_classes
 from pmc_camera.communication import downlink_classes, uplink_classes  # aggregator
 from pmc_camera.communication.command_table import command_manager, CommandStatus
 from pmc_camera.communication import command_table
-from pmc_camera.communication import housekeeping_format_classes
+from pmc_camera.communication import housekeeping_format_classes, file_format_classes
 
 from pmc_camera.communication import constants
 from pmc_camera.communication import aggregator_hard_coded
@@ -36,8 +37,6 @@ START_BYTE = chr(constants.SIP_START_BYTE)
 END_BYTE = chr(constants.SIP_END_BYTE)
 
 
-
-
 @Pyro4.expose
 class Communicator():
     def __init__(self, cam_id, peers, controller, base_port=BASE_PORT, start_pyro=True):
@@ -50,6 +49,7 @@ class Communicator():
         self.peer_polling_order_idx = 0
         self.peer_polling_order = [0]
         self.end_loop = False
+        self.next_data = []
 
         self.pyro_daemon = None
         self.pyro_thread = None
@@ -150,6 +150,9 @@ class Communicator():
         self.downlinks[0].put_data_into_queue(json_file.to_buffer(), self.file_id)
         self.file_id += 1
 
+    def add_status_group(self, status_group):
+        self.status_groups.append(status_group)
+
     def send_data_on_downlinks(self):
         if not self.peers:
             raise RuntimeError(
@@ -235,6 +238,21 @@ class Communicator():
             return
         self.command_logger.add_command_result(command_packet.sequence_number, CommandStatus.command_ok, '')
 
+    ### These commands correspond to commands defined in pmc_camera.communication.command_table
+
+    def get_status_report(self):
+        summary = []
+        for group in self.status_groups:
+            group.update()
+            summary.append(group.get_summary())
+        payload = json.dumps(summary)
+        json_file = file_format_classes.GeneralFile(payload=payload, filename=(
+            'status_summary_%s.json' % time.strftime('%Y-%M-%d-%H:%M:%s')), timestamp=time.time(),
+                                                    camera_id=0,
+                                                    request_id=000)
+
+        self.controller.add_file_to_sequence_data(json_file.to_buffer())
+
     def set_peer_polling_order(self, new_peer_polling_order):
         self.peer_polling_order = new_peer_polling_order
         self.peer_polling_order_idx = 0
@@ -250,8 +268,6 @@ class Communicator():
 
     def run_shell_command(self, command_line, max_num_bytes_returned, request_id, timeout):
         self.controller.run_shell_command(command_line, max_num_bytes_returned, request_id, timeout)
-
-
 
     ##### SIP socket methods
 

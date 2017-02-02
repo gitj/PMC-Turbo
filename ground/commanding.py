@@ -12,6 +12,14 @@ OPEN_PORT = 'open_port'
 
 class CommandSender(object):
     def __init__(self,open_port_address, serial_port_device):
+        '''
+
+        Parameters
+        ----------
+        open_port_address: tuple string ip_address, int port
+        serial_port_device: string serial_port
+
+        '''
         self.command_manager = command_manager
         self.open_port_link = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
         self.open_port_address = open_port_address

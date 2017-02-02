@@ -26,12 +26,16 @@ def construct_status_group_from_csv(csv_path, name):
     column_names = lines[0]
     for line in lines[1:]:
         values = line.split(',')
-        filename = glob.glob(values[0]).sort()
+        filenames = glob.glob(values[0])
+        filenames.sort()
+        filename = filenames[-1]
         if not filename in status_group.keys():
             status_filewatcher = StatusFileWatcher(name=filename, items=[], filename_glob=values[0])
             status_group[filename] = status_filewatcher
         status_item = FloatStatusItem(name=values[1], column_name=values[1], scaling=values[6],
-                                      good_range=values[8], nominal_range=values[9], warning_range=values[10])
+                                      good_range=Range(values[7], values[8]),
+                                      nominal_range=Range(values[9], values[10]),
+                                      warning_range=Range(values[11], values[12]))
         status_group[filename][status_item.name] = status_item
     return status_group
 

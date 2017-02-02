@@ -293,6 +293,9 @@ class Controller(object):
             result = self.get_latest_standard_image().to_buffer()
         return result
 
+    def add_file_to_sequence_data(self, file_buffer):
+        self.sequence_data.append(file_buffer)
+
 
 if __name__ == "__main__":
     from pmc_camera.utils import log

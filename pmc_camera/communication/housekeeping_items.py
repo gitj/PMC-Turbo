@@ -343,17 +343,19 @@ def get_collectd_items(csv_filename=None):
         df = pd.read_csv(fn, index_col='epoch', comment='#')
         for col in df.columns:
             scaling = 1.0
-            good_range = (-1000, 1000)
-            normal_range = (0, 0)
-            warning_range = (0, 0)
+            good_range_low, good_range_high = -1000, 1000
+            normal_range_low, normal_range_high = 0, 0
+            warning_range_low, warning_range_high = 0, 0
 
             result.append((name, col, df[col].min(), df[col].mean(), df[col].max(), df[col].std(),
-                           scaling, good_range, normal_range, warning_range))
+                           scaling, good_range_low, good_range_high, normal_range_low, normal_range_high,
+                           warning_range_low, warning_range_high))
     if csv_filename:
         with open(csv_filename, 'w') as fh:
             fh.write(
                 ','.join(['partial_glob', 'column_name', 'min_value', 'mean_value', 'max_value', 'std_value',
-                          'scaling_value', 'good_range_value', 'normal_range_value', 'warning_range_value']) + '\n')
+                          'scaling_value', 'good_range_low', 'good_range_high', 'normal_range_low', 'normal_range_high',
+                          'warning_range_low', 'warning_range_high']) + '\n')
             for row in result:
                 fh.write(','.join([str(x) for x in row]) + '\n')
     return result
@@ -375,26 +377,28 @@ def get_items(partial_glob, csv_filename=None):
             mean = col.value_counts().index[0]
             std = ''
             scaling = ''
-            good_range = ''
-            normal_range = ''
-            warning_range = ''
+            good_range_low, good_range_high = '', ''
+            normal_range_low, normal_range_high = '', ''
+            warning_range_low, warning_range_high = '', ''
         else:
             min = col.min()
             max = col.max()
             mean = col.mean()
             std = col.std()
             scaling = 1.0
-            good_range = (-1000, 1000)
-            normal_range = (0, 0)
-            warning_range = (0, 0)
+            good_range_low, good_range_high = -1000, 1000
+            normal_range_low, normal_range_high = 0, 0
+            warning_range_low, warning_range_high = 0, 0
         result.append((partial_glob, colname, min, mean, max, std, scaling,
-                       good_range, normal_range, warning_range))
+                       good_range_low, good_range_high, normal_range_low, normal_range_high,
+                       warning_range_low, warning_range_high))
     if csv_filename:
         with open(csv_filename, 'w') as fh:
             fh.write(
                 ','.join(['partial_glob', 'column_name', 'min_value', 'mean_value', 'max_value', 'std_value',
-                          'scaling_value', 'good_range_value', 'normal_range_value', 'warning_range_value',
-                          'critical_range_value']) + '\n')
+                          'scaling_value', 'good_range_low', 'good_range_high', 'normal_range_low', 'normal_range_high',
+                          'warning_range_low', 'warning_range_high',
+                          'critical_range_low', 'critical_range_high']) + '\n')
             for row in result:
                 fh.write(','.join([str(x) for x in row]) + '\n')
     return result
