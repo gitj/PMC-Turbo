@@ -1,5 +1,5 @@
 import IPython
-from pmc_camera.communication import camera_communicator, aggregator_hard_coded, status_dict
+from pmc_camera.communication import camera_communicator, aggregator_hard_coded, housekeeping_classes
 import logging
 import os
 import time
@@ -34,7 +34,7 @@ def run_communicator(cam_id, peers, controller, leader, peer_polling_order=[]):
         c.setup_links(UPLINK_PORT, DOWNLINK_IP, DOWNLINK_PORT, '192.168.1.54', 4002, 700)
         c.setup_aggregator(aggregator_hard_coded.setup_group())
 
-        group = status_dict.construct_status_group_from_csv('charge_controller_items.csv', 'charge_controller_group')
+        group = housekeeping_classes.construct_status_group_from_csv('charge_controller_items.csv', 'charge_controller_group')
         c.add_status_group(group)
 
         c.start_leader_thread()

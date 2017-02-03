@@ -294,6 +294,7 @@ class Controller(object):
         return result
 
     def add_file_to_sequence_data(self, file_buffer):
+        logger.debug('File_buffer added to sequence data: first 20 bytes are %r' % file_buffer[:20])
         self.sequence_data.append(file_buffer)
 
 

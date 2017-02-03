@@ -19,25 +19,81 @@ CRITICAL = 4
 DELIMITER = ','
 
 
-def construct_status_group_from_csv(csv_path, name):
-    status_group = StatusGroup(name, filewatchers=[])
+def construct_super_group_from_csv_list(group_name, csv_paths_and_preambles):
+    """
+
+    Parameters
+    ----------
+    group_name - string
+    csv_paths_and_preambles - tuple - string csv_path, string csv_preamble_to_glob
+
+    Returns
+    -------
+    SuperStatusGroup
+
+    """
+    super_group = SuperStatusGroup(group_name, groups=[])
+    for csv_path_and_preamble in enumerate(csv_paths_and_preambles):
+        csv_path, csv_preamble = csv_path_and_preamble
+        status_group = construct_status_group_from_csv(csv_path, csv_path, csv_preamble)
+        super_group[status_group.name] = status_group
+    return super_group
+
+
+def construct_status_group_from_csv(group_name, csv_path, csv_preamble):
+    status_group = StatusGroup(group_name, filewatchers=[])
     with open(csv_path, 'r') as f:
         lines = f.readlines()
-    column_names = lines[0]
+    column_names = lines[0].split(',')
     for line in lines[1:]:
         values = line.split(',')
-        filenames = glob.glob(values[0])
-        filenames.sort()
-        filename = filenames[-1]
-        if not filename in status_group.keys():
-            status_filewatcher = StatusFileWatcher(name=filename, items=[], filename_glob=values[0])
-            status_group[filename] = status_filewatcher
-        status_item = FloatStatusItem(name=values[1], column_name=values[1], scaling=values[6],
-                                      good_range=Range(values[7], values[8]),
-                                      nominal_range=Range(values[9], values[10]),
-                                      warning_range=Range(values[11], values[12]))
-        status_group[filename][status_item.name] = status_item
+        value_dict = dict(zip(column_names, values))
+        if not value_dict['partial_glob'] in status_group.keys():
+            status_filewatcher = StatusFileWatcher(name=value_dict['partial_glob'], items=[],
+                                                   filename_glob=os.path.join(csv_preamble, value_dict['partial_glob']))
+            status_group[value_dict['partial_glob']] = status_filewatcher
+        status_item = FloatStatusItem(name=values[1], column_name=value_dict['column_name'],
+                                      scaling=value_dict['scaling_value'],
+                                      good_range=Range(value_dict['good_range_low'], value_dict['good_range_high']),
+                                      nominal_range=Range(value_dict['normal_range_low'],
+                                                          value_dict['normal_range_high']),
+                                      warning_range=Range(value_dict['warning_range_low'],
+                                                          value_dict['warning_range_high']))
+        status_group[value_dict['partial_glob']][status_item.name] = status_item
     return status_group
+
+
+class SuperStatusGroup(dict):
+    def __init__(self, name, groups):
+        self.name = name
+        for group in groups:
+            self[group.name] = group
+
+    def get_status_summary(self):
+        status_summaries = [self[key].get_status_summary() for key in self.keys()]
+        max_value = max([status_summary[0] for status_summary in status_summaries])
+        name_list = []
+        for status_summary in status_summaries:
+            if status_summary[0] == max_value:
+                name_list += status_summary[1]
+        return (max_value, name_list)
+
+    def update(self):
+        logger.debug('Updating %r' % self.name)
+        for key in self.keys():
+            self[key].update()
+
+    def to_json_file(self):
+        payload = json.dumps(self.get_status())
+        json_file = file_format_classes.GeneralFile(payload=payload, filename='json_file.json', timestamp=time.time(),
+                                                    camera_id=0, request_id=000)
+        return json_file
+
+    def get_status(self):
+        if len(self.keys()) == 0:
+            raise ValueError('No keys - filewatcher is empty.')
+        entries = {key: self[key].get_status() for key in self.keys()}
+        return entries
 
 
 class StatusGroup(dict):
@@ -74,8 +130,7 @@ class StatusGroup(dict):
     def to_json_file(self):
         payload = json.dumps(self.get_status())
         json_file = file_format_classes.GeneralFile(payload=payload, filename='json_file.json', timestamp=time.time(),
-                                                    camera_id=0,
-                                                    request_id=000)
+                                                    camera_id=0, request_id=000)
         return json_file
 
     def get_status(self):

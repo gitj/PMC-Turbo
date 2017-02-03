@@ -242,6 +242,7 @@ class Communicator():
     # The following methods correspond to commands defined in pmc_camera.communication.command_table
 
     def get_status_report(self):
+        logger.debug('Status report requested')
         summary = []
         for group in self.status_groups:
             group.update()

@@ -1,39 +1,39 @@
-from pmc_camera.communication import status_dict
+from pmc_camera.communication import housekeeping_classes
 import logging
 import time
 
 
 def setup_group():
     path = '/var/lib/collectd/csv/pmc-camera-?.unassigned-domain/ipmi/voltage-12V system_board (7.17)-*'
-    voltage_12v_item = status_dict.FloatStatusItem(name='voltage-12V', column_name='value',
-                                                   nominal_range=status_dict.Range(10, 15), good_range=None,
-                                                   warning_range=None)
-    voltage_12v_filewatcher = status_dict.StatusFileWatcher(name='voltage_12v_filewatcher', items=[voltage_12v_item],
-                                                            filename_glob=path)
+    voltage_12v_item = housekeeping_classes.FloatStatusItem(name='voltage-12V', column_name='value',
+                                                            nominal_range=housekeeping_classes.Range(10, 15), good_range=None,
+                                                            warning_range=None)
+    voltage_12v_filewatcher = housekeeping_classes.StatusFileWatcher(name='voltage_12v_filewatcher', items=[voltage_12v_item],
+                                                                     filename_glob=path)
 
     path = '/var/lib/collectd/csv/pmc-camera-?.unassigned-domain/ipmi/temperature-CPU Temp processor (3.1)-*'
-    temp_cpu_item = status_dict.FloatStatusItem(name='temp_cpu', column_name='value',
-                                                nominal_range=status_dict.Range(20, 60), good_range=None,
-                                                warning_range=None)
-    temp_cpu_filewatcher = status_dict.StatusFileWatcher(name='temp_cpu_filewatcher', items=[temp_cpu_item],
-                                                         filename_glob=path)
+    temp_cpu_item = housekeeping_classes.FloatStatusItem(name='temp_cpu', column_name='value',
+                                                         nominal_range=housekeeping_classes.Range(20, 60), good_range=None,
+                                                         warning_range=None)
+    temp_cpu_filewatcher = housekeeping_classes.StatusFileWatcher(name='temp_cpu_filewatcher', items=[temp_cpu_item],
+                                                                  filename_glob=path)
 
-    test_multifilewatcher = status_dict.MultiStatusFileWatcher('test_multi_filewatcher',
-                                                               [voltage_12v_filewatcher, temp_cpu_filewatcher])
+    test_multifilewatcher = housekeeping_classes.MultiStatusFileWatcher('test_multi_filewatcher',
+                                                                        [voltage_12v_filewatcher, temp_cpu_filewatcher])
 
     path = '/home/pmc/logs/housekeeping/charge_controller/pmc-charge-controller-?_*[!eeprom].csv'
 
-    battery_voltage = status_dict.FloatStatusItem(name='battery_voltage', column_name='register_25',
-                                                  nominal_range=status_dict.Range(0, 10000), good_range=None,
-                                                  warning_range=None)
-    array_voltage = status_dict.FloatStatusItem(name='array_voltage', column_name='register_28',
-                                                nominal_range=status_dict.Range(0, 10000), good_range=None,
-                                                warning_range=None)
-    charge_controller_filewatcher = status_dict.StatusFileWatcher(name='charge_controller_filewatcher',
-                                                                  items=[battery_voltage, array_voltage],
-                                                                  filename_glob=path)
+    battery_voltage = housekeeping_classes.FloatStatusItem(name='battery_voltage', column_name='register_25',
+                                                           nominal_range=housekeeping_classes.Range(0, 10000), good_range=None,
+                                                           warning_range=None)
+    array_voltage = housekeeping_classes.FloatStatusItem(name='array_voltage', column_name='register_28',
+                                                         nominal_range=housekeeping_classes.Range(0, 10000), good_range=None,
+                                                         warning_range=None)
+    charge_controller_filewatcher = housekeeping_classes.StatusFileWatcher(name='charge_controller_filewatcher',
+                                                                           items=[battery_voltage, array_voltage],
+                                                                           filename_glob=path)
 
-    return status_dict.StatusGroup('mygroup', [test_multifilewatcher, charge_controller_filewatcher])
+    return housekeeping_classes.StatusGroup('mygroup', [test_multifilewatcher, charge_controller_filewatcher])
 
     #return status_dict.StatusGroup('mygroup', [temp_cpu_filewatcher, voltage_12v_filewatcher, charge_controller_filewatcher])
 
