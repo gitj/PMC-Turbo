@@ -64,6 +64,6 @@ class CommandSender(object):
             print '%r' % packet.to_buffer()
             link.write(packet.to_buffer())
             response = link.read(3)
-            result = decode_gse_acknowledgement(response)
-            print gse_acknowledgment_codes[result]
+            result,remainder = decode_gse_acknowledgement(response)
+            print gse_acknowledgment_codes[result],remainder
             return result
