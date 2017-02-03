@@ -1,4 +1,7 @@
+from nose.tools import timed
 from pmc_camera.communication.command_classes import Command,ListArgumentCommand,StringArgumentCommand
+from pmc_camera.communication.command_table import command_manager
+from pmc_camera.communication.packet_classes import GSECommandPacket
 
 def test_list_argument_command_round_trip():
     c = ListArgumentCommand("some_command",'1H')
@@ -23,3 +26,19 @@ def test_string_argument_command_round_trip():
     assert kwargs['filename'] == filename
     assert kwargs['request_id'] == request_id
     assert kwargs['max_num_bytes'] == max_num_bytes
+
+@timed(1)
+def test_multiple_command_decoding():
+    p1 = command_manager.get_command_by_name('set_focus')(focus_step=4900)
+    p2 = command_manager.get_command_by_name('set_peer_polling_order')([1,2,3,4,5,6])
+    result = command_manager.decode_commands(p1+p2+p1+p2+p1+p1+p2+p2)
+
+def test_command_padding_gets_stripped():
+    p1 = command_manager.get_command_by_name('set_focus')(focus_step=0xFFFF)
+    result = command_manager.decode_commands(p1 + GSECommandPacket.COMMAND_PAD_BYTE*8)
+    assert result[0][0]=='set_focus'
+    assert len(result) == 1
+    result = command_manager.decode_commands(GSECommandPacket.COMMAND_PAD_BYTE*8 + p1 + GSECommandPacket.COMMAND_PAD_BYTE*8)
+    assert result[0][0]=='set_focus'
+    assert len(result) == 1
+

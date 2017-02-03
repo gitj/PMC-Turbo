@@ -5,6 +5,8 @@ from collections import OrderedDict
 
 import time
 
+from pmc_camera.communication.packet_classes import GSECommandPacket
+
 import pmc_camera.utils.comparisons
 
 logger = logging.getLogger(__name__)
@@ -176,15 +178,26 @@ class CommandManager(object):
         self._command_dict = OrderedDict()
         self._next_command_number = 0
     def add_command(self,command):
+        if self._next_command_number == 255:
+            raise RuntimeError("The total number of commands has exceeded 255. "
+                               "Either some commands need to be removed/optimized or the command number needs to be "
+                               "promoted to 2 bytes.")
         command._command_number = self._next_command_number
         self._command_dict[command._command_number] = command
         setattr(self,command.name,command)
         self._next_command_number += 1
+
     def __getitem__(self, item):
         return self._command_dict[item]
+
+    def get_command_by_name(self,name):
+        for command in self._command_dict.values():
+            if command.name == name:
+                return command
     @property
     def commands(self):
         return self._command_dict.values()
+
     @property
     def total_commands(self):
         return self._next_command_number
@@ -193,6 +206,9 @@ class CommandManager(object):
         remainder = data
         commands = []
         while remainder:
+            if remainder[0] == GSECommandPacket.COMMAND_PAD_BYTE:
+                remainder = remainder[1:]
+                continue
             command_number, = struct.unpack(COMMAND_FORMAT_PREFIX,remainder[:1])
             command = self[command_number]
             kwargs, remainder = command.decode_command_and_arguments(remainder)

@@ -238,7 +238,8 @@ class Communicator():
             return
         self.command_logger.add_command_result(command_packet.sequence_number, CommandStatus.command_ok, '')
 
-    ### These commands correspond to commands defined in pmc_camera.communication.command_table
+    ##################################################################################################
+    # The following methods correspond to commands defined in pmc_camera.communication.command_table
 
     def get_status_report(self):
         summary = []
@@ -268,6 +269,9 @@ class Communicator():
 
     def run_shell_command(self, command_line, max_num_bytes_returned, request_id, timeout):
         self.controller.run_shell_command(command_line, max_num_bytes_returned, request_id, timeout)
+
+    # end command table methods
+    ###################################################################################################################
 
     ##### SIP socket methods
 

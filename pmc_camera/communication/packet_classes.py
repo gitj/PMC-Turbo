@@ -375,6 +375,9 @@ class GSECommandPacket(CommandPacket):
                             ]
     _header_format_string = '>' + ''.join([format_ for format_, _ in _header_format_table])
     header_length = struct.calcsize(_header_format_string)
+    _minimum_payload_length = 20
+    COMMAND_PAD_BYTE = '\xFF'
+
     LOS1 = (0x00, 0x09)
     LOS2 = (0x00, 0x0C)
     TDRSS = (0x01, 0x09)
@@ -388,6 +391,8 @@ class GSECommandPacket(CommandPacket):
                     "link_tuple %r not valid, valid options are %r" % (link_tuple, self._valid_link_tuples))
             else:
                 self.link_tuple = link_tuple
+                if len(payload) < self._minimum_payload_length:
+                    payload = payload + self.COMMAND_PAD_BYTE * (self._minimum_payload_length - len(payload))
         super(GSECommandPacket, self).__init__(buffer=buffer, payload=payload, sequence_number=sequence_number,
                                                destination=destination)
 
