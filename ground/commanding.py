@@ -23,11 +23,14 @@ class CommandSender(object):
         self.command_manager = command_manager
         self.open_port_link = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
         self.open_port_address = open_port_address
-        self.serial_port = serial.Serial(serial_port_device,baudrate=2400,timeout=3)
+        if serial_port_device:
+            self.serial_port = serial.Serial(serial_port_device,baudrate=2400,timeout=3)
+        else:
+            self.serial_port = None
         self.current_link = OPEN_PORT
         self.next_sequence_number=0
         for command in command_manager._command_dict.values():
-            setattr(self, command.name, self._send_wrapper(command))
+            setattr(self, command.name, command)
 
     def set_link_openport(self):
         self.current_link = OPEN_PORT
@@ -44,7 +47,7 @@ class CommandSender(object):
     def set_link_iridium(self):
         self.current_link = IRIDIUM
 
-    def _send(self, payload, destination, via=None):
+    def send(self, payload, destination, via=None):
         if via is None:
             via = self.current_link
         if via == OPEN_PORT:
@@ -64,11 +67,3 @@ class CommandSender(object):
             result = decode_gse_acknowledgement(response)
             print gse_acknowledgment_codes[result]
             return result
-
-    def _send_wrapper(self, func):
-        def sendable_command(*args,**kwargs):
-            destination = kwargs.pop('destination')
-            via = kwargs.pop('via',None)
-            payload = func(**kwargs)
-            return self._send(payload, destination, via=via)
-        return sendable_command
