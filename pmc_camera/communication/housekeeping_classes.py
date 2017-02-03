@@ -33,7 +33,7 @@ def construct_super_group_from_csv_list(group_name, csv_paths_and_preambles):
 
     """
     super_group = SuperStatusGroup(group_name, groups=[])
-    for csv_path_and_preamble in enumerate(csv_paths_and_preambles):
+    for csv_path_and_preamble in csv_paths_and_preambles:
         csv_path, csv_preamble = csv_path_and_preamble
         status_group = construct_status_group_from_csv(csv_path, csv_path, csv_preamble)
         super_group[status_group.name] = status_group
@@ -44,9 +44,9 @@ def construct_status_group_from_csv(group_name, csv_path, csv_preamble):
     status_group = StatusGroup(group_name, filewatchers=[])
     with open(csv_path, 'r') as f:
         lines = f.readlines()
-    column_names = lines[0].split(',')
+    column_names = lines[0].strip('\n').split(',')
     for line in lines[1:]:
-        values = line.split(',')
+        values = line.strip('\n').split(',')
         value_dict = dict(zip(column_names, values))
         if not value_dict['partial_glob'] in status_group.keys():
             status_filewatcher = StatusFileWatcher(name=value_dict['partial_glob'], items=[],
