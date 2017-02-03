@@ -2,6 +2,91 @@ import glob
 import os
 import pandas as pd
 
+
+def get_collectd_items(csv_filename=None):
+    collectd_files = glob.glob('/var/lib/collectd/csv/*/*/*-2017-01-25')
+    collectd_files.sort()
+    result = []
+    for fn in collectd_files:
+        name = os.path.join(os.path.split(os.path.split(fn)[0])[-1], os.path.split(fn)[-1])
+        name = name.replace('2017-01-25', '*')
+        df = pd.read_csv(fn, index_col='epoch', comment='#')
+        for col in df.columns:
+            scaling = 1.0
+            good_range_low, good_range_high = -1000, 1000
+            normal_range_low, normal_range_high = 0, 0
+            warning_range_low, warning_range_high = 0, 0
+
+            result.append((name, col, df[col].min(), df[col].mean(), df[col].max(), df[col].std(),
+                           scaling, good_range_low, good_range_high, normal_range_low, normal_range_high,
+                           warning_range_low, warning_range_high))
+    if csv_filename:
+        with open(csv_filename, 'w') as fh:
+            fh.write(
+                ','.join(['partial_glob', 'column_name', 'min_value', 'mean_value', 'max_value', 'std_value',
+                          'scaling_value', 'good_range_low', 'good_range_high', 'normal_range_low', 'normal_range_high',
+                          'warning_range_low', 'warning_range_high']) + '\n')
+            for row in result:
+                fh.write(','.join([str(x) for x in row]) + '\n')
+    return result
+
+
+def get_items(partial_glob, csv_filename=None):
+    files = glob.glob(partial_glob)
+    files.sort()
+    fn = files[-1]
+    print "using file", fn
+    df = pd.read_csv(fn, index_col='epoch', comment='#')
+
+    result = []
+    for colname in df.columns:
+        col = df[colname]
+        if col.dtype == 'O':  # string columns are Objects
+            min = ''
+            max = ''
+            mean = col.value_counts().index[0]
+            std = ''
+            scaling = ''
+            good_range_low, good_range_high = '', ''
+            normal_range_low, normal_range_high = '', ''
+            warning_range_low, warning_range_high = '', ''
+        else:
+            min = col.min()
+            max = col.max()
+            mean = col.mean()
+            std = col.std()
+            scaling = 1.0
+            good_range_low, good_range_high = -1000, 1000
+            normal_range_low, normal_range_high = 0, 0
+            warning_range_low, warning_range_high = 0, 0
+        result.append((partial_glob, colname, min, mean, max, std, scaling,
+                       good_range_low, good_range_high, normal_range_low, normal_range_high,
+                       warning_range_low, warning_range_high))
+    if csv_filename:
+        with open(csv_filename, 'w') as fh:
+            fh.write(
+                ','.join(['partial_glob', 'column_name', 'min_value', 'mean_value', 'max_value', 'std_value',
+                          'scaling_value', 'good_range_low', 'good_range_high', 'normal_range_low', 'normal_range_high',
+                          'warning_range_low', 'warning_range_high',
+                          'critical_range_low', 'critical_range_high']) + '\n')
+            for row in result:
+                fh.write(','.join([str(x) for x in row]) + '\n')
+    return result
+
+
+def get_camera_items(csv_filename=None):
+    return get_items(partial_glob='/home/pmc/logs/housekeeping/camera/*.csv', csv_filename=csv_filename)
+
+
+def get_labjack_items(csv_filename=None):
+    return get_items(partial_glob='/home/pmc/logs/housekeeping/labjack/*.csv', csv_filename=csv_filename)
+
+
+def get_charge_controller_items(csv_filename=None):
+    return get_items(partial_glob='/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv',
+                     csv_filename=csv_filename)
+
+
 all_collectd_sensors = ['cpu-0/cpu-idle-*',
                         'cpu-0/cpu-interrupt-*',
                         'cpu-0/cpu-nice-*',
@@ -331,87 +416,3 @@ all_collectd_sensors = ['cpu-0/cpu-idle-*',
                         'swap/swap_io-in-*',
                         'swap/swap_io-out-*',
                         'users/users-*']
-
-
-def get_collectd_items(csv_filename=None):
-    collectd_files = glob.glob('/var/lib/collectd/csv/*/*/*-2017-01-25')
-    collectd_files.sort()
-    result = []
-    for fn in collectd_files:
-        name = os.path.join(os.path.split(os.path.split(fn)[0])[-1], os.path.split(fn)[-1])
-        name = name.replace('2017-01-25', '*')
-        df = pd.read_csv(fn, index_col='epoch', comment='#')
-        for col in df.columns:
-            scaling = 1.0
-            good_range_low, good_range_high = -1000, 1000
-            normal_range_low, normal_range_high = 0, 0
-            warning_range_low, warning_range_high = 0, 0
-
-            result.append((name, col, df[col].min(), df[col].mean(), df[col].max(), df[col].std(),
-                           scaling, good_range_low, good_range_high, normal_range_low, normal_range_high,
-                           warning_range_low, warning_range_high))
-    if csv_filename:
-        with open(csv_filename, 'w') as fh:
-            fh.write(
-                ','.join(['partial_glob', 'column_name', 'min_value', 'mean_value', 'max_value', 'std_value',
-                          'scaling_value', 'good_range_low', 'good_range_high', 'normal_range_low', 'normal_range_high',
-                          'warning_range_low', 'warning_range_high']) + '\n')
-            for row in result:
-                fh.write(','.join([str(x) for x in row]) + '\n')
-    return result
-
-
-def get_items(partial_glob, csv_filename=None):
-    files = glob.glob(partial_glob)
-    files.sort()
-    fn = files[-1]
-    print "using file", fn
-    df = pd.read_csv(fn, index_col='epoch', comment='#')
-
-    result = []
-    for colname in df.columns:
-        col = df[colname]
-        if col.dtype == 'O':  # string columns are Objects
-            min = ''
-            max = ''
-            mean = col.value_counts().index[0]
-            std = ''
-            scaling = ''
-            good_range_low, good_range_high = '', ''
-            normal_range_low, normal_range_high = '', ''
-            warning_range_low, warning_range_high = '', ''
-        else:
-            min = col.min()
-            max = col.max()
-            mean = col.mean()
-            std = col.std()
-            scaling = 1.0
-            good_range_low, good_range_high = -1000, 1000
-            normal_range_low, normal_range_high = 0, 0
-            warning_range_low, warning_range_high = 0, 0
-        result.append((partial_glob, colname, min, mean, max, std, scaling,
-                       good_range_low, good_range_high, normal_range_low, normal_range_high,
-                       warning_range_low, warning_range_high))
-    if csv_filename:
-        with open(csv_filename, 'w') as fh:
-            fh.write(
-                ','.join(['partial_glob', 'column_name', 'min_value', 'mean_value', 'max_value', 'std_value',
-                          'scaling_value', 'good_range_low', 'good_range_high', 'normal_range_low', 'normal_range_high',
-                          'warning_range_low', 'warning_range_high',
-                          'critical_range_low', 'critical_range_high']) + '\n')
-            for row in result:
-                fh.write(','.join([str(x) for x in row]) + '\n')
-    return result
-
-
-def get_camera_items(csv_filename=None):
-    return get_items(partial_glob='/home/pmc/logs/housekeeping/camera/*.csv', csv_filename=csv_filename)
-
-
-def get_labjack_items(csv_filename=None):
-    return get_items(partial_glob='/home/pmc/logs/housekeeping/labjack/*.csv', csv_filename=csv_filename)
-
-
-def get_charge_controller_items(csv_filename=None):
-    return get_items(partial_glob='/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv',
-                     csv_filename=csv_filename)

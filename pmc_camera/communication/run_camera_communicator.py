@@ -34,7 +34,11 @@ def run_communicator(cam_id, peers, controller, leader, peer_polling_order=[]):
         c.setup_links(UPLINK_PORT, DOWNLINK_IP, DOWNLINK_PORT, '192.168.1.54', 4002, 700)
         c.setup_aggregator(aggregator_hard_coded.setup_group())
 
-        group = housekeeping_classes.construct_status_group_from_csv('charge_controller_items.csv', 'charge_controller_group')
+
+        csv_paths_and_preambles = [('camera_items.csv', ''),
+                                   ('charge_controller_items.csv', ''),
+                                   ('collectd_items.csv', '/var/lib/collectd/csv/*/')]
+        group = housekeeping_classes.construct_super_group_from_csv_list('supergroup', csv_paths_and_preambles)
         c.add_status_group(group)
 
         c.start_leader_thread()

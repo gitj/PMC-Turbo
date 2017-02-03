@@ -39,7 +39,7 @@ END_BYTE = chr(constants.SIP_END_BYTE)
 
 @Pyro4.expose
 class Communicator():
-    def __init__(self, cam_id, peers, controller, base_port=BASE_PORT, start_pyro=True):
+    def __init__(self, cam_id, peers, controller, base_port=BASE_PORT, start_pyro=True, loop_interval=1):
         self.port = base_port + cam_id
         logger.debug('Communicator initialized')
         self.cam_id = cam_id
@@ -50,6 +50,7 @@ class Communicator():
         self.peer_polling_order = [0]
         self.end_loop = False
         self.status_groups = []
+        self.loop_interval = loop_interval
 
         self.pyro_daemon = None
         self.pyro_thread = None
@@ -58,6 +59,8 @@ class Communicator():
         self.buffer_for_downlink = struct.pack('>255B', *([0] * 255))
 
         self.command_logger = pmc_camera.communication.command_classes.CommandLogger()
+
+        self.controller_connection_errors = 0
 
         # TODO: Set up proper destination lists, including LIDAR, narrow field, wide field, and all
         self.destination_lists = dict(enumerate([[peer] for peer in peers]))
@@ -124,12 +127,11 @@ class Communicator():
 
     def leader_loop(self):
         while True:
-
             self.get_and_process_sip_bytes()
             self.send_data_on_downlinks()
             if self.end_loop == True:  # Switch this to end the leader loop.
                 return
-            time.sleep(1)
+            time.sleep(self.loop_interval)
 
     def get_housekeeping(self):
         if self.aggregator == None:
@@ -160,16 +162,33 @@ class Communicator():
         for link in self.downlinks:
             if link.has_bandwidth():
                 logger.debug('Getting next data from camera %d' % self.peer_polling_order[self.peer_polling_order_idx])
-                next_data = self.peers[self.peer_polling_order[self.peer_polling_order_idx]].get_next_data()
+                next_data = None
+                try:
+                    next_data = self.peers[self.peer_polling_order[self.peer_polling_order_idx]].get_next_data()
+
+                except Pyro4.errors.CommunicationError as e:
+                    logger.debug('Connection to peer %d failed. Error message: %s' % (
+                        self.peer_polling_order[self.peer_polling_order_idx], str(e)))
+
+                if not next_data:
+                    logger.debug('No data was obtained.')
+                else:
+                    link.put_data_into_queue(next_data, self.file_id)
+                    self.file_id += 1
                 self.peer_polling_order_idx = (self.peer_polling_order_idx + 1) % len(self.peer_polling_order)
-                link.put_data_into_queue(next_data, self.file_id)
-                self.file_id += 1
+
             else:
                 link.send_data()
 
     def get_next_data(self):
         try:
             return self.controller.get_next_data_for_downlink()
+        except Pyro4.errors.CommunicationError:
+            self.controller_connection_errors += 1
+            logger.debug(
+                'Connection to controller failed. Failed %d times. Error message: %s' % (
+                    self.controller_connection_errors, "".join(Pyro4.util.getPyroTraceback())))
+            return None
         except Exception:
             raise Exception("".join(Pyro4.util.getPyroTraceback()))
 
@@ -294,11 +313,3 @@ class Communicator():
 
     def ping(self):
         return True
-
-    def ping_other(self, camera_handle):
-        # Need to add timeout to this, as well as a case for no ping.
-        try:
-            return camera_handle.ping()
-        except (Pyro4.errors.CommunicationError, Pyro4.errors.TimeoutError) as e:
-            print e
-            return False
