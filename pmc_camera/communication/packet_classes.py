@@ -375,7 +375,7 @@ class GSECommandPacket(CommandPacket):
                             ]
     _header_format_string = '>' + ''.join([format_ for format_, _ in _header_format_table])
     header_length = struct.calcsize(_header_format_string)
-    _minimum_payload_length = 20
+    _minimum_payload_length = 22
     COMMAND_PAD_BYTE = '\xFF'
 
     LOS1 = (0x00, 0x09)
