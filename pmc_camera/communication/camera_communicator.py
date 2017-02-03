@@ -17,7 +17,7 @@ from pmc_camera.communication import command_table
 from pmc_camera.communication import housekeeping_format_classes, file_format_classes
 
 from pmc_camera.communication import constants
-from pmc_camera.communication import aggregator_hard_coded
+from pmc_camera.communication import error_counter
 
 Pyro4.config.SERVERTYPE = "multiplex"
 Pyro4.config.SERIALIZER = 'pickle'
@@ -51,6 +51,7 @@ class Communicator():
         self.end_loop = False
         self.status_groups = []
         self.loop_interval = loop_interval
+        self.error_counter = error_counter.CSVWriter('error_counts.csv', controller_errors=0)
 
         self.pyro_daemon = None
         self.pyro_thread = None
@@ -59,8 +60,6 @@ class Communicator():
         self.buffer_for_downlink = struct.pack('>255B', *([0] * 255))
 
         self.command_logger = pmc_camera.communication.command_classes.CommandLogger()
-
-        self.controller_connection_errors = 0
 
         # TODO: Set up proper destination lists, including LIDAR, narrow field, wide field, and all
         self.destination_lists = dict(enumerate([[peer] for peer in peers]))
@@ -184,10 +183,11 @@ class Communicator():
         try:
             return self.controller.get_next_data_for_downlink()
         except Pyro4.errors.CommunicationError:
-            self.controller_connection_errors += 1
+            self.error_counter['controller_errors'] += 1
+            self.error_counter.write_to_file()
             logger.debug(
                 'Connection to controller failed. Failed %d times. Error message: %s' % (
-                    self.controller_connection_errors, "".join(Pyro4.util.getPyroTraceback())))
+                    self.error_counter['controller_errrors'], "".join(Pyro4.util.getPyroTraceback())))
             return None
         except Exception:
             raise Exception("".join(Pyro4.util.getPyroTraceback()))
