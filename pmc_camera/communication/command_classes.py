@@ -193,8 +193,8 @@ class CommandManager(object):
         remainder = data
         commands = []
         while remainder:
-            command_number, = struct.unpack(COMMAND_FORMAT_PREFIX,data[:1])
+            command_number, = struct.unpack(COMMAND_FORMAT_PREFIX,remainder[:1])
             command = self[command_number]
-            kwargs, remainder = command.decode_command_and_arguments(data)
+            kwargs, remainder = command.decode_command_and_arguments(remainder)
             commands.append((command.name,kwargs))
         return commands
