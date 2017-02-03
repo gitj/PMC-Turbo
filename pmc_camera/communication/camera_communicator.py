@@ -49,7 +49,7 @@ class Communicator():
         self.peer_polling_order_idx = 0
         self.peer_polling_order = [0]
         self.end_loop = False
-        self.next_data = []
+        self.status_groups = []
 
         self.pyro_daemon = None
         self.pyro_thread = None
@@ -244,7 +244,7 @@ class Communicator():
         summary = []
         for group in self.status_groups:
             group.update()
-            summary.append(group.get_summary())
+            summary.append(group.get_status())
         payload = json.dumps(summary)
         json_file = file_format_classes.GeneralFile(payload=payload, filename=(
             'status_summary_%s.json' % time.strftime('%Y-%M-%d-%H:%M:%s')), timestamp=time.time(),

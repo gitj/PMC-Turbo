@@ -1,5 +1,5 @@
 import IPython
-from pmc_camera.communication import camera_communicator, aggregator_hard_coded
+from pmc_camera.communication import camera_communicator, aggregator_hard_coded, status_dict
 import logging
 import os
 import time
@@ -23,6 +23,7 @@ def setup_logger():
     logger.setLevel(logging.DEBUG)
 
 
+
 def run_communicator(cam_id, peers, controller, leader, peer_polling_order=[]):
     setup_logger()
     UPLINK_PORT, DOWNLINK_IP, DOWNLINK_PORT = 4001, '192.168.1.54', 4001
@@ -32,6 +33,10 @@ def run_communicator(cam_id, peers, controller, leader, peer_polling_order=[]):
     if leader:
         c.setup_links(UPLINK_PORT, DOWNLINK_IP, DOWNLINK_PORT, '192.168.1.54', 4002, 700)
         c.setup_aggregator(aggregator_hard_coded.setup_group())
+
+        group = status_dict.construct_status_group_from_csv('charge_controller_items.csv', 'charge_controller_group')
+        c.add_status_group(group)
+
         c.start_leader_thread()
 
 

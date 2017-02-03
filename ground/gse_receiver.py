@@ -121,7 +121,6 @@ class GSEReceiver():
 
     def write_file_from_file_packets(self, packets, filename):
         data_buffer = ''
-        data_buffer = ''
         for packet in packets:
             data_buffer += packet.payload
 

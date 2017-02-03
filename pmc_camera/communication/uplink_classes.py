@@ -1,8 +1,9 @@
 import struct
 import socket
 from pmc_camera.communication import constants
+import logging
 
-
+logger = logging.getLogger(__name__)
 # start_byte = chr(constants.SIP_START_BYTE)
 # end_byte = chr(constants.SIP_END_BYTE)
 
@@ -20,7 +21,8 @@ class LowrateUplink():
         valid_packets = []
         try:
             data = self.uplink_socket.recv(1024)
-            # logger.debug('%r' % data)
+
+            logger.debug('Received bytes on uplink: %r' % data)
 
             # buffer = self.sip_leftover_buffer + data
             buffer = data
