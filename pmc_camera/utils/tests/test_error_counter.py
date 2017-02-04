@@ -17,6 +17,14 @@ class TestErrorCounter(object):
     def teardown(self):
         shutil.rmtree(self.logging_dir, ignore_errors=True)
 
+    def test_counter_with_default_names(self):
+        ec = error_counter.CounterCollection('a_collection', self.logging_dir, 'events')
+        repr(ec)
+        ec.c1.reset()
+        ec.events.increment()
+        ec.c1.increment()
+
+
     def test_counter(self):
         ec = error_counter.CounterCollection('a_collection', logging_dir=self.logging_dir)
         repr(ec)
@@ -27,6 +35,8 @@ class TestErrorCounter(object):
         assert 'c2' in ec.counters
         ec.c3.reset()
         assert ec.filename is None
+        with nose.tools.assert_raises(AttributeError):
+            ec._invalid.reset()
         ec.c1.increment()
         assert ec.filename is not None
         with nose.tools.assert_raises(RuntimeError):
