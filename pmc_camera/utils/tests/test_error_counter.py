@@ -24,6 +24,11 @@ class TestErrorCounter(object):
         ec.events.increment()
         ec.c1.increment()
 
+    def test_auto_make_dir(self):
+        ec = error_counter.CounterCollection('a_collection', logging_dir=os.path.join(self.logging_dir,'some_new_dir'))
+
+    def test_auto_make_dirs(self):
+        ec = error_counter.CounterCollection('a_collection', logging_dir=os.path.join(self.logging_dir,'some_new_dir/some_other_dir'))
 
     def test_counter(self):
         ec = error_counter.CounterCollection('a_collection', logging_dir=self.logging_dir)

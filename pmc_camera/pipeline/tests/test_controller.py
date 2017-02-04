@@ -59,7 +59,7 @@ class TestMultiIndex(object):
 
     def test_controller_basic_function(self):
         bpl = basic_pipeline.BasicPipeline(disks_to_use=self.data_dirs,use_simulated_camera=True,
-                                           default_write_enable=1,pipeline_port=test_pipeline_port)
+                                           default_write_enable=1,pipeline_port=test_pipeline_port,counter_dir=self.top_dir)
         thread = threading.Thread(target=bpl.run_pyro_loop)
         thread.daemon=True
         thread.start()
@@ -72,7 +72,7 @@ class TestMultiIndex(object):
         
     def test_controller_get_image(self):
         bpl = basic_pipeline.BasicPipeline(disks_to_use=self.data_dirs,use_simulated_camera=True,
-                                           default_write_enable=1,pipeline_port=test_pipeline_port)
+                                           default_write_enable=1,pipeline_port=test_pipeline_port,counter_dir=self.top_dir)
         thread = threading.Thread(target=bpl.run_pyro_loop)
         thread.daemon=True
         thread.start()

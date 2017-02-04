@@ -59,6 +59,8 @@ class CounterCollection(object):
         """
         self.counters = collections.OrderedDict()
         self.logging_dir = logging_dir
+        if not os.path.exists(self.logging_dir):
+            os.makedirs(self.logging_dir)
         self.name = name
         self.filename = None
         for counter_name in args:
@@ -104,6 +106,9 @@ class Counter(object):
 
         This class is not intended to be used by itself, it is automatically invoked by the CounterCollection class
 
+        By default the counters cause the parent CounterCollection to write all values to disk any time they update.
+        This can be disabled by setting the "lazy" attribute to True
+
         Parameters
         ----------
         name : str
@@ -114,6 +119,7 @@ class Counter(object):
         self.name = name
         self.value = 0
         self.parent = parent
+        self.lazy = False
 
     def __repr__(self):
         return '%s : %s' % (self.name, str(self.value))
@@ -126,5 +132,5 @@ class Counter(object):
 
     def increment(self):
         self.value += 1
-        if self.parent:
+        if self.parent and not self.lazy:
             self.parent._write()

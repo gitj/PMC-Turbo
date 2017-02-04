@@ -10,9 +10,10 @@ fake_pipeline_port = 45677
 
 @timed(20)
 def test_pipeline_runs():
+    counter_dir = tempfile.mkdtemp('pipeline_counters')
     tempdir = tempfile.mkdtemp()
     bpl = basic_pipeline.BasicPipeline(disks_to_use=[tempdir],use_simulated_camera=True,
-                                       pipeline_port=fake_pipeline_port)
+                                       pipeline_port=fake_pipeline_port,counter_dir=counter_dir)
     thread = threading.Thread(target=bpl.run_pyro_loop)
     thread.daemon=True
     thread.start()
@@ -24,12 +25,14 @@ def test_pipeline_runs():
     time.sleep(1)
     bpl.close()
     shutil.rmtree(tempdir)
+    shutil.rmtree(counter_dir)
 
 @timed(20)
 def test_pipeline_runs_no_disk():
+    counter_dir = tempfile.mkdtemp('pipeline_counters')
     tempdir = tempfile.mkdtemp()
     bpl = basic_pipeline.BasicPipeline(disks_to_use=[tempdir],use_simulated_camera=True,default_write_enable=0,
-                                       pipeline_port=fake_pipeline_port)
+                                       pipeline_port=fake_pipeline_port,counter_dir=counter_dir)
     thread = threading.Thread(target=bpl.run_pyro_loop)
     thread.daemon=True
     thread.start()
@@ -38,6 +41,7 @@ def test_pipeline_runs_no_disk():
     time.sleep(1)
     bpl.close()
     shutil.rmtree(tempdir)
+    shutil.rmtree(counter_dir)
 
 if __name__ == "__main__":
     import pmc_camera.utils.log

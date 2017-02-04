@@ -14,6 +14,7 @@ from pmc_camera.image_processing.jpeg import simple_jpeg
 from pmc_camera.pipeline.indexer import MergedIndex, DEFAULT_DATA_DIRS
 from pmc_camera.pipeline.write_images import index_keys
 from pmc_camera.utils.camera_id import get_camera_id
+from pmc_camera.utils.error_counter import CounterCollection
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +46,7 @@ def require_pipeline(func):
 
 @Pyro4.expose
 class Controller(object):
-    def __init__(self, pipeline, data_dirs=DEFAULT_DATA_DIRS, gate_time_error_threshold=2e-3):
+    def __init__(self, pipeline, data_dirs=DEFAULT_DATA_DIRS, gate_time_error_threshold=2e-3, counter_dir='/home/pmc/logs/counters'):
         self.data_dirs = data_dirs
         self.pipeline = pipeline
         self.gate_time_error_threshold = gate_time_error_threshold
@@ -54,6 +55,13 @@ class Controller(object):
         self.sequence_data = []
         self.outstanding_command_tags = {}
         self.completed_command_tags = {}
+
+        self.counters = CounterCollection('controller',counter_dir)
+        self.counters.set_focus.reset()
+        self.counters.set_exposure.reset()
+        self.counters.send_arbitrary_command.reset()
+        self.counters.run_focus_sweep.reset()
+
         self.camera_id = get_camera_id()
         self.update_current_image_dirs()
         self.set_standard_image_paramters()
@@ -61,16 +69,19 @@ class Controller(object):
     @require_pipeline
     def set_focus(self, focus_step):
         tag = self.pipeline.send_camera_command("EFLensFocusCurrent", str(focus_step))
+        self.counters.set_focus.increment()
         return tag
 
     @require_pipeline
     def set_exposure(self, exposure_time_us):
         tag = self.pipeline.send_camera_command("ExposureTimeAbs", str(exposure_time_us))
+        self.counters.set_exposure.increment()
         return tag
 
     @require_pipeline
     def send_arbitrary_camera_command(self,command_string,argument_string):
         tag = self.pipeline.send_camera_command(command_string,argument_string)
+        self.counters.send_arbitrary_command.increment()
         return tag
 
     @require_pipeline
@@ -79,6 +90,7 @@ class Controller(object):
         tags = [self.set_focus(focus_step) for focus_step in focus_steps]
         for tag in tags:
             self.outstanding_command_tags[tag] = request_params
+        self.counters.run_focus_sweep.increment()
 
     @require_pipeline
     def check_for_completed_commands(self):

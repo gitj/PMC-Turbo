@@ -5,6 +5,8 @@ import time
 import logging
 from Queue import Empty as EmptyException
 
+from pmc_camera.utils.error_counter import CounterCollection
+
 logger = logging.getLogger(__name__)
 import Pyro4
 import numpy as np
@@ -38,10 +40,11 @@ camera_status_columns = ["total_frames", "camera_timestamp_offset", "main_temper
 
 
 LOG_DIR='/home/pmc/logs/housekeeping/camera'
+COUNTER_DIR = '/home/pmc/logs/counters'
 
 class AcquireImagesProcess:
     def __init__(self, raw_image_buffers, acquire_image_output_queue, acquire_image_input_queue,
-                 command_queue, command_result_queue, info_buffer,status,use_simulated_camera,uri,log_dir = LOG_DIR):
+                 command_queue, command_result_queue, info_buffer,status,use_simulated_camera,uri,log_dir = LOG_DIR,counter_dir=COUNTER_DIR):
         self.data_buffers = raw_image_buffers
         self.input_queue = acquire_image_input_queue
         self.output_queue = acquire_image_output_queue
@@ -50,6 +53,7 @@ class AcquireImagesProcess:
         self.info_buffer = info_buffer
         self.use_simulated_camera = use_simulated_camera
         self.uri = uri
+        self.counter_dir = counter_dir
         if self.use_simulated_camera:
             self.log_dir = tempfile.mkdtemp("simulated_camera_logs")
         else:
@@ -107,6 +111,19 @@ class AcquireImagesProcess:
     def run(self):
         self.pipeline = Pyro4.Proxy(uri=self.uri)
         self.pipeline._pyroTimeout = 0
+        self.counters = CounterCollection('acquire_images',self.counter_dir)
+        self.counters.camera_armed.reset()
+        self.counters.buffer_queued.reset()
+        self.counters.error_queuing_buffer.reset()
+        self.counters.command_sent.reset()
+        self.counters.parameter_set.reset()
+        self.counters.command_non_zero_result.reset()
+        self.counters.waiting_for_buffer.reset()
+        self.counters.buffer_filled.reset()
+        self.counters.getting_parameters.reset()
+        self.counters.waiting.reset()
+        self.counters.waiting.lazy = True # waiting gets incremented hundreds of times per second, no need to record every increment
+
         # Setup
         frame_number = 0
         import pmc_camera
@@ -151,9 +168,11 @@ class AcquireImagesProcess:
                 npy_info_buffer = np.frombuffer(self.info_buffer[ready_to_queue].get_obj(),dtype=frame_info_dtype)
                 result = self.pc._pc.queue_buffer(image_buffer,npy_info_buffer)
                 if result != 0:
-                    print "Errorcode while queueing buffer:",result
+                    logger.error("Errorcode while queueing buffer: %r" % result)
+                    self.counters.error_queuing_buffer.increment()
                 else:
                     buffers_on_camera.add(ready_to_queue)
+                    self.counters.buffer_queued.increment()
             if exit_request:
                 break
             if time.time() > last_trigger + 0.5:
@@ -163,8 +182,13 @@ class AcquireImagesProcess:
                     self.status.value = "sending command"
                     if value is None:
                         result = self.pc.run_feature_command(name)
+                        self.counters.command_sent.increment()
                     else:
                         result = self.pc.set_parameter(name,value)
+                        self.counters.parameter_set.increment()
+                    if result:
+                        logger.error("Errorcode %r while executing command %s:%r" % (result,name,value))
+                        self.counters.command_non_zero_result.increment()
                     gate_time = int(time.time()+1)  # update gate time in case some time has elapsed while executing
                     # command
                     self.command_result_queue.put((tag,name,value,result,gate_time))
@@ -173,10 +197,12 @@ class AcquireImagesProcess:
                 time.sleep(0.1)
                 self.pc.run_feature_command("AcquisitionStart")
                 last_trigger = gate_time
+                self.counters.camera_armed.increment()
 
             if not buffers_on_camera:
                 self.status.value = "waiting for buffer on camera"
                 time.sleep(0.001)
+                self.counters.waiting_for_buffer.increment()
             else:
                 self.status.value = "checking buffers"
             num_buffers_filled = 0
@@ -189,6 +215,7 @@ class AcquireImagesProcess:
                     buffers_on_camera.remove(buffer_id)
                     frame_number += 1
                     num_buffers_filled +=1
+                    self.counters.buffer_filled.increment()
             if num_buffers_filled == 0:
                 self.status.value = "waiting for buffer to be filled"
                 update_at = time.time()
@@ -208,9 +235,11 @@ class AcquireImagesProcess:
                     status_update.update(temperatures)
                     self.log_status(status_update)
                     self.pipeline.update_status(status_update)
+                    self.counters.getting_parameters.increment()
                 else:
                     time.sleep(0.001)
                     self.status.value = "waiting"
+                    self.counters.waiting.increment()
         #if we get here, we were kindly asked to exit
         self.status.value = "exiting"
         if self.use_simulated_camera:

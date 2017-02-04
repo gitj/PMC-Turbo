@@ -31,6 +31,7 @@ import Pyro4.socketutil
 from pmc_camera.pipeline.acquire_images import AcquireImagesProcess
 from pmc_camera.pipeline.write_images import WriteImageProcess
 from pmc_camera.pycamera.dtypes import frame_info_dtype
+from pmc_camera.utils.error_counter import CounterCollection
 
 Pyro4.config.SERVERTYPE = 'multiplex'
 Pyro4.config.SERIALIZERS_ACCEPTED = {'pickle','json'}
@@ -43,8 +44,13 @@ logger = logging.getLogger(__name__)
 class BasicPipeline:
     def __init__(self, dimensions=(3232,4864), num_data_buffers=16,
                  disks_to_use = ['/data1','/data2','/data3','/data4'],
-                 use_simulated_camera=False, default_write_enable=1, pipeline_port=50000):
+                 use_simulated_camera=False, default_write_enable=1, pipeline_port=50000,counter_dir='/home/pmc/logs/counters'):
         image_size_bytes = 31440952 # dimensions[0]*dimensions[1]*2  # Need to figure out how to not hard code this
+
+        self.counters = CounterCollection('pipeline',counter_dir)
+        self.counters.commands_queued.reset()
+        self.counters.commands_completed.reset()
+
         self.num_data_buffers = num_data_buffers
         self.raw_image_buffers = [mp.Array(ctypes.c_uint8, image_size_bytes) for b in range(num_data_buffers)]
         # We save the buffer info in a custom datatype array, which is a bit ugly, but it works and isn't too bad.
@@ -110,7 +116,7 @@ class BasicPipeline:
                                                    info_buffer=self.info_buffer,
                                                    status=self.acquire_status,
                                                    use_simulated_camera=use_simulated_camera,
-                                                   uri=uri)
+                                                   uri=uri,counter_dir=counter_dir)
 
         for writer in self.writers:
             writer.child.start()
@@ -143,6 +149,7 @@ class BasicPipeline:
     def send_camera_command(self,name,value):
         tag = time.time()
         self.acquire_image_command_queue.put((name,value,tag))
+        self.counters.commands_queued.increment()
         return tag
 
     def get_camera_command_result(self,command_tag):
@@ -157,6 +164,7 @@ class BasicPipeline:
             try:
                 tag,name,value,result,gate_time = self.acquire_image_command_results_queue.get_nowait()
                 self.acquire_image_command_results_dict[tag] = (name,value,result,gate_time)
+                self.counters.commands_completed.increment()
             except EmptyException:
                 break
 
