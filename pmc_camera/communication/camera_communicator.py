@@ -1,23 +1,26 @@
 from __future__ import division
-import time
-import traceback
 
-import Pyro4, Pyro4.socketutil, Pyro4.errors, Pyro4.util
+import json
+import logging
 import select
 import struct
 import threading
-import logging
-import json
+import time
+import traceback
+
+import Pyro4
+import Pyro4.errors
+import Pyro4.socketutil
+import Pyro4.util
 
 import pmc_camera.communication.command_classes
 import pmc_camera.communication.packet_classes
-from pmc_camera.communication import downlink_classes, uplink_classes  # aggregator
-from pmc_camera.communication.command_table import command_manager, CommandStatus
 from pmc_camera.communication import command_table
-from pmc_camera.communication import housekeeping_format_classes, file_format_classes
-
 from pmc_camera.communication import constants
-from pmc_camera.communication import error_counter
+from pmc_camera.communication import downlink_classes, uplink_classes  # aggregator
+from pmc_camera.communication import housekeeping_format_classes, file_format_classes
+from pmc_camera.communication.command_table import command_manager, CommandStatus
+from pmc_camera.utils import error_counter
 
 Pyro4.config.SERVERTYPE = "multiplex"
 Pyro4.config.SERIALIZER = 'pickle'

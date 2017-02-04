@@ -6,7 +6,7 @@ import subprocess
 import time
 from functools import wraps
 
-import Pyro4
+import Pyro4, Pyro4.errors
 
 from pmc_camera.communication import file_format_classes
 from pmc_camera.image_processing.blosc_file import load_blosc_image
@@ -34,7 +34,11 @@ def require_pipeline(func):
         if self.pipeline is None:
             return None
         else:
-            return func(*args, **kwargs)
+            try:
+                return func(*args, **kwargs)
+            except Pyro4.errors.CommunicationError as e:
+                import sys
+                raise type(e), type(e)("Error communicating with pipeline!\n" + str(e)), sys.exc_info()[2]
 
     return wrapper
 
@@ -62,6 +66,11 @@ class Controller(object):
     @require_pipeline
     def set_exposure(self, exposure_time_us):
         tag = self.pipeline.send_camera_command("ExposureTimeAbs", str(exposure_time_us))
+        return tag
+
+    @require_pipeline
+    def send_arbitrary_camera_command(self,command_string,argument_string):
+        tag = self.pipeline.send_camera_command(command_string,argument_string)
         return tag
 
     @require_pipeline
