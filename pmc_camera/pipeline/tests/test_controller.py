@@ -64,7 +64,7 @@ class TestMultiIndex(object):
         thread.daemon=True
         thread.start()
         time.sleep(1)
-        sis = controller.Controller(pipeline=bpl, data_dirs=self.data_dirs)
+        sis = controller.Controller(pipeline=bpl, data_dirs=self.data_dirs,counter_dir=self.top_dir)
         sis.run_focus_sweep(request_params=dict())
         time.sleep(1)
         sis.check_for_completed_commands()
@@ -79,7 +79,7 @@ class TestMultiIndex(object):
         time.sleep(1)
 #        for dd in self.data_dirs:
 #            print subprocess.check_output(("ls -Rhl %s" % dd),shell=True)
-        sis = controller.Controller(pipeline=bpl, data_dirs=self.data_dirs)
+        sis = controller.Controller(pipeline=bpl, data_dirs=self.data_dirs, counter_dir=self.top_dir)
         if sis.merged_index.df is None:
             bpl.close()
             raise Exception("No index!!!")
