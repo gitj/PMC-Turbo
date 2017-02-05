@@ -1,12 +1,20 @@
 import unittest
-import socket
 import Pyro4
+import tempfile
+import shutil
 from pmc_camera.communication import camera_communicator
 from pmc_camera.communication import packet_classes, command_table
 from pmc_camera.pipeline import controller
 from nose.tools import timed
-import time
 
+counter_dir = ''
+def setup():
+    global counter_dir
+    counter_dir = tempfile.mkdtemp()
+
+def teardown():
+    global counter_dir
+    shutil.rmtree(counter_dir)
 
 def test_valid_command_table():
     cc = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, start_pyro=False)
@@ -14,7 +22,7 @@ def test_valid_command_table():
 
 
 def test_basic_command_path():
-    cont = controller.Controller(None)
+    cont = controller.Controller(None,counter_dir=counter_dir)
     cc1 = camera_communicator.Communicator(cam_id=0, peers=[], controller=cont, start_pyro=False)
     cc2 = camera_communicator.Communicator(cam_id=1, peers=[], controller=cont, start_pyro=False)
     cc1.peers = [cc1, cc2]

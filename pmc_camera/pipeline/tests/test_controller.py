@@ -39,7 +39,7 @@ class TestMultiIndex(object):
         with open(self.general_filename,'w') as fh:
             fh.write(self.general_file_contents)
             
-        self.controller_no_pipeline = controller.Controller(pipeline=None,data_dirs=self.data_dirs)
+        self.controller_no_pipeline = controller.Controller(pipeline=None,data_dirs=self.data_dirs, counter_dir=self.top_dir)
 
         
 
