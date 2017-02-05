@@ -52,17 +52,21 @@ class Communicator():
             try:
                 self.peers.append(Pyro4.Proxy(peer))
             except TypeError as e:
-                if not hasattr(peer, '_pyroUri') or not hasattr(peer, 'cam_id'):
-                    raise e
+                if not hasattr(peer, '_pyroUri'):
+                    if not hasattr(peer, 'cam_id'):
+                        raise e
                 else:
                     self.peers.append(peer)
+
+
 
         if controller:
             try:
                 self.controller = Pyro4.Proxy(controller)
             except TypeError as e:
-                if not hasattr(controller, '_pyroUri') or not hasattr(controller, 'pipeline'):
-                    raise e
+                if not hasattr(controller, '_pyroUri'):
+                    if not hasattr(controller, 'pipeline'):
+                        raise e
                 else:
                     self.controller = controller
 
