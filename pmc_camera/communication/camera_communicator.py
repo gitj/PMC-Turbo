@@ -57,13 +57,14 @@ class Communicator():
                 else:
                     self.peers.append(peer)
 
-        try:
-            self.controller = Pyro4.Proxy(controller)
-        except TypeError as e:
-            if not hasattr(controller, '_pyroUri'):
-                raise e
-            else:
-                self.controller = controller
+        if controller:
+            try:
+                self.controller = Pyro4.Proxy(controller)
+            except TypeError as e:
+                if not hasattr(controller, '_pyroUri'):
+                    raise e
+                else:
+                    self.controller = controller
 
         self.aggregator = None
         self.peer_polling_order_idx = 0
