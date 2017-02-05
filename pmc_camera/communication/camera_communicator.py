@@ -55,8 +55,9 @@ class Communicator():
         self.status_groups = []
         self.loop_interval = loop_interval
 
+        peer_strings = [str(peer._pyroUri) for peer in self.peers]
         self.error_counter = error_counter.CounterCollection('communication_errors', '/tmp/logs/',
-                                                             'controller', *self.peers)
+                                                             'controller', *peer_strings)
 
         self.pyro_daemon = None
         self.pyro_thread = None
@@ -172,9 +173,10 @@ class Communicator():
                     next_data = active_peer.get_next_data()
 
                 except Pyro4.errors.CommunicationError as e:
-                    self.error_counter.counters[active_peer].increment()
-                    logger.debug('Connection to peer %s failed. Error counter - %r. Error message: %s' % (
-                        active_peer, self.error_counter.counters[active_peer], str(e)))
+                    active_peer_string = str(active_peer._pyroUri)
+                    self.error_counter.counters[active_peer_string].increment()
+                    logger.debug('Connection to peer at URI %s failed. Error counter - %r. Error message: %s' % (
+                        active_peer_string, self.error_counter.counters[active_peer_string], str(e)))
 
                 if not next_data:
                     logger.debug('No data was obtained.')
