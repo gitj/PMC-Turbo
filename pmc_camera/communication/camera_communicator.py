@@ -77,9 +77,9 @@ class Communicator():
         self.status_groups = []
         self.loop_interval = loop_interval
 
-        peer_error_strings = [str(peer._pyroUri) + '_error_counts' for peer in self.peers]
+        peer_error_strings = [('pmc_%d_communication_error_counts' % i) for i in range(len(self.peers))]
         self.error_counter = error_counter.CounterCollection('communication_errors', '/tmp/logs/',
-                                                             'controller_error_counts', *peer_error_strings)
+                                                             'controller_communication_error_counts', *peer_error_strings)
 
         self.pyro_daemon = None
         self.pyro_thread = None
@@ -196,7 +196,7 @@ class Communicator():
 
                 except Pyro4.errors.CommunicationError as e:
                     active_peer_string = str(active_peer._pyroUri)
-                    error_counter_key = active_peer_string + '_error_counts'
+                    error_counter_key = 'pmc_%d_communication_error_counts' % self.peer_polling_order[self.peer_polling_order_idx]
                     self.error_counter.counters[error_counter_key].increment()
                     logger.debug('Connection to peer at URI %s failed. Error counter - %r. Error message: %s' % (
                         active_peer_string, self.error_counter.counters[error_counter_key], str(e)))
