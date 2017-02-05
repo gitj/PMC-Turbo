@@ -46,8 +46,25 @@ class Communicator():
         self.port = base_port + cam_id
         logger.debug('Communicator initialized')
         self.cam_id = cam_id
-        self.peers = peers
-        self.controller = controller
+
+        self.peers = []
+        for peer in peers:
+            try:
+                self.peers.append(Pyro4.Proxy(peer))
+            except TypeError as e:
+                if not hasattr(peer, '_pyroUri'):
+                    raise e
+                else:
+                    self.peers.append(peer)
+
+        try:
+            self.controller = Pyro4.Proxy(controller)
+        except TypeError as e:
+            if not hasattr(controller, '_pyroUri'):
+                raise e
+            else:
+                self.controller = controller
+
         self.aggregator = None
         self.peer_polling_order_idx = 0
         self.peer_polling_order = [0]

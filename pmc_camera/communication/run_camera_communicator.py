@@ -23,7 +23,6 @@ def setup_logger():
     logger.setLevel(logging.DEBUG)
 
 
-
 def run_communicator(cam_id, peers, controller, leader, peer_polling_order=[]):
     setup_logger()
     UPLINK_PORT, DOWNLINK_IP, DOWNLINK_PORT = 4001, '192.168.1.54', 4001
@@ -33,7 +32,6 @@ def run_communicator(cam_id, peers, controller, leader, peer_polling_order=[]):
     if leader:
         c.setup_links(UPLINK_PORT, DOWNLINK_IP, DOWNLINK_PORT, '192.168.1.54', 4002, 700)
         c.setup_aggregator(aggregator_hard_coded.setup_group())
-
 
         csv_paths_and_preambles = [('camera_items.csv', ''),
                                    ('charge_controller_items.csv', ''),
@@ -45,11 +43,14 @@ def run_communicator(cam_id, peers, controller, leader, peer_polling_order=[]):
 
 
 def two_camera_leader():
-    run_communicator(cam_id=0, peers=[Pyro4.Proxy('PYRO:communicator@0.0.0.0:40000'),
-                                      Pyro4.Proxy('PYRO:communicator@0.0.0.0:40001')],
-                     controller=Pyro4.Proxy('PYRO:image@192.168.1.30:50001'), leader=True, peer_polling_order=[0, 1])
+    # run_communicator(cam_id=0, peers=[Pyro4.Proxy('PYRO:communicator@0.0.0.0:40000'),
+    #                                  Pyro4.Proxy('PYRO:communicator@0.0.0.0:40001')],
+    #                 controller=Pyro4.Proxy('PYRO:image@192.168.1.30:50001'), leader=True, peer_polling_order=[0, 1])
+
+    run_communicator(cam_id=0, peers=['PYRO:communicator@0.0.0.0:40000', 'PYRO:communicator@0.0.0.0:40001'],
+                     controller='PYRO:image@192.168.1.30:50001', leader=True, peer_polling_order=[0, 1])
 
 
 def two_camera_follower():
     run_communicator(cam_id=1, peers=[],
-                     controller=Pyro4.Proxy('PYRO:image@192.168.1.30:50002'), leader=False)
+                     controller='PYRO:image@192.168.1.30:50002', leader=False)
