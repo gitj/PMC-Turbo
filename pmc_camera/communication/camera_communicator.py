@@ -90,8 +90,8 @@ class Communicator():
         self.command_logger = pmc_camera.communication.command_classes.CommandLogger()
 
         # TODO: Set up proper destination lists, including LIDAR, narrow field, wide field, and all
-        self.destination_lists = dict(enumerate([[peer] for peer in peers]))
-        self.destination_lists[command_table.DESTINATION_ALL_CAMERAS] = peers
+        self.destination_lists = dict(enumerate([[peer] for peer in self.peers]))
+        self.destination_lists[command_table.DESTINATION_ALL_CAMERAS] = self.peers
 
         # We will instantiate these later
         if start_pyro:
