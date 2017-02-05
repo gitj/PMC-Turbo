@@ -54,7 +54,9 @@ class Communicator():
         self.end_loop = False
         self.status_groups = []
         self.loop_interval = loop_interval
-        self.error_counter = error_counter.CSVWriter('error_counts.csv', controller_errors=0)
+
+        self.error_counter = error_counter.CounterCollection('communication_errors', '/tmp/logs/',
+                                                             'controller', *self.peers)
 
         self.pyro_daemon = None
         self.pyro_thread = None
@@ -166,11 +168,13 @@ class Communicator():
                 logger.debug('Getting next data from camera %d' % self.peer_polling_order[self.peer_polling_order_idx])
                 next_data = None
                 try:
-                    next_data = self.peers[self.peer_polling_order[self.peer_polling_order_idx]].get_next_data()
+                    active_peer = self.peers[self.peer_polling_order[self.peer_polling_order_idx]]
+                    next_data = active_peer.get_next_data()
 
                 except Pyro4.errors.CommunicationError as e:
-                    logger.debug('Connection to peer %d failed. Error message: %s' % (
-                        self.peer_polling_order[self.peer_polling_order_idx], str(e)))
+                    self.error_counter.counters[active_peer].increment()
+                    logger.debug('Connection to peer %s failed. Error counter - %r. Error message: %s' % (
+                        active_peer, self.error_counter.counters[active_peer], str(e)))
 
                 if not next_data:
                     logger.debug('No data was obtained.')
@@ -186,11 +190,10 @@ class Communicator():
         try:
             return self.controller.get_next_data_for_downlink()
         except Pyro4.errors.CommunicationError:
-            self.error_counter['controller_errors'] += 1
-            self.error_counter.write_to_file()
+            self.error_counter.controller.increment()
             logger.debug(
-                'Connection to controller failed. Failed %d times. Error message: %s' % (
-                    self.error_counter['controller_errrors'], "".join(Pyro4.util.getPyroTraceback())))
+                'Connection to controller failed. Error counter - %r. Error message: %s' % (
+                    self.error_counter.controller, "".join(Pyro4.util.getPyroTraceback())))
             return None
         except Exception:
             raise Exception("".join(Pyro4.util.getPyroTraceback()))
