@@ -7,8 +7,8 @@ import startup_script_constants
 if __name__ == "__main__":
     log.setup_stream_handler(level=logging.DEBUG)
     try:
-        pipeline = Pyro4.Proxy('PYRO:pipeline@%s:%s' % startup_script_constants.PIPELINE_IP,
-                               startup_script_constants.PIPELINE_PORT)
+        pipeline = Pyro4.Proxy('PYRO:pipeline@%s:%s' % (startup_script_constants.PIPELINE_IP,
+                               startup_script_constants.PIPELINE_PORT))
     except Exception as e:
         print "failed to connect to pipeline:", e
         pipeline = None
