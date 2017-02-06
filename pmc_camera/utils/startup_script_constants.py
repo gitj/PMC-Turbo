@@ -1,7 +1,5 @@
 # This should not live here, but it will until I decide where to move it.
 
-from pmc_camera.communication import aggregator_hard_coded
-
 PIPELINE_IP = '0.0.0.0'
 PIPELINE_PORT = 50000
 

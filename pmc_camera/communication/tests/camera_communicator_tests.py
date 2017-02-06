@@ -9,6 +9,7 @@ from nose.tools import timed
 
 counter_dir = ''
 
+FAKE_BASE_PORT = 56654
 
 def setup():
     global counter_dir
@@ -21,14 +22,14 @@ def teardown():
 
 
 def test_valid_command_table():
-    cc = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, start_pyro=False)
+    cc = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, start_pyro=False, base_port=FAKE_BASE_PORT)
     cc.validate_command_table()
 
 
 def test_basic_command_path():
     cont = controller.Controller(None, counter_dir=counter_dir)
-    cc1 = camera_communicator.Communicator(cam_id=0, peers=[], controller=cont, start_pyro=False)
-    cc2 = camera_communicator.Communicator(cam_id=1, peers=[], controller=cont, start_pyro=False)
+    cc1 = camera_communicator.Communicator(cam_id=0, peers=[], controller=cont, start_pyro=False, base_port=FAKE_BASE_PORT)
+    cc2 = camera_communicator.Communicator(cam_id=1, peers=[], controller=cont, start_pyro=False, base_port=FAKE_BASE_PORT)
     cc1.peers = [cc1, cc2]
     cc1.destination_lists = {0: [cc1], 1: [cc2]}
     command = command_table.command_manager.set_focus(focus_step=1000)
@@ -101,13 +102,13 @@ class FakeStatusGroup():
 
 class NoPeersTest(unittest.TestCase):
     def setUp(self):
-        self.c = camera_communicator.Communicator(cam_id=0, peers=[], controller=None)
+        self.c = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, base_port=FAKE_BASE_PORT)
 
     def tearDown(self):
         self.c.close()
 
     def setup_leader_attributes_test(self):
-        UPLINK_PORT = 4001
+        UPLINK_PORT = 40001
         LOWRATE_DOWNLINK_IP = 'localhost'
         LOWRATE_DOWNLINK_PORT = 4001
         HIRATE_DOWNLINK_IP = 'localhost'
@@ -140,7 +141,7 @@ class NoPeersTest(unittest.TestCase):
 class PeersTest(unittest.TestCase):
     def setUp(self):
         # Set up port manually.
-        self.base_port = 46788
+        self.base_port = FAKE_BASE_PORT
         proxy = Pyro4.Proxy('PYRO:communicator@0.0.0.0:%d' % (self.base_port + 1))
         self.c = camera_communicator.Communicator(cam_id=0, peers=[proxy], controller=None, base_port=self.base_port)
         self.c.file_id = 0

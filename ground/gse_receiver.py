@@ -222,6 +222,6 @@ if __name__ == "__main__":
     logger.addHandler(default_filehandler)
     logger.setLevel(logging.DEBUG)
 
-    path = os.path.join('/home/pmc/pmchome/gse_receiver_data', time.strftime('%Y-%m-%d_%H:%M:%S'))
+    path = os.path.join('/home/pmc/pmchome/gse_receiver_data', time.strftime('%Y-%m-%d_%H-%M-%S'))
     g = GSEReceiver(path=path)
     g.main_loop()

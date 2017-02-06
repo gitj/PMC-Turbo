@@ -31,9 +31,7 @@ Pyro4.config.COMMTIMEOUT = 1.0
 # "For the multiplexing server only: the timeout of the select or poll calls"
 
 BASE_PORT = 40000  # Change this const when a base port is decided upon.
-num_cameras = 2
 
-port_list = [BASE_PORT + i for i in range(num_cameras)]  # Ditto for the IP list and ports.
 logger = logging.getLogger(__name__)
 
 START_BYTE = chr(constants.SIP_START_BYTE)
