@@ -31,8 +31,6 @@ if __name__ == "__main__":
                       startup_script_constants.HIRATE_DOWNLINK_IP, startup_script_constants.HIRATE_DOWNLINK_PORT,
                       startup_script_constants.DOWNLINK_SPEED)
 
-        c.setup_aggregator(startup_script_constants.AGGREGATOR_GROUP)
-
         group = housekeeping_classes.construct_super_group_from_csv_list(startup_script_constants.GROUP_NAME,
                                                                          startup_script_constants.CSV_PATHS_AND_PREAMBLES)
         c.add_status_group(group)

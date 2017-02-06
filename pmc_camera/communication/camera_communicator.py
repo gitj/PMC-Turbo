@@ -58,8 +58,6 @@ class Communicator():
                 else:
                     self.peers.append(peer)
 
-
-
         if controller:
             try:
                 self.controller = Pyro4.Proxy(controller)
@@ -70,7 +68,6 @@ class Communicator():
                 else:
                     self.controller = controller
 
-        self.aggregator = None
         self.peer_polling_order_idx = 0
         self.peer_polling_order = [0]
         self.end_loop = False
@@ -79,7 +76,8 @@ class Communicator():
 
         peer_error_strings = [('pmc_%d_communication_error_counts' % i) for i in range(len(self.peers))]
         self.error_counter = error_counter.CounterCollection('communication_errors', '/tmp/logs/',
-                                                             'controller_communication_error_counts', *peer_error_strings)
+                                                             'controller_communication_error_counts',
+                                                             *peer_error_strings)
 
         self.pyro_daemon = None
         self.pyro_thread = None
@@ -160,25 +158,6 @@ class Communicator():
                 return
             time.sleep(self.loop_interval)
 
-    def get_housekeeping(self):
-        if self.aggregator == None:
-            raise RuntimeError('Communicator has no aggregator.')
-        self.aggregator.update()
-        status_summary = self.aggregator.get_status_summary()
-        short_housekeeping = housekeeping_format_classes.ShortHousekeeping()
-        short_housekeeping.from_values([self.cam_id], [status_summary])
-        camera_status = short_housekeeping.to_buffer()
-        self.buffer_for_downlink = camera_status + self.buffer_for_downlink[len(camera_status):]
-
-    def setup_aggregator(self, aggregator):
-        self.aggregator = aggregator
-
-    def send_detailed_housekeeping(self):
-        self.aggregator.update()
-        json_file = self.aggregator.to_json_file()
-        self.downlinks[0].put_data_into_queue(json_file.to_buffer(), self.file_id)
-        self.file_id += 1
-
     def add_status_group(self, status_group):
         self.status_groups.append(status_group)
 
@@ -196,7 +175,8 @@ class Communicator():
 
                 except Pyro4.errors.CommunicationError as e:
                     active_peer_string = str(active_peer._pyroUri)
-                    error_counter_key = 'pmc_%d_communication_error_counts' % self.peer_polling_order[self.peer_polling_order_idx]
+                    error_counter_key = 'pmc_%d_communication_error_counts' % self.peer_polling_order[
+                        self.peer_polling_order_idx]
                     self.error_counter.counters[error_counter_key].increment()
                     logger.debug('Connection to peer at URI %s failed. Error counter - %r. Error message: %s' % (
                         active_peer_string, self.error_counter.counters[error_counter_key], str(e)))
@@ -240,7 +220,7 @@ class Communicator():
     ### The following two functions respond to SIP requests
     def respond_to_science_data_request(self):
         logger.debug("Science data request received.")
-        self.get_housekeeping()
+        self.get_status_summary()
         self.lowrate_downlink.send(self.buffer_for_downlink)
 
     def process_science_command_packet(self, msg):
@@ -287,6 +267,20 @@ class Communicator():
             logger.warning(details)
             return
         self.command_logger.add_command_result(command_packet.sequence_number, CommandStatus.command_ok, '')
+
+    def get_status_summary(self):
+        if len(self.status_groups) == 0:
+            raise RuntimeError('Communicator has no status_groups.')
+        summary = []
+        for group in self.status_groups:
+            group.update()
+            summary.append(group.get_status())
+        camera_status = self.summarize_status_to_255_bytes(summary)
+        self.buffer_for_downlink = camera_status + self.buffer_for_downlink[len(camera_status):]
+
+    def summarize_status_to_255_bytes(self, summary):
+        # This stub function needs to be filled out.
+        return '\xff' * 255
 
     ##################################################################################################
     # The following methods correspond to commands defined in pmc_camera.communication.command_table

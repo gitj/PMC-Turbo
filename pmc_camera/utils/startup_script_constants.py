@@ -35,5 +35,3 @@ CSV_PATHS_AND_PREAMBLES = [('/home/pmc/pmchome/pmc-turbo/pmc_camera/communicatio
                            ('/home/pmc/pmchome/pmc-turbo/pmc_camera/communication/charge_controller_items.csv', ''),
                            ('/home/pmc/pmchome/pmc-turbo/pmc_camera/communication/collectd_items.csv',
                             '/var/lib/collectd/csv/*/')]
-
-AGGREGATOR_GROUP = aggregator_hard_coded.setup_group()
