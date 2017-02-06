@@ -8,13 +8,17 @@ from pmc_camera.pipeline import controller
 from nose.tools import timed
 
 counter_dir = ''
+
+
 def setup():
     global counter_dir
     counter_dir = tempfile.mkdtemp()
 
+
 def teardown():
     global counter_dir
     shutil.rmtree(counter_dir)
+
 
 def test_valid_command_table():
     cc = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, start_pyro=False)
@@ -22,7 +26,7 @@ def test_valid_command_table():
 
 
 def test_basic_command_path():
-    cont = controller.Controller(None,counter_dir=counter_dir)
+    cont = controller.Controller(None, counter_dir=counter_dir)
     cc1 = camera_communicator.Communicator(cam_id=0, peers=[], controller=cont, start_pyro=False)
     cc2 = camera_communicator.Communicator(cam_id=1, peers=[], controller=cont, start_pyro=False)
     cc1.peers = [cc1, cc2]
@@ -83,13 +87,16 @@ class FakeController():
     def get_next_data_for_downlink(self):
         return '\x00' * 1024
 
+    def get_status_summary(self):
+        return (1, ['array_voltage', 'battery_voltage'])
 
-class FakeAggregator():
+
+class FakeStatusGroup():
     def update(self):
         return
 
-    def get_status_summary(self):
-        return (1, ['array_voltage', 'battery_voltage'])
+    def get_status(self):
+        return
 
 
 class NoPeersTest(unittest.TestCase):
@@ -118,7 +125,7 @@ class NoPeersTest(unittest.TestCase):
 
     def get_and_process_bytes_test(self):
         self.c.lowrate_uplink = FakeLowrateUplink()
-        self.c.aggregator = FakeAggregator()
+        self.c.add_status_group(FakeStatusGroup())
         self.c.lowrate_uplink.assign_bytes_to_get('\x10\x13\x03')
         self.c.controller = FakeController()
         self.c.lowrate_downlink = FakeLowrateDownlink()
@@ -127,7 +134,7 @@ class NoPeersTest(unittest.TestCase):
 
         msg = self.c.lowrate_downlink.retrieve_msg()
         print '%r' % msg
-        assert (msg == ('\xff\x00\x01\x01\x02' + '\x00' * 250))
+        assert (msg == ('\xff' * 255))
 
 
 class PeersTest(unittest.TestCase):
