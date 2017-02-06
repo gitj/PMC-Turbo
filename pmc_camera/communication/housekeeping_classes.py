@@ -36,7 +36,7 @@ def construct_super_group_from_csv_list(group_name, csv_paths_and_preambles):
     for csv_path_and_preamble in csv_paths_and_preambles:
         csv_path, csv_preamble = csv_path_and_preamble
         status_group = construct_status_group_from_csv(csv_path, csv_path, csv_preamble)
-        super_group[status_group.name] = status_group
+        super_group.groups.append(status_group)
     return super_group
 
 
@@ -48,10 +48,14 @@ def construct_status_group_from_csv(group_name, csv_path, csv_preamble):
     for line in lines[1:]:
         values = line.strip('\n').split(',')
         value_dict = dict(zip(column_names, values))
-        if not value_dict['partial_glob'] in status_group.keys():
+
+        filewatcher_name = value_dict['partial_glob']
+        all_filewatcher_names = [filewatcher.name for filewatcher in status_group.filewatchers]
+
+        if not filewatcher_name in all_filewatcher_names:
             status_filewatcher = StatusFileWatcher(name=value_dict['partial_glob'], items=[],
                                                    filename_glob=os.path.join(csv_preamble, value_dict['partial_glob']))
-            status_group[value_dict['partial_glob']] = status_filewatcher
+            status_group.filewatchers.append(status_filewatcher)
         status_item = FloatStatusItem(name=values[1], column_name=value_dict['column_name'],
                                       scaling=value_dict['scaling_value'],
                                       good_range=Range(value_dict['good_range_low'], value_dict['good_range_high']),
@@ -59,18 +63,20 @@ def construct_status_group_from_csv(group_name, csv_path, csv_preamble):
                                                           value_dict['normal_range_high']),
                                       warning_range=Range(value_dict['warning_range_low'],
                                                           value_dict['warning_range_high']))
-        status_group[value_dict['partial_glob']][status_item.name] = status_item
+        for filewatcher in status_group.filewatchers:
+            if filewatcher.name == filewatcher_name:
+                filewatcher.items.append(status_item)
+
     return status_group
 
 
-class SuperStatusGroup(dict):
+class SuperStatusGroup():
     def __init__(self, name, groups):
         self.name = name
-        for group in groups:
-            self[group.name] = group
+        self.groups = groups
 
     def get_status_summary(self):
-        status_summaries = [self[key].get_status_summary() for key in self.keys()]
+        status_summaries = [group.get_status_summary() for group in self.groups]
         max_value = max([status_summary[0] for status_summary in status_summaries])
         name_list = []
         for status_summary in status_summaries:
@@ -80,8 +86,8 @@ class SuperStatusGroup(dict):
 
     def update(self):
         logger.debug('Updating %r' % self.name)
-        for key in self.keys():
-            self[key].update()
+        for group in self.groups:
+            group.update()
 
     def to_json_file(self):
         payload = json.dumps(self.get_status())
@@ -90,20 +96,19 @@ class SuperStatusGroup(dict):
         return json_file
 
     def get_status(self):
-        if len(self.keys()) == 0:
-            raise ValueError('No keys - filewatcher is empty.')
-        entries = {key: self[key].get_status() for key in self.keys()}
+        if len(self.groups) == 0:
+            raise ValueError('No groups - filewatcher is empty.')
+        entries = {group.name: group.get_status() for group in self.groups}
         return entries
 
 
-class StatusGroup(dict):
+class StatusGroup():
     def __init__(self, name, filewatchers):
         self.name = name
-        for filewatcher in filewatchers:
-            self[filewatcher.name] = filewatcher
+        self.filewatchers = filewatchers
 
     def get_status_summary(self):
-        status_summaries = [self[key].get_status_summary() for key in self.keys()]
+        status_summaries = [filewatcher.get_status_summary() for filewatcher in self.filewatchers]
         max_value = max([status_summary[0] for status_summary in status_summaries])
         name_list = []
         for status_summary in status_summaries:
@@ -113,19 +118,8 @@ class StatusGroup(dict):
 
     def update(self):
         logger.debug('Updating %r' % self.name)
-        for key in self.keys():
-            self[key].update()
-
-    def convert_to_string(self):
-        buffer = ''
-        for file_key in self.keys():
-            for item_key in self[file_key].keys():
-                buffer += 'File: %s, item: %s, value: %0.2f, epoch: %0.0f' % (self[file_key].name,
-                                                                              self[file_key][item_key].name,
-                                                                              self[file_key][item_key].value,
-                                                                              self[file_key][item_key].epoch)
-                buffer += '\n'
-        return buffer
+        for filewatcher in self.filewatchers:
+            filewatcher.update()
 
     def to_json_file(self):
         payload = json.dumps(self.get_status())
@@ -134,31 +128,30 @@ class StatusGroup(dict):
         return json_file
 
     def get_status(self):
-        if len(self.keys()) == 0:
-            raise ValueError('No keys - filewatcher is empty.')
-        entries = {key: self[key].get_status() for key in self.keys()}
+        if len(self.filewatchers) == 0:
+            raise ValueError('No filewatchers - filewatcher is empty.')
+        entries = {filewatcher.name: filewatcher.get_status() for filewatcher in self.filewatchers}
         return entries
 
 
 class MultiStatusFileWatcher(dict):
     def __init__(self, name, filewatchers):
         self.name = name
-        for filewatcher in filewatchers:
-            self[filewatcher.name] = filewatcher
+        self.filewatchers = filewatchers
 
     def update(self):
-        for key in self.keys():
-            self[key].update()
+        for filewatcher in self.filewatchers:
+            filewatcher.update()
 
     def get_status(self):
-        statuses = [self[key].get_status() for key in self.keys()]
+        statuses = [filewatcher.get_status() for filewatcher in self.filewatchers]
         mydict = {}
         for status in statuses:
             mydict.update(status)
         return mydict
 
     def get_status_summary(self):
-        status_summaries = [self[key].get_status_summary() for key in self.keys()]
+        status_summaries = [filewatchers.get_status_summary() for filewatchers in self.filewatchers]
         max_value = max([status_summary[0] for status_summary in status_summaries])
         name_list = []
         for status_summary in status_summaries:
@@ -167,7 +160,7 @@ class MultiStatusFileWatcher(dict):
         return (max_value, name_list)
 
 
-class StatusFileWatcher(dict):
+class StatusFileWatcher():
     def __init__(self, name, items, filename_glob):
         # example, charge_controller.csv, charge_controller
 
@@ -179,8 +172,7 @@ class StatusFileWatcher(dict):
         self.name = name
 
         self.column_names = None
-        for item in items:
-            self[item.name] = item
+        self.items = items
 
     def assign_file(self, filename_glob):
         files = glob.glob(filename_glob)
@@ -191,18 +183,18 @@ class StatusFileWatcher(dict):
         logger.debug('File %r set' % self.source_file)
 
     def get_status_summary(self):
-        if len(self.keys()) == 0:
-            raise ValueError('No keys - filewatcher is empty.')
-        values = [self[key].get_status_summary() for key in self.keys()]
+        if len(self.items) == 0:
+            raise ValueError('No items - filewatcher is empty.')
+        values = [item.get_status_summary() for item in self.items]
         max_value = max(values)
         max_indices = [i for i, value in enumerate(values) if (value == max_value)]
-        return (max_value, [self.keys()[i] for i in max_indices])
+        return (max_value, [self.items[i] for i in max_indices])
 
     def get_status(self):
-        if len(self.keys()) == 0:
-            raise ValueError('No keys - filewatcher is empty.')
-        entries = (self[key].get_status() for key in self.keys())
-        return dict(zip(self.keys(), entries))
+        if len(self.items) == 0:
+            raise ValueError('No items - filewatcher is empty.')
+        entries = (item.get_status() for item in self.items)
+        return dict(zip(self.items, entries))
 
     def update(self):
         logger.debug('Updating %r' % self.name)
@@ -238,8 +230,8 @@ class StatusFileWatcher(dict):
                              (len(values), len(self.column_names)))
         value_dict = dict(zip(self.column_names, values))
 
-        for key in self.keys():
-            self[key].update_value(value_dict)
+        for item in self.items:
+            item.update_value(value_dict)
 
 
 class FloatStatusItem():
