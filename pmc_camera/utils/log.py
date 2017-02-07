@@ -17,34 +17,46 @@ long_formatter = logging.Formatter(long_message_format)
 default_handler.setFormatter(default_formatter)
 
 pmc_camera_logger = logging.getLogger('pmc_camera')
+pmc_camera_logger.setLevel(logging.DEBUG)
 ground_logger = logging.getLogger('ground')
+ground_logger.setLevel(logging.DEBUG)
 
+KNOWN_LOGGERS = {'pipeline': pmc_camera_logger,
+                   'communicator': pmc_camera_logger,
+                   'controller': pmc_camera_logger,
+                   'gse_receiver': ground_logger,
+                   }
 
 def setup_stream_handler(level=logging.INFO):
     for logger in [pmc_camera_logger, ground_logger]:
         if default_handler not in logger.handlers:
             logger.addHandler(default_handler)
             default_handler.setLevel(level)
-            logger.setLevel(level)
-        logger.info("Stream handler initialized")
+            logger.info("Stream handler initialized for %s" % logger.name)
 
 
-def setup_file_handler(level=logging.DEBUG):
-    for name,logger in [('pmc_camera',pmc_camera_logger), ('ground',ground_logger)]:
-        has_file_handler = False
-        for handler in logger.handlers:
-            if issubclass(handler.__class__, logging.FileHandler):
-                has_file_handler = True
-        if not has_file_handler:
-            logger.addHandler(file_handler(name, level))
-            logger.info("File handler added")
-            logger.setLevel(level)
-        logger.info("File handler initialized")
+def setup_file_handler(name, level=logging.DEBUG, logger=None):
+    try:
+        logger = KNOWN_LOGGERS[name]
+        warning = ''
+    except KeyError:
+        if logger is None:
+            raise ValueError("Unknown logger name %s and no logger explicitly provided" % name)
+        warning = 'Unknown logger %s being initialized, please update %s with this logger' % (name,__name__)
+    has_file_handler = False
+    for handler in logger.handlers:
+        if issubclass(handler.__class__, logging.FileHandler):
+            has_file_handler = True
+    if not has_file_handler:
+        logger.addHandler(file_handler(name, level))
+        logger.info("File handler added and initialized for %s" % name)
         logger.info(git_log())
         logger.info(git_status())
+    if warning:
+        logger.warning(warning)
 
 
-def file_handler(name='', level=logging.DEBUG):
+def file_handler(name, level=logging.DEBUG):
     """
     Return a FileHandler that will write to a log file in the default location with a sensible name.
 
@@ -59,7 +71,7 @@ def file_handler(name='', level=logging.DEBUG):
     -------
     logging.FileHandler
     """
-    fh = logging.FileHandler(os.path.join(LOG_DIR, '.'.join([time.strftime('%Y-%m-%d_%H%M%S'), name.replace('/', '.'),
+    fh = logging.FileHandler(os.path.join(LOG_DIR, '.'.join([name.replace('/', '.'), time.strftime('%Y-%m-%d_%H%M%S'),
                                                              'log'])))
     fh.setFormatter(long_formatter)
     fh.setLevel(level)
