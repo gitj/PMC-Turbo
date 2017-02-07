@@ -45,6 +45,7 @@ class GSEReceiver():
             self.port = serial.Serial(serial_port_or_socket_port, baudrate=baudrate)
             self.port.timeout = loop_interval
         self.files = {}
+        self.file_status = {}
         self.hirate_file_packet_remainder = ''
         self.setup_directory(path)
         self.last_gse_remainder = ''
@@ -59,7 +60,7 @@ class GSEReceiver():
 
     def main_loop(self):
         while True:
-            buffer = self.get_next_data(1)
+            buffer = self.get_next_data()
             if not buffer:
                 continue
             with open(self.raw_filename, 'ab+') as f:
@@ -168,6 +169,15 @@ class GSEReceiver():
 
         file_class.write_payload_to_file(filename + file_extension)
 
+        with open(self.file_index_filename, 'a') as f:
+            writer = csv.writer(f, quoting=csv.QUOTE_NONE, lineterminator='\n')
+            writer.writerow(
+                [time.time(), (filename + file_extension), file_class.file_type, packets[0].file_id, len(data_buffer)])
+
+
+            # Write file_index csv that updates whenever a new file is written saying what is in the file
+            # (file type, size, time, can I get % done?)
+
     def setup_directory(self, path):
         if not os.path.exists(path):
             os.makedirs(path)
@@ -179,17 +189,21 @@ class GSEReceiver():
             os.makedirs(self.file_path)
         self.raw_filename = os.path.join(logs_path, 'raw.log')
         self.lowrate_filename = os.path.join(logs_path, 'lowrate.log')
-        self.packet_index_filename = os.path.join(path, 'file_indices.csv')
+        self.packet_index_filename = os.path.join(path, 'packet_index.csv')
+        self.file_index_filename = os.path.join(path, 'file_index.csv')
 
         with open(self.packet_index_filename, 'w') as f:
-            writer = csv.writer(f)
+            writer = csv.writer(f, quoting=csv.QUOTE_NONE, lineterminator='\n')
             writer.writerow(['epoch', 'current_file_id', 'packet_number', 'total_packets'])
+
+        with open(self.file_index_filename, 'a') as f:
+            writer = csv.writer(f, quoting=csv.QUOTE_NONE, lineterminator='\n')
+            writer.writerow(['epoch', 'filename', 'file_type', 'file_id', 'file_size'])
 
     def write_gse_packet_payloads_to_disk(self, gse_lowrate_packets):
         f = open(self.lowrate_filename, 'ab+')
         for packet in gse_lowrate_packets:
             f.write(packet.to_buffer() + '\n')
-            self.log_lowrate_status(packet)
         f.close()
 
     def get_file_packets_and_remainder_from_gse_packets_hirate_origin(self, gse_hirate_packets):
@@ -212,8 +226,18 @@ class GSEReceiver():
             else:
                 self.files[packet.file_id] = [packet]
 
+            if not self.file_status.has_key(packet.file_id):
+                self.file_status[packet.file_id] = {'first_timestamp': time.time(),
+                                                    'recent_timestamp': time.time(),
+                                                    'packets_received': [packet.packet_number],
+                                                    'packets_expected': packet.total_packet_number,
+                                                    'first_packet': packet}
+            else:
+                self.file_status[packet.file_id]['recent_timestamp'] = time.time()
+                self.file_status[packet.file_id]['packets_received'].append(packet.packet_number)
+
             with open(self.packet_index_filename, 'a') as f:
-                writer = csv.writer(f)
+                writer = csv.writer(f, quoting=csv.QUOTE_NONE, lineterminator='\n')
                 writer.writerow([time.time(), packet.file_id, packet.packet_number, packet.total_packet_number])
 
         for file_id in self.files.keys():
@@ -224,13 +248,14 @@ class GSEReceiver():
                 new_filename = os.path.join(self.file_path, new_filename)
                 self.write_file_from_file_packets(sorted_packets, new_filename)
                 del self.files[file_id]
-                # Write file_index csv that updates whenever a new file is written saying what is in the file
-                # (file type, size, time, can I get % done?)
+
+    def get_files_status(self):
+        return self.file_status
 
 
 if __name__ == "__main__":
     log.setup_file_handler()
-    log.setup_stream_handler()
+    log.setup_stream_handler(level=logging.DEBUG)
     path = os.path.join('/home/pmc/pmchome/gse_receiver_data', time.strftime('%Y-%m-%d_%H-%M-%S'))
     g = GSEReceiver(path=path)
     g.main_loop()
