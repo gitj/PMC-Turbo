@@ -2,12 +2,17 @@ import os
 import time
 import logging
 import subprocess
+try:
+    from coloredlogs import ColoredFormatter
+except ImportError:
+    ColoredFormatter = logging.Formatter
+
 LOG_DIR = '/home/pmc/logs'
 
 long_message_format = '%(levelname)-8.8s %(asctime)s - %(name)s.%(funcName)s:%(lineno)d  %(message)s'
 short_message_format = '%(levelname)-4.4s %(asctime)s - %(funcName)s:%(lineno)d  %(message)s'
 default_handler = logging.StreamHandler()
-default_formatter = logging.Formatter(short_message_format)
+default_formatter = ColoredFormatter(short_message_format)
 long_formatter = logging.Formatter(long_message_format)
 default_handler.setFormatter(default_formatter)
 
