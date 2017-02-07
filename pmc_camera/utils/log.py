@@ -35,6 +35,8 @@ def setup_file_handler(level=logging.DEBUG):
             logger.info("File handler added")
             logger.setLevel(level)
         logger.info("File handler initialized")
+        logger.info(git_log())
+        logger.info(git_status())
 
 
 def file_handler(name='', level=logging.DEBUG):
