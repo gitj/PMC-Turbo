@@ -2,6 +2,7 @@ import serial
 import os
 import socket
 import time
+import csv
 from pmc_camera.communication import packet_classes, file_format_classes, constants
 
 import logging
@@ -125,7 +126,16 @@ class GSEReceiver():
             data_buffer += packet.payload
 
         file_class = file_format_classes.decode_file_from_buffer(data_buffer)
-        file_class.write_buffer_to_file(filename + '_buffer')
+
+        file_extension = ''
+        if file_class.file_type == 1:
+            file_extension = '.jpg'
+        if file_class.file_type == 5:
+            file_extension = '.json'
+        if file_class.file_type == 6:
+            file_extension = '.json'
+
+        file_class.write_payload_to_file(filename + file_extension)
 
     def log_lowrate_status(self, packet):
         format_string = '>1B1L1L1H1H1L'
@@ -147,6 +157,11 @@ class GSEReceiver():
             os.makedirs(self.file_path)
         self.raw_filename = os.path.join(logs_path, 'raw.log')
         self.lowrate_filename = os.path.join(logs_path, 'lowrate.log')
+        self.file_index_filename = os.path.join(path, 'file_indices.csv')
+
+        with open(self.file_index_filename, 'w') as f:
+            writer = csv.writer(f)
+            writer.writerow(['epoch', 'current_file_id', 'packet_number', 'total_packets'])
 
     def dump_raw_bytes_to_file(self, buffer):
         f = open(self.raw_filename, 'ab+')
@@ -179,13 +194,17 @@ class GSEReceiver():
             else:
                 self.files[packet.file_id] = [packet]
 
+            with open(self.file_index_filename, 'a') as f:
+                writer = csv.writer(f)
+                writer.writerow([time.time(), packet.file_id, packet.packet_number, packet.total_packet_number])
+
         for file_id in self.files.keys():
             sorted_packets = sorted(self.files[file_id], key=lambda k: k.packet_number)
             if [packet.packet_number for packet in sorted_packets] == range(sorted_packets[0].total_packet_number):
                 logger.debug('Full image received: file id %d' % file_id)
-                jpg_filename = '%d' % file_id
-                jpg_filename = os.path.join(self.file_path, jpg_filename)
-                g.write_file_from_file_packets(sorted_packets, jpg_filename)
+                new_filename = '%d' % file_id
+                new_filename = os.path.join(self.file_path, new_filename)
+                g.write_file_from_file_packets(sorted_packets, new_filename)
                 del self.files[file_id]
 
     def main_loop(self):
