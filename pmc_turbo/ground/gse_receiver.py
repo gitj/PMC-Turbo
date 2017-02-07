@@ -248,9 +248,4 @@ class GSEReceiver():
         return self.file_status
 
 
-if __name__ == "__main__":
-    log.setup_file_handler()
-    log.setup_stream_handler(level=logging.DEBUG)
-    path = os.path.join('/home/pmc/pmchome/gse_receiver_data', time.strftime('%Y-%m-%d_%H-%M-%S'))
-    g = GSEReceiver(path=path)
-    g.main_loop()
+
