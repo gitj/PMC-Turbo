@@ -188,7 +188,7 @@ class StatusFileWatcher():
         values = [item.get_status_summary() for item in self.items]
         max_value = max(values)
         max_indices = [i for i, value in enumerate(values) if (value == max_value)]
-        return (max_value, [self.items[i] for i in max_indices])
+        return (max_value, [self.items[i].name for i in max_indices])
 
     def get_status(self):
         if len(self.items) == 0:

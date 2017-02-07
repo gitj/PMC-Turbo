@@ -34,6 +34,8 @@ class StatusDictTest(unittest.TestCase):
         filewatcher.update()
 
         print item0.value
+
+        print filewatcher.get_status_summary()
         assert (item0.value == 1)
         assert (item1.value == 5)
         assert (filewatcher.get_status_summary() == (housekeeping_classes.CRITICAL, ['data1']))
@@ -68,6 +70,6 @@ class StatusDictTest(unittest.TestCase):
         status_group.update()
 
         print status_group.get_status_summary()
-        assert (status_group.get_status_summary() == (housekeeping_classes.CRITICAL, ['data1', 'data3', 'data2']))
+        assert (status_group.get_status_summary() == (housekeeping_classes.CRITICAL, ['data1', 'data2', 'data3']))
         # Error here - I don't want the order to matter
         # assert (status_group.get_status_summary() == (status_dict.CRITICAL, ['data1', 'data2', 'data3']))
