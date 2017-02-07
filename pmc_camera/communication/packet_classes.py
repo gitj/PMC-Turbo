@@ -51,11 +51,18 @@ class GSEPacket(object):
                        ('1B', 'unused_zero'),
                        ('1H', 'payload_length')]
     _header_format_string = '>' + ''.join([format for format, name in _metadata_table])
-    _valid_start_byte = 0xFA
+    # GSE packet is defined in LDB manual section 2.4
+    START_BYTE = 0xFA
     _valid_sync2_bytes = [0xFA, 0xFB, 0xFC, 0xFD, 0xFF]
     header_length = struct.calcsize(_header_format_string)
+    # These values refer to bits 0-2 of origin byte
+    HIRATE_ORIGIN = 2
+    LOWRATE_ORIGIN = 1
+    HOUSEKEEPING_ORIGIN = 0
+    ORIGIN_BITMASK = 0x07
 
-    def __init__(self, buffer=None, sync2_byte=None, origin=None, payload=None, greedy=True):
+
+    def __init__(self, buffer=None, sync2_byte=None, origin=None, payload=None, greedy=False):
         """
         GSE style packet, received from the GSE and passed to the ground computer.
 
@@ -103,7 +110,7 @@ class GSEPacket(object):
             origin_payload_length_string = struct.pack('>1B1H', self.origin, self.payload_length)
             # Checksum includes origin and payload length; need to put these into the the byte string for calculation.
             self.checksum = get_checksum(payload + origin_payload_length_string)
-            self.start_byte = self._valid_start_byte
+            self.start_byte = self.START_BYTE
 
     def __repr__(self):
         try:
@@ -132,7 +139,7 @@ class GSEPacket(object):
                                     (len(buffer), self._minimum_buffer_length))
         self.start_byte, self.sync2_byte, self.origin, _, self.payload_length = struct.unpack(
             self._header_format_string, buffer[:self.header_length])
-        if self.start_byte != self._valid_start_byte:
+        if self.start_byte != self.START_BYTE:
             raise PacketValidityError("First byte is not valid start byte. First byte is %r" % buffer[0])
         if greedy:
             checksum_index = -1
