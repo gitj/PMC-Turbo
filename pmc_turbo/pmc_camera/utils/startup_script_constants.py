@@ -29,7 +29,9 @@ DOWNLINK_SPEED = 700
 
 GROUP_NAME = 'supergroup'
 
-CSV_PATHS_AND_PREAMBLES = [('/home/pmc/pmchome/pmc-turbo/pmc_camera/communication/camera_items.csv', ''),
-                           ('/home/pmc/pmchome/pmc-turbo/pmc_camera/communication/charge_controller_items.csv', ''),
-                           ('/home/pmc/pmchome/pmc-turbo/pmc_camera/communication/collectd_items.csv',
+CSV_PATHS_AND_PREAMBLES = [('/home/pmc/pmchome/pmc-turbo/pmc_turbo/pmc_camera/communication/camera_items.csv', ''),
+                           (
+                               '/home/pmc/pmchome/pmc-turbo/pmc_turbo/pmc_camera/communication/charge_controller_items.csv',
+                               ''),
+                           ('/home/pmc/pmchome/pmc-turbo/pmc_turbo/pmc_camera/communication/collectd_items.csv',
                             '/var/lib/collectd/csv/*/')]
