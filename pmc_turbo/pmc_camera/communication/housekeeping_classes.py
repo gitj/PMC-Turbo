@@ -33,7 +33,7 @@ def construct_super_group_from_csv_list(group_name, csv_paths_and_preambles):
     for csv_path_and_preamble in csv_paths_and_preambles:
         csv_path, csv_preamble = csv_path_and_preamble
         status_group = construct_status_group_from_csv(csv_path, csv_path, csv_preamble)
-        super_group[status_group.name] = status_group
+        super_group.groups[status_group.name] = status_group
     return super_group
 
 
@@ -45,10 +45,11 @@ def construct_status_group_from_csv(group_name, csv_path, csv_preamble):
     for line in lines[1:]:
         values = line.strip('\n').split(',')
         value_dict = dict(zip(column_names, values))
-        if not value_dict['partial_glob'] in status_group.keys():
+        if not value_dict['partial_glob'] in status_group.filewatchers.keys():
             status_filewatcher = StatusFileWatcher(name=value_dict['partial_glob'], items=[],
                                                    filename_glob=os.path.join(csv_preamble, value_dict['partial_glob']))
-            status_group[value_dict['partial_glob']] = status_filewatcher
+            status_group.filewatchers[value_dict['partial_glob']] = status_filewatcher
+
         status_item = FloatStatusItem(name=values[1], column_name=value_dict['column_name'],
                                       scaling=value_dict['scaling_value'],
                                       good_range=Range(value_dict['good_range_low'], value_dict['good_range_high']),
@@ -56,7 +57,8 @@ def construct_status_group_from_csv(group_name, csv_path, csv_preamble):
                                                           value_dict['normal_range_high']),
                                       warning_range=Range(value_dict['warning_range_low'],
                                                           value_dict['warning_range_high']))
-        status_group[value_dict['partial_glob']][status_item.name] = status_item
+        status_group.filewatchers[value_dict['partial_glob']].items[status_item.name] = status_item
+
     return status_group
 
 
@@ -94,7 +96,7 @@ class SuperStatusGroup():
         return entries
 
 
-class StatusGroup(dict):
+class StatusGroup():
     def __init__(self, name, filewatchers):
         self.name = name
         self.filewatchers = {}
@@ -139,7 +141,7 @@ class StatusGroup(dict):
         return entries
 
 
-class MultiStatusFileWatcher(dict):
+class MultiStatusFileWatcher():
     def __init__(self, name, filewatchers):
         self.name = name
         self.filewatchers = {}
@@ -167,7 +169,7 @@ class MultiStatusFileWatcher(dict):
         return (max_value, name_list)
 
 
-class StatusFileWatcher(dict):
+class StatusFileWatcher():
     def __init__(self, name, items, filename_glob):
         # example, charge_controller.csv, charge_controller
 
