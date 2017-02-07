@@ -174,10 +174,6 @@ class GSEReceiver():
             writer.writerow(
                 [time.time(), (filename + file_extension), file_class.file_type, packets[0].file_id, len(data_buffer)])
 
-
-            # Write file_index csv that updates whenever a new file is written saying what is in the file
-            # (file type, size, time, can I get % done?)
-
     def setup_directory(self, path):
         if not os.path.exists(path):
             os.makedirs(path)
