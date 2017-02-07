@@ -1,11 +1,12 @@
 from __future__ import division
-import time
-import serial
+
 import socket
-import IPython
+import time
+
 import numpy as np
+import serial
+
 import gse_receiver
-from pmc_camera.communication import downlink_classes
 
 DOWNLINK_IP, DOWNLINK_PORT = '192.168.1.54', 4002
 np.random.seed(0)
