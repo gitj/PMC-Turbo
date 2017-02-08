@@ -11,6 +11,7 @@ def test_git_functions():
 
 def test_log_functions():
     log.LOG_DIR = '/tmp'
+    num_handlers = len(log.pmc_turbo_logger.handlers)
     log.setup_stream_handler()
     log.setup_file_handler('pipeline')
     log.setup_file_handler('controller')
@@ -19,5 +20,5 @@ def test_log_functions():
     with assert_raises(ValueError):
         log.setup_file_handler('unknown')
     log.setup_file_handler('known_unknown', logger=log.pmc_turbo_logger)
-
+    log.pmc_turbo_logger.handlers = log.pmc_turbo_logger.handlers[:num_handlers]
 
