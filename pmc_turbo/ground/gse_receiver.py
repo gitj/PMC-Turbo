@@ -167,6 +167,7 @@ class GSEReceiver():
             file_extension = '.json'
 
         file_class.write_payload_to_file(filename + file_extension)
+        file_class.write_buffer_to_file(filename + '_buffer')
 
         with open(self.file_index_filename, 'a') as f:
             writer = csv.writer(f, quoting=csv.QUOTE_NONE, lineterminator='\n')
@@ -246,6 +247,3 @@ class GSEReceiver():
 
     def get_files_status(self):
         return self.file_status
-
-
-

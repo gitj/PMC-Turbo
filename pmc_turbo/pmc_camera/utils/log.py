@@ -16,9 +16,9 @@ default_formatter = ColoredFormatter(short_message_format)
 long_formatter = logging.Formatter(long_message_format)
 default_handler.setFormatter(default_formatter)
 
-pmc_camera_logger = logging.getLogger('pmc_camera')
+pmc_camera_logger = logging.getLogger('pmc_turbo')
 pmc_camera_logger.setLevel(logging.DEBUG)
-ground_logger = logging.getLogger('ground')
+ground_logger = logging.getLogger('pmc_turbo')
 ground_logger.setLevel(logging.DEBUG)
 
 KNOWN_LOGGERS = {'pipeline': pmc_camera_logger,

@@ -288,10 +288,10 @@ class Communicator():
             group.update()
             summary.append(group.get_status())
         payload = json.dumps(summary)
-        json_file = file_format_classes.GeneralFile(payload=payload, filename=(
+        json_file = file_format_classes.CompressedJSONFile(payload=payload, filename=(
             'status_summary_%s.json' % time.strftime('%Y-%M-%d-%H:%M:%s')), timestamp=time.time(),
-                                                    camera_id=0,
-                                                    request_id=000)
+                                                           camera_id=0,
+                                                           request_id=000)
 
         self.controller.add_file_to_sequence_data(json_file.to_buffer())
 
