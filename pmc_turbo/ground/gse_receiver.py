@@ -158,21 +158,13 @@ class GSEReceiver():
 
         file_class = file_format_classes.decode_file_from_buffer(data_buffer)
 
-        file_extension = ''
-        if file_class.file_type == 1:
-            file_extension = '.jpg'
-        if file_class.file_type == 5:
-            file_extension = '.json'
-        if file_class.file_type == 6:
-            file_extension = '.json'
-
-        file_class.write_payload_to_file(filename + file_extension)
+        filename = file_class.write_payload_to_file(filename)
         file_class.write_buffer_to_file(filename + '_buffer')
 
         with open(self.file_index_filename, 'a') as f:
             writer = csv.writer(f, quoting=csv.QUOTE_NONE, lineterminator='\n')
             writer.writerow(
-                [time.time(), (filename + file_extension), file_class.file_type, packets[0].file_id, len(data_buffer)])
+                [time.time(), filename, file_class.file_type, packets[0].file_id, len(data_buffer)])
 
     def setup_directory(self, path):
         if not os.path.exists(path):

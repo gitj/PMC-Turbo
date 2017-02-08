@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import struct
 import zlib
 
@@ -16,6 +17,7 @@ class JSONMixin(object):
 class FileBase(object):
     _metadata_table = [('1I', 'request_id'),
                        ('1B', 'camera_id')]
+    _preferred_extension = '.raw'
 
     def __init__(self, buffer=None, payload=None, **kwargs):
         self._metadata_format_string = '>' + ''.join([format_ for format_, name in self._metadata_table])
@@ -78,10 +80,13 @@ class FileBase(object):
         return result
 
     def write_payload_to_file(self, filename):
+        if not os.path.splitext(filename)[1]:
+            filename += self._preferred_extension
         if self.payload is None:
             raise ValueError("This file has no payload.")
         with open(filename, 'w') as fh:
             fh.write(self.payload)
+        return filename
 
     def write_buffer_to_file(self, filename):
         with open(filename, 'w') as fh:
@@ -108,18 +113,21 @@ class ImageFileBase(FileBase):
                         ('1H', 'num_columns'),
                         ('1f', 'scale_by'),
                         ])
+    _preferred_extension = '.raw_image'
 
 
 class JPEGFile(ImageFileBase):
     _metadata_table = (ImageFileBase._metadata_table +
                        [('1f', 'quality')])
     file_type = 1
+    _preferred_extension = '.jpg'
 
 
 class GeneralFile(FileBase):
     _metadata_table = (FileBase._metadata_table + [('1H', 'filename_length'),
                                                    ('1f', 'timestamp')])
     file_type = 2
+    _preferred_extension = '.general'
 
     def from_values(self, payload, **kwargs):
         try:
@@ -156,6 +164,7 @@ class ShellCommandFile(FileBase):
                         ('1B', 'timed_out'),
                         ('1i', 'returncode')])
     file_type = 3
+    _preferred_extension = '.shell_result'
 
 
 class CompressedGeneralFile(GeneralFile):
@@ -177,10 +186,12 @@ class CompressedGeneralFile(GeneralFile):
 
 class JSONFile(GeneralFile, JSONMixin):
     file_type = 5
+    _preferred_extension = '.json'
 
 
 class CompressedJSONFile(CompressedGeneralFile, JSONMixin):
     file_type = 6
+    _preferred_extension = '.json'
 
 
 try:
