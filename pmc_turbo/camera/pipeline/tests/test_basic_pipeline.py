@@ -21,7 +21,7 @@ def test_pipeline_runs():
     time.sleep(1)
     bpl.get_status()
     tag = bpl.send_camera_command("ExposureTimeAbs","10000")
-    name,value,result,gate_time = bpl.send_camera_command_get_result("ExposureTimeAbs","1000",timeout=2)
+    name,value,result,gate_time = bpl.send_camera_command_get_result("ExposureTimeAbs","1000",timeout=5)
     name,value,result,gate_time = bpl.get_camera_command_result(tag)
     time.sleep(1)
     bpl.close()
