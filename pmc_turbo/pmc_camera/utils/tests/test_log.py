@@ -18,6 +18,6 @@ def test_log_functions():
     log.setup_file_handler('gse_receiver')
     with assert_raises(ValueError):
         log.setup_file_handler('unknown')
-    log.setup_file_handler('known_unknown', logger=log.pmc_camera_logger)
+    log.setup_file_handler('known_unknown', logger=log.pmc_turbo_logger)
 
 

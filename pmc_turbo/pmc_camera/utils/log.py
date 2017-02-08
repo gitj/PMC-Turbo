@@ -2,6 +2,7 @@ import os
 import time
 import logging
 import subprocess
+
 try:
     from coloredlogs import ColoredFormatter
 except ImportError:
@@ -16,33 +17,31 @@ default_formatter = ColoredFormatter(short_message_format)
 long_formatter = logging.Formatter(long_message_format)
 default_handler.setFormatter(default_formatter)
 
-pmc_camera_logger = logging.getLogger('pmc_turbo')
-pmc_camera_logger.setLevel(logging.DEBUG)
-ground_logger = logging.getLogger('pmc_turbo')
-ground_logger.setLevel(logging.DEBUG)
+pmc_turbo_logger = logging.getLogger('pmc_turbo')
+pmc_turbo_logger.setLevel(logging.DEBUG)
 
-KNOWN_LOGGERS = {'pipeline': pmc_camera_logger,
-                   'communicator': pmc_camera_logger,
-                   'controller': pmc_camera_logger,
-                   'gse_receiver': ground_logger,
-                   }
+KNOWN_LOGGERS = {'pipeline',
+                 'communicator',
+                 'controller',
+                 'gse_receiver',
+                 }
+
 
 def setup_stream_handler(level=logging.INFO):
-    for logger in [pmc_camera_logger, ground_logger]:
-        if default_handler not in logger.handlers:
-            logger.addHandler(default_handler)
-            default_handler.setLevel(level)
-            logger.info("Stream handler initialized for %s" % logger.name)
+    if default_handler not in pmc_turbo_logger.handlers:
+        pmc_turbo_logger.addHandler(default_handler)
+        default_handler.setLevel(level)
+        pmc_turbo_logger.info("Stream handler initialized for %s" % pmc_turbo_logger.name)
 
 
 def setup_file_handler(name, level=logging.DEBUG, logger=None):
-    try:
-        logger = KNOWN_LOGGERS[name]
+    if name in KNOWN_LOGGERS:
+        logger = pmc_turbo_logger
         warning = ''
-    except KeyError:
+    else:
         if logger is None:
             raise ValueError("Unknown logger name %s and no logger explicitly provided" % name)
-        warning = 'Unknown logger %s being initialized, please update %s with this logger' % (name,__name__)
+        warning = 'Unknown logger %s being initialized, please update %s with this logger' % (name, __name__)
     has_file_handler = False
     for handler in logger.handlers:
         if issubclass(handler.__class__, logging.FileHandler):
@@ -77,6 +76,7 @@ def file_handler(name, level=logging.DEBUG):
     fh.setLevel(level)
     return fh
 
+
 def git_log():
     code_directory = os.path.dirname(os.path.abspath(__file__))
     try:
@@ -92,6 +92,7 @@ def git_status():
     except Exception as e:
         return str(e)
 
+
 def git_hash(short=True):
     if short:
         short_param = '--short'
@@ -99,7 +100,7 @@ def git_hash(short=True):
         short_param = ''
     code_directory = os.path.dirname(os.path.abspath(__file__))
     try:
-        return subprocess.check_output(("cd {}; git rev-parse {} HEAD".format(code_directory,short_param)),
+        return subprocess.check_output(("cd {}; git rev-parse {} HEAD".format(code_directory, short_param)),
                                        shell=True).strip()
     except Exception as e:
         return str(e)
