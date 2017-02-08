@@ -319,20 +319,3 @@ class Controller(object):
         logger.debug('File_buffer added to sequence data: first 20 bytes are %r' % file_buffer[:20])
         self.sequence_data.append(file_buffer)
 
-
-if __name__ == "__main__":
-    from pmc_turbo.utils import log
-
-    log.setup_stream_handler(level=logging.DEBUG)
-    ip = Pyro4.socketutil.getInterfaceAddress('192.168.1.1')
-    try:
-        pipeline = Pyro4.Proxy('PYRO:pipeline@%s:50000' % ip)
-    except Exception as e:
-        print "failed to connect to pipeline:", e
-        pipeline = None
-    server = Controller(pipeline)
-    ip = Pyro4.socketutil.getInterfaceAddress('192.168.1.1')
-    daemon = Pyro4.Daemon(host='0.0.0.0', port=50001)
-    uri = daemon.register(server, "image")
-    print uri
-    daemon.requestLoop()
