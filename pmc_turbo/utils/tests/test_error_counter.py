@@ -4,7 +4,7 @@ import tempfile
 
 import nose.tools
 
-from pmc_turbo.camera.utils import error_counter
+from pmc_turbo.utils import error_counter
 
 
 class TestErrorCounter(object):

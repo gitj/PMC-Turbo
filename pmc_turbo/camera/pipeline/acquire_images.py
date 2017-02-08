@@ -5,7 +5,7 @@ import tempfile
 import time
 from Queue import Empty as EmptyException
 
-from pmc_turbo.camera.utils.error_counter import CounterCollection
+from pmc_turbo.utils.error_counter import CounterCollection
 
 logger = logging.getLogger(__name__)
 import Pyro4

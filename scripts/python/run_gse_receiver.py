@@ -1,8 +1,9 @@
-from pmc_turbo.camera.utils import log
 import logging
 import os
 import time
+
 from pmc_turbo.ground import gse_receiver
+from pmc_turbo.utils import log
 
 if __name__ == "__main__":
     log.setup_stream_handler(level=logging.DEBUG)

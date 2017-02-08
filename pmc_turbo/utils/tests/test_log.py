@@ -1,6 +1,6 @@
 from nose.tools import assert_raises
 
-from pmc_turbo.camera.utils import log
+from pmc_turbo.utils import log
 
 
 def test_git_functions():

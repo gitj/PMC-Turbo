@@ -12,13 +12,13 @@ import Pyro4
 import Pyro4.errors
 import Pyro4.socketutil
 import Pyro4.util
+
 from pmc_turbo.communication import command_table, command_classes
 from pmc_turbo.communication import constants
 from pmc_turbo.communication import downlink_classes, uplink_classes, packet_classes
-from pmc_turbo.communication.command_table import command_manager, CommandStatus
-
-from pmc_turbo.camera.utils import error_counter
 from pmc_turbo.communication import file_format_classes
+from pmc_turbo.communication.command_table import command_manager, CommandStatus
+from pmc_turbo.utils import error_counter
 
 Pyro4.config.SERVERTYPE = "multiplex"
 Pyro4.config.SERIALIZER = 'pickle'

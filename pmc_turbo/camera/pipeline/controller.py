@@ -13,9 +13,9 @@ from pmc_turbo.camera.image_processing.blosc_file import load_blosc_image
 from pmc_turbo.camera.image_processing.jpeg import simple_jpeg
 from pmc_turbo.camera.pipeline.indexer import MergedIndex, DEFAULT_DATA_DIRS
 from pmc_turbo.camera.pipeline.write_images import index_keys
-from pmc_turbo.camera.utils.camera_id import get_camera_id
-from pmc_turbo.camera.utils.error_counter import CounterCollection
 from pmc_turbo.communication import file_format_classes
+from pmc_turbo.utils.error_counter import CounterCollection
+from pmc_turbo.utils.camera_id import get_camera_id
 
 logger = logging.getLogger(__name__)
 
@@ -321,7 +321,7 @@ class Controller(object):
 
 
 if __name__ == "__main__":
-    from pmc_turbo.camera.utils import log
+    from pmc_turbo.utils import log
 
     log.setup_stream_handler(level=logging.DEBUG)
     ip = Pyro4.socketutil.getInterfaceAddress('192.168.1.1')

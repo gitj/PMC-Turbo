@@ -45,8 +45,8 @@ def test_pipeline_runs_no_disk():
     shutil.rmtree(counter_dir)
 
 if __name__ == "__main__":
-    import pmc_turbo.camera.utils.log
+    import pmc_turbo.utils.log
     import logging
-    pmc_turbo.camera.utils.log.setup_stream_handler(logging.DEBUG)
+    pmc_turbo.utils.log.setup_stream_handler(logging.DEBUG)
     test_pipeline_runs()
     test_pipeline_runs_no_disk()

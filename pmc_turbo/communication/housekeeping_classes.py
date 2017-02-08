@@ -4,8 +4,8 @@ import logging
 import os
 import time
 
-from pmc_turbo.camera.utils import file_reading
 from pmc_turbo.communication import file_format_classes
+from pmc_turbo.utils import file_reading
 
 logger = logging.getLogger(__name__)
 

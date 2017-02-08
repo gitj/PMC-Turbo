@@ -1,11 +1,12 @@
 import logging
 
 import Pyro4
+
 from pmc_turbo.camera.pipeline import controller
 
 
 def setup_image_server(port=50001):
-    from pmc_turbo.camera.utils import log
+    from pmc_turbo.utils import log
     log.setup_stream_handler(level=logging.DEBUG)
     ip = '0.0.0.0'
     try:

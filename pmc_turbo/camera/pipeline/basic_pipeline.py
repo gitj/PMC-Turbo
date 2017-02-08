@@ -27,11 +27,11 @@ from Queue import Empty as EmptyException
 
 import Pyro4
 import Pyro4.socketutil
+
 from pmc_turbo.camera.pipeline.acquire_images import AcquireImagesProcess
 from pmc_turbo.camera.pipeline.write_images import WriteImageProcess
-from pmc_turbo.camera.utils.error_counter import CounterCollection
-
 from pmc_turbo.camera.pycamera.dtypes import frame_info_dtype
+from pmc_turbo.utils.error_counter import CounterCollection
 
 Pyro4.config.SERVERTYPE = 'multiplex'
 Pyro4.config.SERIALIZERS_ACCEPTED = {'pickle','json'}

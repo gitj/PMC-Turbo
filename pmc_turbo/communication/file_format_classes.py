@@ -3,7 +3,7 @@ import logging
 import struct
 import zlib
 
-from pmc_turbo.camera.utils.comparisons import equal_or_close
+from pmc_turbo.utils.comparisons import equal_or_close
 
 logger = logging.getLogger(__name__)
 
