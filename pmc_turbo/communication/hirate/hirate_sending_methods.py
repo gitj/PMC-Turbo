@@ -5,9 +5,9 @@ import struct
 import time
 
 import numpy as np
-from pmc_turbo.camera.communication import constants, packet_classes
+from pmc_turbo.communication import constants, packet_classes
 
-from pmc_turbo.camera.communication.hirate import cobs_encoding
+from pmc_turbo.communication.hirate import cobs_encoding
 
 ez_IP = '192.168.1.54'
 ez_PORT = 4002

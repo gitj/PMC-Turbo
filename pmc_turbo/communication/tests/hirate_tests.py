@@ -3,10 +3,11 @@ import struct
 import unittest
 
 import numpy as np
-from pmc_turbo.camera.communication import constants
-from pmc_turbo.camera.communication.hirate import hirate_receiving_methods, cobs_encoding
+from pmc_turbo.communication import constants
+from pmc_turbo.communication.hirate import hirate_receiving_methods
+from pmc_turbo.communication.hirate import hirate_sending_methods
 
-from pmc_turbo.camera.communication.hirate import hirate_sending_methods
+from pmc_turbo.communication.hirate import cobs_encoding
 
 
 class HirateTests(unittest.TestCase):

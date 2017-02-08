@@ -2,9 +2,9 @@ import logging
 import os
 import time
 
-from pmc_turbo.camera.communication import camera_communicator, aggregator_hard_coded
+from pmc_turbo.communication import camera_communicator, aggregator_hard_coded
 
-from pmc_turbo.camera.communication import housekeeping_classes
+from pmc_turbo.communication import housekeeping_classes
 
 
 def setup_logger():

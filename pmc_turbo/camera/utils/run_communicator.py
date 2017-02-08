@@ -1,7 +1,8 @@
-from pmc_turbo.camera.communication import camera_communicator, housekeeping_classes
-from pmc_turbo.camera.utils import startup_script_constants
+from pmc_turbo.communication import camera_communicator
 
 from pmc_turbo.camera.utils import log
+from pmc_turbo.camera.utils import startup_script_constants
+from pmc_turbo.communication import housekeeping_classes
 
 if __name__ == "__main__":
     log.setup_stream_handler()

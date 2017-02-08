@@ -12,13 +12,13 @@ import Pyro4
 import Pyro4.errors
 import Pyro4.socketutil
 import Pyro4.util
-from pmc_turbo.camera.communication import constants
-from pmc_turbo.camera.communication import downlink_classes, uplink_classes, packet_classes
-from pmc_turbo.camera.communication import file_format_classes
-from pmc_turbo.camera.utils import error_counter
+from pmc_turbo.communication import command_table, command_classes
+from pmc_turbo.communication import constants
+from pmc_turbo.communication import downlink_classes, uplink_classes, packet_classes
+from pmc_turbo.communication.command_table import command_manager, CommandStatus
 
-from pmc_turbo.camera.communication import command_table, command_classes
-from pmc_turbo.camera.communication.command_table import command_manager, CommandStatus
+from pmc_turbo.camera.utils import error_counter
+from pmc_turbo.communication import file_format_classes
 
 Pyro4.config.SERVERTYPE = "multiplex"
 Pyro4.config.SERIALIZER = 'pickle'
@@ -58,11 +58,10 @@ class Communicator():
             try:
                 self.controller = Pyro4.Proxy(controller)
             except TypeError as e:
-                if not hasattr(controller, '_pyroUri'):
-                    if not hasattr(controller, 'pipeline'):
-                        raise e
-                else:
+                if hasattr(controller,'_pyroUri') or hasattr(controller,'pipeline'):
                     self.controller = controller
+                else:
+                    raise Exception("Invalid controller argument; must be URI string, URI object, or controller class")
 
         self.peer_polling_order_idx = 0
         self.peer_polling_order = [0]
@@ -241,7 +240,7 @@ class Communicator():
                 logger.warning(details)
                 return
 
-        command_name = "None"
+        command_name = "<Unknown>"
         number = 0
         kwargs = {}
         try:
@@ -279,7 +278,7 @@ class Communicator():
         return '\xff' * 255
 
     ##################################################################################################
-    # The following methods correspond to commands defined in pmc_turbo.camera.communication.command_table
+    # The following methods correspond to commands defined in pmc_turbo.communication.command_table
 
     def get_status_report(self):
         logger.debug('Status report requested')

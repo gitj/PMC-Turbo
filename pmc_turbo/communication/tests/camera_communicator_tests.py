@@ -4,11 +4,11 @@ import unittest
 
 import Pyro4
 from nose.tools import timed
-from pmc_turbo.camera.communication import camera_communicator
-from pmc_turbo.camera.communication import packet_classes
-from pmc_turbo.camera.pipeline import controller
+from pmc_turbo.communication import command_table
+from pmc_turbo.communication import packet_classes
 
-from pmc_turbo.camera.communication import command_table
+from pmc_turbo.camera.pipeline import controller
+from pmc_turbo.communication import camera_communicator
 
 counter_dir = ''
 

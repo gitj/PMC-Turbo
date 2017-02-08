@@ -2,7 +2,7 @@ import logging
 import socket
 import struct
 
-from pmc_turbo.camera.communication import constants
+from pmc_turbo.communication import constants
 
 logger = logging.getLogger(__name__)
 # start_byte = chr(constants.SIP_START_BYTE)

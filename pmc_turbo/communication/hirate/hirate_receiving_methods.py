@@ -3,10 +3,10 @@ import struct
 import time
 
 import serial
-from pmc_turbo.camera.communication import constants
+from pmc_turbo.communication import constants
+from pmc_turbo.communication import packet_classes
 
 import cobs_encoding
-from pmc_turbo.camera.communication import packet_classes
 
 
 def gather_data_and_write_to_disk(usb_port_address='/dev/ttyUSB0', baudrate=115200, path='./received_sip_data'):

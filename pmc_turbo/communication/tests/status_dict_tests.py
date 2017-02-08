@@ -1,7 +1,7 @@
 import tempfile
 import unittest
 
-from pmc_turbo.camera.communication import housekeeping_classes
+from pmc_turbo.communication import housekeeping_classes
 
 
 class StatusDictTest(unittest.TestCase):

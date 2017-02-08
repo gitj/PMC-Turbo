@@ -8,14 +8,14 @@ from functools import wraps
 
 import Pyro4
 import Pyro4.errors
-from pmc_turbo.camera.communication import file_format_classes
+
 from pmc_turbo.camera.image_processing.blosc_file import load_blosc_image
 from pmc_turbo.camera.image_processing.jpeg import simple_jpeg
+from pmc_turbo.camera.pipeline.indexer import MergedIndex, DEFAULT_DATA_DIRS
 from pmc_turbo.camera.pipeline.write_images import index_keys
 from pmc_turbo.camera.utils.camera_id import get_camera_id
 from pmc_turbo.camera.utils.error_counter import CounterCollection
-
-from pmc_turbo.camera.pipeline.indexer import MergedIndex, DEFAULT_DATA_DIRS
+from pmc_turbo.communication import file_format_classes
 
 logger = logging.getLogger(__name__)
 

@@ -2,9 +2,9 @@ from __future__ import division
 
 import IPython
 import numpy as np
-from pmc_turbo.camera.communication import constants
+from pmc_turbo.communication.hirate import hirate_sending_methods
 
-from pmc_turbo.camera.communication.hirate import hirate_sending_methods
+from pmc_turbo.communication import constants
 
 IP = '192.168.1.54'
 # IP address of the NPort

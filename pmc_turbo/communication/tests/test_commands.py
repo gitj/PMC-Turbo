@@ -1,8 +1,8 @@
 from nose.tools import timed
-from pmc_turbo.camera.communication.command_classes import ListArgumentCommand,StringArgumentCommand
-from pmc_turbo.camera.communication.packet_classes import GSECommandPacket
+from pmc_turbo.communication.command_classes import ListArgumentCommand,StringArgumentCommand
+from pmc_turbo.communication.command_table import command_manager
 
-from pmc_turbo.camera.communication.command_table import command_manager
+from pmc_turbo.communication.packet_classes import GSECommandPacket
 
 
 def test_list_argument_command_round_trip():

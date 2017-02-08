@@ -6,9 +6,9 @@ import struct
 import time
 
 import numpy as np
+from pmc_turbo.communication import packet_classes
 
 import constants
-from pmc_turbo.camera.communication import packet_classes
 
 logger = logging.getLogger(__name__)
 

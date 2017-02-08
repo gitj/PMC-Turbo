@@ -1,6 +1,6 @@
 import unittest
 
-from pmc_turbo.camera.communication.uplink_classes import process_bytes
+from pmc_turbo.communication.uplink_classes import process_bytes
 
 
 class BufferInterpretationTests(unittest.TestCase):

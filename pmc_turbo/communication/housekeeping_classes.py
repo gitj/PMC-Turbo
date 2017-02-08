@@ -1,15 +1,15 @@
-import os
-import logging
-from pmc_turbo.camera.utils import file_reading
-import json
 import glob
+import json
+import logging
+import os
 import time
-from pmc_turbo.camera.communication import file_format_classes
+
+from pmc_turbo.camera.utils import file_reading
+from pmc_turbo.communication import file_format_classes
 
 logger = logging.getLogger(__name__)
 
 # These can go into constants file in the future.
-from pip._vendor.pyparsing import col
 
 SILENCE = 0
 NOMINAL = 1

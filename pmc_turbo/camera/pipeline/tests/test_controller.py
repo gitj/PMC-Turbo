@@ -6,11 +6,11 @@ import threading
 import time
 
 import numpy as np
-from pmc_turbo.camera.communication.file_format_classes import decode_file_from_buffer, GeneralFile, JPEGFile, ShellCommandFile
-from pmc_turbo.camera.pipeline import basic_pipeline
-from pmc_turbo.camera.pipeline import controller
 
 import pmc_turbo.camera.pipeline.indexer
+from pmc_turbo.camera.pipeline import basic_pipeline
+from pmc_turbo.camera.pipeline import controller
+from pmc_turbo.communication.file_format_classes import decode_file_from_buffer, GeneralFile, JPEGFile, ShellCommandFile
 
 test_data_path = os.path.join(os.path.split(os.path.abspath(__file__))[0],'test_data')
 test_pipeline_port = 47563

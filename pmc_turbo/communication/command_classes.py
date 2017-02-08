@@ -4,9 +4,9 @@ import time
 from collections import OrderedDict
 
 import numpy as np
-from pmc_turbo.camera.communication.packet_classes import GSECommandPacket
 
 import pmc_turbo.camera.utils.comparisons
+from pmc_turbo.communication.packet_classes import GSECommandPacket
 
 logger = logging.getLogger(__name__)
 

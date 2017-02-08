@@ -3,7 +3,7 @@ import unittest
 
 import numpy as np
 
-from pmc_turbo.camera.communication.hirate import cobs_encoding
+from pmc_turbo.communication.hirate import cobs_encoding
 
 '''
 def encode_data_old(data):

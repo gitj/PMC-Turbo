@@ -189,5 +189,10 @@ def run_charge_controller_logger(host='pmc-charge-controller-0', port=502, measu
     ccl.run()
 
 if __name__ == "__main__":
-    ccl = ChargeControllerLogger()
-    ccl.run()
+    import sys
+    charge_controller = 0
+    try:
+        charge_controller = int(sys.argv[1])
+    except (IndexError, ValueError):
+        pass
+    run_charge_controller_logger('pmc-charge-controller-%d' % charge_controller)

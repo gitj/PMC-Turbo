@@ -1,7 +1,7 @@
 import logging
 import time
 
-from pmc_turbo.camera.communication import housekeeping_classes
+from pmc_turbo.communication import housekeeping_classes
 
 
 def setup_group():

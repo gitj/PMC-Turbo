@@ -3,7 +3,7 @@ import struct
 import IPython
 import numpy as np
 import serial
-from pmc_turbo.camera.communication.hirate import hirate_receiving_methods
+from pmc_turbo.communication.hirate import hirate_receiving_methods
 
 import cobs_encoding
 import example_hirate_data_sender

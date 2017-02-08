@@ -6,9 +6,8 @@ import shutil
 import tempfile
 import unittest
 
-from pmc_turbo.camera.communication import file_format_classes
-
 import pmc_turbo.camera.utils.comparisons
+from pmc_turbo.communication import file_format_classes
 
 
 def test_unique_file_types():
