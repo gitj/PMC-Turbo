@@ -45,18 +45,26 @@ def construct_status_group_from_csv(group_name, csv_path, csv_preamble):
     for line in lines[1:]:
         values = line.strip('\n').split(',')
         value_dict = dict(zip(column_names, values))
+        print value_dict
         if not value_dict['partial_glob'] in status_group.filewatchers.keys():
             status_filewatcher = StatusFileWatcher(name=value_dict['partial_glob'], items=[],
                                                    filename_glob=os.path.join(csv_preamble, value_dict['partial_glob']))
             status_group.filewatchers[value_dict['partial_glob']] = status_filewatcher
 
-        status_item = FloatStatusItem(name=values[1], column_name=value_dict['column_name'],
-                                      scaling=value_dict['scaling_value'],
-                                      good_range=Range(value_dict['good_range_low'], value_dict['good_range_high']),
-                                      nominal_range=Range(value_dict['normal_range_low'],
-                                                          value_dict['normal_range_high']),
-                                      warning_range=Range(value_dict['warning_range_low'],
-                                                          value_dict['warning_range_high']))
+            if value_dict['type'] == 'string':
+                status_item = FloatStatusItem(name=values[1], column_name=value_dict['column_name'],
+                                              scaling=value_dict['scaling_value'],
+                                              good_range=Range(value_dict['good_range_low'],
+                                                               value_dict['good_range_high']),
+                                              nominal_range=Range(value_dict['normal_range_low'],
+                                                                  value_dict['normal_range_high']),
+                                              warning_range=Range(value_dict['warning_range_low'],
+                                                                  value_dict['warning_range_high']))
+            else:
+                status_item = StringStatusItem(name=values[1], column_name=value_dict['column_name'],
+                                               nominal_string='', good_string='', warning_string='')
+
+
         status_group.filewatchers[value_dict['partial_glob']].items[status_item.name] = status_item
 
     return status_group

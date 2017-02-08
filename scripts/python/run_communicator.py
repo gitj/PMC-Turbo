@@ -1,10 +1,11 @@
+import logging
 from pmc_turbo.communication import camera_communicator
 from pmc_turbo.communication import housekeeping_classes
 from pmc_turbo.utils import log
 from pmc_turbo.utils import startup_script_constants
 
 if __name__ == "__main__":
-    log.setup_stream_handler()
+    log.setup_stream_handler(level=logging.DEBUG)
     log.setup_file_handler('communicator')
 
     c = camera_communicator.Communicator(startup_script_constants.CAM_ID, startup_script_constants.PEER_URIS,

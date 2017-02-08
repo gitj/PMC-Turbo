@@ -58,7 +58,7 @@ class Communicator():
             try:
                 self.controller = Pyro4.Proxy(controller)
             except TypeError as e:
-                if hasattr(controller,'_pyroUri') or hasattr(controller,'pipeline'):
+                if hasattr(controller, '_pyroUri') or hasattr(controller, 'pipeline'):
                     self.controller = controller
                 else:
                     raise Exception("Invalid controller argument; must be URI string, URI object, or controller class")
@@ -319,7 +319,7 @@ class Communicator():
         valid_packets = self.lowrate_uplink.get_sip_packets()
         if valid_packets:
             for packet in valid_packets:
-                print '%r' % packet
+                logger.debug('Found packet: %r' % packet)
                 self.execute_packet(packet)
 
     def execute_packet(self, packet):
