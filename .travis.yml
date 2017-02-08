@@ -41,7 +41,7 @@ after_success:
   - codecov
 
 script: 
-  - pushd pmc_turbo/pmc_camera/pycamera/_pyvimba
+  - pushd pmc_turbo/camera/pycamera/_pyvimba
   - make
   - popd
   - "nosetests -v -s --with-coverage --cover-erase --cover-xml --cover-inclusive --cover-package=pmc_turbo"
