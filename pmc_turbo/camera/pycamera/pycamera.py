@@ -73,7 +73,7 @@ class PyCamera():
         info, data = self._pc.get_image()
         if info['size'] > 2**31:
             raise RuntimeError("Image acquisition failed with error code %d" % (info['size']-2**32))
-        data = data.view('uint16').reshape(dimensions)
+        data = data[:dimensions[0]*dimensions[1]*2].view('uint16').reshape(dimensions)
         return info,data
 
     def get_image_into_buffer(self,npy_array):
