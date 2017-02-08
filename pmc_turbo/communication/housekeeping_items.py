@@ -12,21 +12,25 @@ def get_collectd_items(csv_filename=None):
         name = name.replace('2017-01-25', '*')
         df = pd.read_csv(fn, index_col='epoch', comment='#')
         for col in df.columns:
-            type = 'float'
+            class_type = 'FloatStatusItem'
             scaling = 1.0
             good_range_low, good_range_high = -1000, 1000
             normal_range_low, normal_range_high = 0, 0
             warning_range_low, warning_range_high = 0, 0
+            normal_string, warning_string, good_string = '', '', ''
 
-            result.append((name, col, type, df[col].min(), df[col].mean(), df[col].max(), df[col].std(),
+            result.append((name, col, class_type, df[col].min(), df[col].mean(), df[col].max(), df[col].std(),
                            scaling, good_range_low, good_range_high, normal_range_low, normal_range_high,
-                           warning_range_low, warning_range_high))
+                           warning_range_low, warning_range_high,
+                           normal_string, good_string, warning_string))
     if csv_filename:
         with open(csv_filename, 'w') as fh:
             fh.write(
-                ','.join(['partial_glob', 'column_name', 'type', 'min_value', 'mean_value', 'max_value', 'std_value',
-                          'scaling_value', 'good_range_low', 'good_range_high', 'normal_range_low', 'normal_range_high',
-                          'warning_range_low', 'warning_range_high']) + '\n')
+                ','.join(
+                    ['partial_glob', 'column_name', 'class_type', 'min_value', 'mean_value', 'max_value', 'std_value',
+                     'scaling_value', 'good_range_low', 'good_range_high', 'normal_range_low', 'normal_range_high',
+                     'warning_range_low', 'warning_range_high', 'normal_string', 'good_string',
+                     'warning_string']) + '\n')
             for row in result:
                 fh.write(','.join([str(x) for x in row]) + '\n')
     return result
@@ -43,7 +47,7 @@ def get_items(partial_glob, csv_filename=None):
     for colname in df.columns:
         col = df[colname]
         if col.dtype == 'O':  # string columns are Objects
-            type = 'StringStatusItem'
+            class_type = 'StringStatusItem'
             min = ''
             max = ''
             mean = col.value_counts().index[0]
@@ -52,8 +56,9 @@ def get_items(partial_glob, csv_filename=None):
             good_range_low, good_range_high = '', ''
             normal_range_low, normal_range_high = '', ''
             warning_range_low, warning_range_high = '', ''
+            normal_string, good_string, critical_string = '', '', ''
         else:
-            type = 'FloatStatusItem'
+            class_type = 'FloatStatusItem'
             min = col.min()
             max = col.max()
             mean = col.mean()
@@ -62,16 +67,19 @@ def get_items(partial_glob, csv_filename=None):
             good_range_low, good_range_high = -1000, 1000
             normal_range_low, normal_range_high = 0, 0
             warning_range_low, warning_range_high = 0, 0
-        result.append((partial_glob, colname, type, min, mean, max, std, scaling,
+            normal_string, good_string, critical_string = '', '', ''
+        result.append((partial_glob, colname, class_type, min, mean, max, std, scaling,
                        good_range_low, good_range_high, normal_range_low, normal_range_high,
-                       warning_range_low, warning_range_high))
+                       warning_range_low, warning_range_high,
+                       normal_string, good_string, critical_string))
     if csv_filename:
         with open(csv_filename, 'w') as fh:
             fh.write(
-                ','.join(['partial_glob', 'column_name', 'class_type', 'min_value', 'mean_value', 'max_value', 'std_value',
-                          'scaling_value', 'good_range_low', 'good_range_high', 'normal_range_low', 'normal_range_high',
-                          'warning_range_low', 'warning_range_high',
-                          'critical_range_low', 'critical_range_high']) + '\n')
+                ','.join(
+                    ['partial_glob', 'column_name', 'class_type', 'min_value', 'mean_value', 'max_value', 'std_value',
+                     'scaling_value', 'good_range_low', 'good_range_high', 'normal_range_low', 'normal_range_high',
+                     'warning_range_low', 'warning_range_high', 'normal_string', 'good_string',
+                     'warning_string']) + '\n')
             for row in result:
                 fh.write(','.join([str(x) for x in row]) + '\n')
     return result

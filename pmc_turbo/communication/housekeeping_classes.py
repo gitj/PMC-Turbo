@@ -45,25 +45,15 @@ def construct_status_group_from_csv(group_name, csv_path, csv_preamble):
     for line in lines[1:]:
         values = line.strip('\n').split(',')
         value_dict = dict(zip(column_names, values))
-        print value_dict
         if not value_dict['partial_glob'] in status_group.filewatchers.keys():
             status_filewatcher = StatusFileWatcher(name=value_dict['partial_glob'], items=[],
                                                    filename_glob=os.path.join(csv_preamble, value_dict['partial_glob']))
             status_group.filewatchers[value_dict['partial_glob']] = status_filewatcher
-
-            if value_dict['type'] == 'string':
-                status_item = FloatStatusItem(name=values[1], column_name=value_dict['column_name'],
-                                              scaling=value_dict['scaling_value'],
-                                              good_range=Range(value_dict['good_range_low'],
-                                                               value_dict['good_range_high']),
-                                              nominal_range=Range(value_dict['normal_range_low'],
-                                                                  value_dict['normal_range_high']),
-                                              warning_range=Range(value_dict['warning_range_low'],
-                                                                  value_dict['warning_range_high']))
-            else:
-                status_item = StringStatusItem(name=values[1], column_name=value_dict['column_name'],
-                                               nominal_string='', good_string='', warning_string='')
-
+        try:
+            status_item = eval(value_dict['class_type'])(value_dict)
+        except Exception as e:
+            logger.debug('Problem while trying to create status_item. Value dict is: %r' % value_dict)
+            raise e
 
         status_group.filewatchers[value_dict['partial_glob']].items[status_item.name] = status_item
 
@@ -254,17 +244,17 @@ class StatusFileWatcher():
 
 
 class FloatStatusItem():
-    def __init__(self, name, column_name, nominal_range, good_range, warning_range, scaling=1):
+    def __init__(self, value_dict):
         # Example solar cell voltage
-        self.name = name
-        self.column_name = column_name
+        self.name = value_dict['column_name']
+        self.column_name = value_dict['column_name']
         self.value = None
         self.epoch = None
-        self.nominal_range = nominal_range
-        self.good_range = good_range
-        self.warning_range = warning_range
+        self.normal_range = Range(value_dict['normal_range_low'], value_dict['normal_range_high'])
+        self.good_range = Range(value_dict['good_range_low'], value_dict['good_range_high'])
+        self.warning_range = Range(value_dict['warning_range_low'], value_dict['warning_range_high'])
         self.silenced = False
-        self.scaling = float(scaling)
+        self.scaling = float(value_dict['scaling_value'])
 
     # Add silence, epoch
 
@@ -278,8 +268,8 @@ class FloatStatusItem():
     def get_status_summary(self):
         if self.silenced:
             return SILENCE
-        if self.nominal_range:
-            if self.value in self.nominal_range:
+        if self.normal_range:
+            if self.value in self.normal_range:
                 return NOMINAL
         if self.good_range:
             if self.value in self.good_range:
@@ -294,15 +284,15 @@ class FloatStatusItem():
 
 
 class StringStatusItem():
-    def __init__(self, name, column_name, nominal_string, good_string, warning_string):
+    def __init__(self, value_dict):
         # Example solar cell voltage
-        self.name = name
-        self.column_name = column_name
+        self.name = value_dict['column_name']
+        self.column_name = value_dict['column_name']
         self.value = None
         self.epoch = None
-        self.nominal_string = nominal_string
-        self.good_string = good_string
-        self.warning_string = warning_string
+        self.normal_string = value_dict['normal_string']
+        self.good_string = value_dict['good_string']
+        self.warning_string = value_dict['warning_string']
         self.silenced = False
 
     # Add silence, epoch
@@ -316,8 +306,8 @@ class StringStatusItem():
     def get_status_summary(self):
         if self.silenced:
             return SILENCE
-        if self.nominal_string:
-            if self.nominal_string in self.value:
+        if self.normal_string:
+            if self.normal_string in self.value:
                 return NOMINAL
         if self.good_string:
             if self.good_string in self.value:
