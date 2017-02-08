@@ -1,9 +1,9 @@
 import socket
 
 import serial
-from pmc_turbo.pmc_camera.communication.packet_classes import CommandPacket,GSECommandPacket, decode_gse_acknowledgement, gse_acknowledgment_codes
+from pmc_turbo.camera.communication.packet_classes import CommandPacket,GSECommandPacket, decode_gse_acknowledgement, gse_acknowledgment_codes
 
-from pmc_turbo.pmc_camera.communication.command_table import command_manager
+from pmc_turbo.camera.communication.command_table import command_manager
 
 LOS1 = GSECommandPacket.LOS1
 LOS2 = GSECommandPacket.LOS2

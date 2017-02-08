@@ -5,9 +5,9 @@ import socket
 import time
 
 import serial
-from pmc_turbo.pmc_camera.communication import packet_classes, file_format_classes
+from pmc_turbo.camera.communication import packet_classes, file_format_classes
 
-from pmc_turbo.pmc_camera.utils import log
+from pmc_turbo.camera.utils import log
 
 logger = logging.getLogger(__name__)
 
