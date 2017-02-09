@@ -1,0 +1,592 @@
+{
+    "AcquisitionFrameCount": {
+        "class_type": "FloatStatusItem",
+        "column_name": "AcquisitionFrameCount",
+        "max_value": 2,
+        "mean_value": 2.0,
+        "min_value": 2,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "AcquisitionFrameRateAbs": {
+        "class_type": "FloatStatusItem",
+        "column_name": "AcquisitionFrameRateAbs",
+        "max_value": 6.25,
+        "mean_value": 6.25,
+        "min_value": 6.25,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "AcquisitionFrameRateLimit": {
+        "class_type": "FloatStatusItem",
+        "column_name": "AcquisitionFrameRateLimit",
+        "max_value": 7.71915,
+        "mean_value": 7.7191500000000008,
+        "min_value": 7.71915,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 8.8825408340684338e-16
+    },
+    "AcquisitionMode": {
+        "class_type": "StringStatusItem",
+        "column_name": "AcquisitionMode",
+        "max_value": "",
+        "mean_value": "MultiFrame",
+        "min_value": "",
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": "",
+        "std_value": ""
+    },
+    "ChunkModeActive": {
+        "class_type": "FloatStatusItem",
+        "column_name": "ChunkModeActive",
+        "max_value": 1,
+        "mean_value": 1.0,
+        "min_value": 1,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "DeviceTemperature": {
+        "class_type": "FloatStatusItem",
+        "column_name": "DeviceTemperature",
+        "max_value": 47.093000000000004,
+        "mean_value": 46.538174957410575,
+        "min_value": 41.718000000000004,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.16648971408679056
+    },
+    "DeviceTemperatureSelector": {
+        "class_type": "StringStatusItem",
+        "column_name": "DeviceTemperatureSelector",
+        "max_value": "",
+        "mean_value": "Sensor",
+        "min_value": "",
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": "",
+        "std_value": ""
+    },
+    "EFLensFStopCurrent": {
+        "class_type": "FloatStatusItem",
+        "column_name": "EFLensFStopCurrent",
+        "max_value": 1.24,
+        "mean_value": 1.2400000000000002,
+        "min_value": 1.24,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 2.2206352085171084e-16
+    },
+    "EFLensFStopMax": {
+        "class_type": "FloatStatusItem",
+        "column_name": "EFLensFStopMax",
+        "max_value": 16,
+        "mean_value": 16.0,
+        "min_value": 16,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "EFLensFStopMin": {
+        "class_type": "FloatStatusItem",
+        "column_name": "EFLensFStopMin",
+        "max_value": 1.24,
+        "mean_value": 1.2400000000000002,
+        "min_value": 1.24,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 2.2206352085171084e-16
+    },
+    "EFLensFStopStepSize": {
+        "class_type": "FloatStatusItem",
+        "column_name": "EFLensFStopStepSize",
+        "max_value": 3,
+        "mean_value": 3.0,
+        "min_value": 3,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "EFLensFocusCurrent": {
+        "class_type": "FloatStatusItem",
+        "column_name": "EFLensFocusCurrent",
+        "max_value": 4800,
+        "mean_value": 4800.0,
+        "min_value": 4800,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "EFLensFocusMax": {
+        "class_type": "FloatStatusItem",
+        "column_name": "EFLensFocusMax",
+        "max_value": 4951,
+        "mean_value": 4951.0,
+        "min_value": 4951,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "EFLensFocusMin": {
+        "class_type": "FloatStatusItem",
+        "column_name": "EFLensFocusMin",
+        "max_value": 0,
+        "mean_value": 0.0,
+        "min_value": 0,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "EFLensFocusSwitch": {
+        "class_type": "StringStatusItem",
+        "column_name": "EFLensFocusSwitch",
+        "max_value": "",
+        "mean_value": "AutoFocus",
+        "min_value": "",
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": "",
+        "std_value": ""
+    },
+    "EFLensID": {
+        "class_type": "FloatStatusItem",
+        "column_name": "EFLensID",
+        "max_value": 241,
+        "mean_value": 241.0,
+        "min_value": 241,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "EFLensLastError": {
+        "class_type": "StringStatusItem",
+        "column_name": "EFLensLastError",
+        "max_value": "",
+        "mean_value": "EFLensErrNone",
+        "min_value": "",
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": "",
+        "std_value": ""
+    },
+    "EFLensState": {
+        "class_type": "StringStatusItem",
+        "column_name": "EFLensState",
+        "max_value": "",
+        "mean_value": "EFLensIdle",
+        "min_value": "",
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": "",
+        "std_value": ""
+    },
+    "ExposureAuto": {
+        "class_type": "StringStatusItem",
+        "column_name": "ExposureAuto",
+        "max_value": "",
+        "mean_value": "Continuous",
+        "min_value": "",
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": "",
+        "std_value": ""
+    },
+    "ExposureAutoAdjustTol": {
+        "class_type": "FloatStatusItem",
+        "column_name": "ExposureAutoAdjustTol",
+        "max_value": 5,
+        "mean_value": 5.0,
+        "min_value": 5,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "ExposureAutoAlg": {
+        "class_type": "StringStatusItem",
+        "column_name": "ExposureAutoAlg",
+        "max_value": "",
+        "mean_value": "Mean",
+        "min_value": "",
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": "",
+        "std_value": ""
+    },
+    "ExposureAutoMax": {
+        "class_type": "FloatStatusItem",
+        "column_name": "ExposureAutoMax",
+        "max_value": 500000,
+        "mean_value": 500000.0,
+        "min_value": 500000,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "ExposureAutoMin": {
+        "class_type": "FloatStatusItem",
+        "column_name": "ExposureAutoMin",
+        "max_value": 35,
+        "mean_value": 35.0,
+        "min_value": 35,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "ExposureAutoOutliers": {
+        "class_type": "FloatStatusItem",
+        "column_name": "ExposureAutoOutliers",
+        "max_value": 0,
+        "mean_value": 0.0,
+        "min_value": 0,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "ExposureAutoRate": {
+        "class_type": "FloatStatusItem",
+        "column_name": "ExposureAutoRate",
+        "max_value": 100,
+        "mean_value": 100.0,
+        "min_value": 100,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "ExposureAutoTarget": {
+        "class_type": "FloatStatusItem",
+        "column_name": "ExposureAutoTarget",
+        "max_value": 50,
+        "mean_value": 50.0,
+        "min_value": 50,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "ExposureMode": {
+        "class_type": "StringStatusItem",
+        "column_name": "ExposureMode",
+        "max_value": "",
+        "mean_value": "Timed",
+        "min_value": "",
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": "",
+        "std_value": ""
+    },
+    "ExposureTimeAbs": {
+        "class_type": "FloatStatusItem",
+        "column_name": "ExposureTimeAbs",
+        "max_value": 100000,
+        "mean_value": 54.843952299829645,
+        "min_value": 35,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 1319.3434776325028
+    },
+    "Gain": {
+        "class_type": "FloatStatusItem",
+        "column_name": "Gain",
+        "max_value": 0,
+        "mean_value": 0.0,
+        "min_value": 0,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "GainAuto": {
+        "class_type": "StringStatusItem",
+        "column_name": "GainAuto",
+        "max_value": "",
+        "mean_value": "Off",
+        "min_value": "",
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": "",
+        "std_value": ""
+    },
+    "GevTimestampValue": {
+        "class_type": "FloatStatusItem",
+        "column_name": "GevTimestampValue",
+        "max_value": 1486488872494116000,
+        "mean_value": 1.4864593003692754e+18,
+        "min_value": 1486422362244799400,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 17102307190611.227
+    },
+    "PixelFormat": {
+        "class_type": "StringStatusItem",
+        "column_name": "PixelFormat",
+        "max_value": "",
+        "mean_value": "Mono14",
+        "min_value": "",
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": "",
+        "std_value": ""
+    },
+    "PtpAcquisitionGateTime": {
+        "class_type": "FloatStatusItem",
+        "column_name": "PtpAcquisitionGateTime",
+        "max_value": 1486488873000000000,
+        "mean_value": 1.4864593012311754e+18,
+        "min_value": 1486422363000000000,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 17102307040989.008
+    },
+    "PtpMode": {
+        "class_type": "StringStatusItem",
+        "column_name": "PtpMode",
+        "max_value": "",
+        "mean_value": "Slave",
+        "min_value": "",
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": "",
+        "std_value": ""
+    },
+    "PtpStatus": {
+        "class_type": "StringStatusItem",
+        "column_name": "PtpStatus",
+        "max_value": "",
+        "mean_value": "Listening",
+        "min_value": "",
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": "",
+        "std_value": ""
+    },
+    "StatFrameDelivered": {
+        "class_type": "FloatStatusItem",
+        "column_name": "StatFrameDelivered",
+        "max_value": 16,
+        "mean_value": 15.997274275979557,
+        "min_value": 0,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.2088338677683457
+    },
+    "StatFrameDropped": {
+        "class_type": "FloatStatusItem",
+        "column_name": "StatFrameDropped",
+        "max_value": 0,
+        "mean_value": 0.0,
+        "min_value": 0,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "StatFrameRate": {
+        "class_type": "FloatStatusItem",
+        "column_name": "StatFrameRate",
+        "max_value": 6.25,
+        "mean_value": 6.2489352640545146,
+        "min_value": 0.0,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.081575729597010052
+    },
+    "StatFrameRescued": {
+        "class_type": "FloatStatusItem",
+        "column_name": "StatFrameRescued",
+        "max_value": 0,
+        "mean_value": 0.0,
+        "min_value": 0,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "StatFrameShoved": {
+        "class_type": "FloatStatusItem",
+        "column_name": "StatFrameShoved",
+        "max_value": 0,
+        "mean_value": 0.0,
+        "min_value": 0,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "StatFrameUnderrun": {
+        "class_type": "FloatStatusItem",
+        "column_name": "StatFrameUnderrun",
+        "max_value": 116596,
+        "mean_value": 58331.656047700169,
+        "min_value": 0,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 33608.334472814306
+    },
+    "StatLocalRate": {
+        "class_type": "FloatStatusItem",
+        "column_name": "StatLocalRate",
+        "max_value": 3.5054300000000005,
+        "mean_value": 3.5048328228279391,
+        "min_value": 0.0,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.045753281568199501
+    },
+    "StatPacketErrors": {
+        "class_type": "FloatStatusItem",
+        "column_name": "StatPacketErrors",
+        "max_value": 0,
+        "mean_value": 0.0,
+        "min_value": 0,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "StatPacketMissed": {
+        "class_type": "FloatStatusItem",
+        "column_name": "StatPacketMissed",
+        "max_value": 0,
+        "mean_value": 0.0,
+        "min_value": 0,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "StatPacketReceived": {
+        "class_type": "FloatStatusItem",
+        "column_name": "StatPacketReceived",
+        "max_value": 343664,
+        "mean_value": 343605.45417376491,
+        "min_value": 0,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 4485.5426457962967
+    },
+    "StatPacketRequested": {
+        "class_type": "FloatStatusItem",
+        "column_name": "StatPacketRequested",
+        "max_value": 0,
+        "mean_value": 0.0,
+        "min_value": 0,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "StatPacketResent": {
+        "class_type": "FloatStatusItem",
+        "column_name": "StatPacketResent",
+        "max_value": 0,
+        "mean_value": 0.0,
+        "min_value": 0,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "StatTimeElapsed": {
+        "class_type": "FloatStatusItem",
+        "column_name": "StatTimeElapsed",
+        "max_value": 59144.400000000001,
+        "mean_value": 29573.573077864738,
+        "min_value": 0.19156600000000001,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 17099.867276562727
+    },
+    "StreamAnnouncedBufferCount": {
+        "class_type": "FloatStatusItem",
+        "column_name": "StreamAnnouncedBufferCount",
+        "max_value": 16,
+        "mean_value": 0.00272572402044293,
+        "min_value": 0,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.20883386776834567
+    },
+    "StreamBytesPerSecond": {
+        "class_type": "FloatStatusItem",
+        "column_name": "StreamBytesPerSecond",
+        "max_value": 115000000,
+        "mean_value": 115000000.0,
+        "min_value": 115000000,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "StreamHoldEnable": {
+        "class_type": "StringStatusItem",
+        "column_name": "StreamHoldEnable",
+        "max_value": "",
+        "mean_value": "Off",
+        "min_value": "",
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": "",
+        "std_value": ""
+    },
+    "StreamID": {
+        "class_type": "StringStatusItem",
+        "column_name": "StreamID",
+        "max_value": "",
+        "mean_value": "DEV_000F3102F272-Stream-000",
+        "min_value": "",
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": "",
+        "std_value": ""
+    },
+    "StreamType": {
+        "class_type": "StringStatusItem",
+        "column_name": "StreamType",
+        "max_value": "",
+        "mean_value": "GEV",
+        "min_value": "",
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": "",
+        "std_value": ""
+    },
+    "TriggerMode": {
+        "class_type": "StringStatusItem",
+        "column_name": "TriggerMode",
+        "max_value": "",
+        "mean_value": "On",
+        "min_value": "",
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": "",
+        "std_value": ""
+    },
+    "TriggerSource": {
+        "class_type": "StringStatusItem",
+        "column_name": "TriggerSource",
+        "max_value": "",
+        "mean_value": "FixedRate",
+        "min_value": "",
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": "",
+        "std_value": ""
+    },
+    "camera_timestamp_offset": {
+        "class_type": "FloatStatusItem",
+        "column_name": "camera_timestamp_offset",
+        "max_value": 5996.7041015599998,
+        "mean_value": 2873.4508527402004,
+        "min_value": -817.77572631800001,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 752.30766611645925
+    },
+    "main_temperature": {
+        "class_type": "FloatStatusItem",
+        "column_name": "main_temperature",
+        "max_value": 42.436999999999998,
+        "mean_value": 41.862473253833059,
+        "min_value": 41.5,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.14738303135588457
+    },
+    "sensor_temperature": {
+        "class_type": "FloatStatusItem",
+        "column_name": "sensor_temperature",
+        "max_value": 47.093000000000004,
+        "mean_value": 46.539052299829656,
+        "min_value": 46.25,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.15395883001605831
+    },
+    "total_frames": {
+        "class_type": "FloatStatusItem",
+        "column_name": "total_frames",
+        "max_value": 16,
+        "mean_value": 15.997274275979557,
+        "min_value": 0,
+        "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.2088338677683457
+    }
+}
