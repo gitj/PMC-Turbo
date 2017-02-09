@@ -18,7 +18,9 @@ command_manager.add_command(StringArgumentCommand("request_specific_file", [("ma
 command_manager.add_command(StringArgumentCommand("run_shell_command", [("max_num_bytes_returned", '1I'),
                                                                         ("request_id", '1I'), ("timeout", "1f"),
                                                                         ("command_line", "s")]))
-command_manager.add_command(Command("get_status_report", []))
+command_manager.add_command(Command("get_status_report", [("compress","1B"),
+                                                          ("request_id",'1I')]))
+command_manager.add_command(Command("flush_downlink_queues",[]))
 
 logger.debug("Built command manager with %d total commands" % (command_manager.total_commands))
 

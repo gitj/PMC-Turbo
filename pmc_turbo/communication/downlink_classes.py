@@ -55,6 +55,11 @@ class HirateDownlink():
     def has_bandwidth(self):
         return self.enabled and not self.packets_to_send
 
+    def flush_packet_queue(self):
+        num_items = len(self.packets_to_send)
+        self.packets_to_send = []
+        logger.info("Flushed %d packets from downlink" % num_items)
+
 
 class LowrateDownlink():
     HEADER = '\x10\x53'

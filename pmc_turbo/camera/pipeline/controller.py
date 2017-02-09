@@ -53,7 +53,7 @@ class Controller(object):
         self.gate_time_error_threshold = gate_time_error_threshold
         self.latest_image_subdir = ''
         self.merged_index = None
-        self.sequence_data = []
+        self.downlink_queue = []
         self.outstanding_command_tags = {}
         self.completed_command_tags = {}
 
@@ -195,7 +195,7 @@ class Controller(object):
         """
         self.merged_index.update()
         index_row_data = dict(self.merged_index.df.iloc[index])
-        self.sequence_data.append(self.get_image_by_info(index_row_data, **kwargs).to_buffer())
+        self.downlink_queue.append(self.get_image_by_info(index_row_data, **kwargs).to_buffer())
 
     def request_specific_images(self, timestamp, request_id, num_images=1, row_offset=0, column_offset=0,
                                 num_rows=3232, num_columns=4864, scale_by=1 / 8.,
@@ -210,11 +210,11 @@ class Controller(object):
         selection = self.merged_index.df.iloc[first_index, last_index, abs(step)]
         logger.debug("selected %d rows" % selection.shape[0])
         for _, index_row in selection.iterrows():
-            self.sequence_data.append(self.get_image_by_info(index_row, row_offset=row_offset,
-                                                             column_offset=column_offset,
-                                                             num_rows=num_rows, num_columns=num_columns,
-                                                             scale_by=scale_by, quality=quality, format=format,
-                                                             request_id=request_id).to_buffer())
+            self.downlink_queue.append(self.get_image_by_info(index_row, row_offset=row_offset,
+                                                              column_offset=column_offset,
+                                                              num_rows=num_rows, num_columns=num_columns,
+                                                              scale_by=scale_by, quality=quality, format=format,
+                                                              request_id=request_id).to_buffer())
 
     def get_image_by_info(self, index_row_data, request_id, row_offset=0, column_offset=0, num_rows=3232,
                           num_columns=4864, scale_by=1 / 8., quality=75, format='jpeg'):
@@ -255,7 +255,7 @@ class Controller(object):
                                                       request_id=request_id,
                                                       filename=filename,
                                                       camera_id=self.camera_id)
-        self.sequence_data.append(file_object.to_buffer())
+        self.downlink_queue.append(file_object.to_buffer())
 
     def run_shell_command(self, command_line, max_num_bytes_returned, request_id, timeout):
         timestamp = time.time()
@@ -280,7 +280,7 @@ class Controller(object):
                                                                    timed_out=0,
                                                                    request_id=request_id,
                                                                    camera_id=self.camera_id)
-                self.sequence_data.append(file_object.to_buffer())
+                self.downlink_queue.append(file_object.to_buffer())
                 return
             time.sleep(0.1)
 
@@ -304,18 +304,22 @@ class Controller(object):
                                                            timed_out=1,
                                                            request_id=request_id,
                                                            camera_id=self.camera_id)
-        self.sequence_data.append(file_object.to_buffer())
+        self.downlink_queue.append(file_object.to_buffer())
 
     def get_next_data_for_downlink(self):
-        # TODO: this should return a data buffer ready to downlink
-        if self.sequence_data:
-            result = self.sequence_data[0]
-            self.sequence_data = self.sequence_data[1:]
+        if self.downlink_queue:
+            result = self.downlink_queue[0]
+            self.downlink_queue = self.downlink_queue[1:]
         else:
             result = self.get_latest_standard_image().to_buffer()
         return result
 
-    def add_file_to_sequence_data(self, file_buffer):
-        logger.debug('File_buffer added to sequence data: first 20 bytes are %r' % file_buffer[:20])
-        self.sequence_data.append(file_buffer)
+    def add_file_to_downlink_queue(self, file_buffer):
+        logger.debug('File_buffer added to downlink queue: first 20 bytes are %r' % file_buffer[:20])
+        self.downlink_queue.append(file_buffer)
+
+    def flush_downlink_queue(self):
+        num_items = len(self.downlink_queue)
+        self.downlink_queue = []
+        logger.info("Flushed %d files from downlink queue" % num_items)
 

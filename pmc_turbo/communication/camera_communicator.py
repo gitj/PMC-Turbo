@@ -18,7 +18,7 @@ from pmc_turbo.communication import constants
 from pmc_turbo.communication import downlink_classes, uplink_classes, packet_classes
 from pmc_turbo.communication import file_format_classes
 from pmc_turbo.communication.command_table import command_manager, CommandStatus
-from pmc_turbo.utils import error_counter
+from pmc_turbo.utils import error_counter, camera_id
 
 Pyro4.config.SERVERTYPE = "multiplex"
 Pyro4.config.SERIALIZER = 'pickle'
@@ -280,19 +280,23 @@ class Communicator():
     ##################################################################################################
     # The following methods correspond to commands defined in pmc_turbo.communication.command_table
 
-    def get_status_report(self):
+    def get_status_report(self,compress,request_id):
         logger.debug('Status report requested')
         summary = []
         for group in self.status_groups:
             group.update()
             summary.append(group.get_status())
         payload = json.dumps(summary)
-        json_file = file_format_classes.CompressedJSONFile(payload=payload, filename=(
+        if compress:
+            file_class = file_format_classes.CompressedJSONFile
+        else:
+            file_class = file_format_classes.JSONFile
+        json_file = file_class(payload=payload, filename=(
             'status_summary_%s.json' % time.strftime('%Y-%M-%d-%H:%M:%s')), timestamp=time.time(),
-                                                           camera_id=0,
-                                                           request_id=000)
+                                                           camera_id=camera_id.get_camera_id(),
+                                                           request_id=request_id)
 
-        self.controller.add_file_to_sequence_data(json_file.to_buffer())
+        self.controller.add_file_to_downlink_queue(json_file.to_buffer())
 
     def set_peer_polling_order(self, new_peer_polling_order):
         self.peer_polling_order = new_peer_polling_order
@@ -309,6 +313,11 @@ class Communicator():
 
     def run_shell_command(self, command_line, max_num_bytes_returned, request_id, timeout):
         self.controller.run_shell_command(command_line, max_num_bytes_returned, request_id, timeout)
+
+    def flush_downlink_queues(self):
+        self.controller.flush_downlink_queue()
+        for link in self.downlinks:
+            link.flush_packet_queue()
 
     # end command table methods
     ###################################################################################################################
