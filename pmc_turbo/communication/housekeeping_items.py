@@ -73,36 +73,42 @@ def get_items(partial_glob, csv_filename=None, json_filename=None):
                        good_range_low, good_range_high, normal_range_low, normal_range_high,
                        warning_range_low, warning_range_high,
                        normal_string, good_string, critical_string))
+
+    title_list = ['partial_glob', 'column_name', 'class_type', 'min_value', 'mean_value', 'max_value', 'std_value',
+                  'scaling_value', 'good_range_low', 'good_range_high', 'normal_range_low', 'normal_range_high',
+                  'warning_range_low', 'warning_range_high', 'normal_string', 'good_string',
+                  'warning_string']
+
     if csv_filename:
         with open(csv_filename, 'w') as fh:
             fh.write(
-                ','.join(
-                    ['partial_glob', 'column_name', 'class_type', 'min_value', 'mean_value', 'max_value', 'std_value',
-                     'scaling_value', 'good_range_low', 'good_range_high', 'normal_range_low', 'normal_range_high',
-                     'warning_range_low', 'warning_range_high', 'normal_string', 'good_string',
-                     'warning_string']) + '\n')
+                ','.join(title_list) + '\n')
             for row in result:
                 fh.write(','.join([str(x) for x in row]) + '\n')
 
     if json_filename:
+        result_dict = [dict(zip(title_list, row)) for row in result]
+
         with open(json_filename, 'w') as fh:
             fh.write(
-                json.dumps(result, separators=(',', ': '), indent=4, sort_keys=True)
+                json.dumps(result_dict, separators=(',', ': '), indent=4, sort_keys=True)
             )
     return result
 
 
-def get_camera_items(csv_filename=None):
-    return get_items(partial_glob='/home/pmc/logs/housekeeping/camera/*.csv', csv_filename=csv_filename)
+def get_camera_items(csv_filename=None, json_filename=None):
+    return get_items(partial_glob='/home/pmc/logs/housekeeping/camera/*.csv', csv_filename=csv_filename,
+                     json_filename=json_filename)
 
 
-def get_labjack_items(csv_filename=None):
-    return get_items(partial_glob='/home/pmc/logs/housekeeping/labjack/*.csv', csv_filename=csv_filename)
+def get_labjack_items(csv_filename=None, json_filename=None):
+    return get_items(partial_glob='/home/pmc/logs/housekeeping/labjack/*.csv', csv_filename=csv_filename,
+                     json_filename=json_filename)
 
 
-def get_charge_controller_items(csv_filename=None):
+def get_charge_controller_items(csv_filename=None, json_filename=None):
     return get_items(partial_glob='/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv',
-                     csv_filename=csv_filename)
+                     csv_filename=csv_filename, json_filename=json_filename)
 
 
 all_collectd_sensors = ['cpu-0/cpu-idle-*',

@@ -60,6 +60,34 @@ def construct_status_group_from_csv(group_name, csv_path, csv_preamble):
     return status_group
 
 
+def construct_status_group_from_json(group_name, json_path, json_range_path):
+    status_group = StatusGroup(group_name, filewatchers=[])
+    result = json.loads(json_path)
+    range_result = json.loads(json_range_path)
+
+    for key in range_result.keys():
+        try:
+            result[key].update(range_result[key])
+        except KeyError as e:
+            logger.debug(' Could not find key %r in results from json.' % key)
+            raise e
+
+    for value_dict in result:
+        if not value_dict['partial_glob'] in status_group.filewatchers.keys():
+            status_filewatcher = StatusFileWatcher(name=value_dict['partial_glob'], items=[],
+                                                   filename_glob=os.path.join(value_dict['partial_glob']))
+            status_group.filewatchers[value_dict['partial_glob']] = status_filewatcher
+        try:
+            status_item = eval(value_dict['class_type'])(value_dict)
+        except Exception as e:
+            logger.debug('Problem while trying to create status_item. Value dict is: %r' % value_dict)
+            raise e
+
+        status_group.filewatchers[value_dict['partial_glob']].items[status_item.name] = status_item
+
+    return status_group
+
+
 class SuperStatusGroup():
     def __init__(self, name, groups):
         self.name = name
