@@ -11,6 +11,12 @@ DESTINATION_LIDAR = 252
 command_manager = CommandManager()
 command_manager.add_command(Command("set_focus", [("focus_step", '1H')]))
 command_manager.add_command(Command("set_exposure", [("exposure_time_us", '1I')]))
+command_manager.add_command(Command("set_standard_image_parameters", [("row_offset", "1H"),
+                                                                       ("column_offset","1H"),
+                                                                       ("num_rows", "1H"),
+                                                                       ("num_columns", "1H"),
+                                                                       ("scale_by","1f"),
+                                                                       ("quality","1f")]))
 command_manager.add_command(ListArgumentCommand("set_peer_polling_order", '1B'))
 command_manager.add_command(StringArgumentCommand("request_specific_file", [("max_num_bytes", '1i'),
                                                                             ("request_id", '1I'),
