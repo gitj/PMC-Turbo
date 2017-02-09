@@ -308,10 +308,16 @@ class Communicator():
     def set_exposure(self, exposure_time_us):
         self.controller.set_exposure(exposure_time_us)
 
-    def set_standard_image_parameters(self,row_offset, column_offset, num_rows, num_columns,
-                                     scale_by, quality):
-        self.controller.set_standard_image_paramters(row_offset=row_offset, column_offset=column_offset, num_rows=num_rows,
-                                                     num_columns= num_columns,scale_by=scale_by, quality=quality)
+    def set_standard_image_parameters(self, row_offset, column_offset, num_rows, num_columns, scale_by, quality):
+        self.controller.set_standard_image_paramters(row_offset=row_offset, column_offset=column_offset,
+                                                     num_rows=num_rows,
+                                                     num_columns=num_columns, scale_by=scale_by, quality=quality)
+
+    def request_specific_images(self, timestamp, request_id, row_offset, column_offset, num_rows, num_columns,
+                                scale_by, quality, step):
+        self.controller.request_specific_images(timestamp=timestamp, request_id=request_id, row_offset=row_offset,
+                                                column_offset=column_offset, num_rows=num_rows, num_columns=num_columns,
+                                                scale_by=scale_by, quality=quality, step=step)
 
     def request_specific_file(self, filename, max_num_bytes, request_id):
         self.controller.request_specific_file(filename, max_num_bytes, request_id)

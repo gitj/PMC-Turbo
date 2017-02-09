@@ -17,6 +17,16 @@ command_manager.add_command(Command("set_standard_image_parameters", [("row_offs
                                                                        ("num_columns", "1H"),
                                                                        ("scale_by","1f"),
                                                                        ("quality","1f")]))
+command_manager.add_command(Command("request_specific_images",[("timestamp","1d"),
+                                                               ("request_id", "1I"),
+                                                               ("num_images", "1H"),
+                                                               ("step","1i"),
+                                                               ("row_offset", "1H"),
+                                                               ("column_offset", "1H"),
+                                                               ("num_rows", "1H"),
+                                                               ("num_columns", "1H"),
+                                                               ("scale_by","1f"),
+                                                               ("quality","1f")]))
 command_manager.add_command(ListArgumentCommand("set_peer_polling_order", '1B'))
 command_manager.add_command(StringArgumentCommand("request_specific_file", [("max_num_bytes", '1i'),
                                                                             ("request_id", '1I'),
