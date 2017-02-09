@@ -62,8 +62,11 @@ def construct_status_group_from_csv(group_name, csv_path, csv_preamble):
 
 def construct_status_group_from_json(group_name, json_path, json_range_path):
     status_group = StatusGroup(group_name, filewatchers=[])
-    result = json.loads(json_path)
-    range_result = json.loads(json_range_path)
+
+    with open(json_path, 'r') as f:
+        result = json.loads(f.read())
+    with open(json_range_path, 'r') as f:
+        range_result = json.loads(f.read())
 
     for key in range_result.keys():
         try:
@@ -72,7 +75,8 @@ def construct_status_group_from_json(group_name, json_path, json_range_path):
             logger.debug(' Could not find key %r in results from json.' % key)
             raise e
 
-    for value_dict in result:
+    for value_key in result.keys():
+        value_dict = result[value_key]
         if not value_dict['partial_glob'] in status_group.filewatchers.keys():
             status_filewatcher = StatusFileWatcher(name=value_dict['partial_glob'], items=[],
                                                    filename_glob=os.path.join(value_dict['partial_glob']))
@@ -82,6 +86,8 @@ def construct_status_group_from_json(group_name, json_path, json_range_path):
         except Exception as e:
             logger.debug('Problem while trying to create status_item. Value dict is: %r' % value_dict)
             raise e
+
+        status_group.filewatchers[value_dict['partial_glob']].items.update({status_item.name: status_item})
 
         status_group.filewatchers[value_dict['partial_glob']].items[status_item.name] = status_item
 
@@ -291,9 +297,9 @@ class FloatStatusItem():
         self.column_name = value_dict['column_name']
         self.value = None
         self.epoch = None
-        self.normal_range = Range(value_dict['normal_range_low'], value_dict['normal_range_high'])
-        self.good_range = Range(value_dict['good_range_low'], value_dict['good_range_high'])
-        self.warning_range = Range(value_dict['warning_range_low'], value_dict['warning_range_high'])
+        self.normal_range = Range(float(value_dict['normal_range_low']), float(value_dict['normal_range_high']))
+        self.good_range = Range(float(value_dict['good_range_low']), float(value_dict['good_range_high']))
+        self.warning_range = Range(float(value_dict['warning_range_low']), float(value_dict['warning_range_high']))
         self.silenced = False
         self.scaling = float(value_dict['scaling_value'])
 
@@ -367,10 +373,10 @@ class Range():
     def __init__(self, min, max):
 
         if not (isinstance(min, int) or isinstance(min, float)):
-            raise TypeError("Min is not an int or float")
+            raise TypeError("Min %r is not an int or float. It is a %r" % (min, type(min)))
 
         if not (isinstance(max, int) or isinstance(max, float)):
-            raise TypeError("Max is not an int or float")
+            raise TypeError("Max %r is not an int or float. It is a %r " % (max, type(max)))
 
         if min == float('nan') and max != float('nan'):
             raise ValueError('Either both min or max are float or neither are. Only min is float.')
