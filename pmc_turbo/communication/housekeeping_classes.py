@@ -93,6 +93,19 @@ class SuperStatusGroup():
         entries = {key: self.groups[key].get_status() for key in self.groups.keys()}
         return entries
 
+    def get_255_byte_summary(self):
+        """
+
+        Returns
+        1-byte status for each status_item that has an important flag (put in correct place in 255-length array
+        -------
+
+        """
+
+        # TODO: Make important flag - fill out 255 bytes
+
+        return
+
 
 class StatusGroup():
     def __init__(self, name, filewatchers):
@@ -260,8 +273,8 @@ class FloatStatusItem():
 
     def update_value(self, value_dict):
         if self.column_name in value_dict:
-            self.value = float(value_dict[self.column_name])
-            self.value *= self.scaling
+            self.unscaled_value = float(value_dict[self.column_name])
+            self.value = self.unscaled_value * self.scaling
         self.epoch = float(value_dict['epoch'])
         logger.debug('Item %r updated with value %r' % (self.name, self.value))
 
@@ -280,6 +293,7 @@ class FloatStatusItem():
         return CRITICAL
 
     def get_status(self):
+        # TODO: Add unscaled value and scaling if scaling != 1
         return dict(column_name=self.column_name, value=self.value, epoch=self.epoch)
 
 
@@ -323,12 +337,30 @@ class StringStatusItem():
 
 class Range():
     def __init__(self, min, max):
+
+        if not (isinstance(min, int) or isinstance(min, float)):
+            raise TypeError("Min is not an int or float")
+
+        if not (isinstance(max, int) or isinstance(max, float)):
+            raise TypeError("Max is not an int or float")
+
+        if min == float('nan') and max != float('nan'):
+            raise ValueError('Either both min or max are float or neither are. Only min is float.')
+
+        if max == float('nan') and min != float('nan'):
+            raise ValueError('Either both min or max are float or neither are. Only max is float.')
+
         self.ranges = [(min, max)]
 
     def __contains__(self, item):
         for range_ in self.ranges:
             if range_[0] <= item <= range_[1]:
                 return True
+
+            if range_[0] == float('nan'):
+                # For nan ranges, we want to just return True
+                return True
+
         return False
 
     def __add__(self, other):

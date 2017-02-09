@@ -97,7 +97,7 @@ class StatusDictTest(unittest.TestCase):
         status_group = housekeeping_classes.StatusGroup('test_group', [filewatcher0, filewatcher1])
         status_group.update()
 
-        print status_group.get_status_summary()
-        assert (status_group.get_status_summary() == (housekeeping_classes.CRITICAL, ['data1', 'data3', 'data2']))
-        # Error here - I don't want the order to matter
-        # assert (status_group.get_status_summary() == (status_dict.CRITICAL, ['data1', 'data2', 'data3']))
+        status_summary = status_group.get_status_summary()
+
+        assert (status_summary[0] == housekeeping_classes.CRITICAL)
+        assert (set(status_summary[1]) == set(['data1', 'data3', 'data2']))

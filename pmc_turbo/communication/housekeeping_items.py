@@ -1,6 +1,7 @@
 import glob
 import os
 import pandas as pd
+import json
 
 
 def get_collectd_items(csv_filename=None):
@@ -14,7 +15,7 @@ def get_collectd_items(csv_filename=None):
         for col in df.columns:
             class_type = 'FloatStatusItem'
             scaling = 1.0
-            good_range_low, good_range_high = -1000, 1000
+            good_range_low, good_range_high = 'nan', 'nan'
             normal_range_low, normal_range_high = 0, 0
             warning_range_low, warning_range_high = 0, 0
             normal_string, warning_string, good_string = '', '', ''
@@ -36,7 +37,7 @@ def get_collectd_items(csv_filename=None):
     return result
 
 
-def get_items(partial_glob, csv_filename=None):
+def get_items(partial_glob, csv_filename=None, json_filename=None):
     files = glob.glob(partial_glob)
     files.sort()
     fn = files[-1]
@@ -82,6 +83,12 @@ def get_items(partial_glob, csv_filename=None):
                      'warning_string']) + '\n')
             for row in result:
                 fh.write(','.join([str(x) for x in row]) + '\n')
+
+    if json_filename:
+        with open(json_filename, 'w') as fh:
+            fh.write(
+                json.dumps(result, separators=(',', ': '), indent=4, sort_keys=True)
+            )
     return result
 
 
