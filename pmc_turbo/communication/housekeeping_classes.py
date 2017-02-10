@@ -3,6 +3,7 @@ import json
 import logging
 import os
 import time
+import math
 
 from pmc_turbo.communication import file_format_classes
 from pmc_turbo.utils import file_reading
@@ -388,12 +389,14 @@ class Range():
 
     def __contains__(self, item):
         for range_ in self.ranges:
+            if math.isnan(range_[0]) or math.isnan(range_[1]):
+                return True
+
             if range_[0] <= item <= range_[1]:
                 return True
 
-            if range_[0] == float('nan'):
-                # For nan ranges, we want to just return True
-                return True
+            else:
+                return False
 
         return False
 
