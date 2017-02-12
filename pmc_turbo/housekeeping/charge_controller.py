@@ -112,7 +112,7 @@ class ChargeControllerLogger():
         self.file = open(self.filename, 'a')
         header = ('# %s Serial No %s\n' % (self.charge_controller.device_name, self.charge_controller.serial_number))
         self.file.write(header)
-        columns = ['epoch'] + [('register_%d' % x) for x in range(1, NUM_REGISTERS + 1)]
+        columns = ['epoch'] + [('register_%03d' % x) for x in range(1, NUM_REGISTERS + 1)]
         self.file.write(','.join(columns) + '\n')
         self.file.flush()
 
