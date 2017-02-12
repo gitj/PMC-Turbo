@@ -13,7 +13,7 @@ PORT = 4002
 
 zero_msg = '\x00' * 2041
 np.random.seed(0)
-random_msg = np.random.randint(0, 255, size=10e3).astype('uint8')
+#random_msg = np.random.randint(0, 255, size=10e3).astype('uint8')
 
 incrementing_msg = (np.arange(0, 3000) % 255).astype('uint8')
 
