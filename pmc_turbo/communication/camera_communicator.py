@@ -65,6 +65,7 @@ class Communicator():
 
         self.peer_polling_order_idx = 0
         self.peer_polling_order = [0]
+        self.synchronize_image_time_across_cameras = False
         self.end_loop = False
         self.status_groups = []
         self.loop_interval = loop_interval
@@ -162,6 +163,8 @@ class Communicator():
                 'Communicator has no peers. This should never happen; leader at minimum has self as peer.')
         for link in self.downlinks:
             if link.has_bandwidth():
+                if self.synchronize_image_time_across_cameras and self.peer_polling_order_idx == 0:
+                    self.request_synchronized_images()
                 logger.debug('Getting next data from camera %d' % self.peer_polling_order[self.peer_polling_order_idx])
                 next_data = None
                 active_peer = self.peers[self.peer_polling_order[self.peer_polling_order_idx]]
@@ -186,6 +189,24 @@ class Communicator():
 
             else:
                 link.send_data()
+
+    def request_synchronized_images(self):
+        timestamp = time.time()-2 # TODO: this should probably be a parameter in settings file
+        for peer in self.peers:
+            logger.debug("Synchronizing images by requesting standard image closest to timestamp %f from peer %r" %
+                         (timestamp,peer))
+            peer.request_standard_image_at(timestamp)
+
+    def request_standard_image_at(self,timestamp):
+        try:
+            self.controller.request_standard_image_at(timestamp)
+        except Pyro4.errors.CommunicationError:
+            self.error_counter.controller.increment()
+            logger.debug('Connection to controller failed. Error counter - %r. Error message: %s' % (
+                    self.error_counter.controller, "".join(Pyro4.util.getPyroTraceback())))
+        except Exception:
+            raise Exception("".join(Pyro4.util.getPyroTraceback()))
+
 
     def get_next_data(self):
         try:
@@ -330,6 +351,9 @@ class Communicator():
         self.controller.flush_downlink_queue()
         for link in self.downlinks:
             link.flush_packet_queue()
+
+    def use_synchronized_images(self,synchronize):
+        self.synchronize_image_time_across_cameras = bool(synchronize)
 
 
     # end command table methods

@@ -37,6 +37,7 @@ command_manager.add_command(StringArgumentCommand("run_shell_command", [("max_nu
 command_manager.add_command(Command("get_status_report", [("compress","1B"),
                                                           ("request_id",'1I')]))
 command_manager.add_command(Command("flush_downlink_queues",[]))
+command_manager.add_command(Command("use_synchronized_images",[("synchronize","1B")]))
 
 logger.debug("Built command manager with %d total commands" % (command_manager.total_commands))
 

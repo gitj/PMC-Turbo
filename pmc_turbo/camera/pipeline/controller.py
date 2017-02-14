@@ -164,17 +164,15 @@ class Controller(object):
         file_obj = self.get_latest_jpeg(**params)
         return file_obj
 
-    def get_latest_jpeg(self, request_id, row_offset=0, column_offset=0, num_rows=3232, num_columns=4864, scale_by=1 /
-                                                                                                                   8.,
-                        **kwargs):
+    def get_latest_jpeg(self, request_id, row_offset=0, column_offset=0, num_rows=3232, num_columns=4864,
+                        scale_by=1 /8., **kwargs):
         info = self.get_latest_fileinfo()
         return self.get_image_by_info(info, request_id=request_id, row_offset=row_offset, column_offset=column_offset,
                                       num_rows=num_rows, num_columns=num_columns, scale_by=scale_by,
                                       **kwargs)
 
     def set_standard_image_paramters(self, row_offset=0, column_offset=0, num_rows=3232, num_columns=4864,
-                                     scale_by=1 / 8., quality=75,
-                                     format='jpeg'):
+                                     scale_by=1 / 8., quality=75, format='jpeg'):
         self.standard_image_parameters = dict(row_offset=row_offset, column_offset=column_offset,
                                               num_rows=num_rows, num_columns=num_columns,
                                               scale_by=scale_by,
@@ -215,6 +213,10 @@ class Controller(object):
                                                               num_rows=num_rows, num_columns=num_columns,
                                                               scale_by=scale_by, quality=quality, format=format,
                                                               request_id=request_id).to_buffer())
+
+    def request_standard_image_at(self,timestamp):
+        # use step=1 to ensure that we get the image closest to timestamp. Otherwise we'd get the image immediately before
+        self.request_specific_images(timestamp,step=1,**self.standard_image_parameters)
 
     def get_image_by_info(self, index_row_data, request_id, row_offset=0, column_offset=0, num_rows=3232,
                           num_columns=4864, scale_by=1 / 8., quality=75, format='jpeg'):
