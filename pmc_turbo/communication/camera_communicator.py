@@ -164,8 +164,8 @@ class Communicator():
             if link.has_bandwidth():
                 logger.debug('Getting next data from camera %d' % self.peer_polling_order[self.peer_polling_order_idx])
                 next_data = None
+                active_peer = self.peers[self.peer_polling_order[self.peer_polling_order_idx]]
                 try:
-                    active_peer = self.peers[self.peer_polling_order[self.peer_polling_order_idx]]
                     next_data = active_peer.get_next_data()
 
                 except Pyro4.errors.CommunicationError as e:
@@ -181,6 +181,7 @@ class Communicator():
                 else:
                     link.put_data_into_queue(next_data, self.file_id)
                     self.file_id += 1
+
                 self.peer_polling_order_idx = (self.peer_polling_order_idx + 1) % len(self.peer_polling_order)
 
             else:
