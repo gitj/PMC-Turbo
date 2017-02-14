@@ -81,3 +81,14 @@ def test_gse_acknowledgements():
         bytes[index] = 'a'
         with assert_raises(packet_classes.PacketValidityError):
             packet_classes.decode_gse_acknowledgement(''.join(bytes))
+
+def test_gse_command_packet_max_payload_length():
+    with assert_raises(ValueError):
+        packet = packet_classes.GSECommandPacket(payload=('a'*255),sequence_number=456,destination=0,
+                                                 link_tuple=packet_classes.GSECommandPacket.TDRSS)
+
+
+def test_gse_command_packet_min_payload_length():
+    packet = packet_classes.GSECommandPacket(payload=('a'),sequence_number=456,destination=0,
+                                                 link_tuple=packet_classes.GSECommandPacket.TDRSS)
+    assert len(packet.payload) >= packet_classes.GSECommandPacket._minimum_payload_length
