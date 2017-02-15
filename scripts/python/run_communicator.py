@@ -15,8 +15,13 @@ if __name__ == "__main__":
     if startup_script_constants.LEADER:
         c.setup_links(startup_script_constants.LOWRATE_UPLINK_PORT,
                       startup_script_constants.LOWRATE_DOWNLINK_IP, startup_script_constants.LOWRATE_DOWNLINK_PORT,
-                      startup_script_constants.HIRATE_DOWNLINK_IP, startup_script_constants.HIRATE_DOWNLINK_PORT,
-                      startup_script_constants.DOWNLINK_SPEED)
+                      startup_script_constants.TDRSS_HIRATE_DOWNLINK_IP,
+                      startup_script_constants.TDRSS_HIRATE_DOWNLINK_PORT,
+                      startup_script_constants.TDRSS_DOWNLINK_SPEED,
+                      startup_script_constants.OPENPORT_DOWNLINK_IP, startup_script_constants.OPENPORT_DOWNLINK_PORT,
+                      startup_script_constants.OPENPORT_DOWNLINK_SPEED)
+
+        c.tdrss_hirate_downlink.enabled = False
 
         group = housekeeping_classes.construct_super_group_from_csv_list(startup_script_constants.GROUP_NAME,
                                                                          startup_script_constants.CSV_PATHS_AND_PREAMBLES)

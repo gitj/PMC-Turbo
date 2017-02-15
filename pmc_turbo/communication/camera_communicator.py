@@ -128,14 +128,21 @@ class Communicator():
         uri = self.pyro_daemon.register(self, "communicator")
         print uri
 
-    def setup_links(self, sip_uplink_port, lowrate_downlink_ip, lowrate_downlink_port, hirate_downlink_ip,
-                    hirate_downlink_port, downlink_speed):
+    def setup_links(self, sip_uplink_port, lowrate_downlink_ip, lowrate_downlink_port, tdrss_hirate_downlink_ip,
+                    tdrss_hirate_downlink_port, tdrss_downlink_speed, openport_downlink_ip, openport_downlink_port,
+                    openport_downlink_speed):
         self.sip_leftover_buffer = ''
         self.leftover_buffer = ''
-        self.lowrate_uplink = uplink_classes.LowrateUplink(sip_uplink_port)
+        self.lowrate_uplink = uplink_classes.Uplink(sip_uplink_port)
         self.lowrate_downlink = downlink_classes.LowrateDownlink(lowrate_downlink_ip, lowrate_downlink_port)
-        self.hirate_downlink = downlink_classes.HirateDownlink(hirate_downlink_ip, hirate_downlink_port, downlink_speed)
-        self.downlinks = [self.hirate_downlink]  # Eventually this will also include Openport downlink
+        self.tdrss_hirate_downlink = downlink_classes.HirateDownlink(tdrss_hirate_downlink_ip,
+                                                                     tdrss_hirate_downlink_port, tdrss_downlink_speed)
+
+        self.openport_downlink = downlink_classes.HirateDownlink(openport_downlink_ip, openport_downlink_port,
+                                                                 openport_downlink_speed)
+
+        self.downlinks = [self.tdrss_hirate_downlink,
+                          self.openport_downlink]  # Eventually this will also include Openport downlink
         self.file_id = 0
 
     ### Loops to continually be run
@@ -188,7 +195,8 @@ class Communicator():
                 self.peer_polling_order_idx = (self.peer_polling_order_idx + 1) % len(self.peer_polling_order)
 
             else:
-                link.send_data()
+                if link.enabled:
+                    link.send_data()
 
     def request_synchronized_images(self):
         timestamp = time.time()-2 # TODO: this should probably be a parameter in settings file
@@ -302,7 +310,7 @@ class Communicator():
     ##################################################################################################
     # The following methods correspond to commands defined in pmc_turbo.communication.command_table
 
-    def get_status_report(self,compress,request_id):
+    def get_status_report(self, compress, request_id):
         logger.debug('Status report requested')
         summary = []
         for group in self.status_groups:
@@ -315,8 +323,8 @@ class Communicator():
             file_class = file_format_classes.JSONFile
         json_file = file_class(payload=payload, filename=(
             'status_summary_%s.json' % time.strftime('%Y-%M-%d-%H:%M:%s')), timestamp=time.time(),
-                                                           camera_id=camera_id.get_camera_id(),
-                                                           request_id=request_id)
+                               camera_id=camera_id.get_camera_id(),
+                               request_id=request_id)
 
         self.controller.add_file_to_downlink_queue(json_file.to_buffer())
 

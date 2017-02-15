@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 # start_byte = chr(constants.SIP_START_BYTE)
 # end_byte = chr(constants.SIP_END_BYTE)
 
-class LowrateUplink():
+class Uplink():
     def __init__(self, uplink_port):
         self.uplink_port = uplink_port
         # sip_ip='192.168.1.137', sip_port=4001 in our experimental setup.

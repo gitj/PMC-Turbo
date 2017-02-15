@@ -14,9 +14,9 @@ logger = logging.getLogger(__name__)
 
 
 class HirateDownlink():
-    def __init__(self, downlink_ip, downlink_port, downlink_speed_bytes):
+    def __init__(self, downlink_ip, downlink_port, downlink_speed_bytes_per_sec):
         self.downlink_ip, self.downlink_port = downlink_ip, downlink_port
-        self.downlink_speed_bytes = downlink_speed_bytes
+        self.downlink_speed_bytes_per_sec = downlink_speed_bytes_per_sec
         self.prev_packet_size = 0
         self.prev_packet_time = 0
         self.packets_to_send = []
@@ -36,11 +36,17 @@ class HirateDownlink():
         self.packets_to_send += packets
 
     def send_data(self):
-        wait_time = self.prev_packet_size / self.downlink_speed_bytes
+        if not self.packets_to_send:
+            logger.debug('No packets to send.')
+            return
+        wait_time = self.prev_packet_size / self.downlink_speed_bytes_per_sec
         if time.time() - self.prev_packet_time > wait_time:
             buffer = self.packets_to_send[0].to_buffer()
             if buffer.find(chr(constants.SYNC_BYTE)):
                 raise AttributeError('Start byte found within buffer.')
+
+            print self.downlink_ip, self.downlink_port
+
             self.send(buffer, self.downlink_ip, self.downlink_port)
             self.prev_packet_size = len(buffer)
             self.prev_packet_time = time.time()
