@@ -14,6 +14,7 @@ counter_dir = ''
 
 FAKE_BASE_PORT = 56654
 
+
 def setup():
     global counter_dir
     counter_dir = tempfile.mkdtemp()
@@ -25,14 +26,17 @@ def teardown():
 
 
 def test_valid_command_table():
-    cc = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, start_pyro=False, base_port=FAKE_BASE_PORT)
+    cc = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, start_pyro=False,
+                                          base_port=FAKE_BASE_PORT)
     cc.validate_command_table()
 
 
 def test_basic_command_path():
     cont = controller.Controller(None, counter_dir=counter_dir)
-    cc1 = camera_communicator.Communicator(cam_id=0, peers=[], controller=cont, start_pyro=False, base_port=FAKE_BASE_PORT)
-    cc2 = camera_communicator.Communicator(cam_id=1, peers=[], controller=cont, start_pyro=False, base_port=FAKE_BASE_PORT)
+    cc1 = camera_communicator.Communicator(cam_id=0, peers=[], controller=cont, start_pyro=False,
+                                           base_port=FAKE_BASE_PORT)
+    cc2 = camera_communicator.Communicator(cam_id=1, peers=[], controller=cont, start_pyro=False,
+                                           base_port=FAKE_BASE_PORT)
     cc1.peers = [cc1, cc2]
     cc1.destination_lists = {0: [cc1], 1: [cc2]}
     command = command_table.command_manager.set_focus(focus_step=1000)
@@ -118,8 +122,13 @@ class NoPeersTest(unittest.TestCase):
         HIRATE_DOWNLINK_PORT = 4002
         DOWNLINK_SPEED = 700
 
+        OPENPORT_DOWNLINK_IP = 'localhost'
+        OPENPORT_DOWNLINK_PORT = 4501
+        OPENPORT_DOWNLINK_SPEED = 700
+
         self.c.setup_links(UPLINK_PORT, LOWRATE_DOWNLINK_PORT, LOWRATE_DOWNLINK_IP,
-                           HIRATE_DOWNLINK_IP, HIRATE_DOWNLINK_PORT, DOWNLINK_SPEED)
+                           HIRATE_DOWNLINK_IP, HIRATE_DOWNLINK_PORT, DOWNLINK_SPEED,
+                           OPENPORT_DOWNLINK_IP, OPENPORT_DOWNLINK_PORT, OPENPORT_DOWNLINK_SPEED)
 
     def get_bytes_test(self):
         self.c.lowrate_uplink = FakeLowrateUplink()
