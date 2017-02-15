@@ -61,7 +61,6 @@ class GSEPacket(object):
     HOUSEKEEPING_ORIGIN = 0
     ORIGIN_BITMASK = 0x07
 
-
     def __init__(self, buffer=None, sync2_byte=None, origin=None, payload=None, greedy=False):
         """
         GSE style packet, received from the GSE and passed to the ground computer.
@@ -120,6 +119,10 @@ class GSEPacket(object):
                                                                                                self.payload[:10])
         except Exception:
             return '[Invalid Packet]'
+
+    @property
+    def total_packet_length(self):
+        return self.header_length + self.payload_length + 1  # 1 is lenght of checksum
 
     def from_buffer(self, buffer, greedy=True):
         """
@@ -231,7 +234,12 @@ class FilePacket(object):
                                  % self.payload_length)
             self.payload_crc = get_crc(payload)
             self.start_byte = self._valid_start_byte
+
         logger.debug('Hirate packet created.')
+
+    @property
+    def total_packet_length(self):
+        return self.header_length + self.payload_length + 2  # 2 is lenght of crc
 
     def __repr__(self):
         payload = None
@@ -400,7 +408,7 @@ class GSECommandPacket(CommandPacket):
             else:
                 if len(payload) > self._maximum_payload_length:
                     raise ValueError("Payload cannot be longer than %d bytes, got %d bytes" %
-                                     (self._maximum_payload_length,len(payload)))
+                                     (self._maximum_payload_length, len(payload)))
                 self.link_tuple = link_tuple
                 if len(payload) < self._minimum_payload_length:
                     payload = payload + self.COMMAND_PAD_BYTE * (self._minimum_payload_length - len(payload))

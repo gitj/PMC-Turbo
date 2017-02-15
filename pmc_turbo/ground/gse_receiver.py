@@ -129,9 +129,9 @@ class GSEReceiver():
             try:
                 gse_packet = packet_classes.GSEPacket(buffer=buffer)
                 gse_packets.append(gse_packet)
-                total_packet_length = gse_packet.header_length + gse_packet.payload_length + 1
-                logger.debug('Found valid packet. Advancing %d bytes' % total_packet_length)
-                buffer = buffer[total_packet_length:]  # Change to use gse_packet.total_length
+                #total_packet_length = gse_packet.header_length + gse_packet.payload_length + 1
+                logger.debug('Found valid packet. Advancing %d bytes' % gse_packet.total_packet_length)
+                buffer = buffer[gse_packet.total_packet_length:]
 
             except packet_classes.PacketLengthError:
                 # This triggers when there are insufficient bytes to finish a GSEPacket
@@ -171,9 +171,9 @@ class GSEReceiver():
             try:
                 file_packet = packet_classes.FilePacket(buffer=buffer)
                 file_packets.append(file_packet)
-                total_packet_length = file_packet.header_length + file_packet.payload_length + 2
-                logger.debug('Found valid packet. Advancing %d bytes' % total_packet_length)
-                buffer = buffer[total_packet_length:]  # Add total packet length
+                #total_packet_length = file_packet.header_length + file_packet.payload_length + 2
+                logger.debug('Found valid packet. Advancing %d bytes' % file_packet.total_packet_length)
+                buffer = buffer[file_packet.total_packet_length:]
             except packet_classes.PacketLengthError as e:
                 logger.debug('Insufficient bytes for complete packet.')
                 # This triggers when there are insufficient bytes to finish a FilePacket.
