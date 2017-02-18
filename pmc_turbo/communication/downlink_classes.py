@@ -14,16 +14,17 @@ logger = logging.getLogger(__name__)
 
 
 class HirateDownlink():
-    def __init__(self, downlink_ip, downlink_port, downlink_speed_bytes_per_sec):
+    def __init__(self, downlink_ip, downlink_port, downlink_speed_bytes_per_sec, name):
         self.downlink_ip, self.downlink_port = downlink_ip, downlink_port
         self.downlink_speed_bytes_per_sec = downlink_speed_bytes_per_sec
         self.prev_packet_size = 0
         self.prev_packet_time = 0
         self.packets_to_send = []
         self.enabled = True
+        self.name = name
 
     def put_data_into_queue(self, buffer, file_id, packet_size=1000):
-        logger.debug('Buffer length: %d' % len(buffer))
+        logger.debug('Buffer length: %d in downlink %s' % (len(buffer), self.name))
         packets = []
         num_packets = int(np.ceil(len(buffer) / packet_size))
         for i in range(num_packets):
@@ -32,18 +33,18 @@ class HirateDownlink():
                                                total_packet_number=num_packets, payload=msg)
             packets.append(packet)
         packet_length_debug_string = ','.join([str(packet.payload_length) for packet in packets])
-        logger.debug('Packet payload lengths: %s' % packet_length_debug_string)
+        logger.debug('Packet payload lengths: %s for downlink %s' % (packet_length_debug_string, self.name))
         self.packets_to_send += packets
 
     def send_data(self):
         if not self.packets_to_send:
-            logger.debug('No packets to send.')
+            logger.debug('No packets to send in downlink %s.' % self.name)
             return
         wait_time = self.prev_packet_size / self.downlink_speed_bytes_per_sec
         if time.time() - self.prev_packet_time > wait_time:
             buffer = self.packets_to_send[0].to_buffer()
             if buffer.find(chr(constants.SYNC_BYTE)):
-                raise AttributeError('Start byte found within buffer.')
+                raise AttributeError('Start byte found within buffer of downlink %s.' % self.name)
 
             print self.downlink_ip, self.downlink_port
 
@@ -55,7 +56,7 @@ class HirateDownlink():
     def send(self, msg, ip, port):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         bytes_sent = sock.sendto(msg, (ip, port))
-        logger.debug('Bytes sent on hirate downlink: %d' % bytes_sent)
+        logger.debug('Bytes sent on hirate downlink %s: %d' % (self.name, bytes_sent))
         sock.close()
 
     def has_bandwidth(self):
@@ -64,7 +65,7 @@ class HirateDownlink():
     def flush_packet_queue(self):
         num_items = len(self.packets_to_send)
         self.packets_to_send = []
-        logger.info("Flushed %d packets from downlink" % num_items)
+        logger.info("Flushed %d packets from downlink %s" % (num_items, self.name))
 
 
 class LowrateDownlink():

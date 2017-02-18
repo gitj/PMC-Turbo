@@ -129,7 +129,7 @@ class GSEReceiver():
             try:
                 gse_packet = packet_classes.GSEPacket(buffer=buffer)
                 gse_packets.append(gse_packet)
-                #total_packet_length = gse_packet.header_length + gse_packet.payload_length + 1
+                # total_packet_length = gse_packet.header_length + gse_packet.payload_length + 1
                 logger.debug('Found valid packet. Advancing %d bytes' % gse_packet.total_packet_length)
                 buffer = buffer[gse_packet.total_packet_length:]
 
@@ -171,7 +171,7 @@ class GSEReceiver():
             try:
                 file_packet = packet_classes.FilePacket(buffer=buffer)
                 file_packets.append(file_packet)
-                #total_packet_length = file_packet.header_length + file_packet.payload_length + 2
+                # total_packet_length = file_packet.header_length + file_packet.payload_length + 2
                 logger.debug('Found valid packet. Advancing %d bytes' % file_packet.total_packet_length)
                 buffer = buffer[file_packet.total_packet_length:]
             except packet_classes.PacketLengthError as e:

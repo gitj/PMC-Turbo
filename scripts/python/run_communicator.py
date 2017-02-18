@@ -9,7 +9,8 @@ if __name__ == "__main__":
     log.setup_file_handler('communicator')
 
     c = camera_communicator.Communicator(startup_script_constants.CAM_ID, startup_script_constants.PEER_URIS,
-                                         startup_script_constants.CONTROLLER_URI)
+                                         startup_script_constants.CONTROLLER_URI,
+                                         loop_interval=startup_script_constants.LOOP_INTERVAL)
     c.set_peer_polling_order(startup_script_constants.PEER_POLLING_ORDER)
 
     if startup_script_constants.LEADER:
@@ -20,8 +21,6 @@ if __name__ == "__main__":
                       startup_script_constants.TDRSS_DOWNLINK_SPEED,
                       startup_script_constants.OPENPORT_DOWNLINK_IP, startup_script_constants.OPENPORT_DOWNLINK_PORT,
                       startup_script_constants.OPENPORT_DOWNLINK_SPEED)
-
-        c.tdrss_hirate_downlink.enabled = False
 
         group = housekeeping_classes.construct_super_group_from_csv_list(startup_script_constants.GROUP_NAME,
                                                                          startup_script_constants.CSV_PATHS_AND_PREAMBLES)

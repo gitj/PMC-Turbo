@@ -23,7 +23,8 @@ from pmc_turbo.utils import error_counter, camera_id
 Pyro4.config.SERVERTYPE = "multiplex"
 Pyro4.config.SERIALIZER = 'pickle'
 Pyro4.config.SERIALIZERS_ACCEPTED = ['pickle', ]
-Pyro4.config.COMMTIMEOUT = 1.0
+# Caution: If COMMTIMEOUT is too low, camera communicator gets a timeout error when it requests data from another communicator.
+Pyro4.config.COMMTIMEOUT = 0.3
 # Tests show COMMTIMEOUT works.
 # Note that there is another timeout POLLTIMEOUT
 # "For the multiplexing server only: the timeout of the select or poll calls"
@@ -136,10 +137,12 @@ class Communicator():
         self.lowrate_uplink = uplink_classes.Uplink(sip_uplink_port)
         self.lowrate_downlink = downlink_classes.LowrateDownlink(lowrate_downlink_ip, lowrate_downlink_port)
         self.tdrss_hirate_downlink = downlink_classes.HirateDownlink(tdrss_hirate_downlink_ip,
-                                                                     tdrss_hirate_downlink_port, tdrss_downlink_speed)
+                                                                     tdrss_hirate_downlink_port, tdrss_downlink_speed,
+                                                                     name='TDRSS')
 
         self.openport_downlink = downlink_classes.HirateDownlink(openport_downlink_ip, openport_downlink_port,
-                                                                 openport_downlink_speed)
+                                                                 openport_downlink_speed,
+                                                                 name='OpenPort')
 
         self.downlinks = [self.tdrss_hirate_downlink,
                           self.openport_downlink]  # Eventually this will also include Openport downlink
@@ -199,22 +202,21 @@ class Communicator():
                     link.send_data()
 
     def request_synchronized_images(self):
-        timestamp = time.time()-2 # TODO: this should probably be a parameter in settings file
+        timestamp = time.time() - 2  # TODO: this should probably be a parameter in settings file
         for peer in self.peers:
             logger.debug("Synchronizing images by requesting standard image closest to timestamp %f from peer %r" %
-                         (timestamp,peer))
+                         (timestamp, peer))
             peer.request_standard_image_at(timestamp)
 
-    def request_standard_image_at(self,timestamp):
+    def request_standard_image_at(self, timestamp):
         try:
             self.controller.request_standard_image_at(timestamp)
         except Pyro4.errors.CommunicationError:
             self.error_counter.controller.increment()
             logger.debug('Connection to controller failed. Error counter - %r. Error message: %s' % (
-                    self.error_counter.controller, "".join(Pyro4.util.getPyroTraceback())))
+                self.error_counter.controller, "".join(Pyro4.util.getPyroTraceback())))
         except Exception:
             raise Exception("".join(Pyro4.util.getPyroTraceback()))
-
 
     def get_next_data(self):
         try:
@@ -360,9 +362,8 @@ class Communicator():
         for link in self.downlinks:
             link.flush_packet_queue()
 
-    def use_synchronized_images(self,synchronize):
+    def use_synchronized_images(self, synchronize):
         self.synchronize_image_time_across_cameras = bool(synchronize)
-
 
     # end command table methods
     ###################################################################################################################
