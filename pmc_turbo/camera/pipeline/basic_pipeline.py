@@ -42,7 +42,7 @@ logger = logging.getLogger(__name__)
 
 @Pyro4.expose
 class BasicPipeline:
-    def __init__(self, dimensions=(3232,4864), num_data_buffers=16,
+    def __init__(self, num_data_buffers=16,
                  disks_to_use = ['/data1','/data2','/data3','/data4'],
                  use_simulated_camera=False, default_write_enable=1, pipeline_port=50000,counter_dir='/home/pmc/logs/counters'):
         image_size_bytes = 31440952 # dimensions[0]*dimensions[1]*2  # Need to figure out how to not hard code this
@@ -92,19 +92,18 @@ class BasicPipeline:
 
         self.status_dict = {}
 
-        ip = Pyro4.socketutil.getInterfaceAddress('192.168.1.1')
         self.daemon = Pyro4.Daemon(host='0.0.0.0',port=pipeline_port)
         uri = self.daemon.register(self,"pipeline")
         print uri
 
         # instantiate (and start) the threads
-        # in general, make sure to instantiate the Acquire process last; that way no data starts flowing through the
+        # in general, make sure to start the Acquire process last; that way no data starts flowing through the
         # system until all threads have started running.
         output_dir = time.strftime("%Y-%m-%d_%H%M%S")
         self.writers = [
             WriteImageProcess(input_buffers=self.raw_image_buffers, input_queue=self.acquire_image_output_queue,
                               output_queue=self.acquire_image_input_queue, info_buffer=self.info_buffer,
-                              dimensions=dimensions, status=self.disk_statuses[k], output_dir=output_dir,
+                              status=self.disk_statuses[k], output_dir=output_dir,
                               available_disks=[disks_to_use[k]], write_enable=self.disk_write_enables[k])
             for k in range(num_writers)]
 

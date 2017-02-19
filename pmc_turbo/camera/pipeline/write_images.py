@@ -33,7 +33,7 @@ DISK_MIN_BYTES_AVAILABLE = 100*1024*1024 # 100 MiB
 
 
 class WriteImageProcess(object):
-    def __init__(self, input_buffers, input_queue, output_queue, info_buffer, dimensions, status, output_dir,
+    def __init__(self, input_buffers, input_queue, output_queue, info_buffer, status, output_dir,
                  available_disks, write_enable):
         self.data_buffers = input_buffers
         self.input_queue = input_queue
@@ -49,7 +49,6 @@ class WriteImageProcess(object):
             else:
                 logger.warning("Insufficient disk space available on %s, only %d MiB" % (disk,bytes_available//2**20))
         self.available_disks = disks_with_free_space
-        self.dimensions=dimensions
         self.write_enable = write_enable
         self.output_dirs = [os.path.join(rpath,output_dir) for rpath in self.available_disks]
         for dname in self.output_dirs:

@@ -33,10 +33,12 @@ def test_valid_command_table():
 
 def test_basic_command_path():
     cont = controller.Controller(None, counter_dir=counter_dir)
-    cc1 = camera_communicator.Communicator(cam_id=0, peers=[], controller=cont, start_pyro=False,
+    cc1 = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, start_pyro=False,
                                            base_port=FAKE_BASE_PORT)
-    cc2 = camera_communicator.Communicator(cam_id=1, peers=[], controller=cont, start_pyro=False,
+    cc2 = camera_communicator.Communicator(cam_id=1, peers=[], controller=None, start_pyro=False,
                                            base_port=FAKE_BASE_PORT)
+    cc1.controller = cont
+    cc2.controller = cont
     cc1.peers = [cc1, cc2]
     cc1.destination_lists = {0: [cc1], 1: [cc2]}
     command = command_table.command_manager.set_focus(focus_step=1000)
