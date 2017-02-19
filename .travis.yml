@@ -15,21 +15,22 @@ install:
   - conda update -q conda
   # Useful for debugging any issues with conda
   - conda info -a
-  - conda create -q -n test-environment python=2.7 numpy scipy matplotlib nose cython numexpr pyzmq pyserial
+  - conda create -q -n test-environment -f environment.yml
+  #python=2.7 numpy scipy matplotlib nose cython numexpr pyzmq pyserial
   - source activate test-environment
-  - conda install pandas
+#  - conda install pandas
   #- conda install opencv
-  - pip install opencv-python
+#  - pip install opencv-python
   #- pip install -r requirements.txt
-  - pip install codecov
-  - pip install coverage
-  - pip install blosc
-  - pip install Pyro4
-  - pip install cobs
-  - pip install ipython
-  - pip install PyCRC
-  - pip install pillow
-  - pip install coloredlogs
+#  - pip install codecov
+#  - pip install coverage
+#  - pip install blosc
+#  - pip install Pyro4
+#  - pip install cobs
+#  - pip install ipython
+#  - pip install PyCRC
+#  - pip install pillow
+#  - pip install coloredlogs
   # --
   - pushd $HOME
   - git clone --depth=10 --branch=master https://github.com/labjack/LabJackPython.git
