@@ -28,7 +28,7 @@ dependencies:
 - nose=1.3.7=py27_1
 - numexpr=2.6.1=np111py27_0
 - numpy=1.11.2=py27_0
-- opencv=2.4.10=np110py27_1
+- opencv
 - openssl=1.0.2j=0
 - pandas=0.19.1=np111py27_0
 - pango=1.39.0=1
