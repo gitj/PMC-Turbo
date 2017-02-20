@@ -9,7 +9,7 @@ if __name__ == "__main__":
     log.setup_file_handler('communicator')
 
     c = camera_communicator.Communicator(startup_script_constants.CAM_ID, startup_script_constants.PEER_URIS,
-                                         startup_script_constants.CONTROLLER_URI,
+                                         startup_script_constants.CONTROLLER_URI, startup_script_constants.LEADER,
                                          loop_interval=startup_script_constants.LOOP_INTERVAL)
     c.set_peer_polling_order(startup_script_constants.PEER_POLLING_ORDER)
 
@@ -26,4 +26,4 @@ if __name__ == "__main__":
                                                                          startup_script_constants.CSV_PATHS_AND_PREAMBLES)
         c.add_status_group(group)
 
-        c.leader_loop()
+    c.main_loop()

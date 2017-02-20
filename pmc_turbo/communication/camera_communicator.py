@@ -39,10 +39,11 @@ END_BYTE = chr(constants.SIP_END_BYTE)
 
 @Pyro4.expose
 class Communicator():
-    def __init__(self, cam_id, peers, controller, base_port=BASE_PORT, start_pyro=True, loop_interval=1):
-        self.port = base_port + cam_id
+    def __init__(self, cam_id, peers, controller, leader, base_port=BASE_PORT, start_pyro=True, loop_interval=1):
+        self.port = base_port  # + cam_id
         logger.debug('Communicator initialized')
         self.cam_id = cam_id
+        self.leader = leader
 
         self.peers = []
         for peer in peers:
@@ -151,17 +152,22 @@ class Communicator():
     ### Loops to continually be run
 
     def start_leader_thread(self):
-        self.leader_thread = threading.Thread(target=self.leader_loop)
+        self.leader_thread = threading.Thread(target=self.main_loop)
         self.leader_thread.daemon = True
         logger.debug('Starting leader thread')
         self.leader_thread.start()
 
-    def leader_loop(self):
+    def main_loop(self):
         while True:
             self.get_and_process_sip_bytes()
-            self.send_data_on_downlinks()
+            if self.leader:
+                self.send_data_on_downlinks()
             if self.end_loop == True:  # Switch this to end the leader loop.
                 return
+            time.sleep(self.loop_interval)
+
+    def peer_loop(self):
+        while True:
             time.sleep(self.loop_interval)
 
     def add_status_group(self, status_group):
@@ -220,6 +226,7 @@ class Communicator():
 
     def get_next_data(self):
         try:
+            logger.debug('Getting next data from controller.')
             return self.controller.get_next_data_for_downlink()
         except Pyro4.errors.CommunicationError:
             self.error_counter.controller.increment()
@@ -299,7 +306,7 @@ class Communicator():
         if len(self.status_groups) == 0:
             raise RuntimeError('Communicator has no status_groups.')
         summary = []
-        for group in self.status_groups:
+        for group in self.status_groups:  # TODO: get this from all other cameras before summarizing
             group.update()
             summary.append(group.get_status())
         camera_status = self.summarize_status_to_255_bytes(summary)

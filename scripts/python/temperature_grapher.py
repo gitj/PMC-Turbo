@@ -86,5 +86,8 @@ def graph_temps(csv_file0, csv_file1):
 
 
 if __name__ == "__main__":
-    graph_temps('/home/pmc/logs/housekeeping/camera/2017-02-17_160805.csv',
+    # graph_temps('/home/pmc/logs/housekeeping/camera/2017-02-17_160805.csv',
+    #            '/home/pmc/logs/housekeeping/labjack/2017-02-17_160813.csv')
+
+    graph_temps('/home/pmc/logs/housekeeping/camera/2017-02-18_132924.csv',
                 '/home/pmc/logs/housekeeping/labjack/2017-02-17_160813.csv')

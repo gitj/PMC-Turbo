@@ -1,5 +1,7 @@
 # This should not live here, but it will until I decide where to move it.
 
+from pmc_turbo.utils import camera_id
+
 PIPELINE_IP = '0.0.0.0'
 PIPELINE_PORT = 50000
 
@@ -8,9 +10,14 @@ CONTROLLER_IP = 50001
 
 CONTROLLER_NAME = 'image'
 
-CAM_ID = 0
+CAM_ID = camera_id.get_camera_id()
+if CAM_ID == 255:
+    raise ValueError('CAM_ID is 255 - error in get_camera_id')
 
-LEADER = True
+if CAM_ID == 0:
+    LEADER = True
+else:
+    LEADER = False
 
 if False:
     PEER_URIS = ['PYRO:communicator@0.0.0.0:40000',
@@ -53,3 +60,8 @@ GROUP_NAME = 'supergroup'
 CSV_PATHS_AND_PREAMBLES = [('/home/pmc/camera_items.csv', '/var/lib/collectd/csv/*/'),
                            ('/home/pmc/charge_controller_items.csv', ''), ]
 # ('/home/pmc/collectd_items.csv', '/var/lib/collectd/csv/*/')]
+
+JSON_PATHS = ['/home/pmc/pmchome/pmc-turbo/status_item_params/camera_items.json',
+              '/home/pmc/pmchome/pmc-turbo/status_item_params/charge_controller_items.json']
+JSON_RANGE_PATHS = ['/home/pmc/pmchome/pmc-turbo/status_item_params/camera_items_ranges.json',
+                    '/home/pmc/pmchome/pmc-turbo/status_item_params/charge_controller_items_ranges.json']

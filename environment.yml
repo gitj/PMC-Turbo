@@ -77,11 +77,15 @@ dependencies:
 - 'zlib=1.2.8=3'
 - 'opencv3=3.2.0=np111py27_0'
 - pip:
+  - attrs==16.3.0
+  - automat==0.5.0
   - backports.shutil-get-terminal-size==1.0.0
   - blosc==1.5.0
   - cobs==1.0.0
   - coloredlogs==5.2
+  - constantly==15.1.0
   - humanfriendly==2.4
+  - incremental==16.10.1
   - ipython-genutils==0.1.0
   - monotonic==1.2
   - olefile==0.44
@@ -89,7 +93,11 @@ dependencies:
   - pillow==4.0.0
   - prompt-toolkit==1.0.9
   - pycrc==1.21
+  - pymodbus==1.2.0
   - pyro4==4.55
   - selectors34==1.1
   - serpent==1.18
+  - twisted==17.1.0
+  - zope.interface==4.3.3
+
 

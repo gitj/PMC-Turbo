@@ -97,8 +97,8 @@ def construct_status_group_from_json(group_name, json_path, json_range_path):
 
 def construct_super_group_from_json_list(group_name, json_paths, json_range_paths):
     super_group = SuperStatusGroup(group_name, groups=[])
-    for json_path, json_range_path in zip(json_paths, json_range_paths):
-        status_group = construct_status_group_from_json(json_path, json_range_path)
+    for i, (json_path, json_range_path) in enumerate(zip(json_paths, json_range_paths)):
+        status_group = construct_status_group_from_json(('subgroup_%d' % i), json_path, json_range_path)
         super_group.groups[status_group.name] = status_group
     return super_group
 

@@ -309,6 +309,7 @@ class Controller(object):
         self.downlink_queue.append(file_object.to_buffer())
 
     def get_next_data_for_downlink(self):
+        logger.debug('Getting next data for downlink.')
         if self.downlink_queue:
             result = self.downlink_queue[0]
             self.downlink_queue = self.downlink_queue[1:]
