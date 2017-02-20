@@ -10,7 +10,10 @@ class PyCamera():
         if use_simulated_camera:
             from pmc_turbo.camera.pycamera._pyvimba._pyvimba_simulator import BasicPyCameraSimulator as _PyCamera
         else:
-            from pmc_turbo.camera.pycamera._pyvimba import PyCamera as _PyCamera
+            try:
+                from pmc_turbo.camera.pycamera._pyvimba import PyCamera as _PyCamera
+            except ImportError as e:
+                raise ImportError(e.message + "\n* This error likely indicates that the _pyvimba.so file cannot be found.\n* Usually this is because 'make' needs to be run in the _pyvimba directory.")
 
         self._pc = _PyCamera(ip=ip,num_buffers=num_buffers)
         self._num_buffers = num_buffers
