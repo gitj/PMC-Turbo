@@ -19,7 +19,6 @@ install:
   #python=2.7 numpy scipy matplotlib nose cython numexpr pyzmq pyserial
   - source activate test-environment
 #  - conda install pandas
-  - conda install -c menpo opencv3=3.2.0
 #  - conda install opencv
 #  - pip install opencv-python
   #- pip install -r requirements.txt
