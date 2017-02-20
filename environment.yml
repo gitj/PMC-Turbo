@@ -77,6 +77,7 @@ dependencies:
 #  - labjackpython (/home/pmc/pmchome/LabJackPython/src)==5 26 2015
   - mdstat==1.0.4
   - monotonic==1.2
+  - orderedattrdict==1.4.3
   - pillow==3.4.2
   - prompt-toolkit==1.0.3
   - pycrc==1.21
