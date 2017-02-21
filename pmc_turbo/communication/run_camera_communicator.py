@@ -40,7 +40,7 @@ def run_communicator(cam_id, peers, controller, leader, peer_polling_order=[]):
         group = housekeeping_classes.construct_super_group_from_csv_list('supergroup', csv_paths_and_preambles)
         c.add_status_group(group)
 
-        c.start_leader_thread()
+        c.start_main_thread()
 
 
 def two_camera_leader():

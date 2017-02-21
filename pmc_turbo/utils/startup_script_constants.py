@@ -61,7 +61,10 @@ CSV_PATHS_AND_PREAMBLES = [('/home/pmc/camera_items.csv', '/var/lib/collectd/csv
                            ('/home/pmc/charge_controller_items.csv', ''), ]
 # ('/home/pmc/collectd_items.csv', '/var/lib/collectd/csv/*/')]
 
-JSON_PATHS = ['/home/pmc/pmchome/pmc-turbo/status_item_params/camera_items.json',
-              '/home/pmc/pmchome/pmc-turbo/status_item_params/charge_controller_items.json']
-JSON_RANGE_PATHS = ['/home/pmc/pmchome/pmc-turbo/status_item_params/camera_items_ranges.json',
-                    '/home/pmc/pmchome/pmc-turbo/status_item_params/charge_controller_items_ranges.json']
+JSON_PATHS = ['/home/pmc/pmchome/pmc-turbo/status_item_params/camera_items.json',]
+              #'/home/pmc/pmchome/pmc-turbo/status_item_params/charge_controller_items.json',
+              #'/home/pmc/pmchome/pmc-turbo/status_item_params/collectd_items.json']
+JSON_RANGE_PATHS = ['/home/pmc/pmchome/pmc-turbo/status_item_params/camera_items_ranges.json',]
+                    #'/home/pmc/pmchome/pmc-turbo/status_item_params/charge_controller_items_ranges.json',
+                    #'/home/pmc/pmchome/pmc-turbo/status_item_params/collectd_items_ranges.json']
+                    # TODO: Add preambles to the collectd_items like I did with the CSV preambles.

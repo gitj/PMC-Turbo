@@ -79,7 +79,7 @@ class Communicator():
 
         self.pyro_daemon = None
         self.pyro_thread = None
-        self.leader_thread = None
+        self.main_thread = None
         self.lowrate_uplink = None
         self.buffer_for_downlink = struct.pack('>255B', *([0] * 255))
 
@@ -113,8 +113,8 @@ class Communicator():
         time.sleep(0.01)
         if self.pyro_thread and self.pyro_thread.is_alive():
             self.pyro_thread.join(timeout=0)
-        if self.leader_thread and self.leader_thread.is_alive():
-            self.leader_thread.join(timeout=0)
+        if self.main_thread and self.main_thread.is_alive():
+            self.main_thread.join(timeout=0)
         try:
             self.pyro_daemon.shutdown()
         except Exception:
@@ -151,11 +151,11 @@ class Communicator():
 
     ### Loops to continually be run
 
-    def start_leader_thread(self):
-        self.leader_thread = threading.Thread(target=self.main_loop)
-        self.leader_thread.daemon = True
+    def start_main_thread(self):
+        self.main_thread = threading.Thread(target=self.main_loop)
+        self.main_thread.daemon = True
         logger.debug('Starting leader thread')
-        self.leader_thread.start()
+        self.main_thread.start()
 
     def main_loop(self):
         while True:
@@ -254,7 +254,7 @@ class Communicator():
     ### The following two functions respond to SIP requests
     def respond_to_science_data_request(self):
         logger.debug("Science data request received.")
-        self.get_status_summary()
+        self.get_all_status_summaries()
         self.lowrate_downlink.send(self.buffer_for_downlink)
 
     def process_science_command_packet(self, msg):
@@ -302,15 +302,26 @@ class Communicator():
             return
         self.command_logger.add_command_result(command_packet.sequence_number, CommandStatus.command_ok, '')
 
+    def get_all_status_summaries(self):
+        summary_dict = {}
+        for i, peer in enumerate(self.peers):
+            try:
+                summary_dict[i] = peer.get_status_summary()
+                logger.debug('Received status summary from peer %d' % i)
+            except Pyro4.errors.CommunicationError:
+                logger.debug('Unable to connect to peer %d' % i)
+                pass
+        camera_status = self.summarize_status_to_255_bytes(summary_dict)
+        self.buffer_for_downlink = camera_status + self.buffer_for_downlink[len(camera_status):]
+
     def get_status_summary(self):
         if len(self.status_groups) == 0:
             raise RuntimeError('Communicator has no status_groups.')
         summary = []
-        for group in self.status_groups:  # TODO: get this from all other cameras before summarizing
+        for group in self.status_groups:
             group.update()
-            summary.append(group.get_status())
-        camera_status = self.summarize_status_to_255_bytes(summary)
-        self.buffer_for_downlink = camera_status + self.buffer_for_downlink[len(camera_status):]
+            summary.append(group.get_status_summary())
+        return summary
 
     def summarize_status_to_255_bytes(self, summary):
         # This stub function needs to be filled out.
@@ -382,7 +393,8 @@ class Communicator():
         if valid_packets:
             for packet in valid_packets:
                 logger.debug('Found packet: %r' % packet)
-                self.execute_packet(packet)
+                if self.leader:
+                    self.execute_packet(packet)
 
     def execute_packet(self, packet):
         # Improve readability here - constants in uplink classes

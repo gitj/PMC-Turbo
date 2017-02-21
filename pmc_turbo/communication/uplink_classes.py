@@ -5,6 +5,8 @@ import struct
 from pmc_turbo.communication import constants
 
 logger = logging.getLogger(__name__)
+
+
 # start_byte = chr(constants.SIP_START_BYTE)
 # end_byte = chr(constants.SIP_END_BYTE)
 
@@ -30,7 +32,7 @@ class Uplink():
             self.sip_leftover_buffer = ''
             while buffer:
                 valid_packet, remainder = process_bytes(buffer)
-                print '%r' % valid_packet
+                logger.debug('Packet is: %r' % valid_packet)
                 if valid_packet:
                     valid_packets.append(valid_packet)
                     buffer = remainder

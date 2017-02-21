@@ -13,17 +13,17 @@ if __name__ == "__main__":
                                          loop_interval=startup_script_constants.LOOP_INTERVAL)
     c.set_peer_polling_order(startup_script_constants.PEER_POLLING_ORDER)
 
-    if startup_script_constants.LEADER:
-        c.setup_links(startup_script_constants.LOWRATE_UPLINK_PORT,
-                      startup_script_constants.LOWRATE_DOWNLINK_IP, startup_script_constants.LOWRATE_DOWNLINK_PORT,
-                      startup_script_constants.TDRSS_HIRATE_DOWNLINK_IP,
-                      startup_script_constants.TDRSS_HIRATE_DOWNLINK_PORT,
-                      startup_script_constants.TDRSS_DOWNLINK_SPEED,
-                      startup_script_constants.OPENPORT_DOWNLINK_IP, startup_script_constants.OPENPORT_DOWNLINK_PORT,
-                      startup_script_constants.OPENPORT_DOWNLINK_SPEED)
+    c.setup_links(startup_script_constants.LOWRATE_UPLINK_PORT,
+                  startup_script_constants.LOWRATE_DOWNLINK_IP, startup_script_constants.LOWRATE_DOWNLINK_PORT,
+                  startup_script_constants.TDRSS_HIRATE_DOWNLINK_IP,
+                  startup_script_constants.TDRSS_HIRATE_DOWNLINK_PORT,
+                  startup_script_constants.TDRSS_DOWNLINK_SPEED,
+                  startup_script_constants.OPENPORT_DOWNLINK_IP, startup_script_constants.OPENPORT_DOWNLINK_PORT,
+                  startup_script_constants.OPENPORT_DOWNLINK_SPEED)
 
-        group = housekeeping_classes.construct_super_group_from_csv_list(startup_script_constants.GROUP_NAME,
-                                                                         startup_script_constants.CSV_PATHS_AND_PREAMBLES)
-        c.add_status_group(group)
+    group = housekeeping_classes.construct_super_group_from_json_list('supergroup',
+                                                                      startup_script_constants.JSON_PATHS,
+                                                                      startup_script_constants.JSON_RANGE_PATHS)
+    c.add_status_group(group)
 
     c.main_loop()
