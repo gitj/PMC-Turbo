@@ -162,7 +162,7 @@ class PeersTest(unittest.TestCase):
                                                   base_port=self.base_port)
         self.c.file_id = 0
         self.peer = camera_communicator.Communicator(cam_id=1, peers=[], controller=None, leader=True,
-                                                     base_port=self.base_port)
+                                                     base_port=self.base_port + 1)
 
     def tearDown(self):
         self.c.close()
