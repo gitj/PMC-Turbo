@@ -26,16 +26,16 @@ def teardown():
 
 
 def test_valid_command_table():
-    cc = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, start_pyro=False,
+    cc = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, leader=True, start_pyro=False,
                                           base_port=FAKE_BASE_PORT)
     cc.validate_command_table()
 
 
 def test_basic_command_path():
     cont = controller.Controller(None, counter_dir=counter_dir)
-    cc1 = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, start_pyro=False,
+    cc1 = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, leader=True, start_pyro=False,
                                            base_port=FAKE_BASE_PORT)
-    cc2 = camera_communicator.Communicator(cam_id=1, peers=[], controller=None, start_pyro=False,
+    cc2 = camera_communicator.Communicator(cam_id=1, peers=[], controller=None, leader=True, start_pyro=False,
                                            base_port=FAKE_BASE_PORT)
     cc1.controller = cont
     cc2.controller = cont
@@ -111,7 +111,8 @@ class FakeStatusGroup():
 
 class NoPeersTest(unittest.TestCase):
     def setUp(self):
-        self.c = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, base_port=FAKE_BASE_PORT)
+        self.c = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, leader=True,
+                                                  base_port=FAKE_BASE_PORT)
 
     def tearDown(self):
         self.c.close()
@@ -157,9 +158,11 @@ class PeersTest(unittest.TestCase):
         # Set up port manually.
         self.base_port = FAKE_BASE_PORT
         proxy = Pyro4.Proxy('PYRO:communicator@0.0.0.0:%d' % (self.base_port + 1))
-        self.c = camera_communicator.Communicator(cam_id=0, peers=[proxy], controller=None, base_port=self.base_port)
+        self.c = camera_communicator.Communicator(cam_id=0, peers=[proxy], controller=None, leader=True,
+                                                  base_port=self.base_port)
         self.c.file_id = 0
-        self.peer = camera_communicator.Communicator(cam_id=1, peers=[], controller=None, base_port=self.base_port)
+        self.peer = camera_communicator.Communicator(cam_id=1, peers=[], controller=None, leader=True,
+                                                     base_port=self.base_port)
 
     def tearDown(self):
         self.c.close()
