@@ -17,12 +17,12 @@ assert basic_config
 print "loaded config",basic_config
 
 def setup_module():
-    counter_dir = tempfile.mkdtemp()
     disk_dirs = [tempfile.mkdtemp() for k in range(4)]
     basic_config.GlobalConfiguration.log_dir = tempfile.mkdtemp()
 
     basic_config.GlobalConfiguration.housekeeping_dir = os.path.join(basic_config.GlobalConfiguration.log_dir,'housekeeping')
     basic_config.GlobalConfiguration.counters_dir = os.path.join(basic_config.GlobalConfiguration.log_dir,'counters')
+    basic_config.BasicPipeline.disks_to_use = disk_dirs
 
 def teardown_module():
     shutil.rmtree(basic_config.GlobalConfiguration.log_dir)
