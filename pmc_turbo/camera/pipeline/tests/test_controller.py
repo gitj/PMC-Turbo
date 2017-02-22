@@ -4,13 +4,36 @@ import shutil
 import tempfile
 import threading
 import time
+import copy
 
 import numpy as np
+
+from traitlets.config.loader import load_pyconfig_files
 
 import pmc_turbo.camera.pipeline.indexer
 from pmc_turbo.camera.pipeline import basic_pipeline
 from pmc_turbo.camera.pipeline import controller
 from pmc_turbo.communication.file_format_classes import decode_file_from_buffer, GeneralFile, JPEGFile, ShellCommandFile
+
+from pmc_turbo.utils.configuration import default_config_dir
+
+print "default config dir",default_config_dir
+basic_config = load_pyconfig_files(['no_hardware.py'], default_config_dir)
+assert basic_config
+print "loaded config",basic_config
+
+def setup_module():
+    disk_dirs = [tempfile.mkdtemp() for k in range(4)]
+    basic_config.GlobalConfiguration.log_dir = tempfile.mkdtemp()
+
+    basic_config.GlobalConfiguration.housekeeping_dir = os.path.join(basic_config.GlobalConfiguration.log_dir,'housekeeping')
+    basic_config.GlobalConfiguration.counters_dir = os.path.join(basic_config.GlobalConfiguration.log_dir,'counters')
+    basic_config.BasicPipeline.disks_to_use = disk_dirs
+
+def teardown_module():
+    shutil.rmtree(basic_config.GlobalConfiguration.log_dir)
+    for disk_dir in basic_config.BasicPipeline.disks_to_use:
+        shutil.rmtree(disk_dir)
 
 test_data_path = os.path.join(os.path.split(os.path.abspath(__file__))[0],'test_data')
 test_pipeline_port = 47563
@@ -58,8 +81,11 @@ class TestMultiIndex(object):
             open(os.path.join(data_dir,self.subdir,'index.csv'),'w').close()
 
     def test_controller_basic_function(self):
-        bpl = basic_pipeline.BasicPipeline(disks_to_use=self.data_dirs, use_simulated_camera=True,
-                                           default_write_enable=1, pipeline_port=test_pipeline_port, counter_dir=self.top_dir)
+        config = copy.deepcopy(basic_config)
+        config.BasicPipeline.default_write_enable=1
+        bpl = basic_pipeline.BasicPipeline(config=config)
+
+        bpl.initialize()
         thread = threading.Thread(target=bpl.run_pyro_loop)
         thread.daemon=True
         thread.start()
@@ -71,8 +97,12 @@ class TestMultiIndex(object):
         bpl.close()
         
     def test_controller_get_image(self):
-        bpl = basic_pipeline.BasicPipeline(disks_to_use=self.data_dirs, use_simulated_camera=True,
-                                           default_write_enable=1, pipeline_port=test_pipeline_port, counter_dir=self.top_dir)
+        config = copy.deepcopy(basic_config)
+        config.BasicPipeline.default_write_enable=1
+        config.BasicPipeline.disks_to_use = self.data_dirs
+        bpl = basic_pipeline.BasicPipeline(config=config)
+
+        bpl.initialize()
         thread = threading.Thread(target=bpl.run_pyro_loop)
         thread.daemon=True
         thread.start()

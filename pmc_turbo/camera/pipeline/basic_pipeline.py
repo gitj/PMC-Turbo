@@ -25,6 +25,9 @@ import sys
 import time
 from Queue import Empty as EmptyException
 
+
+from traitlets import (Bool, Int, List, Unicode)
+
 import Pyro4
 import Pyro4.socketutil
 
@@ -32,6 +35,7 @@ from pmc_turbo.camera.pipeline.acquire_images import AcquireImagesProcess
 from pmc_turbo.camera.pipeline.write_images import WriteImageProcess
 from pmc_turbo.camera.pycamera.dtypes import frame_info_dtype
 from pmc_turbo.utils.error_counter import CounterCollection
+from pmc_turbo.utils.configuration import GlobalConfiguration
 
 Pyro4.config.SERVERTYPE = 'multiplex'
 Pyro4.config.SERIALIZERS_ACCEPTED = {'pickle','json'}
@@ -41,21 +45,24 @@ logger = logging.getLogger(__name__)
 
 
 @Pyro4.expose
-class BasicPipeline:
-    def __init__(self, num_data_buffers=16,
-                 disks_to_use = ['/data1','/data2','/data3','/data4'],
-                 use_simulated_camera=False, default_write_enable=1, pipeline_port=50000,counter_dir='/home/pmc/logs/counters'):
+class BasicPipeline(GlobalConfiguration):
+    num_data_buffers = Int(16).tag(config=True)
+    disks_to_use = List(trait=Unicode,default_value=['/data1','/data2','/data3','/data4']).tag(config=True)
+    default_write_enable = Int(1, help="Initial value for disk write enable flag. If nonzero, start writing to disk immediately").tag(config=True)
+
+    def initialize(self):
+
         image_size_bytes = 31440952 # dimensions[0]*dimensions[1]*2  # Need to figure out how to not hard code this
 
-        self.counters = CounterCollection('pipeline',counter_dir)
+        self.counters = CounterCollection('pipeline',self.counters_dir)
         self.counters.commands_queued.reset()
         self.counters.commands_completed.reset()
 
-        self.num_data_buffers = num_data_buffers
-        self.raw_image_buffers = [mp.Array(ctypes.c_uint8, image_size_bytes) for b in range(num_data_buffers)]
+#        self.num_data_buffers = num_data_buffers
+        self.raw_image_buffers = [mp.Array(ctypes.c_uint8, image_size_bytes) for b in range(self.num_data_buffers)]
         # We save the buffer info in a custom datatype array, which is a bit ugly, but it works and isn't too bad.
         self.info_buffer = [mp.Array(ctypes.c_uint8, frame_info_dtype.itemsize)
-                            for b in range(num_data_buffers)]
+                            for b in range(self.num_data_buffers)]
 
         # The input queue holds indexes for the buffers that have already been emptied (processed) and are ready to
         # recieve new images. The acquire thread grabs an index from the input queue, fills the corresponding buffer,
@@ -67,8 +74,6 @@ class BasicPipeline:
         # when it's done, it puts the index of the now empty buffer back in acquire_image_input queue so it can be
         # filled again.
         #
-        # When we add another step, we'll need to make more queues (and maybe more buffers) to hand the data between
-        # different processes
         self.acquire_image_input_queue = mp.Queue()
         self.acquire_image_output_queue = mp.Queue()
         self.acquire_image_command_queue = mp.Queue()
@@ -79,20 +84,20 @@ class BasicPipeline:
         # We can also use such things for other state (i.e. camera or birger state, or other housekeeping) if
         # desired, but that might unecessarily complicate things
         self.acquire_status = mp.Array(ctypes.c_char,32)
-        self.disk_statuses = [mp.Array(ctypes.c_char,32) for disk in disks_to_use]
-        num_writers = len(disks_to_use)
+        self.disk_statuses = [mp.Array(ctypes.c_char,32) for disk in self.disks_to_use]
+        num_writers = len(self.disks_to_use)
 
-        self.disk_write_enables = [mp.Value(ctypes.c_int32) for disk in disks_to_use]
+        self.disk_write_enables = [mp.Value(ctypes.c_int32) for disk in self.disks_to_use]
         for enable in self.disk_write_enables:
-            enable.value=int(default_write_enable)
+            enable.value=int(self.default_write_enable)
 
         # we prime the input queue to indicate that all buffers are ready to be filled
-        for i in range(num_data_buffers):
+        for i in range(self.num_data_buffers):
             self.acquire_image_input_queue.put(i)
 
         self.status_dict = {}
 
-        self.daemon = Pyro4.Daemon(host='0.0.0.0',port=pipeline_port)
+        self.daemon = Pyro4.Daemon(host='0.0.0.0',port=self.pipeline_pyro_port)
         uri = self.daemon.register(self,"pipeline")
         print uri
 
@@ -104,7 +109,7 @@ class BasicPipeline:
             WriteImageProcess(input_buffers=self.raw_image_buffers, input_queue=self.acquire_image_output_queue,
                               output_queue=self.acquire_image_input_queue, info_buffer=self.info_buffer,
                               status=self.disk_statuses[k], output_dir=output_dir,
-                              available_disks=[disks_to_use[k]], write_enable=self.disk_write_enables[k])
+                              available_disks=[self.disks_to_use[k]], write_enable=self.disk_write_enables[k])
             for k in range(num_writers)]
 
         self.acquire_images = AcquireImagesProcess(raw_image_buffers=self.raw_image_buffers,
@@ -114,8 +119,8 @@ class BasicPipeline:
                                                    command_result_queue=self.acquire_image_command_results_queue,
                                                    info_buffer=self.info_buffer,
                                                    status=self.acquire_status,
-                                                   use_simulated_camera=use_simulated_camera,
-                                                   uri=uri,counter_dir=counter_dir)
+                                                   uri=uri,
+                                                   config=self.config)
 
         for writer in self.writers:
             writer.child.start()

@@ -8,7 +8,7 @@ try:
 except ImportError:
     ColoredFormatter = logging.Formatter
 
-LOG_DIR = '/home/pmc/logs'
+from configuration import LOG_DIR
 
 long_message_format = '%(levelname)-8.8s %(asctime)s - %(name)s.%(funcName)s:%(lineno)d  %(message)s'
 short_message_format = '%(levelname)-4.4s %(asctime)s - %(funcName)s:%(lineno)d  %(message)s'
@@ -34,7 +34,7 @@ def setup_stream_handler(level=logging.INFO):
         pmc_turbo_logger.info("Stream handler initialized for %s" % pmc_turbo_logger.name)
 
 
-def setup_file_handler(name, level=logging.DEBUG, logger=None):
+def setup_file_handler(name, log_dir=LOG_DIR, level=logging.DEBUG, logger=None):
     if name in KNOWN_LOGGERS:
         logger = pmc_turbo_logger
         warning = ''
@@ -47,7 +47,7 @@ def setup_file_handler(name, level=logging.DEBUG, logger=None):
         if issubclass(handler.__class__, logging.FileHandler):
             has_file_handler = True
     if not has_file_handler:
-        logger.addHandler(file_handler(name, level))
+        logger.addHandler(file_handler(name, log_dir=log_dir,level=level))
         logger.info("File handler added and initialized for %s" % name)
         logger.info(git_log())
         logger.info(git_status())
@@ -55,7 +55,7 @@ def setup_file_handler(name, level=logging.DEBUG, logger=None):
         logger.warning(warning)
 
 
-def file_handler(name, level=logging.DEBUG):
+def file_handler(name, log_dir, level=logging.DEBUG):
     """
     Return a FileHandler that will write to a log file in the default location with a sensible name.
 
@@ -70,7 +70,7 @@ def file_handler(name, level=logging.DEBUG):
     -------
     logging.FileHandler
     """
-    fh = logging.FileHandler(os.path.join(LOG_DIR, '.'.join([name.replace('/', '.'), time.strftime('%Y-%m-%d_%H%M%S'),
+    fh = logging.FileHandler(os.path.join(log_dir, '.'.join([name.replace('/', '.'), time.strftime('%Y-%m-%d_%H%M%S'),
                                                              'log'])))
     fh.setFormatter(long_formatter)
     fh.setLevel(level)

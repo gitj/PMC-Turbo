@@ -3,10 +3,15 @@ import multiprocessing as mp
 import os
 import tempfile
 import time
+
+import errno
 import numpy as np
 from Queue import Empty as EmptyException
+from traitlets.config import Configurable
+from traitlets import (Bool, Int, List, Unicode,Tuple, Bytes)
 
 from pmc_turbo.utils.error_counter import CounterCollection
+from pmc_turbo.utils.configuration import GlobalConfiguration
 from pmc_turbo.camera.pycamera.dtypes import frame_info_dtype
 
 logger = logging.getLogger(__name__)
@@ -37,27 +42,33 @@ camera_status_columns = ["total_frames", "camera_timestamp_offset", "main_temper
                          "StreamAnnouncedBufferCount", "StreamBytesPerSecond",
                          "StreamHoldEnable", "StreamID", "StreamType", "TriggerMode", "TriggerSource"]
 
-LOG_DIR = '/home/pmc/logs/housekeeping/camera'
-COUNTER_DIR = '/home/pmc/logs/counters'
+class AcquireImagesProcess(GlobalConfiguration):
+    use_simulated_camera = Bool(False).tag(config=True)
+    camera_housekeeping_subdir = Unicode('camera').tag(config=True)
+    acquire_counters_name = Unicode('acquire_images').tag(config=True)
+    camera_ip_address = Bytes("10.0.0.2").tag(config=True)
+    initial_camera_configuration = List(trait=Tuple(Bytes(), Bytes()),
+                                        default_value=[("PtpMode", "Slave"),
+                                                       ("ChunkModeActive", "1"),
+                                                       ("AcquisitionFrameCount", "2"),
+                                                       ('AcquisitionMode', "MultiFrame"),
+                                                       ("StreamFrameRateConstrain", "0"),
+                                                       ('AcquisitionFrameRateAbs', "6.25"),
+                                                       ('TriggerSource', 'FixedRate'),
+                                                       ('ExposureTimeAbs', "100000"),
+                                                       ('EFLensFocusCurrent', "4800")]).tag(config=True)
 
-
-class AcquireImagesProcess:
     def __init__(self, raw_image_buffers, acquire_image_output_queue, acquire_image_input_queue,
-                 command_queue, command_result_queue, info_buffer, status, use_simulated_camera, uri, log_dir=LOG_DIR,
-                 counter_dir=COUNTER_DIR):
+                 command_queue, command_result_queue, info_buffer, status, uri, **kwargs):
+        super(AcquireImagesProcess,self).__init__(**kwargs)
         self.data_buffers = raw_image_buffers
         self.input_queue = acquire_image_input_queue
         self.output_queue = acquire_image_output_queue
         self.command_queue = command_queue
         self.command_result_queue = command_result_queue
         self.info_buffer = info_buffer
-        self.use_simulated_camera = use_simulated_camera
         self.uri = uri
-        self.counter_dir = counter_dir
-        if self.use_simulated_camera:
-            self.log_dir = tempfile.mkdtemp("simulated_camera_logs")
-        else:
-            self.log_dir = log_dir
+        self.camera_housekeeping_dir = os.path.join(self.housekeeping_dir,self.camera_housekeeping_subdir)
         self.status = status
         self.status.value = "starting"
         self.status_log_filename = None
@@ -70,11 +81,14 @@ class AcquireImagesProcess:
 
     def create_log_file(self, columns):
         try:
-            os.makedirs(self.log_dir)
-        except OSError:
-            pass
+            os.makedirs(self.camera_housekeeping_dir)
+        except OSError as e:
+            if e.errno == errno.EEXIST and os.path.isdir(self.camera_housekeeping_dir):
+                pass
+            else:
+                logger.exception("Could not create housekeeping directory %s" % self.camera_housekeeping_dir)
 
-        self.status_log_filename = os.path.join(self.log_dir, (time.strftime('%Y-%m-%d_%H%M%S.csv')))
+        self.status_log_filename = os.path.join(self.camera_housekeeping_dir, (time.strftime('%Y-%m-%d_%H%M%S.csv')))
         self.status_log_file = open(self.status_log_filename, 'a')
         self.status_log_file.write('# %s %s %s %s\n' %
                                    (self.pc.get_parameter("DeviceModelName"),
@@ -108,7 +122,7 @@ class AcquireImagesProcess:
     def run(self):
         self.pipeline = Pyro4.Proxy(uri=self.uri)
         self.pipeline._pyroTimeout = 0
-        self.counters = CounterCollection('acquire_images', self.counter_dir)
+        self.counters = CounterCollection(self.acquire_counters_name, self.counters_dir)
         self.counters.camera_armed.reset()
         self.counters.buffer_queued.reset()
         self.counters.error_queuing_buffer.reset()
@@ -125,16 +139,10 @@ class AcquireImagesProcess:
         frame_number = 0
         from pmc_turbo import camera
         self.status.value = "initializing camera"
-        self.pc = camera.PyCamera("10.0.0.2", use_simulated_camera=self.use_simulated_camera)
-        self.pc.set_parameter("PtpMode", "Slave")
-        self.pc.set_parameter("ChunkModeActive", "1")
-        self.pc.set_parameter("AcquisitionFrameCount", "2")
-        self.pc.set_parameter('AcquisitionMode', "MultiFrame")
-        self.pc.set_parameter("StreamFrameRateConstrain", "0")
-        self.pc.set_parameter('AcquisitionFrameRateAbs', "6.25")
-        self.pc.set_parameter('TriggerSource', 'FixedRate')
-        self.pc.set_parameter('ExposureTimeAbs', "100000")
-        self.pc.set_parameter('EFLensFocusCurrent', "4800")
+        self.pc = camera.PyCamera(self.camera_ip_address, use_simulated_camera=self.use_simulated_camera)
+        for name,value in self.initial_camera_configuration:
+            self.pc.set_parameter(name,value)
+
         self.payload_size = int(self.pc.get_parameter('PayloadSize'))
         logger.debug("payload size: %d" % self.payload_size)
 

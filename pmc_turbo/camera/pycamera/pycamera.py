@@ -17,7 +17,7 @@ class PyCamera():
                 raise ImportError(
                     e.message + "\n* This error likely indicates that the _pyvimba.so file cannot be found.\n* Usually this is because 'make' needs to be run in the _pyvimba directory.")
 
-        self._pc = _PyCamera(ip=ip, num_buffers=num_buffers)
+        self._pc = _PyCamera(ip=str(ip), num_buffers=num_buffers)
         self._num_buffers = num_buffers
         self.exposure_counts = 0
         self.parameter_names = self._pc.get_parameter_names()
