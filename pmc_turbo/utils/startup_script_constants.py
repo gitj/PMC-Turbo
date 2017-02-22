@@ -11,8 +11,6 @@ CONTROLLER_IP = 50001
 CONTROLLER_NAME = 'image'
 
 CAM_ID = camera_id.get_camera_id()
-if CAM_ID == 255:
-    raise ValueError('CAM_ID is 255 - error in get_camera_id')
 
 if CAM_ID == 0:
     LEADER = True
