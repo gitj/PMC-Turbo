@@ -1,6 +1,6 @@
 from nose.tools import assert_raises
 
-from pmc_turbo.utils import log
+from pmc_turbo.utils import log, configuration
 
 
 def test_git_functions():
@@ -10,13 +10,13 @@ def test_git_functions():
     log.git_log()
 
 def test_log_functions():
-    log.LOG_DIR = '/tmp'
+    LOG_DIR = '/tmp'
     num_handlers = len(log.pmc_turbo_logger.handlers)
     log.setup_stream_handler()
-    log.setup_file_handler('pipeline')
-    log.setup_file_handler('controller')
-    log.setup_file_handler('communicator')
-    log.setup_file_handler('gse_receiver')
+    log.setup_file_handler('pipeline',log_dir=LOG_DIR)
+    log.setup_file_handler('controller',log_dir=LOG_DIR)
+    log.setup_file_handler('communicator',log_dir=LOG_DIR)
+    log.setup_file_handler('gse_receiver',log_dir=LOG_DIR)
     with assert_raises(ValueError):
         log.setup_file_handler('unknown')
     log.setup_file_handler('known_unknown', logger=log.pmc_turbo_logger)
