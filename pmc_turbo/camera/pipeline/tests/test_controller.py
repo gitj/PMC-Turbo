@@ -15,40 +15,19 @@ from pmc_turbo.camera.pipeline import basic_pipeline
 from pmc_turbo.camera.pipeline import controller
 from pmc_turbo.communication.file_format_classes import decode_file_from_buffer, GeneralFile, JPEGFile, ShellCommandFile
 
-from pmc_turbo.utils.configuration import default_config_dir
-
-print "default config dir",default_config_dir
-basic_config = load_pyconfig_files(['no_hardware.py'], default_config_dir)
-assert basic_config
-print "loaded config",basic_config
-
-def setup_module():
-    disk_dirs = [tempfile.mkdtemp() for k in range(4)]
-    basic_config.GlobalConfiguration.log_dir = tempfile.mkdtemp()
-
-    basic_config.GlobalConfiguration.housekeeping_dir = os.path.join(basic_config.GlobalConfiguration.log_dir,'housekeeping')
-    basic_config.GlobalConfiguration.counters_dir = os.path.join(basic_config.GlobalConfiguration.log_dir,'counters')
-    basic_config.BasicPipeline.disks_to_use = disk_dirs
-
-def teardown_module():
-    shutil.rmtree(basic_config.GlobalConfiguration.log_dir)
-    for disk_dir in basic_config.BasicPipeline.disks_to_use:
-        shutil.rmtree(disk_dir)
+from pmc_turbo.utils.tests.test_config import BasicTestHarness
 
 test_data_path = os.path.join(os.path.split(os.path.abspath(__file__))[0],'test_data')
 test_pipeline_port = 47563
 
-class TestMultiIndex(object):
+class TestMultiIndex(BasicTestHarness):
     def setup(self):
+        super(TestMultiIndex,self).setup()
         self.top_dir = tempfile.mkdtemp('server_test')
-        self.data_dirs = [os.path.join(self.top_dir,'data%d' %k) for k in range(1,5)]
-        #print self.data_dirs
-        for data_dir in self.data_dirs:
-            os.mkdir(data_dir)
         self.all_subdirs = ['lost+found','2016-10-25_195422',
                            '2016-11-29_112233',
                            '2016-12-08_231459','2016-12-20_100727']
-        for data_dir in self.data_dirs:
+        for data_dir in self.basic_config.GlobalConfiguration.data_directories:
             for subdir in self.all_subdirs:
                 subdir_path = os.path.join(data_dir,subdir)
                 os.mkdir(subdir_path)
@@ -62,7 +41,7 @@ class TestMultiIndex(object):
         with open(self.general_filename,'w') as fh:
             fh.write(self.general_file_contents)
             
-        self.controller_no_pipeline = controller.Controller(pipeline=None, data_dirs=self.data_dirs, counter_dir=self.top_dir)
+        self.controller_no_pipeline = controller.Controller(pipeline=None, config=self.basic_config)
 
         
 
@@ -70,18 +49,18 @@ class TestMultiIndex(object):
         shutil.rmtree(self.top_dir,ignore_errors=True)
 
     def test_all_data(self):
-        for k,data_dir in enumerate(self.data_dirs):
+        for k,data_dir in enumerate(self.basic_config.GlobalConfiguration.data_directories):
             shutil.copy(os.path.join(test_data_path,('index_%d.csv' % (k+1))),
                         os.path.join(data_dir,self.subdir,'index.csv'))
-        mi = pmc_turbo.camera.pipeline.indexer.MergedIndex(subdirectory_name=self.subdir, data_dirs=self.data_dirs)
+        mi = pmc_turbo.camera.pipeline.indexer.MergedIndex(subdirectory_name=self.subdir, data_dirs=self.basic_config.GlobalConfiguration.data_directories)
         result = mi.get_latest(update=True)
         assert result['frame_id'] == 422
         assert mi.get_index_of_timestamp(1482246746.160007500) == 416
-        for k,data_dir in enumerate(self.data_dirs):
+        for k,data_dir in enumerate(self.basic_config.GlobalConfiguration.data_directories):
             open(os.path.join(data_dir,self.subdir,'index.csv'),'w').close()
 
     def test_controller_basic_function(self):
-        config = copy.deepcopy(basic_config)
+        config = copy.deepcopy(self.basic_config)
         config.BasicPipeline.default_write_enable=1
         bpl = basic_pipeline.BasicPipeline(config=config)
 
@@ -90,16 +69,16 @@ class TestMultiIndex(object):
         thread.daemon=True
         thread.start()
         time.sleep(1)
-        sis = controller.Controller(pipeline=bpl, data_dirs=self.data_dirs, counter_dir=self.top_dir)
+        sis = controller.Controller(pipeline=bpl, config=config)
         sis.run_focus_sweep(request_params=dict())
         time.sleep(1)
         sis.check_for_completed_commands()
         bpl.close()
         
     def test_controller_get_image(self):
-        config = copy.deepcopy(basic_config)
+        config = copy.deepcopy(self.basic_config)
         config.BasicPipeline.default_write_enable=1
-        config.BasicPipeline.disks_to_use = self.data_dirs
+        config.BasicPipeline.disks_to_use = self.basic_config.GlobalConfiguration.data_directories
         bpl = basic_pipeline.BasicPipeline(config=config)
 
         bpl.initialize()
@@ -107,9 +86,9 @@ class TestMultiIndex(object):
         thread.daemon=True
         thread.start()
         time.sleep(1)
-#        for dd in self.data_dirs:
+#        for dd in self.basic_config.GlobalConfiguration.data_directories:
 #            print subprocess.check_output(("ls -Rhl %s" % dd),shell=True)
-        sis = controller.Controller(pipeline=bpl, data_dirs=self.data_dirs, counter_dir=self.top_dir)
+        sis = controller.Controller(pipeline=bpl, config=config)
         if sis.merged_index.df is None:
             bpl.close()
             raise Exception("No index!!!")

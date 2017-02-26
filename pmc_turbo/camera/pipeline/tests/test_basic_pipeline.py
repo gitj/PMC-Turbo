@@ -22,7 +22,7 @@ def setup_module():
 
     basic_config.GlobalConfiguration.housekeeping_dir = os.path.join(basic_config.GlobalConfiguration.log_dir,'housekeeping')
     basic_config.GlobalConfiguration.counters_dir = os.path.join(basic_config.GlobalConfiguration.log_dir,'counters')
-    basic_config.BasicPipeline.disks_to_use = disk_dirs
+    basic_config.GlobalConfiguration.data_directories = disk_dirs
 
 def teardown_module():
     shutil.rmtree(basic_config.GlobalConfiguration.log_dir)

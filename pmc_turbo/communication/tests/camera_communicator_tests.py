@@ -9,6 +9,7 @@ from pmc_turbo.communication import packet_classes
 
 from pmc_turbo.camera.pipeline import controller
 from pmc_turbo.communication import camera_communicator
+from pmc_turbo.utils.tests.test_config import BasicTestHarness
 
 counter_dir = ''
 
@@ -31,33 +32,34 @@ def test_valid_command_table():
     cc.validate_command_table()
 
 
-def test_basic_command_path():
-    cont = controller.Controller(None, counter_dir=counter_dir)
-    cc1 = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, leader=True, start_pyro=False,
-                                           base_port=FAKE_BASE_PORT)
-    cc2 = camera_communicator.Communicator(cam_id=1, peers=[], controller=None, leader=True, start_pyro=False,
-                                           base_port=FAKE_BASE_PORT)
-    cc1.controller = cont
-    cc2.controller = cont
-    cc1.peers = [cc1, cc2]
-    cc1.destination_lists = {0: [cc1], 1: [cc2]}
-    command = command_table.command_manager.set_focus(focus_step=1000)
-    command_packet = packet_classes.CommandPacket(payload=command, sequence_number=1, destination=1)
-    cc1.execute_packet(command_packet.to_buffer())
+class TestCommunicator(BasicTestHarness):
+    def test_basic_command_path(self):
+        cont = controller.Controller(None, config=self.basic_config)
+        cc1 = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, leader=True, start_pyro=False,
+                                               base_port=FAKE_BASE_PORT)
+        cc2 = camera_communicator.Communicator(cam_id=1, peers=[], controller=None, leader=True, start_pyro=False,
+                                               base_port=FAKE_BASE_PORT)
+        cc1.controller = cont
+        cc2.controller = cont
+        cc1.peers = [cc1, cc2]
+        cc1.destination_lists = {0: [cc1], 1: [cc2]}
+        command = command_table.command_manager.set_focus(focus_step=1000)
+        command_packet = packet_classes.CommandPacket(payload=command, sequence_number=1, destination=1)
+        cc1.execute_packet(command_packet.to_buffer())
 
-    bad_buffer = command_packet.to_buffer()[:-2] + 'AA'
-    cc1.execute_packet(bad_buffer)
+        bad_buffer = command_packet.to_buffer()[:-2] + 'AA'
+        cc1.execute_packet(bad_buffer)
 
-    bad_crc_buffer = command_packet.to_buffer()[:-2] + 'A\x03'
-    cc1.execute_packet(bad_crc_buffer)
+        bad_crc_buffer = command_packet.to_buffer()[:-2] + 'A\x03'
+        cc1.execute_packet(bad_crc_buffer)
 
-    cc1.execute_packet('bad packet')
+        cc1.execute_packet('bad packet')
 
-    non_existant_command = '\xfe' + command
-    cc1.execute_packet(packet_classes.CommandPacket(payload=non_existant_command, sequence_number=1,
-                                                    destination=1).to_buffer())
+        non_existant_command = '\xfe' + command
+        cc1.execute_packet(packet_classes.CommandPacket(payload=non_existant_command, sequence_number=1,
+                                                        destination=1).to_buffer())
 
-    # command = command_table.command_manager.
+        # command = command_table.command_manager.
 
 
 class FakeLowrateUplink():

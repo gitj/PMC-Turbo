@@ -8,6 +8,7 @@ from functools import wraps
 
 import Pyro4
 import Pyro4.errors
+from traitlets import (Unicode, Int, Float, List, Tuple)
 
 from pmc_turbo.camera.image_processing.blosc_file import load_blosc_image
 from pmc_turbo.camera.image_processing.jpeg import simple_jpeg
@@ -16,11 +17,9 @@ from pmc_turbo.camera.pipeline.write_images import index_keys
 from pmc_turbo.communication import file_format_classes
 from pmc_turbo.utils.error_counter import CounterCollection
 from pmc_turbo.utils.camera_id import get_camera_id
+from pmc_turbo.utils.configuration import GlobalConfiguration
 
 logger = logging.getLogger(__name__)
-
-Pyro4.config.SERIALIZER = 'pickle'
-Pyro4.config.SERIALIZERS_ACCEPTED = ['pickle', ]
 
 DEFAULT_REQUEST_ID = 2 ** 32 - 1
 
@@ -46,18 +45,18 @@ def require_pipeline(func):
 
 
 @Pyro4.expose
-class Controller(object):
-    def __init__(self, pipeline, data_dirs=DEFAULT_DATA_DIRS, gate_time_error_threshold=2e-3, counter_dir='/home/pmc/logs/counters'):
-        self.data_dirs = data_dirs
+class Controller(GlobalConfiguration):
+    gate_time_error_threshold = Float(2e-3,min=0).tag(config=True)
+    def __init__(self, pipeline, **kwargs):
+        super(Controller,self).__init__(**kwargs)
         self.pipeline = pipeline
-        self.gate_time_error_threshold = gate_time_error_threshold
         self.latest_image_subdir = ''
         self.merged_index = None
         self.downlink_queue = []
         self.outstanding_command_tags = {}
         self.completed_command_tags = {}
 
-        self.counters = CounterCollection('controller',counter_dir)
+        self.counters = CounterCollection('controller',self.counters_dir)
         self.counters.set_focus.reset()
         self.counters.set_exposure.reset()
         self.counters.send_arbitrary_command.reset()
@@ -128,7 +127,7 @@ class Controller(object):
 
     def update_current_image_dirs(self):
         all_dirs = []
-        for data_dir in self.data_dirs:
+        for data_dir in self.data_directories:
             image_dirs = [os.path.split(x)[1] for x in glob.glob(os.path.join(data_dir, '20*'))]
             all_dirs.extend(image_dirs)
         all_dirs = list(set(all_dirs))  # get just the unique names
@@ -137,7 +136,7 @@ class Controller(object):
         try:
             latest = all_dirs[-1]
         except IndexError:
-            logger.warning("No data directories found under %r" % self.data_dirs)
+            logger.warning("No data directories found under %r" % self.data_directories)
             self.merged_index = None
             self.latest_image_subdir = ''
             return
@@ -145,7 +144,7 @@ class Controller(object):
         if latest != self.latest_image_subdir:
             logger.info("Found new image directory %s" % latest)
             self.latest_image_subdir = latest
-            self.merged_index = MergedIndex(self.latest_image_subdir, data_dirs=self.data_dirs)
+            self.merged_index = MergedIndex(self.latest_image_subdir, data_dirs=self.data_directories)
 
     def get_latest_fileinfo(self):
         if self.merged_index is None:

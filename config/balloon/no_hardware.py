@@ -1,6 +1,5 @@
 # Basic configuration for running with no hardware
-from traitlets.config import get_config
-#c = get_config()
+
 #------------------------------------------------------------------------------
 # GlobalConfiguration(Configurable) configuration
 #------------------------------------------------------------------------------

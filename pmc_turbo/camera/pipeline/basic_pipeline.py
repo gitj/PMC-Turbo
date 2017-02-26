@@ -47,7 +47,6 @@ logger = logging.getLogger(__name__)
 @Pyro4.expose
 class BasicPipeline(GlobalConfiguration):
     num_data_buffers = Int(16).tag(config=True)
-    disks_to_use = List(trait=Unicode,default_value=['/data1','/data2','/data3','/data4']).tag(config=True)
     default_write_enable = Int(1, help="Initial value for disk write enable flag. If nonzero, start writing to disk immediately").tag(config=True)
 
     def initialize(self):
@@ -84,10 +83,10 @@ class BasicPipeline(GlobalConfiguration):
         # We can also use such things for other state (i.e. camera or birger state, or other housekeeping) if
         # desired, but that might unecessarily complicate things
         self.acquire_status = mp.Array(ctypes.c_char,32)
-        self.disk_statuses = [mp.Array(ctypes.c_char,32) for disk in self.disks_to_use]
-        num_writers = len(self.disks_to_use)
+        self.disk_statuses = [mp.Array(ctypes.c_char,32) for disk in self.data_directories]
+        num_writers = len(self.data_directories)
 
-        self.disk_write_enables = [mp.Value(ctypes.c_int32) for disk in self.disks_to_use]
+        self.disk_write_enables = [mp.Value(ctypes.c_int32) for disk in self.data_directories]
         for enable in self.disk_write_enables:
             enable.value=int(self.default_write_enable)
 
@@ -109,7 +108,7 @@ class BasicPipeline(GlobalConfiguration):
             WriteImageProcess(input_buffers=self.raw_image_buffers, input_queue=self.acquire_image_output_queue,
                               output_queue=self.acquire_image_input_queue, info_buffer=self.info_buffer,
                               status=self.disk_statuses[k], output_dir=output_dir,
-                              available_disks=[self.disks_to_use[k]], write_enable=self.disk_write_enables[k])
+                              available_disks=[self.data_directories[k]], write_enable=self.disk_write_enables[k])
             for k in range(num_writers)]
 
         self.acquire_images = AcquireImagesProcess(raw_image_buffers=self.raw_image_buffers,
