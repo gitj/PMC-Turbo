@@ -130,6 +130,7 @@ class AcquireImagesProcess(GlobalConfiguration):
         self.counters.parameter_set.reset()
         self.counters.command_non_zero_result.reset()
         self.counters.waiting_for_buffer.reset()
+        self.counters.waiting_for_buffer.lazy = True # This gets incremented several times per second, so no need to record every event
         self.counters.buffer_filled.reset()
         self.counters.getting_parameters.reset()
         self.counters.waiting.reset()
