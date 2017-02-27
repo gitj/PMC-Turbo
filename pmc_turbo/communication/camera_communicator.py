@@ -109,7 +109,6 @@ class Communicator(GlobalConfiguration):
         self.destination_lists[command_table.DESTINATION_ALL_CAMERAS] = self.peers
 
         self.setup_links()
-        self.setup_pyro_daemon()
 
     def validate_command_table(self):
         """

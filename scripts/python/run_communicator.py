@@ -50,6 +50,7 @@ class CommunicatorApp(Application):
                                                                           startup_script_constants.JSON_PATHS,
                                                                           startup_script_constants.JSON_RANGE_PATHS)
         self.communicator.add_status_group(group)
+        self.communicator.setup_pyro_daemon()
         self.communicator.start_pyro_thread()
         self.communicator.main_loop()
 

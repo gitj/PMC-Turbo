@@ -10,7 +10,7 @@ from pmc_turbo.communication import packet_classes
 from pmc_turbo.camera.pipeline import controller
 from pmc_turbo.communication import camera_communicator
 from pmc_turbo.utils.tests.test_config import BasicTestHarness
-
+from copy import deepcopy
 
 counter_dir = ''
 
@@ -27,23 +27,26 @@ def teardown():
     shutil.rmtree(counter_dir)
 
 
-def test_valid_command_table():
-    basic_config = load_pyconfig_files(['no_hardware.py'], default_config_dir)
-    config = basic_config.copy()
-    config.Communicator.lowrate_link_parameters = [(('pmc-serial-1', 6501), 6501)]
-    cc = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, leader=True, start_pyro=False,
-                                          base_port=FAKE_BASE_PORT, config=config)
-    cc.validate_command_table()
-    cc.close()
-
-
 class TestCommunicator(BasicTestHarness):
+    def test_valid_command_table(self):
+        config = deepcopy(self.basic_config)
+        config.Communicator.lowrate_link_parameters = [(('localhost', 6501), 6501)]
+        cc = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, leader=True, start_pyro=False,
+                                              base_port=FAKE_BASE_PORT, config=config)
+        cc.validate_command_table()
+        cc.close()
+
     def test_basic_command_path(self):
         cont = controller.Controller(pipeline=None, config=self.basic_config)
+        config1 = deepcopy(self.basic_config)
+        config1.Communicator.lowrate_link_parameters = [(('localhost', 6501), 6501)]
         cc1 = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, leader=True, start_pyro=False,
-                                               base_port=FAKE_BASE_PORT)
+                                               base_port=FAKE_BASE_PORT, config=config1)
+
+        config2 = deepcopy(self.basic_config)
+        config2.Communicator.lowrate_link_parameters = [(('localhost', 6601), 6601)]
         cc2 = camera_communicator.Communicator(cam_id=1, peers=[], controller=None, leader=True, start_pyro=False,
-                                               base_port=FAKE_BASE_PORT)
+                                               base_port=FAKE_BASE_PORT, config=config2)
         cc1.controller = cont
         cc2.controller = cont
         cc1.peers = [cc1, cc2]
@@ -63,6 +66,9 @@ class TestCommunicator(BasicTestHarness):
         non_existant_command = '\xfe' + command
         cc1.execute_packet(packet_classes.CommandPacket(payload=non_existant_command, sequence_number=1,
                                                         destination=1).to_buffer())
+
+        cc1.close()
+        cc2.close()
 
         # command = command_table.command_manager.
 
@@ -116,19 +122,18 @@ class FakeStatusGroup():
         return
 
 
-class NoPeersTest(unittest.TestCase):
-    def setUp(self):
-        basic_config = load_pyconfig_files(['no_hardware.py'], default_config_dir)
-        config = basic_config.copy()
+class TestNoPeers(BasicTestHarness):
+    def setup(self):
+        super(TestNoPeers, self).setup()
+        config = self.basic_config.copy()
         config.Communicator.lowrate_link_parameters = [(('pmc-serial-1', 6501), 6501)]
         self.base_port = FAKE_BASE_PORT
         self.c = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, leader=True,
                                                   base_port=self.base_port, config=config)
 
-
-    def tearDown(self):
+    def teardown(self):
+        super(TestNoPeers, self).teardown()
         self.c.close()
-
 
     def get_bytes_test(self):
         self.c.lowrate_uplink = FakeLowrateUplink()
@@ -150,24 +155,27 @@ class NoPeersTest(unittest.TestCase):
         assert (msg == ('\xff' * 255))
 
 
-class PeersTest(unittest.TestCase):
-    def setUp(self):
+class TestPeers(BasicTestHarness):
+    def setup(self):
+        super(TestPeers, self).setup()
         # Set up port manually.
-        basic_config = load_pyconfig_files(['no_hardware.py'], default_config_dir)
-        config = basic_config.copy()
+        config = self.basic_config.copy()
         config.Communicator.lowrate_link_parameters = [(("pmc-serial-1", 6501), 6501)]
         self.base_port = FAKE_BASE_PORT
         proxy = Pyro4.Proxy('PYRO:communicator@0.0.0.0:%d' % (self.base_port + 1))
         self.c = camera_communicator.Communicator(cam_id=0, peers=[proxy], controller=None, leader=True,
                                                   base_port=self.base_port, config=config)
-
+        self.c.setup_pyro_daemon()
 
         self.c.file_id = 0
         config.Communicator.lowrate_link_parameters = [(("pmc-serial-1", 6601), 6601)]
         self.peer = camera_communicator.Communicator(cam_id=1, peers=[], controller=None, leader=True,
                                                      base_port=(self.base_port + 1), config=config)
+        self.peer.setup_pyro_daemon()
+        self.peer.start_pyro_thread()
 
-    def tearDown(self):
+    def teardown(self):
+        super(TestPeers, self).teardown()
         self.c.close()
         self.peer.close()
 
