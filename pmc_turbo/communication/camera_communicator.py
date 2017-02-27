@@ -82,7 +82,7 @@ class Communicator(GlobalConfiguration):
                     raise Exception("Invalid controller argument; must be URI string, URI object, or controller class")
         else:
             if self.use_controller:
-                controller_uri = 'PYRO:image@%s:%d' % ('0.0.0.0', self.controller_pyro_port)
+                controller_uri = 'PYRO:controller@%s:%d' % ('0.0.0.0', self.controller_pyro_port)
                 self.controller = Pyro4.Proxy(controller_uri)
 
         self.peer_polling_order_idx = 0
@@ -92,7 +92,7 @@ class Communicator(GlobalConfiguration):
         self.status_groups = []
 
         peer_error_strings = [('pmc_%d_communication_error_counts' % i) for i in range(len(self.peers))]
-        self.error_counter = error_counter.CounterCollection('communication_errors', '/tmp/logs/',
+        self.error_counter = error_counter.CounterCollection('communication_errors', self.counters_dir,
                                                              'controller_communication_error_counts',
                                                              *peer_error_strings)
 
@@ -156,7 +156,7 @@ class Communicator(GlobalConfiguration):
         self.file_id = 0
         print self.lowrate_link_parameters
         self.lowrate_uplink = uplink_classes.Uplink(self.lowrate_link_parameters[0][1])
-        self.lowrate_downlink = downlink_classes.LowrateDownlink(*self.lowrate_link_parameters[0])
+        self.lowrate_downlink = downlink_classes.LowrateDownlink(*self.lowrate_link_parameters[0][0])
         self.downlinks = []
         for name, (address, port), initial_rate in self.hirate_link_parameters:
             self.downlinks.append(downlink_classes.HirateDownlink(ip=address, port=port,

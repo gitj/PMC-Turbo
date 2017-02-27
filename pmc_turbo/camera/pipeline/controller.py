@@ -79,6 +79,7 @@ class Controller(GlobalConfiguration):
     def setup_pyro_daemon(self):
         self.daemon = Pyro4.Daemon(host='0.0.0.0', port=self.controller_pyro_port)
         uri = self.daemon.register(self, "controller")
+        print uri
 
     def main_loop(self):
         events, _, _ = select.select(self.daemon.sockets, [], [], self.main_loop_interval)

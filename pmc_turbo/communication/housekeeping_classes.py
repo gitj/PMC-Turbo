@@ -319,7 +319,7 @@ class FloatStatusItem():
             self.unscaled_value = float(value_dict[self.column_name])
             self.value = self.unscaled_value * self.scaling
         self.epoch = float(value_dict['epoch'])
-        logger.debug('Item %r updated with value %r' % (self.name, self.value))
+        #logger.debug('Item %r updated with value %r' % (self.name, self.value)) # This is too much logging
 
     def get_status_summary(self):
         if self.silenced:
@@ -358,7 +358,7 @@ class StringStatusItem():
         if self.column_name in value_dict:
             self.value = str(value_dict[self.column_name])
             self.epoch = float(value_dict['epoch'])
-            logger.debug('Item %r updated with value %r' % (self.name, self.value))
+            # logger.debug('Item %r updated with value %r' % (self.name, self.value)) # Too much logging.
 
     def get_status_summary(self):
         if self.silenced:

@@ -34,6 +34,7 @@ class CommunicatorApp(Application):
             print 'loading config: ', self.config_dir, self.config_file
             self.load_config_file(self.config_file, path=self.config_dir)
         #self.update_config(basic_config)
+        print self.config
         cam_id = camera_id.get_camera_id()
         base_port = self.address_book[cam_id][1]
         sorted_keys = self.address_book.keys()
