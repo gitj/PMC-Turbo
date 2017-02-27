@@ -1,0 +1,92 @@
+{
+    "controller_communication_error_counts": {
+        "class_type": "FloatStatusItem",
+        "column_name": "controller_communicator_error_counts",
+        "max_value": 2,
+        "mean_value": 2.0,
+        "min_value": 2,
+        "partial_glob": "/home/pmc/logs/counters/communication_errors_*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "pmc_0_communication_error_counts": {
+        "class_type": "FloatStatusItem",
+        "column_name": "pmc_0_communication_error_counts",
+        "max_value": 2,
+        "mean_value": 2.0,
+        "min_value": 2,
+        "partial_glob": "/home/pmc/logs/counters/communication_errors_*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "pmc_1_communication_error_counts": {
+        "class_type": "FloatStatusItem",
+        "column_name": "pmc_1_communication_error_counts",
+        "max_value": 2,
+        "mean_value": 2.0,
+        "min_value": 2,
+        "partial_glob": "/home/pmc/logs/counters/communication_errors_*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "pmc_2_communication_error_counts": {
+        "class_type": "FloatStatusItem",
+        "column_name": "pmc_2_communication_error_counts",
+        "max_value": 2,
+        "mean_value": 2.0,
+        "min_value": 2,
+        "partial_glob": "/home/pmc/logs/counters/communication_errors_*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "pmc_3_communication_error_counts": {
+        "class_type": "FloatStatusItem",
+        "column_name": "pmc_3_communication_error_counts",
+        "max_value": 2,
+        "mean_value": 2.0,
+        "min_value": 2,
+        "partial_glob": "/home/pmc/logs/counters/communication_errors_*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "pmc_4_communication_error_counts": {
+        "class_type": "FloatStatusItem",
+        "column_name": "pmc_4_communication_error_counts",
+        "max_value": 2,
+        "mean_value": 2.0,
+        "min_value": 2,
+        "partial_glob": "/home/pmc/logs/counters/communication_errors_*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "pmc_5_communication_error_counts": {
+        "class_type": "FloatStatusItem",
+        "column_name": "pmc_5_communication_error_counts",
+        "max_value": 2,
+        "mean_value": 2.0,
+        "min_value": 2,
+        "partial_glob": "/home/pmc/logs/counters/communication_errors_*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "pmc_6_communication_error_counts": {
+        "class_type": "FloatStatusItem",
+        "column_name": "pmc_6_communication_error_counts",
+        "max_value": 2,
+        "mean_value": 2.0,
+        "min_value": 2,
+        "partial_glob": "/home/pmc/logs/counters/communication_errors_*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    },
+    "pmc_7_communication_error_counts": {
+        "class_type": "FloatStatusItem",
+        "column_name": "pmc_7_communication_error_counts",
+        "max_value": 2,
+        "mean_value": 2.0,
+        "min_value": 2,
+        "partial_glob": "/home/pmc/logs/counters/communication_errors_*.csv",
+        "scaling_value": 1.0,
+        "std_value": 0.0
+    }
+}

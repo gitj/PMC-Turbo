@@ -26,7 +26,7 @@ Pyro4.config.SERVERTYPE = "multiplex"
 Pyro4.config.SERIALIZER = 'pickle'
 Pyro4.config.SERIALIZERS_ACCEPTED = ['pickle', ]
 # Caution: If COMMTIMEOUT is too low, camera communicator gets a timeout error when it requests data from another communicator.
-Pyro4.config.COMMTIMEOUT = 0.3
+Pyro4.config.COMMTIMEOUT = 1.5
 # Tests show COMMTIMEOUT works.
 # Note that there is another timeout POLLTIMEOUT
 # "For the multiplexing server only: the timeout of the select or poll calls"
@@ -41,7 +41,7 @@ END_BYTE = chr(constants.SIP_END_BYTE)
 
 @Pyro4.expose
 class Communicator(GlobalConfiguration):
-    initial_peer_polling_order = List(trait=Int, default_value=[0, 1, 2, 3, 4, 5, 6]).tag(config=True)
+    initial_peer_polling_order = List(trait=Int).tag(config=True)#, default_value=[0, 1, 2, 3, 4, 5, 6]).tag(config=True)
     loop_interval = Float(default_value=0.01, allow_none=False, min=0).tag(config=True)
     lowrate_link_parameters = List(trait=Tuple(TCPAddress(), Int(default_value=5001, min=1024, max=65535)),
                                    help='List of tuples - lowrate downlink address and lowrate uplink port.'
@@ -198,8 +198,8 @@ class Communicator(GlobalConfiguration):
                 next_data = None
                 active_peer = self.peers[self.peer_polling_order[self.peer_polling_order_idx]]
                 try:
-                    next_data = active_peer.get_next_data()
-
+                    if self.check_peer_connection(active_peer):
+                        next_data = active_peer.get_next_data()
                 except Pyro4.errors.CommunicationError as e:
                     active_peer_string = str(active_peer._pyroUri)
                     error_counter_key = 'pmc_%d_communication_error_counts' % self.peer_polling_order[
@@ -270,6 +270,24 @@ class Communicator(GlobalConfiguration):
         self.get_all_status_summaries()
         self.lowrate_downlink.send(self.buffer_for_downlink)
 
+    def check_peer_connection(self, peer):
+        initial_timeout = peer._pyroTimeout
+        try:
+            logger.debug("Pinging peer %r" % peer)
+            peer._pyroTimeout = 0.1
+            peer.ping()
+            return True
+        except Pyro4.errors.CommunicationError:
+            details = "Ping failure for peer %s" % (peer._pyroUri)
+            if False:
+                details += traceback.format_exc()
+                pyro_details = ''.join(Pyro4.util.getPyroTraceback())
+                details = details + pyro_details
+            logger.warning(details)
+            return False
+        finally:
+            peer._pyroTimeout = initial_timeout
+
     def process_science_command_packet(self, msg):
         try:
             command_packet = packet_classes.CommandPacket(buffer=msg)
@@ -318,12 +336,14 @@ class Communicator(GlobalConfiguration):
     def get_all_status_summaries(self):
         summary_dict = {}
         for i, peer in enumerate(self.peers):
-            try:
-                summary_dict[i] = peer.get_status_summary()
-                logger.debug('Received status summary from peer %d' % i)
-            except Pyro4.errors.CommunicationError:
-                logger.debug('Unable to connect to peer %d' % i)
-                pass
+            if self.check_peer_connection(peer):
+                try:
+                    summary_dict[i] = peer.get_status_summary()
+                    logger.debug('Received status summary from peer %d' % i)
+                except Pyro4.errors.CommunicationError:
+                    logger.debug('Unable to connect to peer %d' % i)
+
+
         camera_status = self.summarize_status_to_255_bytes(summary_dict)
         self.buffer_for_downlink = camera_status + self.buffer_for_downlink[len(camera_status):]
 

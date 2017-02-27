@@ -51,7 +51,7 @@ c.Communicator.hirate_link_parameters = [('TDRSS', ('pmc-serial-1', 5002), 700),
                                          ('Openport', ('192.168.1.70', 4501), 10000)]
 
 ##
-c.Communicator.initial_peer_polling_order = [0, 1, 2, 3, 4, 5, 6]
+c.Communicator.initial_peer_polling_order = [0, 1, 2, 3]#, 4, 5, 6]
 
 ##
 c.Communicator.loop_interval = 0.01

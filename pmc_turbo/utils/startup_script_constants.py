@@ -36,7 +36,7 @@ if True: # This is what we will want to use in flight
                  'PYRO:communicator@pmc-camera-6:40000',
                  'PYRO:communicator@pmc-camera-7:40000', ]
 
-PEER_POLLING_ORDER = [0, 1, 2, 3, 4, 5, 6, 7]
+#PEER_POLLING_ORDER = [0, 1, 2, 3, 4, 5, 6, 7]
 
 CONTROLLER_URI = 'PYRO:image@192.168.1.30:50001'
 
@@ -59,10 +59,12 @@ CSV_PATHS_AND_PREAMBLES = [('/home/pmc/camera_items.csv', '/var/lib/collectd/csv
                            ('/home/pmc/charge_controller_items.csv', ''), ]
 # ('/home/pmc/collectd_items.csv', '/var/lib/collectd/csv/*/')]
 
-JSON_PATHS = ['/home/pmc/pmchome/pmc-turbo/status_item_params/camera_items.json',]
-              #'/home/pmc/pmchome/pmc-turbo/status_item_params/charge_controller_items.json',
+JSON_PATHS = ['/home/pmc/pmchome/pmc-turbo/status_item_params/camera_items.json',
+              '/home/pmc/pmchome/pmc-turbo/status_item_params/charge_controller_items.json',
+              '/home/pmc/pmchome/pmc-turbo/status_item_params/counter_items.json']
               #'/home/pmc/pmchome/pmc-turbo/status_item_params/collectd_items.json']
-JSON_RANGE_PATHS = ['/home/pmc/pmchome/pmc-turbo/status_item_params/camera_items_ranges.json',]
-                    #'/home/pmc/pmchome/pmc-turbo/status_item_params/charge_controller_items_ranges.json',
+JSON_RANGE_PATHS = ['/home/pmc/pmchome/pmc-turbo/status_item_params/camera_items_ranges.json',
+                    '/home/pmc/pmchome/pmc-turbo/status_item_params/charge_controller_items_ranges.json',
+                    '/home/pmc/pmchome/pmc-turbo/status_item_params/counter_items_ranges.json']
                     #'/home/pmc/pmchome/pmc-turbo/status_item_params/collectd_items_ranges.json']
                     # TODO: Add preambles to the collectd_items like I did with the CSV preambles.
