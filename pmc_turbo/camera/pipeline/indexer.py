@@ -60,6 +60,7 @@ class IndexWatcher(object):
     def __init__(self, filename):
         self.filename = filename
         self.last_position = 0
+        self.last_modified = 0
         self.df = None
 
     def get_latest(self, update=True):
@@ -78,15 +79,18 @@ class IndexWatcher(object):
             names = None
             header = 0
         fragment = None
-        with open(self.filename) as fh:
-            fh.seek(self.last_position)
-            try:
-                fragment = pd.read_csv(fh, names=names, header=header)
-                if self.df is None:
-                    self.df = fragment
-            except ValueError:
-                pass
-            self.last_position = fh.tell()
+        modified = os.stat(self.filename).st_mtime
+        if modified != self.last_modified:
+            with open(self.filename) as fh:
+                fh.seek(self.last_position)
+                try:
+                    fragment = pd.read_csv(fh, names=names, header=header)
+                    if self.df is None:
+                        self.df = fragment
+                except ValueError:
+                    pass
+                self.last_position = fh.tell()
+            self.last_modified = modified
         return fragment
 
     def update(self):

@@ -74,7 +74,7 @@ class Controller(GlobalConfiguration):
 
         self.camera_id = get_camera_id()
         self.update_current_image_dirs()
-        self.set_standard_image_paramters()
+        self.set_standard_image_parameters()
 
     def setup_pyro_daemon(self):
         self.daemon = Pyro4.Daemon(host='0.0.0.0', port=self.controller_pyro_port)
@@ -140,39 +140,22 @@ class Controller(GlobalConfiguration):
                 continue
             row = self.merged_index.df.iloc[index]
             timestamp = row.frame_timestamp_ns / 1e9
-            if abs(gate_time - timestamp) < self.gate_time_error_threshold:
-                request_params = self.outstanding_command_tags.pop(tag)
-                _ = self.completed_command_tags.pop(tag)
-                logger.info("Command tag %f - %s:%s retired" % (tag, name, value))
-                logger.debug("Command %s:%s with request_params %r retired by image %r" % (name, value,
-                                                                                           request_params, dict(row)))
-                self.request_image_by_index(index, **request_params)
-            else:
+            if abs(gate_time - timestamp) > self.gate_time_error_threshold:
                 self.counters.gate_time_threshold_error.increment()
                 logger.warning("Command tag %f - %s:%s complete, but image timestamp %f does not match "
                                "gate_timestamp %f to within specified threshold %f. Is something wrong with PTP?"
                                % (tag, name, value, gate_time, timestamp, self.gate_time_error_threshold))
+            request_params = self.outstanding_command_tags.pop(tag)
+            _ = self.completed_command_tags.pop(tag)
+            logger.info("Command tag %f - %s:%s retired" % (tag, name, value))
+            logger.debug("Command %s:%s with request_params %r retired by image %r" % (name, value,
+                                                                                       request_params, dict(row)))
+            self.request_image_by_index(index, **request_params)
+
 
     def update_current_image_dirs(self):
-        all_dirs = []
-        for data_dir in self.data_directories:
-            image_dirs = [os.path.split(x)[1] for x in glob.glob(os.path.join(data_dir, '20*'))]
-            all_dirs.extend(image_dirs)
-        all_dirs = list(set(all_dirs))  # get just the unique names
-        all_dirs.sort()
-        logger.debug("Found these dirs: %r" % all_dirs)
-        try:
-            latest = all_dirs[-1]
-        except IndexError:
-            logger.warning("No data directories found under %r" % self.data_directories)
-            self.merged_index = None
-            self.latest_image_subdir = ''
-            return
-        logger.debug("latest: %r" % latest)
-        if latest != self.latest_image_subdir:
-            logger.info("Found new image directory %s" % latest)
-            self.latest_image_subdir = latest
-            self.merged_index = MergedIndex(self.latest_image_subdir, data_dirs=self.data_directories)
+        self.merged_index = MergedIndex('*', data_dirs=self.data_directories)
+
 
     def get_latest_fileinfo(self):
         if self.merged_index is None:
@@ -198,7 +181,7 @@ class Controller(GlobalConfiguration):
                                       num_rows=num_rows, num_columns=num_columns, scale_by=scale_by,
                                       **kwargs)
 
-    def set_standard_image_paramters(self, row_offset=0, column_offset=0, num_rows=3232, num_columns=4864,
+    def set_standard_image_parameters(self, row_offset=0, column_offset=0, num_rows=3232, num_columns=4864,
                                      scale_by=1 / 8., quality=75, format='jpeg'):
         self.standard_image_parameters = dict(row_offset=row_offset, column_offset=column_offset,
                                               num_rows=num_rows, num_columns=num_columns,
