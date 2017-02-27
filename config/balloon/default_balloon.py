@@ -1,6 +1,9 @@
 import os
 
-c.BasicPipeline.disks_to_use = ['/data1', '/data2', '/data3', '/data4']
+# noinspection PyUnresolvedReferences
+c = get_config()
+
+c.GlobalConfiguration.data_directories = ['/data1', '/data2', '/data3', '/data4']
 
 c.BasicPipeline.num_data_buffers = 16
 
