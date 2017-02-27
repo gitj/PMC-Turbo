@@ -7,6 +7,8 @@ import struct
 import threading
 import time
 import traceback
+from pmc_turbo.utils.configuration import GlobalConfiguration
+from traitlets import Int, Unicode, Bool, List, Float, Tuple, Bytes, TCPAddress, Dict
 
 import Pyro4
 import Pyro4.errors
@@ -38,8 +40,22 @@ END_BYTE = chr(constants.SIP_END_BYTE)
 
 
 @Pyro4.expose
-class Communicator():
-    def __init__(self, cam_id, peers, controller, leader, base_port=BASE_PORT, start_pyro=True, loop_interval=1):
+class Communicator(GlobalConfiguration):
+    initial_peer_polling_order = List(trait=Int, default_value=[0, 1, 2, 3, 4, 5, 6]).tag(config=True)
+    loop_interval = Float(default_value=0.01, allow_none=False, min=0).tag(config=True)
+    lowrate_link_parameters = List(trait=Tuple(TCPAddress(), Int(default_value=5001, min=1024, max=65535)),
+                                   help='List of tuples - lowrate downlink address and lowrate uplink port.'
+                                        'e.g. [(("pmc-serial-1", 5001), 5001), ...]').tag(config=True)
+    hirate_link_parameters = List(trait=Tuple(Bytes(), TCPAddress(), Int(min=0)),
+                                  help='List of types - hirate downlink name,'
+                                       'hirate downlink address,'
+                                       'hirate downlink downlink speed in bytes per second.'
+                                       'e.g. [("Openport", ("192.168.1.70", 4501), 10000), ...]').tag(config=True)
+    use_controller = Bool(default_value=True).tag(config=True)
+
+
+    def __init__(self, cam_id, peers, controller, leader, base_port=BASE_PORT, **kwargs):
+        super(Communicator, self).__init__(**kwargs)
         self.port = base_port  # + cam_id
         logger.debug('Communicator initialized')
         self.cam_id = cam_id
@@ -64,13 +80,16 @@ class Communicator():
                     self.controller = controller
                 else:
                     raise Exception("Invalid controller argument; must be URI string, URI object, or controller class")
+        else:
+            if self.use_controller:
+                controller_uri = 'PYRO:image@%s:%d' % ('0.0.0.0', self.controller_pyro_port)
+                self.controller = Pyro4.Proxy(controller_uri)
 
         self.peer_polling_order_idx = 0
-        self.peer_polling_order = [0]
+        self.peer_polling_order = self.initial_peer_polling_order
         self.synchronize_image_time_across_cameras = False
         self.end_loop = False
         self.status_groups = []
-        self.loop_interval = loop_interval
 
         peer_error_strings = [('pmc_%d_communication_error_counts' % i) for i in range(len(self.peers))]
         self.error_counter = error_counter.CounterCollection('communication_errors', '/tmp/logs/',
@@ -89,10 +108,8 @@ class Communicator():
         self.destination_lists = dict(enumerate([[peer] for peer in self.peers]))
         self.destination_lists[command_table.DESTINATION_ALL_CAMERAS] = self.peers
 
-        # We will instantiate these later
-        if start_pyro:
-            self.setup_pyro()
-            self.start_pyro_thread()
+        self.setup_links()
+        self.setup_pyro_daemon()
 
     def validate_command_table(self):
         """
@@ -122,32 +139,29 @@ class Communicator():
         try:
             self.lowrate_uplink.uplink_socket.close()
         except Exception:
+            print "cant's close"
             pass
         logger.debug('Communicator deleted')
 
-    def setup_pyro(self):
+    def setup_pyro_daemon(self):
         self.pyro_daemon = Pyro4.Daemon(host='0.0.0.0', port=self.port)
         uri = self.pyro_daemon.register(self, "communicator")
         print uri
 
-    def setup_links(self, sip_uplink_port, lowrate_downlink_ip, lowrate_downlink_port, tdrss_hirate_downlink_ip,
-                    tdrss_hirate_downlink_port, tdrss_downlink_speed, openport_downlink_ip, openport_downlink_port,
-                    openport_downlink_speed):
+    def setup_links(self):
+        # , sip_uplink_port, lowrate_downlink_ip, lowrate_downlink_port, tdrss_hirate_downlink_ip,
+        # tdrss_hirate_downlink_port, tdrss_downlink_speed, openport_downlink_ip, openport_downlink_port,
+        # openport_downlink_speed):
         self.sip_leftover_buffer = ''
         self.leftover_buffer = ''
-        self.lowrate_uplink = uplink_classes.Uplink(sip_uplink_port)
-        self.lowrate_downlink = downlink_classes.LowrateDownlink(lowrate_downlink_ip, lowrate_downlink_port)
-        self.tdrss_hirate_downlink = downlink_classes.HirateDownlink(tdrss_hirate_downlink_ip,
-                                                                     tdrss_hirate_downlink_port, tdrss_downlink_speed,
-                                                                     name='TDRSS')
-
-        self.openport_downlink = downlink_classes.HirateDownlink(openport_downlink_ip, openport_downlink_port,
-                                                                 openport_downlink_speed,
-                                                                 name='OpenPort')
-
-        self.downlinks = [self.tdrss_hirate_downlink,
-                          self.openport_downlink]  # Eventually this will also include Openport downlink
         self.file_id = 0
+        print self.lowrate_link_parameters
+        self.lowrate_uplink = uplink_classes.Uplink(self.lowrate_link_parameters[0][1])
+        self.lowrate_downlink = downlink_classes.LowrateDownlink(*self.lowrate_link_parameters[0])
+        self.downlinks = []
+        for name, (address, port), initial_rate in self.hirate_link_parameters:
+            self.downlinks.append(downlink_classes.HirateDownlink(ip=address, port=port,
+                                                                  speed_bytes_per_sec=initial_rate, name=name))
 
     ### Loops to continually be run
 

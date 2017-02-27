@@ -17,7 +17,7 @@ if CAM_ID == 0:
 else:
     LEADER = False
 
-if False:
+if False: # I use this for testing code on a single machine
     PEER_URIS = ['PYRO:communicator@0.0.0.0:40000',
                  'PYRO:communicator@0.0.0.0:40001',
                  'PYRO:communicator@0.0.0.0:40002',
@@ -26,7 +26,7 @@ if False:
                  'PYRO:communicator@0.0.0.0:40005',
                  'PYRO:communicator@0.0.0.0:40006',
                  'PYRO:communicator@0.0.0.0:40007']
-if True:
+if True: # This is what we will want to use in flight
     PEER_URIS = ['PYRO:communicator@0.0.0.0:40000',
                  'PYRO:communicator@pmc-camera-1:40000',
                  'PYRO:communicator@pmc-camera-2:40000',

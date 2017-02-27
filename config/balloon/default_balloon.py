@@ -1,13 +1,61 @@
 import os
 
-# noinspection PyUnresolvedReferences
-c = get_config()
-
-c.GlobalConfiguration.data_directories = ['/data1', '/data2', '/data3', '/data4']
+c.BasicPipeline.disks_to_use = ['/data1', '/data2', '/data3', '/data4']
 
 c.BasicPipeline.num_data_buffers = 16
 
 housekeeping_dir = '/home/pmc/logs/housekeeping'
 
 c.PipelineApp.housekeeping_dir = housekeeping_dir
-c.PipelineApp.counters_dir = os.path.join(housekeeping_dir,'counters')
+c.PipelineApp.counters_dir = os.path.join(housekeeping_dir, 'counters')
+
+# ------------------------------------------------------------------------------
+# CommunicatorApp(Application) configuration
+# ------------------------------------------------------------------------------
+
+c.Application.log_level = 0
+
+## This is an application.
+
+## Dict for mapping camera ID to Pyro address.e.g. {3: ("pmc-camera-3", 40000)}
+c.CommunicatorApp.address_book = {0: ('0.0.0.0', 40000), 1: ('pmc-camera-1', 40000),
+                                  2: ('pmc-camera-2', 40000), 3: ('pmc-camera-3', 40000),
+                                  4: ('pmc-camera-4', 40000), 5: ('pmc-camera-5', 40000),
+                                  6: ('pmc-camera-6', 40000), 7: ('pmc-camera-7', 40000)}
+
+c.GlobalConfiguration.controller_pyro_port = 50001
+
+##
+c.GlobalConfiguration.counters_dir = '/home/pmc/logs/counters'
+
+##
+c.GlobalConfiguration.housekeeping_dir = '/home/pmc/logs/housekeeping'
+
+##
+c.GlobalConfiguration.log_dir = '/home/pmc/logs'
+
+##
+c.GlobalConfiguration.pipeline_pyro_port = 50000
+
+# ------------------------------------------------------------------------------
+# Communicator(GlobalConfiguration) configuration
+# ------------------------------------------------------------------------------
+
+## List of types - hirate downlink name,hirate downlink address,hirate downlink
+#  downlink speed in bytes per second.e.g. [("Openport", ("192.168.1.70", 4501),
+#  10000), ...]
+c.Communicator.hirate_link_parameters = [('TDRSS', ('pmc-serial-1', 5002), 700),
+                                         ('Openport', ('192.168.1.70', 4501), 10000)]
+
+##
+c.Communicator.initial_peer_polling_order = [0, 1, 2, 3, 4, 5, 6]
+
+##
+c.Communicator.loop_interval = 0.01
+
+## List of tuples - lowrate downlink address and lowrate uplink port.e.g.
+#  [(("pmc-serial-1", 5001), 5001), ...]
+c.Communicator.lowrate_link_parameters = [(("pmc-serial-1", 5001), 5001)]
+
+##
+c.Communicator.use_controller = True
