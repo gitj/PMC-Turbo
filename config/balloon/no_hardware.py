@@ -45,3 +45,5 @@ c.BasicPipeline.default_write_enable = 0
 
 ##
 c.AcquireImagesProcess.use_simulated_camera = True
+
+

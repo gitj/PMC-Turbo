@@ -11,6 +11,7 @@ from pmc_turbo.camera.pipeline import controller
 from pmc_turbo.communication import camera_communicator
 from pmc_turbo.utils.tests.test_config import BasicTestHarness
 
+
 counter_dir = ''
 
 FAKE_BASE_PORT = 56654
@@ -27,9 +28,13 @@ def teardown():
 
 
 def test_valid_command_table():
+    basic_config = load_pyconfig_files(['no_hardware.py'], default_config_dir)
+    config = basic_config.copy()
+    config.Communicator.lowrate_link_parameters = [(('pmc-serial-1', 6501), 6501)]
     cc = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, leader=True, start_pyro=False,
-                                          base_port=FAKE_BASE_PORT)
+                                          base_port=FAKE_BASE_PORT, config=config)
     cc.validate_command_table()
+    cc.close()
 
 
 class TestCommunicator(BasicTestHarness):
@@ -113,27 +118,17 @@ class FakeStatusGroup():
 
 class NoPeersTest(unittest.TestCase):
     def setUp(self):
+        basic_config = load_pyconfig_files(['no_hardware.py'], default_config_dir)
+        config = basic_config.copy()
+        config.Communicator.lowrate_link_parameters = [(('pmc-serial-1', 6501), 6501)]
+        self.base_port = FAKE_BASE_PORT
         self.c = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, leader=True,
-                                                  base_port=FAKE_BASE_PORT)
+                                                  base_port=self.base_port, config=config)
+
 
     def tearDown(self):
         self.c.close()
 
-    def setup_leader_attributes_test(self):
-        UPLINK_PORT = 40001
-        LOWRATE_DOWNLINK_IP = 'localhost'
-        LOWRATE_DOWNLINK_PORT = 4001
-        HIRATE_DOWNLINK_IP = 'localhost'
-        HIRATE_DOWNLINK_PORT = 4002
-        DOWNLINK_SPEED = 700
-
-        OPENPORT_DOWNLINK_IP = 'localhost'
-        OPENPORT_DOWNLINK_PORT = 4501
-        OPENPORT_DOWNLINK_SPEED = 700
-
-        self.c.setup_links(UPLINK_PORT, LOWRATE_DOWNLINK_PORT, LOWRATE_DOWNLINK_IP,
-                           HIRATE_DOWNLINK_IP, HIRATE_DOWNLINK_PORT, DOWNLINK_SPEED,
-                           OPENPORT_DOWNLINK_IP, OPENPORT_DOWNLINK_PORT, OPENPORT_DOWNLINK_SPEED)
 
     def get_bytes_test(self):
         self.c.lowrate_uplink = FakeLowrateUplink()
@@ -158,13 +153,19 @@ class NoPeersTest(unittest.TestCase):
 class PeersTest(unittest.TestCase):
     def setUp(self):
         # Set up port manually.
+        basic_config = load_pyconfig_files(['no_hardware.py'], default_config_dir)
+        config = basic_config.copy()
+        config.Communicator.lowrate_link_parameters = [(("pmc-serial-1", 6501), 6501)]
         self.base_port = FAKE_BASE_PORT
         proxy = Pyro4.Proxy('PYRO:communicator@0.0.0.0:%d' % (self.base_port + 1))
         self.c = camera_communicator.Communicator(cam_id=0, peers=[proxy], controller=None, leader=True,
-                                                  base_port=self.base_port)
+                                                  base_port=self.base_port, config=config)
+
+
         self.c.file_id = 0
+        config.Communicator.lowrate_link_parameters = [(("pmc-serial-1", 6601), 6601)]
         self.peer = camera_communicator.Communicator(cam_id=1, peers=[], controller=None, leader=True,
-                                                     base_port=self.base_port + 1)
+                                                     base_port=(self.base_port + 1), config=config)
 
     def tearDown(self):
         self.c.close()

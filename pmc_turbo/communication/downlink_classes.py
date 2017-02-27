@@ -14,9 +14,9 @@ logger = logging.getLogger(__name__)
 
 
 class HirateDownlink():
-    def __init__(self, downlink_ip, downlink_port, downlink_speed_bytes_per_sec, name):
-        self.downlink_ip, self.downlink_port = downlink_ip, downlink_port
-        self.downlink_speed_bytes_per_sec = downlink_speed_bytes_per_sec
+    def __init__(self, ip, port, speed_bytes_per_sec, name):
+        self.downlink_ip, self.downlink_port = ip, port
+        self.downlink_speed_bytes_per_sec = speed_bytes_per_sec
         self.prev_packet_size = 0
         self.prev_packet_time = 0
         self.packets_to_send = []
