@@ -39,6 +39,8 @@ command_manager.add_command(Command("get_status_report", [("compress","1B"),
 command_manager.add_command(Command("flush_downlink_queues",[]))
 command_manager.add_command(Command("use_synchronized_images",[("synchronize","1B")]))
 
+# add command to set pyro comm timeout?
+
 logger.debug("Built command manager with %d total commands" % (command_manager.total_commands))
 
 

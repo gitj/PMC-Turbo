@@ -48,7 +48,7 @@ def require_pipeline(func):
 @Pyro4.expose
 class Controller(GlobalConfiguration):
     gate_time_error_threshold = Float(2e-3, min=0).tag(config=True)
-    main_loop_interval = Float(1.0, min=0).tag(config=True)
+    main_loop_interval = Float(3.0, min=0).tag(config=True)
 
     def __init__(self, **kwargs):
         super(Controller, self).__init__(**kwargs)
@@ -85,8 +85,9 @@ class Controller(GlobalConfiguration):
         events, _, _ = select.select(self.daemon.sockets, [], [], self.main_loop_interval)
         if events:
             self.daemon.events(events)
-        # check_for_completed_commands also updates the merged index
-        self.check_for_completed_commands()
+        else:
+            # check_for_completed_commands also updates the merged index
+            self.check_for_completed_commands()
 
     @require_pipeline
     def set_focus(self, focus_step):
