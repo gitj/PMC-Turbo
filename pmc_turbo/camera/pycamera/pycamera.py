@@ -27,6 +27,7 @@ class PyCamera():
 
     def set_parameter(self, name, value):
         result = self._pc.set_parameter_from_string(name, str(value))
+        logger.debug("Set %s to %s" % (name,str(value)))
         if result:
             logger.warn("problem setting camera parameter %s to %s, result code %d" % (name, value, result))
         return result

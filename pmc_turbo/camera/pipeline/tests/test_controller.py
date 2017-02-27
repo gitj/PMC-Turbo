@@ -78,7 +78,6 @@ class TestMultiIndex(BasicTestHarness):
     def test_controller_get_image(self):
         config = copy.deepcopy(self.basic_config)
         config.BasicPipeline.default_write_enable = 1
-        config.BasicPipeline.disks_to_use = self.basic_config.GlobalConfiguration.data_directories
         bpl = basic_pipeline.BasicPipeline(config=config)
 
         bpl.initialize()

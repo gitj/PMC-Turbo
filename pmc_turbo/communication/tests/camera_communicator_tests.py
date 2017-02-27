@@ -34,7 +34,7 @@ def test_valid_command_table():
 
 class TestCommunicator(BasicTestHarness):
     def test_basic_command_path(self):
-        cont = controller.Controller(None, config=self.basic_config)
+        cont = controller.Controller(pipeline=None, config=self.basic_config)
         cc1 = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, leader=True, start_pyro=False,
                                                base_port=FAKE_BASE_PORT)
         cc2 = camera_communicator.Communicator(cam_id=1, peers=[], controller=None, leader=True, start_pyro=False,

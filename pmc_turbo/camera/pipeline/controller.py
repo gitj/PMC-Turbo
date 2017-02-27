@@ -4,6 +4,7 @@ import os
 import signal
 import subprocess
 import time
+import select
 from functools import wraps
 
 import Pyro4
@@ -46,46 +47,70 @@ def require_pipeline(func):
 
 @Pyro4.expose
 class Controller(GlobalConfiguration):
-    gate_time_error_threshold = Float(2e-3,min=0).tag(config=True)
-    def __init__(self, pipeline, **kwargs):
-        super(Controller,self).__init__(**kwargs)
-        self.pipeline = pipeline
+    gate_time_error_threshold = Float(2e-3, min=0).tag(config=True)
+    main_loop_interval = Float(0.1, min=0).tag(config=True)
+
+    def __init__(self, **kwargs):
+        super(Controller, self).__init__(**kwargs)
+        if 'pipeline' in kwargs:
+            self.pipeline = kwargs['pipeline']
+        else:
+            self.pipeline = Pyro4.Proxy("PYRO:pipeline@0.0.0.0:%d" % int(self.pipeline_pyro_port))
         self.latest_image_subdir = ''
         self.merged_index = None
         self.downlink_queue = []
         self.outstanding_command_tags = {}
         self.completed_command_tags = {}
 
-        self.counters = CounterCollection('controller',self.counters_dir)
+        self.counters = CounterCollection('controller', self.counters_dir)
         self.counters.set_focus.reset()
         self.counters.set_exposure.reset()
         self.counters.send_arbitrary_command.reset()
         self.counters.run_focus_sweep.reset()
 
+        self.counters.no_index_available.reset()
+        self.counters.command_complete_waiting_for_image_data.reset()
+        self.counters.gate_time_threshold_error.reset()
+
         self.camera_id = get_camera_id()
         self.update_current_image_dirs()
         self.set_standard_image_paramters()
 
+    def setup_pyro_daemon(self):
+        self.daemon = Pyro4.Daemon(host='0.0.0.0', port=self.controller_pyro_port)
+        uri = self.daemon.register(self, "controller")
+
+    def main_loop(self):
+        events, _, _ = select.select(self.daemon.sockets, [], [], self.main_loop_interval)
+        if events:
+            self.daemon.events(events)
+        self.check_for_completed_commands()
+
     @require_pipeline
     def set_focus(self, focus_step):
         tag = self.pipeline.send_camera_command("EFLensFocusCurrent", str(focus_step))
+        logger.debug("Set focus to %s" % focus_step)
         self.counters.set_focus.increment()
         return tag
 
     @require_pipeline
     def set_exposure(self, exposure_time_us):
         tag = self.pipeline.send_camera_command("ExposureTimeAbs", str(exposure_time_us))
+        logger.debug("Set exposure to %s us" % exposure_time_us)
         self.counters.set_exposure.increment()
         return tag
 
     @require_pipeline
-    def send_arbitrary_camera_command(self,command_string,argument_string):
-        tag = self.pipeline.send_camera_command(command_string,argument_string)
+    def send_arbitrary_camera_command(self, command_string, argument_string):
+        tag = self.pipeline.send_camera_command(command_string, argument_string)
+        logger.debug("Set camera parameter %s to %r" % (command_string,argument_string))
         self.counters.send_arbitrary_command.increment()
         return tag
 
     @require_pipeline
     def run_focus_sweep(self, request_params, start=1950, stop=2150, step=10):
+        logger.debug("Running focus sweep with start=%d, stop=%d, step=%d, request_params=%r" % (start,stop,step,
+                                                                                                 request_params))
         focus_steps = range(start, stop, step)
         tags = [self.set_focus(focus_step) for focus_step in focus_steps]
         for tag in tags:
@@ -106,9 +131,11 @@ class Controller(GlobalConfiguration):
             name, value, result, gate_time = self.completed_command_tags[tag]
             index = self.merged_index.get_index_of_timestamp(gate_time)
             if index is None:
+                self.counters.no_index_available.increment()
                 logger.warning("No index available, is the pipeline writing? Looking for gate_time %d" % gate_time)
                 continue
             if index == len(self.merged_index.df):
+                self.counters.command_complete_waiting_for_image_data.increment()
                 logger.info("Command tag %f - %s:%s complete, but image data not yet available" % (tag, name, value))
                 continue
             row = self.merged_index.df.iloc[index]
@@ -121,6 +148,7 @@ class Controller(GlobalConfiguration):
                                                                                            request_params, dict(row)))
                 self.request_image_by_index(index, **request_params)
             else:
+                self.counters.gate_time_threshold_error.increment()
                 logger.warning("Command tag %f - %s:%s complete, but image timestamp %f does not match "
                                "gate_timestamp %f to within specified threshold %f. Is something wrong with PTP?"
                                % (tag, name, value, gate_time, timestamp, self.gate_time_error_threshold))
@@ -164,7 +192,7 @@ class Controller(GlobalConfiguration):
         return file_obj
 
     def get_latest_jpeg(self, request_id, row_offset=0, column_offset=0, num_rows=3232, num_columns=4864,
-                        scale_by=1 /8., **kwargs):
+                        scale_by=1 / 8., **kwargs):
         info = self.get_latest_fileinfo()
         return self.get_image_by_info(info, request_id=request_id, row_offset=row_offset, column_offset=column_offset,
                                       num_rows=num_rows, num_columns=num_columns, scale_by=scale_by,
@@ -213,9 +241,9 @@ class Controller(GlobalConfiguration):
                                                               scale_by=scale_by, quality=quality, format=format,
                                                               request_id=request_id).to_buffer())
 
-    def request_standard_image_at(self,timestamp):
+    def request_standard_image_at(self, timestamp):
         # use step=1 to ensure that we get the image closest to timestamp. Otherwise we'd get the image immediately before
-        self.request_specific_images(timestamp,step=1,**self.standard_image_parameters)
+        self.request_specific_images(timestamp, step=1, **self.standard_image_parameters)
 
     def get_image_by_info(self, index_row_data, request_id, row_offset=0, column_offset=0, num_rows=3232,
                           num_columns=4864, scale_by=1 / 8., quality=75, format='jpeg'):
@@ -266,7 +294,7 @@ class Controller(GlobalConfiguration):
         while time.time() - timestamp < timeout:
             returncode = proc.poll()
             if returncode is not None:
-                stdout,stderr = proc.communicate()
+                stdout, stderr = proc.communicate()
                 if len(stdout) > max_num_bytes_returned:
                     stdout = stdout[:max_num_bytes_returned]
                 stderr_bytes = max_num_bytes_returned - len(stdout)
@@ -324,4 +352,3 @@ class Controller(GlobalConfiguration):
         num_items = len(self.downlink_queue)
         self.downlink_queue = []
         logger.info("Flushed %d files from downlink queue" % num_items)
-
