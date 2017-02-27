@@ -151,7 +151,7 @@ class TestNoPeers(BasicTestHarness):
         self.c.get_and_process_sip_bytes()
 
         msg = self.c.lowrate_downlink.retrieve_msg()
-        print '%r' % msg
+        # this is temporary until the status message is defined
         assert (msg == ('\xff' * 255))
 
 

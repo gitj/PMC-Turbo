@@ -48,7 +48,7 @@ def require_pipeline(func):
 @Pyro4.expose
 class Controller(GlobalConfiguration):
     gate_time_error_threshold = Float(2e-3, min=0).tag(config=True)
-    main_loop_interval = Float(0.1, min=0).tag(config=True)
+    main_loop_interval = Float(1.0, min=0).tag(config=True)
 
     def __init__(self, **kwargs):
         super(Controller, self).__init__(**kwargs)
@@ -84,6 +84,7 @@ class Controller(GlobalConfiguration):
         events, _, _ = select.select(self.daemon.sockets, [], [], self.main_loop_interval)
         if events:
             self.daemon.events(events)
+        # check_for_completed_commands also updates the merged index
         self.check_for_completed_commands()
 
     @require_pipeline
@@ -161,7 +162,7 @@ class Controller(GlobalConfiguration):
         if self.merged_index is None:
             self.update_current_image_dirs()
         if self.merged_index is not None:
-            result = self.merged_index.get_latest()
+            result = self.merged_index.get_latest(update=False)  #updating the index is now done in the controller main loop
             if result is None:
                 raise RuntimeError("No candidates for latest file!")
             else:
