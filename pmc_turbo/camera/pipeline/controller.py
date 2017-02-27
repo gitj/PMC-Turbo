@@ -127,31 +127,34 @@ class Controller(GlobalConfiguration):
                 self.completed_command_tags[tag] = (name, value, result, gate_time)
             except KeyError:
                 pass
-
-        for tag in self.completed_command_tags.keys():
-            name, value, result, gate_time = self.completed_command_tags[tag]
-            index = self.merged_index.get_index_of_timestamp(gate_time)
-            if index is None:
-                self.counters.no_index_available.increment()
-                logger.warning("No index available, is the pipeline writing? Looking for gate_time %d" % gate_time)
-                continue
-            if index == len(self.merged_index.df):
-                self.counters.command_complete_waiting_for_image_data.increment()
-                logger.info("Command tag %f - %s:%s complete, but image data not yet available" % (tag, name, value))
-                continue
-            row = self.merged_index.df.iloc[index]
-            timestamp = row.frame_timestamp_ns / 1e9
-            if abs(gate_time - timestamp) > self.gate_time_error_threshold:
-                self.counters.gate_time_threshold_error.increment()
-                logger.warning("Command tag %f - %s:%s complete, but image timestamp %f does not match "
-                               "gate_timestamp %f to within specified threshold %f. Is something wrong with PTP?"
-                               % (tag, name, value, gate_time, timestamp, self.gate_time_error_threshold))
-            request_params = self.outstanding_command_tags.pop(tag)
-            _ = self.completed_command_tags.pop(tag)
-            logger.info("Command tag %f - %s:%s retired" % (tag, name, value))
-            logger.debug("Command %s:%s with request_params %r retired by image %r" % (name, value,
-                                                                                       request_params, dict(row)))
-            self.request_image_by_index(index, **request_params)
+        if self.completed_command_tags:
+            for tag in self.completed_command_tags.keys():
+                name, value, result, gate_time = self.completed_command_tags[tag]
+                index = self.merged_index.get_index_of_timestamp(gate_time) # this will update the merged index
+                if index is None:
+                    self.counters.no_index_available.increment()
+                    logger.warning("No index available, is the pipeline writing? Looking for gate_time %d" % gate_time)
+                    continue
+                if index == len(self.merged_index.df):
+                    self.counters.command_complete_waiting_for_image_data.increment()
+                    logger.info("Command tag %f - %s:%s complete, but image data not yet available" % (tag, name, value))
+                    continue
+                row = self.merged_index.df.iloc[index]
+                timestamp = row.frame_timestamp_ns / 1e9
+                if abs(gate_time - timestamp) > self.gate_time_error_threshold:
+                    self.counters.gate_time_threshold_error.increment()
+                    logger.warning("Command tag %f - %s:%s complete, but image timestamp %f does not match "
+                                   "gate_timestamp %f to within specified threshold %f. Is something wrong with PTP?"
+                                   % (tag, name, value, gate_time, timestamp, self.gate_time_error_threshold))
+                request_params = self.outstanding_command_tags.pop(tag)
+                _ = self.completed_command_tags.pop(tag)
+                logger.info("Command tag %f - %s:%s retired" % (tag, name, value))
+                logger.debug("Command %s:%s with request_params %r retired by image %r" % (name, value,
+                                                                                           request_params, dict(row)))
+                self.request_image_by_index(index, **request_params)
+        else:
+            logger.debug("Forcing update of index because no commands have been executed recently")
+            self.merged_index.update()
 
 
     def update_current_image_dirs(self):
