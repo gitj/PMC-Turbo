@@ -24,7 +24,7 @@ class MergedIndex(object):
         for watcher in self.watchers:
             fragment = watcher.get_fragment()
             if fragment is not None and fragment.shape[0] > 0:
-                logger.debug("Found %d new rows" % fragment.shape[0])
+                logger.debug("Found %d new rows in %s" % (fragment.shape[0],watcher.filename))
                 new_rows = True
                 if segment is None:
                     segment = fragment

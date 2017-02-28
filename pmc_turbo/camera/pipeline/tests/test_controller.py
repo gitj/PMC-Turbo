@@ -70,7 +70,7 @@ class TestMultiIndex(BasicTestHarness):
         thread.start()
         time.sleep(1)
         sis = controller.Controller(pipeline=bpl, config=config)
-        sis.run_focus_sweep(request_params=dict())
+        sis.run_focus_sweep(request_params=dict(request_id=234))
         time.sleep(1)
         sis.check_for_completed_commands()
         bpl.close()
