@@ -186,9 +186,10 @@ class TestPeers(BasicTestHarness):
 
     @timed(20)
     def send_data_on_downlinks_test(self):
+        self.c.peer_polling_order = [0] # This is manually set
         self.peer.controller = FakeController()
-        print self.c.peers
-        print self.c.peer_polling_order
+        print 'Peers are:', self.c.peers
+        print 'Peer polling order is:', self.c.peer_polling_order
         self.hirate_downlink = FakeHirateDownlink()
         self.c.downlinks = [self.hirate_downlink]
         self.c.send_data_on_downlinks()
