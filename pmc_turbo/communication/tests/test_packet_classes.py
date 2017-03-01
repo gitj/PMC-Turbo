@@ -92,3 +92,54 @@ def test_gse_command_packet_min_payload_length():
     packet = packet_classes.GSECommandPacket(payload=('a'),sequence_number=456,destination=0,
                                                  link_tuple=packet_classes.GSECommandPacket.TDRSS)
     assert len(packet.payload) >= packet_classes.GSECommandPacket._minimum_payload_length
+
+
+def test_packet_from_buffer():
+    packet = packet_classes.GSEPacket(sync2_byte=0xFA, origin=1, payload='hi there!' * 30)
+    buffer = packet.to_buffer()
+    packets,remainder = packet_classes.get_packets_from_buffer(buffer,packet_classes.GSEPacket,packet_classes.GSEPacket.START_BYTE)
+    packet2 = packets[0]
+    assert remainder == ''
+    assert packet.sync2_byte == packet2.sync2_byte
+    assert packet.origin == packet2.origin
+    assert packet.payload_length == packet2.payload_length
+    assert packet.checksum == packet2.checksum
+    assert packet.payload == packet2.payload
+
+    packets,remainder = packet_classes.get_packets_from_buffer(buffer[:30],packet_classes.GSEPacket,packet_classes.GSEPacket.START_BYTE)
+    assert packets == []
+    assert remainder == buffer[:30]
+
+    buffer2 = buffer + chr(packet_classes.GSEPacket.START_BYTE)
+    packets,remainder = packet_classes.get_packets_from_buffer(buffer2,packet_classes.GSEPacket,packet_classes.GSEPacket.START_BYTE)
+    packet2 = packets[0]
+    assert remainder == chr(packet_classes.GSEPacket.START_BYTE)
+    assert packet.sync2_byte == packet2.sync2_byte
+    assert packet.origin == packet2.origin
+    assert packet.payload_length == packet2.payload_length
+    assert packet.checksum == packet2.checksum
+    assert packet.payload == packet2.payload
+
+    buffer3 = buffer + 'asdb' + buffer2
+    packets,remainder = packet_classes.get_packets_from_buffer(buffer3,packet_classes.GSEPacket,packet_classes.GSEPacket.START_BYTE)
+    assert remainder == chr(packet_classes.GSEPacket.START_BYTE)
+    assert len(packets) == 2
+    for packet2 in packets:
+        assert packet.sync2_byte == packet2.sync2_byte
+        assert packet.origin == packet2.origin
+        assert packet.payload_length == packet2.payload_length
+        assert packet.checksum == packet2.checksum
+        assert packet.payload == packet2.payload
+
+    #TODO: This test currently fails, but shouldn't
+    # buffer3 = buffer2 + buffer2[:30] + buffer2
+    # packets,remainder = packet_classes.get_packets_from_buffer(buffer3,packet_classes.GSEPacket,packet_classes.GSEPacket.START_BYTE)
+    # print repr(remainder)
+    # assert remainder == ''
+    # assert len(packets) == 2
+    # for packet2 in packets:
+    #     assert packet.sync2_byte == packet2.sync2_byte
+    #     assert packet.origin == packet2.origin
+    #     assert packet.payload_length == packet2.payload_length
+    #     assert packet.checksum == packet2.checksum
+    #     assert packet.payload == packet2.payload

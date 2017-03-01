@@ -235,8 +235,6 @@ class FilePacket(object):
             self.payload_crc = get_crc(payload)
             self.start_byte = self._valid_start_byte
 
-        logger.debug('Hirate packet created.')
-
     @property
     def total_packet_length(self):
         return self.header_length + self.payload_length + 2  # 2 is lenght of crc
@@ -450,3 +448,45 @@ def decode_gse_acknowledgement(data):
 
 def encode_gse_acknowledgement(ack_byte):
     return struct.pack('>3B', 0xFA, 0xF3, ack_byte)
+
+
+def get_packets_from_buffer(buffer, packet_class, start_byte):
+    packets = []
+    remainder = ''
+    while buffer:
+        idx = buffer.find(chr(start_byte))
+        if idx == -1:
+            # There's no start byte in the buffer
+            remainder = buffer
+            break
+        else:
+            logger.debug('Found start byte at index %d. Discard preceding bytes.' % idx)
+            buffer = buffer[idx:]
+        try:
+            gse_packet = packet_class(buffer=buffer)
+            packets.append(gse_packet)
+            logger.debug('Found valid packet. Advancing %d bytes' % gse_packet.total_packet_length)
+            buffer = buffer[gse_packet.total_packet_length:]
+        except PacketLengthError:
+            # This triggers when there are insufficient bytes to finish a Packet
+            logger.debug('Insufficient bytes for complete packet.')
+            remainder = buffer
+            break
+        except PacketChecksumError as e:
+            logger.warning('Invalid packet found: %s. Moving to next start byte.' % str(e))
+            logger.debug('Discarded erroneous start byte.')
+            remainder = buffer[1:]
+            break
+    return packets, remainder
+
+
+def separate_gse_packets_by_origin(gse_packets):
+    lowrate_gse_packets = []
+    hirate_gse_packets = []
+    for packet in gse_packets:
+        origin = packet.origin & GSEPacket.ORIGIN_BITMASK
+        if origin == GSEPacket.LOWRATE_ORIGIN:
+            lowrate_gse_packets.append(packet)
+        if origin == GSEPacket.HIRATE_ORIGIN:
+            hirate_gse_packets.append(packet)
+    return hirate_gse_packets, lowrate_gse_packets

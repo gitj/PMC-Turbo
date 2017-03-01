@@ -73,9 +73,11 @@ class GSEReceiver():
                 f.write(buffer)
 
             if self.socket_type == self.GSE_SERIAL:
-                gse_packets, gse_remainder = self.get_gse_packets_from_buffer(self.last_gse_remainder + buffer)
+                gse_packets, gse_remainder = packet_classes.get_packets_from_buffer(self.last_gse_remainder + buffer,
+                                                                                    packet_class=packet_classes.GSEPacket,
+                                                                                    start_byte=packet_classes.GSEPacket.START_BYTE)
                 self.last_gse_remainder = gse_remainder
-                gse_hirate_packets, gse_lowrate_packets = self.separate_gse_packets_by_origin(gse_packets)
+                gse_hirate_packets, gse_lowrate_packets = packet_classes.separate_gse_packets_by_origin(gse_packets)
 
                 self.write_gse_packet_payloads_to_disk(gse_lowrate_packets)
 
@@ -86,7 +88,9 @@ class GSEReceiver():
             else:
                 file_packet_buffer = buffer
 
-            file_packets, remainder = self.get_file_packets_from_buffer(self.file_packet_remainder + file_packet_buffer)
+            file_packets, remainder = packet_classes.get_packets_from_buffer(self.file_packet_remainder + file_packet_buffer,
+                                                                             packet_class=packet_classes.FilePacket,
+                                                                             start_byte=packet_classes.FilePacket._valid_start_byte)
             for packet in file_packets:
                 logger.debug('File_id: %d, Packet Number: %d of %d' % (
                     packet.file_id, packet.packet_number, packet.total_packet_number))
@@ -114,78 +118,78 @@ class GSEReceiver():
             logger.debug('Received %d bytes from serial port' % len(buffer))
         return buffer
 
-    def get_gse_packets_from_buffer(self, buffer):
-        gse_packets = []
-        remainder = ''
-        while buffer:
-            idx = buffer.find(chr(packet_classes.GSEPacket.START_BYTE))
-            if idx == -1:
-                # There's no GSE start byte in the buffer
-                remainder = buffer
-                break
-            else:
-                logger.debug('Found start byte at index %d. Discard preceding bytes.' % idx)
-                buffer = buffer[idx:]
-            try:
-                gse_packet = packet_classes.GSEPacket(buffer=buffer)
-                gse_packets.append(gse_packet)
-                # total_packet_length = gse_packet.header_length + gse_packet.payload_length + 1
-                logger.debug('Found valid packet. Advancing %d bytes' % gse_packet.total_packet_length)
-                buffer = buffer[gse_packet.total_packet_length:]
-
-            except packet_classes.PacketLengthError:
-                # This triggers when there are insufficient bytes to finish a GSEPacket
-                logger.debug('Insufficient bytes for complete packet.')
-                remainder = buffer
-                break
-            except packet_classes.PacketChecksumError as e:
-                logger.warning('Invalid packet found: %s. Moving to next start byte.' % str(e))
-                logger.debug('Discarded erroneous start byte.')
-                remainder = buffer[1:]
-                break
-        return gse_packets, remainder
-
-    def separate_gse_packets_by_origin(self, gse_packets):
-        lowrate_gse_packets = []
-        hirate_gse_packets = []
-        for packet in gse_packets:
-            origin = packet.origin & packet_classes.GSEPacket.ORIGIN_BITMASK
-            if origin == packet_classes.GSEPacket.LOWRATE_ORIGIN:
-                lowrate_gse_packets.append(packet)
-            if origin == packet_classes.GSEPacket.HIRATE_ORIGIN:
-                hirate_gse_packets.append(packet)
-        return hirate_gse_packets, lowrate_gse_packets
-
-    def get_file_packets_from_buffer(self, buffer):
-        file_packets = []
-        remainder = ''
-        while buffer:
-            idx = buffer.find(chr(packet_classes.FilePacket._valid_start_byte))
-            if idx == -1:
-                logger.debug('no start byte found')
-                remainder = buffer
-                break
-            else:
-                logger.debug('Found start byte at index %d. Discard preceding bytes.' % idx)
-                buffer = buffer[idx:]
-            try:
-                file_packet = packet_classes.FilePacket(buffer=buffer)
-                file_packets.append(file_packet)
-                # total_packet_length = file_packet.header_length + file_packet.payload_length + 2
-                logger.debug('Found valid packet. Advancing %d bytes' % file_packet.total_packet_length)
-                buffer = buffer[file_packet.total_packet_length:]
-            except packet_classes.PacketLengthError as e:
-                logger.debug('Insufficient bytes for complete packet.')
-                # This triggers when there are insufficient bytes to finish a FilePacket.
-                # This is common - usually just needs to wait for more data.
-                remainder = buffer
-                break
-            except (packet_classes.PacketChecksumError, packet_classes.PacketValidityError) as e:
-                logger.warning('Invalid packet found: %s. Moving to next start byte.' % str(e))
-                logger.debug('Discarded erroneous start byte.')
-                remainder = buffer[1:]
-                break
-        return file_packets, remainder
+    # def get_gse_packets_from_buffer(self, buffer):
+    #     gse_packets = []
+    #     remainder = ''
+    #     while buffer:
+    #         idx = buffer.find(chr(packet_classes.GSEPacket.START_BYTE))
+    #         if idx == -1:
+    #             # There's no GSE start byte in the buffer
+    #             remainder = buffer
+    #             break
+    #         else:
+    #             logger.debug('Found start byte at index %d. Discard preceding bytes.' % idx)
+    #             buffer = buffer[idx:]
+    #         try:
+    #             gse_packet = packet_classes.GSEPacket(buffer=buffer)
+    #             gse_packets.append(gse_packet)
+    #             # total_packet_length = gse_packet.header_length + gse_packet.payload_length + 1
+    #             logger.debug('Found valid packet. Advancing %d bytes' % gse_packet.total_packet_length)
+    #             buffer = buffer[gse_packet.total_packet_length:]
+    #
+    #         except packet_classes.PacketLengthError:
+    #             # This triggers when there are insufficient bytes to finish a GSEPacket
+    #             logger.debug('Insufficient bytes for complete packet.')
+    #             remainder = buffer
+    #             break
+    #         except packet_classes.PacketChecksumError as e:
+    #             logger.warning('Invalid packet found: %s. Moving to next start byte.' % str(e))
+    #             logger.debug('Discarded erroneous start byte.')
+    #             remainder = buffer[1:]
+    #             break
+    #     return gse_packets, remainder
+    #
+    # def separate_gse_packets_by_origin(self, gse_packets):
+    #     lowrate_gse_packets = []
+    #     hirate_gse_packets = []
+    #     for packet in gse_packets:
+    #         origin = packet.origin & packet_classes.GSEPacket.ORIGIN_BITMASK
+    #         if origin == packet_classes.GSEPacket.LOWRATE_ORIGIN:
+    #             lowrate_gse_packets.append(packet)
+    #         if origin == packet_classes.GSEPacket.HIRATE_ORIGIN:
+    #             hirate_gse_packets.append(packet)
+    #     return hirate_gse_packets, lowrate_gse_packets
+    #
+    # def get_file_packets_from_buffer(self, buffer):
+    #     file_packets = []
+    #     remainder = ''
+    #     while buffer:
+    #         idx = buffer.find(chr(packet_classes.FilePacket._valid_start_byte))
+    #         if idx == -1:
+    #             logger.debug('no start byte found')
+    #             remainder = buffer
+    #             break
+    #         else:
+    #             logger.debug('Found start byte at index %d. Discard preceding bytes.' % idx)
+    #             buffer = buffer[idx:]
+    #         try:
+    #             file_packet = packet_classes.FilePacket(buffer=buffer)
+    #             file_packets.append(file_packet)
+    #             # total_packet_length = file_packet.header_length + file_packet.payload_length + 2
+    #             logger.debug('Found valid packet. Advancing %d bytes' % file_packet.total_packet_length)
+    #             buffer = buffer[file_packet.total_packet_length:]
+    #         except packet_classes.PacketLengthError as e:
+    #             logger.debug('Insufficient bytes for complete packet.')
+    #             # This triggers when there are insufficient bytes to finish a FilePacket.
+    #             # This is common - usually just needs to wait for more data.
+    #             remainder = buffer
+    #             break
+    #         except (packet_classes.PacketChecksumError, packet_classes.PacketValidityError) as e:
+    #             logger.warning('Invalid packet found: %s. Moving to next start byte.' % str(e))
+    #             logger.debug('Discarded erroneous start byte.')
+    #             remainder = buffer[1:]
+    #             break
+    #     return file_packets, remainder
 
     def write_file_from_file_packets(self, packets, filename):
         data_buffer = ''
