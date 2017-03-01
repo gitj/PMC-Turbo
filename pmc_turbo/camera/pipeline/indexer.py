@@ -90,6 +90,7 @@ class IndexWatcher(object):
                 fh.seek(self.last_position)
                 try:
                     fragment = pd.read_csv(fh, names=names, header=header)
+                    fragment.dropna(axis=0,how='any',inplace=True)
                     if self.df is None:
                         self.df = fragment
                 except ValueError:

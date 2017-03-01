@@ -1,28 +1,26 @@
-import glob
 import logging
 import os
+import select
 import signal
 import subprocess
 import time
-import select
 from functools import wraps
 
 import Pyro4
 import Pyro4.errors
-from traitlets import (Unicode, Int, Float, List, Tuple)
+from traitlets import (Float)
 
 from pmc_turbo.camera.image_processing.blosc_file import load_blosc_image
 from pmc_turbo.camera.image_processing.jpeg import simple_jpeg
-from pmc_turbo.camera.pipeline.indexer import MergedIndex, DEFAULT_DATA_DIRS
+from pmc_turbo.camera.pipeline.indexer import MergedIndex
 from pmc_turbo.camera.pipeline.write_images import index_keys
 from pmc_turbo.communication import file_format_classes
-from pmc_turbo.utils.error_counter import CounterCollection
+from pmc_turbo.communication.file_format_classes import DEFAULT_REQUEST_ID
 from pmc_turbo.utils.camera_id import get_camera_id
 from pmc_turbo.utils.configuration import GlobalConfiguration
+from pmc_turbo.utils.error_counter import CounterCollection
 
 logger = logging.getLogger(__name__)
-
-DEFAULT_REQUEST_ID = 2 ** 32 - 1
 
 
 class ImageParameters(object):

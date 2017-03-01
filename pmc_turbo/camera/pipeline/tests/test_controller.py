@@ -7,10 +7,10 @@ import time
 import copy
 
 import numpy as np
-
-from traitlets.config.loader import load_pyconfig_files
+import pandas as pd
 
 import pmc_turbo.camera.pipeline.indexer
+import pmc_turbo.communication.file_format_classes
 from pmc_turbo.camera.pipeline import basic_pipeline
 from pmc_turbo.camera.pipeline import controller
 from pmc_turbo.communication.file_format_classes import decode_file_from_buffer, GeneralFile, JPEGFile, ShellCommandFile
@@ -59,6 +59,25 @@ class TestMultiIndex(BasicTestHarness):
         for k, data_dir in enumerate(self.basic_config.GlobalConfiguration.data_directories):
             open(os.path.join(data_dir, self.subdir, 'index.csv'), 'w').close()
 
+    def test_corrupt_files(self):
+        for k, data_dir in enumerate(self.basic_config.GlobalConfiguration.data_directories):
+            destination = os.path.join(data_dir, self.subdir, 'index.csv')
+            shutil.copy(os.path.join(test_data_path, ('index_%d.csv' % (k + 1))),
+                        destination)
+            with open(destination,'a') as fh:
+                fh.write('\x00'*2048)
+            df = pd.read_csv(destination)
+            assert np.any(df.isnull())  # make sure there are NaNs  in the dataframe to be confident in the following test
+
+        mi = pmc_turbo.camera.pipeline.indexer.MergedIndex(subdirectory_name=self.subdir,
+                                                           data_dirs=self.basic_config.GlobalConfiguration.data_directories)
+
+        for k, data_dir in enumerate(self.basic_config.GlobalConfiguration.data_directories):
+            open(os.path.join(data_dir, self.subdir, 'index.csv'), 'w').close()
+
+        assert not np.any(mi.df.isnull())
+
+
     def test_controller_basic_function(self):
         config = copy.deepcopy(self.basic_config)
         config.BasicPipeline.default_write_enable = 1
@@ -94,7 +113,7 @@ class TestMultiIndex(BasicTestHarness):
         result = sis.get_next_data_for_downlink()
         result = decode_file_from_buffer(result)
         assert result.file_type == JPEGFile.file_type
-        assert result.request_id == controller.DEFAULT_REQUEST_ID
+        assert result.request_id == pmc_turbo.communication.file_format_classes.DEFAULT_REQUEST_ID
         time.sleep(1)
         sis.request_image_by_index(2, request_id=128)
         result = sis.get_next_data_for_downlink()
