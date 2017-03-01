@@ -93,8 +93,8 @@ class Communicator(GlobalConfiguration):
 
         peer_error_strings = [('pmc_%d_communication_error_counts' % i) for i in range(len(self.peers))]
         self.error_counter = error_counter.CounterCollection('communication_errors', self.counters_dir,
-                                                             'controller_communication_error_counts',
                                                              *peer_error_strings)
+        self.error_counter.controller_communication_errors.reset()
 
         self.pyro_daemon = None
         self.pyro_thread = None
@@ -231,9 +231,9 @@ class Communicator(GlobalConfiguration):
         try:
             self.controller.request_standard_image_at(timestamp)
         except Pyro4.errors.CommunicationError:
-            self.error_counter.controller.increment()
+            self.error_counter.controller_communication_errors.increment()
             logger.debug('Connection to controller failed. Error counter - %r. Error message: %s' % (
-                self.error_counter.controller, "".join(Pyro4.util.getPyroTraceback())))
+                self.error_counter.controller_communication_errors, "".join(Pyro4.util.getPyroTraceback())))
         except Exception:
             raise Exception("".join(Pyro4.util.getPyroTraceback()))
 
@@ -242,10 +242,10 @@ class Communicator(GlobalConfiguration):
             logger.debug('Getting next data from controller.')
             return self.controller.get_next_data_for_downlink()
         except Pyro4.errors.CommunicationError:
-            self.error_counter.controller.increment()
+            self.error_counter.controller_communication_errors.increment()
             logger.debug(
                 'Connection to controller failed. Error counter - %r. Error message: %s' % (
-                    self.error_counter.controller, "".join(Pyro4.util.getPyroTraceback())))
+                    self.error_counter.controller_communication_errors, "".join(Pyro4.util.getPyroTraceback())))
             return None
         except Exception:
             raise Exception("".join(Pyro4.util.getPyroTraceback()))

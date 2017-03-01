@@ -46,8 +46,6 @@ class HirateDownlink():
             if buffer.find(chr(constants.SYNC_BYTE)):
                 raise AttributeError('Start byte found within buffer of downlink %s.' % self.name)
 
-            print self.downlink_ip, self.downlink_port
-
             self.send(buffer, self.downlink_ip, self.downlink_port)
             self.prev_packet_size = len(buffer)
             self.prev_packet_time = time.time()
