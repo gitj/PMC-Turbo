@@ -193,6 +193,13 @@ class CompressedJSONFile(CompressedGeneralFile, JSONMixin):
     file_type = 6
     _preferred_extension = '.json'
 
+class BloscImageFile(ImageFileBase):
+    file_type = 7
+    _preferred_extension = '.blosc_image'
+
+class UnhandledExceptionFile(FileBase):
+    file_type = 8
+    _preferred_extension = '.exception'
 
 try:
     file_classes = [eval(k) for k in dir() if k.endswith('File')]
@@ -216,3 +223,6 @@ def load_and_decode_file(filename):
     with open(filename, 'r') as fh:
         buffer = fh.read()
     return decode_file_from_buffer(buffer)
+
+
+DEFAULT_REQUEST_ID = 2 ** 32 - 1

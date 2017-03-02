@@ -183,6 +183,20 @@ class Communicator(GlobalConfiguration):
         while True:
             time.sleep(self.loop_interval)
 
+    def start_pyro_thread(self):
+        self.pyro_thread = threading.Thread(target=self.pyro_loop)
+        self.pyro_thread.daemon = True
+        logger.debug('Stating pyro thread')
+        self.pyro_thread.start()
+
+    def pyro_loop(self):
+        while True:
+            events, _, _ = select.select(self.pyro_daemon.sockets, [], [], 0.01)
+            if events:
+                self.pyro_daemon.events(events)
+            if self.end_loop == True:
+                return
+
     def add_status_group(self, status_group):
         self.status_groups.append(status_group)
 
@@ -192,6 +206,7 @@ class Communicator(GlobalConfiguration):
                 'Communicator has no peers. This should never happen; leader at minimum has self as peer.')
         for link in self.downlinks:
             if link.has_bandwidth():
+                # TODO: This needs some work: we probably only want to request images when all pending images have been sent
                 if self.synchronize_image_time_across_cameras and self.peer_polling_order_idx == 0:
                     self.request_synchronized_images()
                 logger.debug('Getting next data from camera %d' % self.peer_polling_order[self.peer_polling_order_idx])
@@ -199,7 +214,7 @@ class Communicator(GlobalConfiguration):
                 active_peer = self.peers[self.peer_polling_order[self.peer_polling_order_idx]]
                 try:
                     if self.check_peer_connection(active_peer):
-                        next_data = active_peer.get_next_data()
+                        next_data = active_peer.get_next_data()  # pyro call
                 except Pyro4.errors.CommunicationError as e:
                     active_peer_string = str(active_peer._pyroUri)
                     error_counter_key = 'pmc_%d_communication_error_counts' % self.peer_polling_order[
@@ -207,6 +222,12 @@ class Communicator(GlobalConfiguration):
                     self.error_counter.counters[error_counter_key].increment()
                     logger.debug('Connection to peer at URI %s failed. Error counter - %r. Error message: %s' % (
                         active_peer_string, self.error_counter.counters[error_counter_key], str(e)))
+                except Exception as e:
+                    payload = str(e)
+                    payload += "".join(Pyro4.util.getPyroTraceback())
+                    exception_file = file_format_classes.UnhandledExceptionFile(payload=payload,request_id=file_format_classes.DEFAULT_REQUEST_ID,
+                                                                                camera_id=self.peer_polling_order[self.peer_polling_order_idx])
+                    next_data = exception_file.to_buffer()
 
                 if not next_data:
                     logger.debug('No data was obtained.')
@@ -223,9 +244,14 @@ class Communicator(GlobalConfiguration):
     def request_synchronized_images(self):
         timestamp = time.time() - 2  # TODO: this should probably be a parameter in settings file
         for peer in self.peers:
-            logger.debug("Synchronizing images by requesting standard image closest to timestamp %f from peer %r" %
-                         (timestamp, peer))
-            peer.request_standard_image_at(timestamp)
+            if self.check_peer_connection(peer):
+                logger.debug("Synchronizing images by requesting standard image closest to timestamp %f from peer %r" %
+                             (timestamp, peer))
+                peer.request_standard_image_at(timestamp) # pyro call
+
+
+
+    ##### Methods called by leader via pyro
 
     def request_standard_image_at(self, timestamp):
         try:
@@ -247,22 +273,9 @@ class Communicator(GlobalConfiguration):
                 'Connection to controller failed. Error counter - %r. Error message: %s' % (
                     self.error_counter.controller_communication_errors, "".join(Pyro4.util.getPyroTraceback())))
             return None
-        except Exception:
-            raise Exception("".join(Pyro4.util.getPyroTraceback()))
+        except Exception as e:
+            raise Exception(str(e) + "".join(Pyro4.util.getPyroTraceback()))
 
-    def start_pyro_thread(self):
-        self.pyro_thread = threading.Thread(target=self.pyro_loop)
-        self.pyro_thread.daemon = True
-        logger.debug('Stating pyro thread')
-        self.pyro_thread.start()
-
-    def pyro_loop(self):
-        while True:
-            events, _, _ = select.select(self.pyro_daemon.sockets, [], [], 0.01)
-            if events:
-                self.pyro_daemon.events(events)
-            if self.end_loop == True:
-                return
 
     ### The following two functions respond to SIP requests
     def respond_to_science_data_request(self):
