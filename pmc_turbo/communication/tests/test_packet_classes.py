@@ -131,15 +131,14 @@ def test_packet_from_buffer():
         assert packet.checksum == packet2.checksum
         assert packet.payload == packet2.payload
 
-    #TODO: This test currently fails, but shouldn't
-    # buffer3 = buffer2 + buffer2[:30] + buffer2
-    # packets,remainder = packet_classes.get_packets_from_buffer(buffer3,packet_classes.GSEPacket,packet_classes.GSEPacket.START_BYTE)
-    # print repr(remainder)
-    # assert remainder == ''
-    # assert len(packets) == 2
-    # for packet2 in packets:
-    #     assert packet.sync2_byte == packet2.sync2_byte
-    #     assert packet.origin == packet2.origin
-    #     assert packet.payload_length == packet2.payload_length
-    #     assert packet.checksum == packet2.checksum
-    #     assert packet.payload == packet2.payload
+    buffer3 = buffer + buffer[:30] + buffer*20
+    packets,remainder = packet_classes.get_packets_from_buffer(buffer3,packet_classes.GSEPacket,packet_classes.GSEPacket.START_BYTE)
+    print repr(remainder)
+    assert remainder == ''
+    assert len(packets) == 21
+    for packet2 in packets:
+        assert packet.sync2_byte == packet2.sync2_byte
+        assert packet.origin == packet2.origin
+        assert packet.payload_length == packet2.payload_length
+        assert packet.checksum == packet2.checksum
+        assert packet.payload == packet2.payload

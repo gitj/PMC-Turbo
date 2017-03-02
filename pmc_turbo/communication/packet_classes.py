@@ -268,8 +268,8 @@ class FilePacket(object):
 
         if self.payload_length > self._max_payload_size:
             raise PacketValidityError(
-                "Payload length is clearly wrong. Payload length is %d. First 15 bytes of buffer are %r" % (
-                    self.payload_length, buffer[:15]))
+                "Payload length %d is greater than maximum payload size %d. First 15 bytes of buffer are %r" % (
+                    self.payload_length, self._max_payload_size, buffer[:15]))
 
         crc_index = self.header_length + self.payload_length
         payload = buffer[self.header_length:crc_index]
@@ -467,16 +467,15 @@ def get_packets_from_buffer(buffer, packet_class, start_byte):
             packets.append(gse_packet)
             logger.debug('Found valid packet. Advancing %d bytes' % gse_packet.total_packet_length)
             buffer = buffer[gse_packet.total_packet_length:]
-        except PacketLengthError:
+        except PacketLengthError as e:
             # This triggers when there are insufficient bytes to finish a Packet
-            logger.debug('Insufficient bytes for complete packet.')
+            logger.debug('Insufficient bytes for complete packet. Original error %s' % e)
             remainder = buffer
             break
-        except PacketChecksumError as e:
+        except (PacketChecksumError, PacketValidityError) as e:
             logger.warning('Invalid packet found: %s. Moving to next start byte.' % str(e))
             logger.debug('Discarded erroneous start byte.')
-            remainder = buffer[1:]
-            break
+            buffer = buffer[1:]
     return packets, remainder
 
 
