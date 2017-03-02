@@ -135,7 +135,7 @@ class GSEReceiver():
 
     def write_file(self, file_class, file_id):
         file_status = self.file_status[file_id]
-        base_filename = '%06d' % file_id
+        base_filename = time.strftime('%Y-%m-%d_%H%M%S') + ('_%06d' % file_id)
         file_class.write_payload_to_file(os.path.join(self.payload_path,base_filename))
         filename = os.path.join(self.file_path,base_filename)
         file_class.write_buffer_to_file(filename)
@@ -149,11 +149,17 @@ class GSEReceiver():
                 self.logger.exception("Could not create %s" % source_path)
         os.symlink(filename,os.path.join(source_path,base_filename))
 
+        try:
+            frame_timestamp_ns = file_class.frame_timestamp_ns
+        except AttributeError:
+            frame_timestamp_ns = -1
 
         with open(self.file_index_filename, 'a') as f:
             writer = csv.writer(f, quoting=csv.QUOTE_NONE, lineterminator='\n')
             writer.writerow(
-                [file_id, file_status['first_timestamp'],file_status['recent_timestamp'], time.time(), filename, file_class.file_type,
+                [file_id, file_status['first_timestamp'],file_status['recent_timestamp'], time.time(), filename,
+                 file_class.file_type,file_class.request_id, file_class.camera_id, frame_timestamp_ns,
+
                 len(file_status['packets_received']), file_status['packets_expected'] ])
 
     def setup_directory(self):
@@ -183,7 +189,9 @@ class GSEReceiver():
 
         with open(self.file_index_filename, 'a') as f:
             writer = csv.writer(f, quoting=csv.QUOTE_NONE, lineterminator='\n')
-            writer.writerow(['file_id','first_timestamp', 'last_timestamp', 'file_write_timestamp', 'filename', 'file_type', 'packets_received', 'packets_expected'])
+            writer.writerow(['file_id','first_timestamp', 'last_timestamp', 'file_write_timestamp', 'filename',
+                             'file_type','request_id', 'camera_id', 'frame_timestamp_ns',
+                             'packets_received', 'packets_expected'])
 
     def write_gse_packet_payloads_to_disk(self, gse_lowrate_packets):
         f = open(self.lowrate_filename, 'ab+')
