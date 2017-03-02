@@ -90,7 +90,11 @@ class IndexWatcher(object):
                 fh.seek(self.last_position)
                 try:
                     fragment = pd.read_csv(fh, names=names, header=header)
+                    original_num_rows = fragment.shape[0]
                     fragment.dropna(axis=0,how='any',inplace=True)
+                    num_rows_dropped = original_num_rows-fragment.shape[0]
+                    if num_rows_dropped:
+                        logger.warning("dropped %d rows that had NaNs from file %s" % (num_rows_dropped,self.filename))
                     if self.df is None:
                         self.df = fragment
                 except ValueError:
