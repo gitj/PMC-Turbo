@@ -23,7 +23,14 @@ class PacketError(RuntimeError):
     pass
 
 
-class PacketLengthError(PacketError):
+class PacketInsufficientLengthError(PacketError):
+    """
+    Exception for packets that are shorter or longer than their length field specifies
+    """
+    pass
+
+
+class PacketValidityError(PacketError):
     """
     Exception for packets that are shorter or longer than their length field specifies
     """
@@ -61,7 +68,7 @@ class GSEPacket(object):
     HOUSEKEEPING_ORIGIN = 0
     ORIGIN_BITMASK = 0x07
 
-    def __init__(self, buffer=None, sync2_byte=None, origin=None, payload=None, greedy=False):
+    def __init__(self, buffer=None, sync2_byte=None, origin=None, payload=None):
         """
         GSE style packet, received from the GSE and passed to the ground computer.
 
@@ -85,15 +92,12 @@ class GSEPacket(object):
             origin byte, see SIP manual
         payload : string
             Bytes to package into the packet
-        greedy : bool
-            Only used for decoding.
-            If true, assume the buffer contains exactly one packet.
-            If false, use the length field of the packet to decide how much of the buffer to interpret.
         """
         self._minimum_buffer_length = self.header_length + 1
         self.is_valid = False
+        self._max_payload_size = 5000
         if buffer is not None:
-            self.from_buffer(buffer, greedy=greedy)
+            self.from_buffer(buffer)
         else:
             if (sync2_byte is None) or (origin is None) or (payload is None):
                 raise ValueError('All parameters must be specified'
@@ -122,9 +126,9 @@ class GSEPacket(object):
 
     @property
     def total_packet_length(self):
-        return self.header_length + self.payload_length + 1  # 1 is lenght of checksum
+        return self.header_length + self.payload_length + 1  # 1 is length of checksum
 
-    def from_buffer(self, buffer, greedy=True):
+    def from_buffer(self, buffer):
         """
         Decode and validate the given buffer and update the class attributes accordingly
 
@@ -132,28 +136,38 @@ class GSEPacket(object):
         ----------
         buffer : str
             buffer to decode as a packet
-        greedy : bool
-            If true, assume the buffer contains exactly one packet.
-            If false, use the length field of the packet to decide how much of the buffer to interpret.
         """
 
         if len(buffer) < self._minimum_buffer_length:
-            raise PacketLengthError("Buffer of length %d is too short to contain a packet (minimum length is %d)" %
-                                    (len(buffer), self._minimum_buffer_length))
+            raise PacketInsufficientLengthError(
+                "Buffer of length %d is too short to contain a packet (minimum length is %d)" %
+                (len(buffer), self._minimum_buffer_length))
         self.start_byte, self.sync2_byte, self.origin, _, self.payload_length = struct.unpack(
             self._header_format_string, buffer[:self.header_length])
+
+        if self.payload_length > self._max_payload_size:
+            raise PacketValidityError(
+                "Payload length %d is greater than maximum payload size %d. First 15 bytes of buffer are %r" % (
+                    self.payload_length, self._max_payload_size, buffer[:15]))
+
         if self.start_byte != self.START_BYTE:
             raise PacketValidityError("First byte is not valid start byte. First byte is %r" % buffer[0])
-        if greedy:
-            checksum_index = -1
-        else:
-            checksum_index = self.header_length + self.payload_length
+        if self.origin > 3:
+            raise PacketValidityError("Origin byte is invalid. It is %r" % buffer[2])
+        checksum_index = self.header_length + self.payload_length
+        if checksum_index > len(buffer):
+            # TODO: Write test to make sure this is > and not >=.
+            # I believe that the insufficient bytes for checksum covers this. Check codecov.
+            raise PacketInsufficientLengthError('Buffer of length %d is too short to contain complete packet'
+                                                '(header, payload, CRC.'
+                                                'Minimum length is %d'
+                                                % (len(buffer), self.header_length + self.payload_length + 1))
         payload = buffer[self.header_length:checksum_index]
         if len(payload) != self.payload_length:
-            raise PacketLengthError("Payload length %d does not match length field value %d" % (len(payload),
-                                                                                                self.payload_length))
+            raise PacketValidityError("Payload length %d does not match length field value %d" % (len(payload),
+                                                                                                  self.payload_length))
 
-        checksum = get_checksum(buffer[2:checksum_index])
+        checksum = get_checksum(buffer[2:checksum_index]) # SIP Checksum calculated from byte 3 on.
         if checksum != ord(buffer[checksum_index]):
             raise PacketChecksumError("Payload checksum %d does not match checksum field value %d" %
                                       (checksum, ord(buffer[checksum_index])))
@@ -210,10 +224,6 @@ class FilePacket(object):
             Total number of packets in file
         payload : string
             Bytes to package into the packet
-        greedy : bool
-            Only used for decoding.
-            If true, assume the buffer contains exactly one packet.
-            If false, use the length field of the packet to decide how much of the buffer to interpret.
         """
 
         self._minimum_buffer_length = self.header_length + 2
@@ -256,13 +266,11 @@ class FilePacket(object):
         ----------
         buffer : str
             buffer to decode as a packet
-        greedy : bool
-            If true, assume the buffer contains exactly one packet.
-            If false, use the length field of the packet to decide how much of the buffer to interpret.
         """
         if len(buffer) < self._minimum_buffer_length:
-            raise PacketLengthError("Buffer of length %d is too short to contain a packet (minimum length is %d)" %
-                                    (len(buffer), self._minimum_buffer_length))
+            raise PacketInsufficientLengthError(
+                "Buffer of length %d is too short to contain a packet (minimum length is %d)" %
+                (len(buffer), self._minimum_buffer_length))
         self.start_byte, self.file_id, self.packet_number, self.total_packet_number, self.payload_length = struct.unpack(
             self._header_format_string, buffer[:self.header_length])
 
@@ -272,16 +280,22 @@ class FilePacket(object):
                     self.payload_length, self._max_payload_size, buffer[:15]))
 
         crc_index = self.header_length + self.payload_length
-        payload = buffer[self.header_length:crc_index]
 
+        if crc_index > len(buffer):
+            raise PacketInsufficientLengthError('Buffer of length %d is too short to contain complete packet'
+                                                '(header, payload, CRC.'
+                                                'Minimum length is %d'
+                                                % len(buffer), self.header_length + self.payload_length + 2)
+
+        payload = buffer[self.header_length:crc_index]
         if len(payload) != self.payload_length:
-            raise PacketLengthError("Payload length %d does not match length field value %d" % (len(payload),
-                                                                                                self.payload_length))
+            raise PacketValidityError("Payload length %d does not match length field value %d" % (len(payload),
+                                                                                                          self.payload_length))
 
         payload_crc = get_crc(payload)
         crc_bytes = buffer[crc_index:crc_index + 2]
         if len(crc_bytes) < 2:
-            raise PacketLengthError("Buffer length insufficient to contain complete CRC.")
+            raise PacketInsufficientLengthError("Buffer length insufficient to contain complete CRC.")
         buffer_crc, = struct.unpack('>1H', crc_bytes)
         if payload_crc != buffer_crc:
             raise PacketChecksumError("Payload CRC %d does not match CRC field value %d \n Packet: %r" %
@@ -329,8 +343,9 @@ class CommandPacket(object):
         self._minimum_buffer_length = self.header_length + self.subheader_length + self.footer_length
         if buffer is not None:
             if len(buffer) < self._minimum_buffer_length:
-                raise PacketLengthError("Cannot decode %r as CommandPacket because length %d is less than minimum %d"
-                                        % (buffer, len(buffer), self._minimum_buffer_length))
+                raise PacketInsufficientLengthError(
+                    "Cannot decode %r as CommandPacket because length %d is less than minimum %d"
+                    % (buffer, len(buffer), self._minimum_buffer_length))
             self.from_buffer(buffer)
         else:
             self.payload = payload
@@ -377,7 +392,7 @@ class CommandPacket(object):
         if this_crc != crc:
             raise PacketChecksumError("Bad CRC: got %d, expected %d" % (crc, this_crc))
         if length != len(crc_payload) + 2:
-            raise PacketLengthError("Bad length:, got %d, expected %d" % (length, len(crc_payload) + 2))
+            raise PacketValidityError("Bad length:, got %d, expected %d" % (length, len(crc_payload) + 2))
 
 
 class GSECommandPacket(CommandPacket):
@@ -435,7 +450,7 @@ gse_acknowledgment_codes = {0x00: "command transmitted successfully",
 
 def decode_gse_acknowledgement(data):
     if len(data) < 3:
-        raise PacketLengthError("GSE Acknowledgement must be 3 bytes, only got %d" % len(data))
+        raise PacketInsufficientLengthError("GSE Acknowledgement must be 3 bytes, only got %d" % len(data))
     sync1, sync2, ack = struct.unpack('>3B', data[:3])
     if sync1 != 0xFA:
         raise PacketValidityError("GSE Acknowledgement must start with 0xFA, got 0x%02X" % sync1)
@@ -467,12 +482,12 @@ def get_packets_from_buffer(buffer, packet_class, start_byte):
             packets.append(gse_packet)
             logger.debug('Found valid packet. Advancing %d bytes' % gse_packet.total_packet_length)
             buffer = buffer[gse_packet.total_packet_length:]
-        except PacketLengthError as e:
+        except PacketInsufficientLengthError as e:
             # This triggers when there are insufficient bytes to finish a Packet
             logger.debug('Insufficient bytes for complete packet. Original error %s' % e)
             remainder = buffer
             break
-        except (PacketChecksumError, PacketValidityError) as e:
+        except (PacketChecksumError, PacketValidityError, PacketValidityError) as e:
             logger.warning('Invalid packet found: %s. Moving to next start byte.' % str(e))
             logger.debug('Discarded erroneous start byte.')
             buffer = buffer[1:]
