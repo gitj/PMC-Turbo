@@ -2,21 +2,21 @@ import csv
 import logging
 import os
 import socket
+import threading
 import time
 
+import errno
 import serial
 from pmc_turbo.communication import packet_classes
 
 from pmc_turbo.communication import file_format_classes
-
-logger = logging.getLogger(__name__)
 
 
 class GSEReceiver():
     GSE_SERIAL = 'gse-serial'
     OPENPORT_SOCKET = 'openport-socket'
 
-    def __init__(self, path, serial_port_or_socket_port, baudrate, loop_interval):
+    def __init__(self, root_path, serial_port_or_socket_port, baudrate, loop_interval, use_gse_packets, name):
         """
 
         loop_interval specifies the time we wait per byte reading loop.
@@ -39,7 +39,10 @@ class GSEReceiver():
         loop_interval:int
 
         """
-
+        self.name = name
+        self.root_path = root_path
+        self.logger = logging.getLogger('pmc_turbo.'+name)
+        self.use_gse_packets = use_gse_packets
         if type(serial_port_or_socket_port) is int:
             self.port = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             self.port.bind(('0.0.0.0', serial_port_or_socket_port))
@@ -52,27 +55,35 @@ class GSEReceiver():
         self.files = {}
         self.file_status = {}
         self.file_packet_remainder = ''
-        self.setup_directory(path)
+        self.setup_directory()
         self.last_gse_remainder = ''
         self.loop_interval = loop_interval
         self.num_bytes_per_read = 10000
+        self._exit = False
 
     def close(self):
+        self._exit = True
+        self.thread.join(2)
         try:
             self.port.close()
         except Exception:
             pass
 
+    def start_main_loop_thread(self):
+        self.thread = threading.Thread(target=self.main_loop)
+        self.thread.daemon = True
+        self.thread.start()
+
     def main_loop(self):
-        while True:
+        while not self._exit:
             buffer = self.get_next_data()
             if not buffer:
-                logger.debug('No buffer')
+                self.logger.debug('Waiting for data')
                 continue
             with open(self.raw_filename, 'ab+') as f:
                 f.write(buffer)
 
-            if self.socket_type == self.GSE_SERIAL:
+            if self.use_gse_packets:
                 gse_packets, gse_remainder = packet_classes.get_packets_from_buffer(self.last_gse_remainder + buffer,
                                                                                     packet_class=packet_classes.GSEPacket,
                                                                                     start_byte=packet_classes.GSEPacket.START_BYTE)
@@ -92,9 +103,8 @@ class GSEReceiver():
                                                                              packet_class=packet_classes.FilePacket,
                                                                              start_byte=packet_classes.FilePacket._valid_start_byte)
             for packet in file_packets:
-                logger.debug('File_id: %d, Packet Number: %d of %d' % (
-                    packet.file_id, packet.packet_number, packet.total_packet_number))
-                logger.debug('Packet length: %d' % packet.payload_length)
+                self.logger.debug('File_id: %d, Packet Number: %d of %d, length %d' % (
+                    packet.file_id, packet.packet_number, packet.total_packet_number, packet.payload_length))
             self.file_packet_remainder = remainder
 
             self.gather_files_from_file_packets(file_packets)
@@ -109,104 +119,45 @@ class GSEReceiver():
                     data = self.port.recv(self.num_bytes_per_read)
                 except socket.timeout:
                     time.sleep(0.01)
-                    logger.debug('Timeout')
+                    self.logger.debug('Timeout')
                     pass
             else:
                 data = self.port.read(self.num_bytes_per_read)
             buffer += data
         if buffer:
-            logger.debug('Received %d bytes from serial port' % len(buffer))
+            self.logger.debug('Received %d bytes from serial port' % len(buffer))
         return buffer
 
-    # def get_gse_packets_from_buffer(self, buffer):
-    #     gse_packets = []
-    #     remainder = ''
-    #     while buffer:
-    #         idx = buffer.find(chr(packet_classes.GSEPacket.START_BYTE))
-    #         if idx == -1:
-    #             # There's no GSE start byte in the buffer
-    #             remainder = buffer
-    #             break
-    #         else:
-    #             logger.debug('Found start byte at index %d. Discard preceding bytes.' % idx)
-    #             buffer = buffer[idx:]
-    #         try:
-    #             gse_packet = packet_classes.GSEPacket(buffer=buffer)
-    #             gse_packets.append(gse_packet)
-    #             # total_packet_length = gse_packet.header_length + gse_packet.payload_length + 1
-    #             logger.debug('Found valid packet. Advancing %d bytes' % gse_packet.total_packet_length)
-    #             buffer = buffer[gse_packet.total_packet_length:]
-    #
-    #         except packet_classes.PacketLengthError:
-    #             # This triggers when there are insufficient bytes to finish a GSEPacket
-    #             logger.debug('Insufficient bytes for complete packet.')
-    #             remainder = buffer
-    #             break
-    #         except packet_classes.PacketChecksumError as e:
-    #             logger.warning('Invalid packet found: %s. Moving to next start byte.' % str(e))
-    #             logger.debug('Discarded erroneous start byte.')
-    #             remainder = buffer[1:]
-    #             break
-    #     return gse_packets, remainder
-    #
-    # def separate_gse_packets_by_origin(self, gse_packets):
-    #     lowrate_gse_packets = []
-    #     hirate_gse_packets = []
-    #     for packet in gse_packets:
-    #         origin = packet.origin & packet_classes.GSEPacket.ORIGIN_BITMASK
-    #         if origin == packet_classes.GSEPacket.LOWRATE_ORIGIN:
-    #             lowrate_gse_packets.append(packet)
-    #         if origin == packet_classes.GSEPacket.HIRATE_ORIGIN:
-    #             hirate_gse_packets.append(packet)
-    #     return hirate_gse_packets, lowrate_gse_packets
-    #
-    # def get_file_packets_from_buffer(self, buffer):
-    #     file_packets = []
-    #     remainder = ''
-    #     while buffer:
-    #         idx = buffer.find(chr(packet_classes.FilePacket._valid_start_byte))
-    #         if idx == -1:
-    #             logger.debug('no start byte found')
-    #             remainder = buffer
-    #             break
-    #         else:
-    #             logger.debug('Found start byte at index %d. Discard preceding bytes.' % idx)
-    #             buffer = buffer[idx:]
-    #         try:
-    #             file_packet = packet_classes.FilePacket(buffer=buffer)
-    #             file_packets.append(file_packet)
-    #             # total_packet_length = file_packet.header_length + file_packet.payload_length + 2
-    #             logger.debug('Found valid packet. Advancing %d bytes' % file_packet.total_packet_length)
-    #             buffer = buffer[file_packet.total_packet_length:]
-    #         except packet_classes.PacketLengthError as e:
-    #             logger.debug('Insufficient bytes for complete packet.')
-    #             # This triggers when there are insufficient bytes to finish a FilePacket.
-    #             # This is common - usually just needs to wait for more data.
-    #             remainder = buffer
-    #             break
-    #         except (packet_classes.PacketChecksumError, packet_classes.PacketValidityError) as e:
-    #             logger.warning('Invalid packet found: %s. Moving to next start byte.' % str(e))
-    #             logger.debug('Discarded erroneous start byte.')
-    #             remainder = buffer[1:]
-    #             break
-    #     return file_packets, remainder
 
-    def write_file_from_file_packets(self, packets, filename):
-        data_buffer = ''
-        for packet in packets:
-            data_buffer += packet.payload
+    def assemble_file_from_packets(self, packets):
+        data_buffer = ''.join([packet.payload for packet in packets])
+        return file_format_classes.decode_file_from_buffer(data_buffer)
 
-        file_class = file_format_classes.decode_file_from_buffer(data_buffer)
+    def write_file(self, file_class, file_id):
+        file_status = self.file_status[file_id]
+        base_filename = '%06d' % file_id
+        file_class.write_payload_to_file(os.path.join(self.payload_path,base_filename))
+        filename = os.path.join(self.file_path,base_filename)
+        file_class.write_buffer_to_file(filename)
+        source_path = os.path.join(self.by_source_path,('camera-%d' % file_class.camera_id))
+        try:
+            os.makedirs(source_path)
+        except OSError as e:
+            if e.errno == errno.EEXIST and os.path.isdir(source_path):
+                pass
+            else:
+                self.logger.exception("Could not create %s" % source_path)
+        os.symlink(filename,os.path.join(source_path,base_filename))
 
-        filename = file_class.write_payload_to_file(filename)
-        file_class.write_buffer_to_file(filename + '_buffer')
 
         with open(self.file_index_filename, 'a') as f:
             writer = csv.writer(f, quoting=csv.QUOTE_NONE, lineterminator='\n')
             writer.writerow(
-                [time.time(), filename, file_class.file_type, packets[0].file_id, len(data_buffer)])
+                [file_id, file_status['first_timestamp'],file_status['recent_timestamp'], time.time(), filename, file_class.file_type,
+                len(file_status['packets_received']), file_status['packets_expected'] ])
 
-    def setup_directory(self, path):
+    def setup_directory(self):
+        path = os.path.join(self.root_path,self.name)
         if not os.path.exists(path):
             os.makedirs(path)
         logs_path = os.path.join(path, 'logs')
@@ -215,6 +166,12 @@ class GSEReceiver():
         self.file_path = os.path.join(path, 'files')
         if not os.path.exists(self.file_path):
             os.makedirs(self.file_path)
+        self.payload_path = os.path.join(path,'payloads')
+        if not os.path.exists(self.payload_path):
+            os.makedirs(self.payload_path)
+
+        self.by_source_path = os.path.join(self.root_path,'by-source')
+
         self.raw_filename = os.path.join(logs_path, 'raw.log')
         self.lowrate_filename = os.path.join(logs_path, 'lowrate.log')
         self.packet_index_filename = os.path.join(path, 'packet_index.csv')
@@ -226,7 +183,7 @@ class GSEReceiver():
 
         with open(self.file_index_filename, 'a') as f:
             writer = csv.writer(f, quoting=csv.QUOTE_NONE, lineterminator='\n')
-            writer.writerow(['epoch', 'filename', 'file_type', 'file_id', 'file_size'])
+            writer.writerow(['file_id','first_timestamp', 'last_timestamp', 'file_write_timestamp', 'filename', 'file_type', 'packets_received', 'packets_expected'])
 
     def write_gse_packet_payloads_to_disk(self, gse_lowrate_packets):
         f = open(self.lowrate_filename, 'ab+')
@@ -258,10 +215,13 @@ class GSEReceiver():
         for file_id in self.files.keys():
             sorted_packets = sorted(self.files[file_id], key=lambda k: k.packet_number)
             if [packet.packet_number for packet in sorted_packets] == range(sorted_packets[0].total_packet_number):
-                logger.info('Full file received: file id %d' % file_id)
-                new_filename = '%d' % file_id
-                new_filename = os.path.join(self.file_path, new_filename)
-                self.write_file_from_file_packets(sorted_packets, new_filename)
+                self.logger.info('Full file received: file id %d' % file_id)
+                try:
+                    file_class = self.assemble_file_from_packets(sorted_packets)
+                except RuntimeError:
+                    self.logger.exception("Failed to assemble file id %d" % file_id)
+                    continue
+                self.write_file(file_class,file_id=file_id)
                 del self.files[file_id]
 
     def get_files_status(self):
