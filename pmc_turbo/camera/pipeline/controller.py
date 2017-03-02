@@ -339,3 +339,6 @@ class Controller(GlobalConfiguration):
         num_items = len(self.downlink_queue)
         self.downlink_queue = []
         logger.info("Flushed %d files from downlink queue" % num_items)
+
+    def get_downlink_queue_depth(self):
+        return len(self.downlink_queue)

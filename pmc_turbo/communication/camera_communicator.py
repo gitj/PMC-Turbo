@@ -52,6 +52,9 @@ class Communicator(GlobalConfiguration):
                                        'hirate downlink downlink speed in bytes per second.'
                                        'e.g. [("Openport", ("192.168.1.70", 4501), 10000), ...]').tag(config=True)
     use_controller = Bool(default_value=True).tag(config=True)
+    synchronized_image_delay = Float(2.0,min=0,help="Number of seconds in the past to request images from all cameras "
+                                                    "when synchronized image mode is enabled. This value should be set "
+                                                    "large enough to ensure that all cameras have an image ready.").tag(config=True)
 
 
     def __init__(self, cam_id, peers, controller, leader, base_port=BASE_PORT, **kwargs):
@@ -206,7 +209,6 @@ class Communicator(GlobalConfiguration):
                 'Communicator has no peers. This should never happen; leader at minimum has self as peer.')
         for link in self.downlinks:
             if link.has_bandwidth():
-                # TODO: This needs some work: we probably only want to request images when all pending images have been sent
                 if self.synchronize_image_time_across_cameras and self.peer_polling_order_idx == 0:
                     self.request_synchronized_images()
                 logger.debug('Getting next data from camera %d' % self.peer_polling_order[self.peer_polling_order_idx])
@@ -242,12 +244,14 @@ class Communicator(GlobalConfiguration):
                     link.send_data()
 
     def request_synchronized_images(self):
-        timestamp = time.time() - 2  # TODO: this should probably be a parameter in settings file
+        timestamp = time.time() - self.synchronized_image_delay
         for peer in self.peers:
             if self.check_peer_connection(peer):
                 logger.debug("Synchronizing images by requesting standard image closest to timestamp %f from peer %r" %
                              (timestamp, peer))
-                peer.request_standard_image_at(timestamp) # pyro call
+                queued_items = peer.get_downlink_queue_depth() # pyro call
+                if queued_items == 0:
+                    peer.request_standard_image_at(timestamp) # pyro call
 
 
 
