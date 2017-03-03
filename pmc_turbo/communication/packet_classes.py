@@ -441,6 +441,8 @@ class GSECommandPacket(CommandPacket):
         return length
 
 
+gse_acknowledgment_length = 3
+
 gse_acknowledgment_codes = {0x00: "command transmitted successfully",
                             0x0A: "0x0A: GSE operator disabled science from sending commands",
                             0x0B: "0x0B: Routing address does not match the selected link",
@@ -449,7 +451,7 @@ gse_acknowledgment_codes = {0x00: "command transmitted successfully",
 
 
 def decode_gse_acknowledgement(data):
-    if len(data) < 3:
+    if len(data) < gse_acknowledgment_length:
         raise PacketInsufficientLengthError("GSE Acknowledgement must be 3 bytes, only got %d" % len(data))
     sync1, sync2, ack = struct.unpack('>3B', data[:3])
     if sync1 != 0xFA:
@@ -472,7 +474,7 @@ def get_packets_from_buffer(buffer, packet_class, start_byte):
         idx = buffer.find(chr(start_byte))
         if idx == -1:
             # There's no start byte in the buffer
-            remainder = buffer
+            remainder = buffer  #TODO: I think we should return remainder='' in this case, need to write tests to check
             break
         else:
             logger.debug('Found start byte at index %d. Discard preceding bytes.' % idx)

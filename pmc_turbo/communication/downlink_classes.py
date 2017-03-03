@@ -1,11 +1,12 @@
 from __future__ import division
+
 import logging
 import socket
 import struct
 import time
+
 import numpy as np
 from pmc_turbo.communication import packet_classes
-
 
 logger = logging.getLogger(__name__)
 
@@ -17,8 +18,13 @@ class HirateDownlink():
         self.prev_packet_size = 0
         self.prev_packet_time = 0
         self.packets_to_send = []
-        self.enabled = True
         self.name = name
+
+    def set_bandwidth(self,bytes_per_sec):
+        self.downlink_speed_bytes_per_sec = bytes_per_sec
+        logger.info("Set link %s bandwidth to %d bytes per second, %.2f kbps" % (self.name,
+                                                                                 bytes_per_sec,
+                                                                                 (bytes_per_sec/100.))) # 100 because 1000 bits / 10 bits per byte
 
     def put_data_into_queue(self, buffer, file_id, packet_size=1000):
         logger.debug('Buffer length: %d in downlink %s' % (len(buffer), self.name))
@@ -37,6 +43,9 @@ class HirateDownlink():
         if not self.packets_to_send:
             logger.debug('No packets to send in downlink %s.' % self.name)
             return
+        if self.downlink_speed_bytes_per_sec == 0:
+            logger.debug("link %s is disabled, not sending data")
+            return
         wait_time = self.prev_packet_size / self.downlink_speed_bytes_per_sec
         if time.time() - self.prev_packet_time > wait_time:
             buffer = self.packets_to_send[0].to_buffer()
@@ -52,7 +61,11 @@ class HirateDownlink():
         sock.close()
 
     def has_bandwidth(self):
-        return self.enabled and not self.packets_to_send
+        return (not self.packets_to_send) and self.enabled
+
+    @property
+    def enabled(self):
+        return (self.downlink_speed_bytes_per_sec > 0)
 
     def flush_packet_queue(self):
         num_items = len(self.packets_to_send)

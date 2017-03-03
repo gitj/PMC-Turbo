@@ -8,7 +8,7 @@ import threading
 import time
 import traceback
 from pmc_turbo.utils.configuration import GlobalConfiguration
-from traitlets import Int, Unicode, Bool, List, Float, Tuple, Bytes, TCPAddress, Dict
+from traitlets import Int, Unicode, Bool, List, Float, Tuple, Bytes, TCPAddress, Dict, Enum
 
 import Pyro4
 import Pyro4.errors
@@ -46,11 +46,11 @@ class Communicator(GlobalConfiguration):
     lowrate_link_parameters = List(trait=Tuple(TCPAddress(), Int(default_value=5001, min=1024, max=65535)),
                                    help='List of tuples - lowrate downlink address and lowrate uplink port.'
                                         'e.g. [(("pmc-serial-1", 5001), 5001), ...]').tag(config=True)
-    hirate_link_parameters = List(trait=Tuple(Bytes(), TCPAddress(), Int(min=0)),
-                                  help='List of types - hirate downlink name,'
+    hirate_link_parameters = List(trait=Tuple(Enum(("openport", "highrate", "los")), TCPAddress(), Int(min=0)),
+                                  help='List of tuples - hirate downlink name, Enum(("openport", "highrate", "los"))'
                                        'hirate downlink address,'
-                                       'hirate downlink downlink speed in bytes per second.'
-                                       'e.g. [("Openport", ("192.168.1.70", 4501), 10000), ...]').tag(config=True)
+                                       'hirate downlink downlink speed in bytes per second. 0 means link is disabled.'
+                                       'e.g. [("openport", ("192.168.1.70", 4501), 10000), ...]').tag(config=True)
     use_controller = Bool(default_value=True).tag(config=True)
     synchronized_image_delay = Float(2.0,min=0,help="Number of seconds in the past to request images from all cameras "
                                                     "when synchronized image mode is enabled. This value should be set "
@@ -63,6 +63,7 @@ class Communicator(GlobalConfiguration):
         logger.debug('Communicator initialized')
         self.cam_id = cam_id
         self.leader = leader
+        self.become_leader = False
 
         self.peers = []
         for peer in peers:
@@ -176,6 +177,7 @@ class Communicator(GlobalConfiguration):
     def main_loop(self):
         while True:
             self.get_and_process_sip_bytes()
+
             if self.leader:
                 self.send_data_on_downlinks()
             if self.end_loop == True:  # Switch this to end the leader loop.
@@ -377,6 +379,10 @@ class Communicator(GlobalConfiguration):
         # This stub function needs to be filled out.
         return '\xff' * 255
 
+    def ping(self):
+        return True
+
+
     ##################################################################################################
     # The following methods correspond to commands defined in pmc_turbo.communication.command_table
 
@@ -433,6 +439,38 @@ class Communicator(GlobalConfiguration):
     def use_synchronized_images(self, synchronize):
         self.synchronize_image_time_across_cameras = bool(synchronize)
 
+    def set_leader(self,leader):
+        if leader == self.cam_id:
+            self.election_enabled = False
+            if not self.leader:
+                self.become_leader = True
+                logger.info("Becoming leader by direct command")
+            else:
+                logger.info("Requested to become leader, but I am already leader")
+        elif leader == command_table.USE_BULLY_ELECTION:
+            self.election_enabled = True
+            logger.info("Requested to use bully election")
+            #self.run_election
+        else:
+            if self.leader:
+                #self.stop_leader_things
+                logger.warning("I was leader but Camera %d has been commanded to be leader" % leader)
+            else:
+                logger.info("Camera %d has been requested to become leader," % leader)
+            self.leader = False
+            self.election_enabled = False
+
+    def set_downlink_bandwidth(self, openport, highrate, los):
+        for link in self.downlinks:
+            if link.name == 'openport':
+                link.set_bandwidth(openport)
+            elif link.name == 'highrate':
+                link.set_bandwidth(highrate)
+            elif link.name == 'los':
+                link.set_bandwidth(los)
+            else:
+                logger.error("Unknown link %s found, so can't set its bandwidth" % link.name)
+
     # end command table methods
     ###################################################################################################################
 
@@ -450,10 +488,8 @@ class Communicator(GlobalConfiguration):
         # Improve readability here - constants in uplink classes
         id_byte = packet[1]
         logger.debug('Got packet with id %r' % id_byte)
-        if id_byte == chr(constants.SCIENCE_DATA_REQUEST_BYTE):
+        if id_byte == chr(constants.SCIENCE_DATA_REQUEST_MESSAGE):
             self.respond_to_science_data_request()
-        if id_byte == chr(constants.SCIENCE_COMMAND_BYTE):
+        if id_byte == chr(constants.SCIENCE_COMMAND_MESSAGE):
             self.process_science_command_packet(packet)  ### peer methods
 
-    def ping(self):
-        return True

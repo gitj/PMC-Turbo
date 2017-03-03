@@ -7,6 +7,7 @@ import numpy as np
 
 import pmc_turbo.utils.comparisons
 from pmc_turbo.communication.packet_classes import GSECommandPacket
+from pmc_turbo.utils.struct_formats import format_description
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +15,7 @@ COMMAND_FORMAT_PREFIX = '>1B'
 
 
 class Command(object):
-    def __init__(self, name, argument_table):
+    def __init__(self, name, argument_table, docstring = ''):
         self._name = name
         self._argument_table = argument_table
         self._argument_names = [argname for argname, format_ in self._argument_table]
@@ -23,6 +24,15 @@ class Command(object):
         self._argument_format_string = ''.join([format_ for argname, format_ in self._argument_table])
         self._encoded_command_size_bytes = struct.calcsize(self._command_format_prefix + self._argument_format_string)
         self._command_number = None
+        self._docstring=docstring
+
+    @property
+    def __doc__(self):
+        argument_docs = 'Arguments:\n'
+        for name,format_ in self._argument_table:
+            description = format_description.get(format_,format_)
+            argument_docs += '\t%s : %s\n' % (name,description)
+        return self._docstring + '\n\n' + argument_docs
 
     @property
     def name(self):
@@ -81,8 +91,8 @@ class Command(object):
 
 
 class ListArgumentCommand(Command):
-    def __init__(self, name, argument_format):
-        super(ListArgumentCommand, self).__init__(name, [('number', '1B')])
+    def __init__(self, name, argument_format, docstring=''):
+        super(ListArgumentCommand, self).__init__(name, [('number', 'B')],docstring=docstring)
         self._argument_format = argument_format
 
     def decode_command_and_arguments(self, data):
@@ -122,12 +132,12 @@ class ListArgumentCommand(Command):
 
 
 class StringArgumentCommand(Command):
-    def __init__(self, name, argument_table):
+    def __init__(self, name, argument_table, docstring=''):
         self.validate_argument_table(argument_table)
         argument_subtable = argument_table[:-1]
-        argument_subtable.append(('string_length', '1B'))
+        argument_subtable.append(('string_length', 'B'))
         self._string_argument_name = argument_table[-1][0]
-        super(StringArgumentCommand, self).__init__(name, argument_subtable)
+        super(StringArgumentCommand, self).__init__(name, argument_subtable, docstring=docstring)
 
     def validate_argument_table(self, argument_table):
         last_argument_name, last_argument_format = argument_table[-1]

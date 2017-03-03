@@ -7,37 +7,49 @@ DESTINATION_ALL_CAMERAS = 255
 DESTINATION_WIDEFIELD_CAMERAS = 254
 DESTINATION_NARROWFIELD_CAMERAS = 253
 DESTINATION_LIDAR = 252
+#DESTINATION_SUPER_COMMAND = 251 # use for sending commands to anyone listening, i.e for manually assigning leader
+
+USE_BULLY_ELECTION = 254
 
 command_manager = CommandManager()
-command_manager.add_command(Command("set_focus", [("focus_step", '1H')]))
-command_manager.add_command(Command("set_exposure", [("exposure_time_us", '1I')]))
-command_manager.add_command(Command("set_standard_image_parameters", [("row_offset", "1H"),
-                                                                       ("column_offset","1H"),
-                                                                       ("num_rows", "1H"),
-                                                                       ("num_columns", "1H"),
-                                                                       ("scale_by","1f"),
-                                                                       ("quality","1f")]))
-command_manager.add_command(Command("request_specific_images",[("timestamp","1d"),
-                                                               ("request_id", "1I"),
-                                                               ("num_images", "1H"),
-                                                               ("step","1i"),
-                                                               ("row_offset", "1H"),
-                                                               ("column_offset", "1H"),
-                                                               ("num_rows", "1H"),
-                                                               ("num_columns", "1H"),
-                                                               ("scale_by","1f"),
-                                                               ("quality","1f")]))
-command_manager.add_command(ListArgumentCommand("set_peer_polling_order", '1B'))
-command_manager.add_command(StringArgumentCommand("request_specific_file", [("max_num_bytes", '1i'),
-                                                                            ("request_id", '1I'),
+command_manager.add_command(Command("set_focus", [("focus_step", 'H')]))
+command_manager.add_command(Command("set_exposure", [("exposure_time_us", 'I')]))
+command_manager.add_command(Command("set_standard_image_parameters", [("row_offset", "H"),
+                                                                       ("column_offset","H"),
+                                                                       ("num_rows", "H"),
+                                                                       ("num_columns", "H"),
+                                                                       ("scale_by","f"),
+                                                                       ("quality","f")]))
+command_manager.add_command(Command("request_specific_images",[("timestamp","d"),
+                                                               ("request_id", "I"),
+                                                               ("num_images", "H"),
+                                                               ("step","i"),
+                                                               ("row_offset", "H"),
+                                                               ("column_offset", "H"),
+                                                               ("num_rows", "H"),
+                                                               ("num_columns", "H"),
+                                                               ("scale_by","f"),
+                                                               ("quality","f")]))
+command_manager.add_command(ListArgumentCommand("set_peer_polling_order", 'B',
+                                                docstring="Argument is list of uint8 indicating order"))
+command_manager.add_command(StringArgumentCommand("request_specific_file", [("max_num_bytes", 'i'),
+                                                                            ("request_id", 'I'),
                                                                             ("filename", "s")]))
-command_manager.add_command(StringArgumentCommand("run_shell_command", [("max_num_bytes_returned", '1I'),
-                                                                        ("request_id", '1I'), ("timeout", "1f"),
-                                                                        ("command_line", "s")]))
-command_manager.add_command(Command("get_status_report", [("compress","1B"),
-                                                          ("request_id",'1I')]))
+command_manager.add_command(StringArgumentCommand("run_shell_command", [("max_num_bytes_returned", 'I'),
+                                                                        ("request_id", 'I'), ("timeout", "f"),
+                                                                        ("command_line", "s")],
+                                                  docstring="`timeout` is maximum number of seconds command will be allowed to run.\n"
+                                                            "`command_line` is shell command to execute"))
+command_manager.add_command(Command("get_status_report", [("compress","B"),
+                                                          ("request_id",'I')],
+                                    docstring="if `compress` is non-zero, result will be compressed for downlink"))
 command_manager.add_command(Command("flush_downlink_queues",[]))
-command_manager.add_command(Command("use_synchronized_images",[("synchronize","1B")]))
+command_manager.add_command(Command("use_synchronized_images",[("synchronize","B")],
+                                    docstring="non-zero argument means images should be synchronized"))
+command_manager.add_command(Command("set_downlink_bandwidth",[("openport", "I"),
+                                                              ("highrate", "I"),
+                                                              ("los", "I")],
+                                    docstring="bandwidths are specified in bytes per second"))
 
 # add command to set pyro comm timeout?
 
