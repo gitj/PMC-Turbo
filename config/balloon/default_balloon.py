@@ -21,7 +21,7 @@ c.Application.log_level = 0
 ## This is an application.
 
 ## Dict for mapping camera ID to Pyro address.e.g. {3: ("pmc-camera-3", 40000)}
-c.CommunicatorApp.address_book = {0: ('0.0.0.0', 40000), 1: ('pmc-camera-1', 40000),
+c.CommunicatorApp.address_book = {0: ('pmc-camera-0', 40000), 1: ('pmc-camera-1', 40000),
                                   2: ('pmc-camera-2', 40000), 3: ('pmc-camera-3', 40000),
                                   4: ('pmc-camera-4', 40000), 5: ('pmc-camera-5', 40000),
                                   6: ('pmc-camera-6', 40000), 7: ('pmc-camera-7', 40000)}
@@ -44,11 +44,13 @@ c.GlobalConfiguration.pipeline_pyro_port = 50000
 # Communicator(GlobalConfiguration) configuration
 # ------------------------------------------------------------------------------
 
-## List of types - hirate downlink name,hirate downlink address,hirate downlink
-#  downlink speed in bytes per second.e.g. [("Openport", ("192.168.1.70", 4501),
-#  10000), ...]
-c.Communicator.hirate_link_parameters = [('TDRSS', ('pmc-serial-1', 5002), 700),
-                                         ('Openport', ('192.168.1.70', 4501), 10000)]
+## List of tuples - hirate downlink name, Enum(("openport", "highrate", "los"))
+#  hirate downlink address,
+#  hirate downlink downlink speed in bytes per second. 0 means link is disabled.
+#  e.g. [("openport", ("192.168.1.70", 4501), 10000), ...]
+c.Communicator.hirate_link_parameters = [('highrate', ('pmc-serial-0', 5002), 700),
+                                         ('openport', ('192.168.1.70', 4501), 10000),
+                                         ('los', ('pmc-serial-2', 5004), 0)]
 
 ##
 c.Communicator.initial_peer_polling_order = [0, 1, 2, 3]#, 4, 5, 6]
