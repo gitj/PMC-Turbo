@@ -18,16 +18,17 @@ class Uplink():
     def get_sip_packets(self):
         try:
             data = self.uplink_socket.recv(2000)
+        except socket.timeout:
+            return [] # This is expected when no data has been received
+        except socket.error as e:
+            logger.exception("Unexpected exceception caught while receiving SIP packets")
+            return []
 
-            logger.debug('Received bytes on uplink: %r' % data)
+        logger.debug('Received bytes on uplink: %r' % data)
 
-            buffer = self.sip_leftover_buffer + data
-            packets, self.sip_leftover_buffer = get_sip_uplink_packets_from_buffer(buffer)
-            return packets
-        except socket.error as e:  # This should catch a timeouterrror.
-            if e.errno != 11:
-                logger.exception("Unexpected exceception caught while receiving SIP packets")
-        return []
+        buffer = self.sip_leftover_buffer + data
+        packets, self.sip_leftover_buffer = get_sip_uplink_packets_from_buffer(buffer)
+        return packets
 
 
 def get_sip_uplink_packets_from_buffer(buffer):

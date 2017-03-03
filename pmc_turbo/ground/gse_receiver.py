@@ -125,7 +125,7 @@ class GSEReceiver():
                 data = self.port.read(self.num_bytes_per_read)
             buffer += data
         if buffer:
-            self.logger.debug('Received %d bytes from serial port' % len(buffer))
+            self.logger.debug('Received %d bytes from %s' % (len(buffer),self.name))
         return buffer
 
 

@@ -285,12 +285,12 @@ class FilePacket(object):
             raise PacketInsufficientLengthError('Buffer of length %d is too short to contain complete packet'
                                                 '(header, payload, CRC.'
                                                 'Minimum length is %d'
-                                                % len(buffer), self.header_length + self.payload_length + 2)
+                                                % (len(buffer), (self.header_length + self.payload_length + 2)))
 
         payload = buffer[self.header_length:crc_index]
         if len(payload) != self.payload_length:
-            raise PacketValidityError("Payload length %d does not match length field value %d" % (len(payload),
-                                                                                                          self.payload_length))
+            raise PacketValidityError("Payload length %d does not match length field value %d"
+                                      % (len(payload), self.payload_length))
 
         payload_crc = get_crc(payload)
         crc_bytes = buffer[crc_index:crc_index + 2]
