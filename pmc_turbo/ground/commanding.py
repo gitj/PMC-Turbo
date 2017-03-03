@@ -19,7 +19,7 @@ IRIDIUM = GSECommandPacket.IRIDIUM
 OPENPORT = 'openport'
 
 class CommandSender(GroundConfiguration):
-    command_port_baudrate = 2400  # LDB 2.x.x.x.
+    command_port_baudrate = 2400  # LDB 2.1.2
     command_port_response_timeout = Float(3.,help="Timeout for serial command port. This sets how much time is allocated "
                                                   "for the GSE to acknowledge the command we sent.", min=0).tag(config=True)
     def __init__(self,**kwargs):
