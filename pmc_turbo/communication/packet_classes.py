@@ -142,9 +142,15 @@ class GSEPacket(object):
             raise PacketInsufficientLengthError(
                 "Buffer of length %d is too short to contain a packet (minimum length is %d)" %
                 (len(buffer), self._minimum_buffer_length))
-        self.start_byte, self.sync2_byte, self.origin, _, self.payload_length = struct.unpack(
+        self.start_byte, self.sync2_byte, self.origin, zero_byte, self.payload_length = struct.unpack(
             self._header_format_string, buffer[:self.header_length])
 
+        if self.sync2_byte not in self._valid_sync2_bytes:
+            raise PacketValidityError('Sync2_byte not in valid_sync2_bytes. Sync2 byte is %r' % self.sync2_byte)
+
+        if zero_byte != 0:
+            raise PacketValidityError("Expected byte at offset 3 to be zero, got %02X. Start of buffer: %r"
+                                      % (zero_byte, buffer[:self.header_length]))
         if self.payload_length > self._max_payload_size:
             raise PacketValidityError(
                 "Payload length %d is greater than maximum payload size %d. First 15 bytes of buffer are %r" % (
@@ -152,8 +158,8 @@ class GSEPacket(object):
 
         if self.start_byte != self.START_BYTE:
             raise PacketValidityError("First byte is not valid start byte. First byte is %r" % buffer[0])
-        if self.origin > 3:
-            raise PacketValidityError("Origin byte is invalid. It is %r" % buffer[2])
+        if (self.origin & 0xF0):
+            raise PacketValidityError("Origin byte %02X is invalid. Start of buffer: %r" % (self.origin,buffer[:self.header_length]))
         checksum_index = self.header_length + self.payload_length
         if checksum_index > len(buffer):
             # TODO: Write test to make sure this is > and not >=.
@@ -173,8 +179,6 @@ class GSEPacket(object):
                                       (checksum, ord(buffer[checksum_index])))
         self.payload = payload
         self.checksum = checksum
-        if self.sync2_byte not in self._valid_sync2_bytes:
-            raise PacketValidityError('Sync2_byte not in valid_sync2_bytes. Sync2 byte is %r' % self.sync2_byte)
 
     def to_buffer(self):
         """
