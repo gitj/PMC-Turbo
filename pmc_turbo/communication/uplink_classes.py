@@ -2,6 +2,8 @@ import logging
 import socket
 import struct
 
+import errno
+
 from pmc_turbo.communication import constants
 
 logger = logging.getLogger(__name__)
@@ -18,10 +20,9 @@ class Uplink():
     def get_sip_packets(self):
         try:
             data = self.uplink_socket.recv(2000)
-        except socket.timeout:
-            return [] # This is expected when no data has been received
         except socket.error as e:
-            logger.exception("Unexpected exceception caught while receiving SIP packets")
+            if e.errno != errno.EAGAIN:  # EAGAIN is expected when no data has been received because the socket is set to non-blocking.
+                logger.exception("Unexpected exceception caught while receiving SIP packets")
             return []
 
         logger.debug('Received bytes on uplink: %r' % data)

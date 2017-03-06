@@ -44,13 +44,6 @@ class PacketChecksumError(PacketError):
     pass
 
 
-class PacketValidityError(PacketError):
-    """
-    Exception for packets which are clearly not valid
-    """
-    pass
-
-
 class GSEPacket(object):
     _metadata_table = [('1B', 'start_byte'),
                        ('1B', 'sync2_byte'),

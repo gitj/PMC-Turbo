@@ -1,10 +1,11 @@
-import time
-import os
 import logging
-from traitlets import (Int, Bytes, Float, Union, List, Tuple, Enum)
-import pmc_turbo
+import os
+import time
+
 import Pyro4
-from pmc_turbo.ground.ground_configuration import GroundConfiguration, standard_baudrates
+from traitlets import (Float, List, Enum)
+
+from pmc_turbo.ground.ground_configuration import GroundConfiguration
 from pmc_turbo.ground.gse_receiver import GSEReceiver
 
 logger = logging.getLogger(__name__)
@@ -20,7 +21,7 @@ class GSEReceiverManager(GroundConfiguration):
                             default_value=['openport','gse_sip', 'los'],
                             help="Downlinks to setup and use.").tag(config=True)
     receiver_main_loop_interval = Float(1.0,min=0).tag(config=True)
-    root_data_path = Bytes('/data/gse_data').tag(config=True)
+
     def __init__(self, **kwargs):
         super(GSEReceiverManager,self).__init__(**kwargs)
         timestring = time.strftime('%Y-%m-%d_%H%M%S')

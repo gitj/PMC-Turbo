@@ -28,11 +28,18 @@ class Command(object):
 
     @property
     def __doc__(self):
+        return self.make_docstring()
+
+    @property
+    def argument_docs(self):
         argument_docs = 'Arguments:\n'
         for name,format_ in self._argument_table:
             description = format_description.get(format_,format_)
             argument_docs += '\t%s : %s\n' % (name,description)
-        return self._docstring + '\n\n' + argument_docs
+        return argument_docs
+
+    def make_docstring(self):
+        return self._docstring + '\n' + self.argument_docs
 
     @property
     def name(self):
@@ -94,6 +101,14 @@ class ListArgumentCommand(Command):
     def __init__(self, name, argument_format, docstring=''):
         super(ListArgumentCommand, self).__init__(name, [('number', 'B')],docstring=docstring)
         self._argument_format = argument_format
+    @property
+    def __doc__(self):
+        return self.make_docstring()
+
+    @property
+    def argument_docs(self):
+        argument_docs = 'Argument:\nList of %s' % format_description.get(self._argument_format,self._argument_format)
+        return argument_docs
 
     def decode_command_and_arguments(self, data):
         length_dict, _ = super(ListArgumentCommand, self).decode_command_and_arguments(data)
@@ -138,6 +153,21 @@ class StringArgumentCommand(Command):
         argument_subtable.append(('string_length', 'B'))
         self._string_argument_name = argument_table[-1][0]
         super(StringArgumentCommand, self).__init__(name, argument_subtable, docstring=docstring)
+    @property
+    def __doc__(self):
+        return self.make_docstring()
+
+    @property
+    def argument_docs(self):
+        argument_docs = 'Arguments:\n'
+        for name,format_ in self._argument_table:
+            if name == 'string_length':
+                continue
+            description = format_description.get(format_,format_)
+            argument_docs += '\t%s : %s\n' % (name,description)
+        argument_docs += '\t%s : %s\n' % (self._string_argument_name, "string")
+        return argument_docs
+
 
     def validate_argument_table(self, argument_table):
         last_argument_name, last_argument_format = argument_table[-1]
