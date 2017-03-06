@@ -159,8 +159,11 @@ class Communicator(GlobalConfiguration):
         self.leftover_buffer = ''
         self.file_id = 0
         print self.lowrate_link_parameters
-        self.lowrate_uplink = uplink_classes.Uplink(self.lowrate_link_parameters[0][1])
-        self.lowrate_downlink = downlink_classes.LowrateDownlink(*self.lowrate_link_parameters[0][0])
+        self.lowrate_uplinks = []
+        self.lowrate_downlinks = []
+        for lowrate_link_parameters in self.lowrate_link_parameters:
+            self.lowrate_uplinks.append(uplink_classes.Uplink(lowrate_link_parameters[1]))
+            self.lowrate_downlinks.append(downlink_classes.LowrateDownlink(*lowrate_link_parameters[0]))
         self.downlinks = []
         for name, (address, port), initial_rate in self.hirate_link_parameters:
             self.downlinks.append(downlink_classes.HirateDownlink(ip=address, port=port,
@@ -287,7 +290,9 @@ class Communicator(GlobalConfiguration):
     def respond_to_science_data_request(self):
         logger.debug("Science data request received.")
         self.get_all_status_summaries()
-        self.lowrate_downlink.send(self.buffer_for_downlink)
+        for lowrate_downlink in self.lowrate_downlinks:
+            lowrate_downlink.send(self.buffer_for_downlink)
+            # TODO: Think about this - do I want to broadcast to both or select which one - make signature?
 
     def check_peer_connection(self, peer):
         initial_timeout = peer._pyroTimeout
@@ -477,7 +482,11 @@ class Communicator(GlobalConfiguration):
     ##### SIP socket methods
 
     def get_and_process_sip_bytes(self):
-        valid_packets = self.lowrate_uplink.get_sip_packets()
+        valid_packets = []
+        for lowrate_uplink in self.lowrate_uplinks:
+            packets = lowrate_uplink.get_sip_packets()
+            if packets:
+                valid_packets.append(lowrate_uplink.get_sip_packets())
         if valid_packets:
             for packet in valid_packets:
                 logger.debug('Found packet: %r' % packet)

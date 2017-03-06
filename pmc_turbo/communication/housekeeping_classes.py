@@ -102,7 +102,7 @@ def construct_super_group_from_json_list(group_name, json_paths, json_range_path
             status_group = construct_status_group_from_json(('subgroup_%d' % i), json_path, json_range_path)
             super_group.groups[status_group.name] = status_group
         except ValueError as e:
-            logger.warning(str(e))
+            logger.error(str(e))
     return super_group
 
 
