@@ -6,7 +6,7 @@ import time
 import numpy as np
 import serial
 
-import gse_receiver
+import pmc_turbo.ground.gse_receiver
 
 DOWNLINK_IP, DOWNLINK_PORT = '192.168.1.54', 4002
 np.random.seed(0)
@@ -47,7 +47,7 @@ def main(data_length, chunk_size, downlink_bytes_per_sec):
     DATA = np.arange(0, data_length, dtype='>u2').view('uint8')
     DATA[DATA == 0xFA] = 0x55
     DATA = DATA.tostring()
-    gr = gse_receiver.GSEReceiver()
+    gr = pmc_turbo.ground.gse_receiver.GSEReceiver()
     buffer = send_and_receive_loop(DATA, chunk_size, downlink_bytes_per_sec)
     gse_packets, _ = gr.get_gse_packets_from_buffer(buffer)
     hi, low = gr.separate_gse_packets_by_origin(gse_packets)
