@@ -3,12 +3,11 @@ import time
 import select
 import Pyro4
 from collections import OrderedDict
+import logging
 
-try:
-    from pymodbus.client.sync import ModbusTcpClient
-except ImportError:
-    print 'Unable to import ModbusTcpClient'
-    pass
+logger = logging.getLogger(__name__)
+
+from pymodbus.client.sync import ModbusTcpClient
 
 LOG_DIR = '/home/pmc/logs/housekeeping/charge_controller'
 # serial_number = 16050331
@@ -32,23 +31,26 @@ NUM_COIL_REGISTERS = 26
 
 @Pyro4.expose
 class ChargeController():
-    def __init__(self, host='pmc-charge-controller-0', port=502):
-        self.host = host
-        self.port = port
-#        self.client = ModbusTcpClient(host=host, port=port)
+    def __init__(self, address):
+        self.host,self.port = address
+        self.device_name = '<unknown>'
+        self.serial_number = '<unknown>'
         self.update_serial_number_and_device_name()
         self.readable_values = {}
         self.coil_register_indices = range(1, NUM_COIL_REGISTERS + 1)
 
     def update_serial_number_and_device_name(self):
-        self.measure_eeprom()
-        serial_number_bytes = [('%04x' % self.eeprom_measurement[k])[::-1] for k in range(57536, 57540)]
-        self.serial_number = ''.join(serial_number_bytes)[::2]
-        device_model = self.eeprom_measurement[0xE0CC]
-        if device_model:
-            self.device_name = 'TriStar-MPPT-60'
-        else:
-            self.device_name = 'TriStar-MPPT-45'
+        try:
+            self.measure_eeprom()
+            serial_number_bytes = [('%04x' % self.eeprom_measurement[k])[::-1] for k in range(57536, 57540)]
+            self.serial_number = ''.join(serial_number_bytes)[::2]
+            device_model = self.eeprom_measurement[0xE0CC]
+            if device_model:
+                self.device_name = 'TriStar-MPPT-60'
+            else:
+                self.device_name = 'TriStar-MPPT-45'
+        except Exception:
+            logger.exception("Could not get serial number or device name for %s:%d" % (self.host,self.port))
 
     def measure(self):
         self.client = ModbusTcpClient(host=self.host, port=self.port)
@@ -85,15 +87,15 @@ class ChargeController():
 
 @Pyro4.expose
 class ChargeControllerLogger():
-    def __init__(self, host='pmc-charge-controller-0', port=502, measurement_interval=10, record_eeprom=True,
-                 eeprom_measurement_interval=3600, pyro_port=42000):
+    def __init__(self, address=('pmc-charge-controller-0',502), measurement_interval=10, record_eeprom=True,
+                 eeprom_measurement_interval=3600, pyro_port=None):
         try:
             os.makedirs(LOG_DIR)
         except OSError:
             pass
-        self.charge_controller = ChargeController(host, port)
+        self.charge_controller = ChargeController(address)
         self.filename = None
-        self.host = host
+        self.name = address[0].replace('.','_')
         self.file = None
         self.last_measurement = None
         self.last_eeprom_measurement = None
@@ -103,12 +105,12 @@ class ChargeControllerLogger():
             self.eeprom_measurement_interval = eeprom_measurement_interval
             self.eeprom_filename = None
             self.eeprom_file = None
-        ip = Pyro4.socketutil.getInterfaceAddress('192.168.1.1')
-        self.daemon = Pyro4.Daemon(host='0.0.0.0', port=pyro_port)
-        print self.daemon.register(self, objectId='chargecontroller')
+        if pyro_port:
+            self.daemon = Pyro4.Daemon(host='0.0.0.0', port=pyro_port)
+            print self.daemon.register(self, objectId='chargecontroller')
 
     def create_file(self, log_dir=LOG_DIR):
-        self.filename = os.path.join(log_dir, (self.host + '_' + time.strftime('%Y-%m-%d_%H%M%S.csv')))
+        self.filename = os.path.join(log_dir, (self.name + '_' + time.strftime('%Y-%m-%d_%H%M%S.csv')))
         self.file = open(self.filename, 'a')
         header = ('# %s Serial No %s\n' % (self.charge_controller.device_name, self.charge_controller.serial_number))
         self.file.write(header)
@@ -117,7 +119,7 @@ class ChargeControllerLogger():
         self.file.flush()
 
     def create_eeprom_file(self, log_dir=LOG_DIR):
-        self.eeprom_filename = os.path.join(log_dir, (self.host + '_' + time.strftime('%Y-%m-%d_%H%M%S__eeprom.csv')))
+        self.eeprom_filename = os.path.join(log_dir, (self.name + '_eeprom_' + time.strftime('%Y-%m-%d_%H%M%S.csv')))
         self.eeprom_file = open(self.eeprom_filename, 'a')
         header = ('# %s Serial No %s\n' % (self.charge_controller.device_name, self.charge_controller.serial_number))
         self.eeprom_file.write(header)
@@ -128,39 +130,42 @@ class ChargeControllerLogger():
     def show_priority_values(self):
         return populate_human_readable_dict(self.last_measurement)
 
+    def measure_and_log(self):
+        if self.last_measurement and (time.time() - self.last_measurement['epoch'] < self.measurement_interval):
+            return
+        try:
+            self.last_measurement = self.charge_controller.measure()
+        except AttributeError:
+            pass
+        else:
+            if self.file is None:
+                self.create_file()
+            line_to_write = '%f,' % self.last_measurement.values()[0]
+            line_to_write += (','.join([('%d' % x) for x in self.last_measurement.values()[1:]]) + '\n')
+            self.file.write(line_to_write)
+            self.file.flush()
+
+        if self.record_eeprom:
+            if (self.last_eeprom_measurement == None) or (
+                            time.time() - self.last_eeprom_measurement['epoch'] > self.eeprom_measurement_interval):
+                if self.eeprom_file is None:
+                    self.create_eeprom_file()
+                try:
+                    self.last_eeprom_measurement = self.charge_controller.measure_eeprom()
+                except AttributeError:
+                    pass
+                else:
+                    line_to_write = '%f,' % self.last_eeprom_measurement.values()[0]
+                    line_to_write += (','.join([('%d' % x) for x in self.last_eeprom_measurement.values()[1:]]) + '\n')
+                    self.eeprom_file.write(line_to_write)
+                    self.eeprom_file.flush()
+
     def run(self):
-        while True:
-            try:
-                self.last_measurement = self.charge_controller.measure()
-            except AttributeError:
-                pass
-            else:
-                if self.file is None:
-                    self.create_file()
-                line_to_write = '%f,' % self.last_measurement.values()[0]
-                line_to_write += (','.join([('%d' % x) for x in self.last_measurement.values()[1:]]) + '\n')
-                self.file.write(line_to_write)
-                self.file.flush()
-
-            if self.record_eeprom:
-                if (self.last_eeprom_measurement == None) or (
-                                time.time() - self.last_eeprom_measurement['epoch'] > self.eeprom_measurement_interval):
-                    if self.eeprom_file is None:
-                        self.create_eeprom_file()
-                    try:
-                        self.last_eeprom_measurement = self.charge_controller.measure_eeprom()
-                    except AttributeError:
-                        pass
-                    else:
-                        line_to_write = '%f,' % self.last_eeprom_measurement.values()[0]
-                        line_to_write += (','.join([('%d' % x) for x in self.last_eeprom_measurement.values()[1:]]) + '\n')
-                        self.eeprom_file.write(line_to_write)
-                        self.eeprom_file.flush()
-
-            while time.time() - self.last_measurement['epoch'] < self.measurement_interval:
-                events, _, _ = select.select(self.daemon.sockets, [], [], 0.1)
-                if events:
-                    self.daemon.events(events)
+        self.measure_and_log()
+        while time.time() - self.last_measurement['epoch'] < self.measurement_interval:
+            events, _, _ = select.select(self.daemon.sockets, [], [], 0.1)
+            if events:
+                self.daemon.events(events)
 
 
 def populate_human_readable_dict(measurement_array):
@@ -182,9 +187,9 @@ def populate_human_readable_dict(measurement_array):
     return priority_values
 
 
-def run_charge_controller_logger(host='pmc-charge-controller-0', port=502, measurement_interval=10, record_eeprom=True,
+def run_charge_controller_logger(address=('pmc-charge-controller-0', 502), measurement_interval=10, record_eeprom=True,
                  eeprom_measurement_interval=3600, pyro_port=42000):
-    ccl = ChargeControllerLogger(host=host,port=port,measurement_interval=measurement_interval,record_eeprom=record_eeprom,
+    ccl = ChargeControllerLogger(address=address,measurement_interval=measurement_interval,record_eeprom=record_eeprom,
                                  eeprom_measurement_interval=eeprom_measurement_interval,pyro_port=pyro_port)
     ccl.run()
 

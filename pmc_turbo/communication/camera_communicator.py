@@ -7,6 +7,7 @@ import struct
 import threading
 import time
 import traceback
+from pymodbus.exceptions import ConnectionException
 from pmc_turbo.utils.configuration import GlobalConfiguration
 from traitlets import Int, Unicode, Bool, List, Float, Tuple, Bytes, TCPAddress, Dict, Enum
 
@@ -21,6 +22,8 @@ from pmc_turbo.communication import downlink_classes, uplink_classes, packet_cla
 from pmc_turbo.communication import file_format_classes
 from pmc_turbo.communication.command_table import command_manager, CommandStatus
 from pmc_turbo.communication.short_status import ShortStatusLeader, ShortStatusCamera
+from pmc_turbo.housekeeping.charge_controller import ChargeControllerLogger
+
 from pmc_turbo.utils import error_counter, camera_id
 
 Pyro4.config.SERVERTYPE = "multiplex"
@@ -42,8 +45,7 @@ END_BYTE = chr(constants.SIP_END_BYTE)
 
 @Pyro4.expose
 class Communicator(GlobalConfiguration):
-    initial_peer_polling_order = List(trait=Int).tag(
-        config=True)  # , default_value=[0, 1, 2, 3, 4, 5, 6]).tag(config=True)
+    initial_peer_polling_order = List(trait=Int).tag(config=True)
     loop_interval = Float(default_value=0.01, allow_none=False, min=0).tag(config=True)
     lowrate_link_parameters = List(trait=Tuple(Enum(("comm1", "comm2")), TCPAddress(), Int(default_value=5001, min=1024, max=65535)),
                                    help='List of tuples - link name, lowrate downlink address and lowrate uplink port.'
@@ -57,8 +59,9 @@ class Communicator(GlobalConfiguration):
     synchronized_image_delay = Float(2.0, min=0,
                                      help="Number of seconds in the past to request images from all cameras "
                                           "when synchronized image mode is enabled. This value should be set "
-                                          "large enough to ensure that all cameras have an image ready.").tag(
-        config=True)
+                                          "large enough to ensure that all cameras have an image ready.").tag(config=True)
+    charge_controller_settings = List(trait=Tuple(TCPAddress(), Float(10, min=0), Float(3600, min=0)),
+                                      help="List of tuples ((ip,port), measurement_interval, eeprom_measurement_interval)\n").tag(config=True)
 
     def __init__(self, cam_id, peers, controller, leader, base_port=BASE_PORT, **kwargs):
         super(Communicator, self).__init__(**kwargs)
@@ -98,10 +101,16 @@ class Communicator(GlobalConfiguration):
         self.end_loop = False
         self.status_groups = []
 
+        self.charge_controllers = [ChargeControllerLogger(address=settings[0], measurement_interval=settings[1],
+                                                          eeprom_measurement_interval=settings[2])
+                                   for settings in self.charge_controller_settings]
+
         peer_error_strings = [('pmc_%d_communication_error_counts' % i) for i in range(len(self.peers))]
         self.error_counter = error_counter.CounterCollection('communication_errors', self.counters_dir,
                                                              *peer_error_strings)
         self.error_counter.controller_communication_errors.reset()
+        for charge_controller in self.charge_controllers:
+            getattr(self.error_counter,(charge_controller.name+'_connection_error')).reset()
 
         self.pyro_daemon = None
         self.pyro_thread = None
@@ -183,13 +192,17 @@ class Communicator(GlobalConfiguration):
         self.main_thread.start()
 
     def main_loop(self):
-        while True:
+        while not self.end_loop:
             self.get_and_process_sip_bytes()
 
             if self.leader:
                 self.send_data_on_downlinks()
-            if self.end_loop == True:  # Switch this to end the leader loop.
-                return
+                for charge_controller in self.charge_controllers:
+                    try:
+                        charge_controller.measure_and_log()
+                    except ConnectionException:
+                        logger.exception("Failed to connect to %s" % charge_controller.name)
+                        getattr(self.error_counter,(charge_controller.name+'_connection_error')).increment()
             time.sleep(self.loop_interval)
 
     def peer_loop(self):
