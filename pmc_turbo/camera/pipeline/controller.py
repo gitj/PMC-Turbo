@@ -216,6 +216,8 @@ class Controller(GlobalConfiguration):
                                 quality=75,
                                 format='jpeg', step=-1):
         last_index = self.merged_index.get_index_of_timestamp(timestamp)
+        if last_index is None:
+            raise RuntimeError("No index available!")
         first_index = last_index + step * num_images
         logger.debug("request timestamp %f, num_images %d, step %d -> first index: %d, last index: %d, total rows: %d"
                      % (timestamp, num_images, step, first_index, last_index, self.merged_index.df.shape[0]))

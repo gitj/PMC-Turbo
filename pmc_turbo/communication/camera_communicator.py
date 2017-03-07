@@ -215,7 +215,7 @@ class Communicator(GlobalConfiguration):
     def send_data_on_downlinks(self):
         if not self.peers:
             raise RuntimeError(
-                'Communicator has no peers. This should never happen; leader at minimum has self as peer.')
+                'Communicator has no peers. This should never happen; leader at minimum has self as peer.') # pragma: no cover
         for link in self.downlinks:
             if link.has_bandwidth():
                 if self.synchronize_image_time_across_cameras and self.peer_polling_order_idx == 0:

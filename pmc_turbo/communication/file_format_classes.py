@@ -8,6 +8,7 @@ from pmc_turbo.utils.comparisons import equal_or_close
 
 logger = logging.getLogger(__name__)
 
+DEFAULT_REQUEST_ID = 2 ** 32 - 1
 
 class JSONMixin(object):
     def to_object(self):
@@ -36,7 +37,7 @@ class FileBase(object):
         file_type, = struct.unpack('>1B', buffer[0])
         buffer = buffer[1:]
         if file_type != cls.file_type:
-            raise RuntimeError("File %s contains file type code %d, which does not match type code %d ofthe class you "
+            raise RuntimeError("File %s contains file type code %d, which does not match type code %d of the class you "
                                "are trying to read with. try using load_load_and_decode_file instead"
                                % (filename, file_type, cls.file_type))
         return cls(buffer=buffer)
@@ -224,5 +225,3 @@ def load_and_decode_file(filename):
         buffer = fh.read()
     return decode_file_from_buffer(buffer)
 
-
-DEFAULT_REQUEST_ID = 2 ** 32 - 1

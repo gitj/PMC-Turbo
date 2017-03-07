@@ -13,6 +13,9 @@ from pmc_turbo.communication import camera_communicator
 from pmc_turbo.utils.tests.test_config import BasicTestHarness
 from copy import deepcopy
 
+#from pmc_turbo.utils.log import setup_stream_handler,logging
+#setup_stream_handler(logging.DEBUG)
+
 counter_dir = ''
 
 FAKE_BASE_PORT = 56654
@@ -39,10 +42,11 @@ class TestCommunicator(BasicTestHarness):
 
     def test_basic_command_path(self):
         config = copy.deepcopy(self.basic_config)
-        config.BasicPipeline.default_write_enable = 0
+        config.BasicPipeline.default_write_enable = 1
         bpl = basic_pipeline.BasicPipeline(config=config)
 
         bpl.initialize()
+        time.sleep(2)
         cont = controller.Controller(pipeline=bpl, config=self.basic_config)
         config1 = deepcopy(self.basic_config)
         config1.Communicator.lowrate_link_parameters = [(('localhost', 6501), 6501)]
@@ -83,9 +87,6 @@ class TestCommunicator(BasicTestHarness):
                     cm.send_arbitrary_camera_command(command="TriggerSource"),
                     cm.set_standard_image_parameters(row_offset=1000, column_offset=1000, num_rows=256,num_columns=256,
                                        scale_by = 1.0, quality=90),
-                    cm.request_specific_images(timestamp=123456789.123,request_id=1223,num_images=2,step=1,row_offset=1000,
-                                               column_offset=1000, num_rows=256,num_columns=256,
-                                       scale_by = 1.0, quality=90),
                     cm.set_peer_polling_order([0,1,2,3,4,5,6]),
                     cm.request_specific_file(max_num_bytes=2**20,request_id=123,filename='/data1/index.csv'),
                     cm.run_shell_command(max_num_bytes_returned=2**20,request_id=3488,timeout=30.0,command_line="ls -lhtr"),
@@ -93,17 +94,20 @@ class TestCommunicator(BasicTestHarness):
                     cm.flush_downlink_queues(),
                     cm.use_synchronized_images(synchronize=1),
                     cm.set_downlink_bandwidth(openport=10000,highrate=100,los=0),
+                    cm.request_specific_images(timestamp=123456789.123,request_id=1223,num_images=2,step=1,row_offset=1000,
+                                               column_offset=1000, num_rows=256,num_columns=256,
+                                       scale_by = 1.0, quality=90),
                     ]
         for command in commands:
             print cm.decode_commands(command)
             cc1.execute_packet(packet_classes.CommandPacket(payload=command, sequence_number=1,
                                                         destination=1).to_buffer())
+
         cc1.close()
         cc2.close()
         bpl.close()
         time.sleep(1)
 
-        # command = command_table.command_manager.
 
 
 class FakeLowrateUplink():
