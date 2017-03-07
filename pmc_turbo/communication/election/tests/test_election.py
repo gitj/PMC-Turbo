@@ -61,40 +61,40 @@ class DummyPeer():
 def test_bully_election(interval = 0.1):
     import random
 
-    player_class = SimpleBullyPlayer
+    for player_class in (SimpleBullyPlayer, ConcensusBullyPlayer):
 
-    num_peers = 4
-    address_book = dict([(k,('localhost',57430+k)) for k in range(num_peers)])
-    peers = [DummyPeer(k,address_book,player_class=player_class,main_loop_interval=interval) for k in range(num_peers)]
-    for peer in peers:
-        peer.ping_value = False
-    indexes = range(num_peers)
-    random.shuffle(indexes)
-    indexes = range(num_peers)[::-1]
-    for k in indexes:
-        peer = peers[k]
-        logger.info("starting peer %d" % k)
-        time.sleep(random.random()*interval)
-        peer.start_player()
-        peer.ping_value = True
-    logger.info("waiting for a few rounds")
-    time.sleep(5*interval)
-    for peer in peers:
-        logger.info("peer %d has leader %d" % (peer.player.id,peer.player.leader_id))
-    logger.info("killing player 0")
-    peers[0].ping_value = False
-    peers[0].daemon.shutdown()
-    time.sleep(5*interval)
-    logger.info("ressurecting player 0")
-    peers[0].player.leader_id = None
-    peers[0].ping_value = True
-    time.sleep(5*interval)
-    logger.info("shutting down")
-    for peer in peers:
-        peer.exit = True
-        peer.daemon.shutdown()
-    time.sleep(3*interval)
-    logger.info("done")
+        num_peers = 4
+        address_book = dict([(k,('localhost',57430+k)) for k in range(num_peers)])
+        peers = [DummyPeer(k,address_book,player_class=player_class,main_loop_interval=interval) for k in range(num_peers)]
+        for peer in peers:
+            peer.ping_value = False
+        indexes = range(num_peers)
+        random.shuffle(indexes)
+        indexes = range(num_peers)[::-1]
+        for k in indexes:
+            peer = peers[k]
+            logger.info("starting peer %d" % k)
+            time.sleep(random.random()*interval)
+            peer.start_player()
+            peer.ping_value = True
+        logger.info("waiting for a few rounds")
+        time.sleep(5*interval)
+        for peer in peers:
+            logger.info("peer %d has leader %d" % (peer.player.id,peer.player.leader_id))
+        logger.info("killing player 0")
+        peers[0].ping_value = False
+        #peers[0].daemon.shutdown()
+        time.sleep(5*interval)
+        logger.info("ressurecting player 0")
+        peers[0].player.leader_id = None
+        peers[0].ping_value = True
+        time.sleep(5*interval)
+        logger.info("shutting down")
+        for peer in peers:
+            peer.exit = True
+            peer.daemon.shutdown()
+        time.sleep(3*interval)
+        logger.info("done")
 
 if __name__ == "__main__":
     import pmc_turbo.utils.log
