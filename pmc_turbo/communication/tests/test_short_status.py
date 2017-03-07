@@ -78,11 +78,17 @@ def test_coerce():
     ss.sdd_temp = 47
     ss.sde_temp = 46
     ss.sdf_temp = 77
+    values = ss._values.copy()
     ss2 = ShortStatusCamera(ss.encode())
     assert ss2.free_disk_root_mb == 2**32-1
     assert ss2.focus_step == 2**16-1
     assert ss2.lens_wall_temp == 127
     assert ss2.dcdc_wall_temp == -128
+
+    ss._values = values
+    ss.timestamp = "hello"
+    result = ss.decode(ss.encode())
+    assert result['timestamp'] == 0
 
 def test_sizes():
     ss = ShortStatusCamera()
@@ -91,3 +97,12 @@ def test_sizes():
     ss = ShortStatusLeader()
     print "leader status size:", ss.encoded_size
     assert ss.encoded_size <= 255
+
+def test_dir():
+    ss = ShortStatusCamera()
+    dir(ss)
+
+def test_non_existant_attribute():
+    ss = ShortStatusCamera()
+    with assert_raises(AttributeError):
+        ss.asdfb = 45
