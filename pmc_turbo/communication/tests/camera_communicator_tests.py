@@ -67,6 +67,31 @@ class TestCommunicator(BasicTestHarness):
         cc1.execute_packet(packet_classes.CommandPacket(payload=non_existant_command, sequence_number=1,
                                                         destination=1).to_buffer())
 
+        cm = command_table.command_manager
+        commands = [cm.set_exposure(exposure_time_us=1000),
+                    cm.run_focus_sweep(request_id=333,row_offset=1000, column_offset=1000, num_rows=256,num_columns=256,
+                                       scale_by = 1.0, quality=90,start=4400,stop=4900,step=10),
+                    cm.send_arbitrary_camera_command(command="TriggerSource:FixedRate"),
+                    cm.send_arbitrary_camera_command(command="TriggerSource:None"),
+                    cm.send_arbitrary_camera_command(command="TriggerSource:FixedRate:"),
+                    cm.send_arbitrary_camera_command(command="TriggerSource"),
+                    cm.set_standard_image_parameters(row_offset=1000, column_offset=1000, num_rows=256,num_columns=256,
+                                       scale_by = 1.0, quality=90),
+                    cm.request_specific_images(timestamp=123456789.123,request_id=1223,num_images=2,step=1,row_offset=1000,
+                                               column_offset=1000, num_rows=256,num_columns=256,
+                                       scale_by = 1.0, quality=90),
+                    cm.set_peer_polling_order([0,1,2,3,4,5,6]),
+                    cm.request_specific_file(max_num_bytes=2**20,request_id=123,filename='/data1/index.csv'),
+                    cm.run_shell_command(max_num_bytes_returned=2**20,request_id=3488,timeout=30.0,command_line="ls -lhtr"),
+                    cm.get_status_report(compress=1,request_id=344),
+                    cm.flush_downlink_queues(),
+                    cm.use_synchronized_images(synchronize=1),
+                    cm.set_downlink_bandwidth(openport=10000,highrate=100,los=0),
+                    ]
+        for command in commands:
+            print cm.decode_commands(command)
+            cc1.execute_packet(packet_classes.CommandPacket(payload=command, sequence_number=1,
+                                                        destination=1).to_buffer())
         cc1.close()
         cc2.close()
 

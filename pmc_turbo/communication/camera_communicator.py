@@ -41,7 +41,8 @@ END_BYTE = chr(constants.SIP_END_BYTE)
 
 @Pyro4.expose
 class Communicator(GlobalConfiguration):
-    initial_peer_polling_order = List(trait=Int).tag(config=True)#, default_value=[0, 1, 2, 3, 4, 5, 6]).tag(config=True)
+    initial_peer_polling_order = List(trait=Int).tag(
+        config=True)  # , default_value=[0, 1, 2, 3, 4, 5, 6]).tag(config=True)
     loop_interval = Float(default_value=0.01, allow_none=False, min=0).tag(config=True)
     lowrate_link_parameters = List(trait=Tuple(TCPAddress(), Int(default_value=5001, min=1024, max=65535)),
                                    help='List of tuples - lowrate downlink address and lowrate uplink port.'
@@ -52,10 +53,11 @@ class Communicator(GlobalConfiguration):
                                        'hirate downlink downlink speed in bytes per second. 0 means link is disabled.'
                                        'e.g. [("openport", ("192.168.1.70", 4501), 10000), ...]').tag(config=True)
     use_controller = Bool(default_value=True).tag(config=True)
-    synchronized_image_delay = Float(2.0,min=0,help="Number of seconds in the past to request images from all cameras "
-                                                    "when synchronized image mode is enabled. This value should be set "
-                                                    "large enough to ensure that all cameras have an image ready.").tag(config=True)
-
+    synchronized_image_delay = Float(2.0, min=0,
+                                     help="Number of seconds in the past to request images from all cameras "
+                                          "when synchronized image mode is enabled. This value should be set "
+                                          "large enough to ensure that all cameras have an image ready.").tag(
+        config=True)
 
     def __init__(self, cam_id, peers, controller, leader, base_port=BASE_PORT, **kwargs):
         super(Communicator, self).__init__(**kwargs)
@@ -234,8 +236,10 @@ class Communicator(GlobalConfiguration):
                 except Exception as e:
                     payload = str(e)
                     payload += "".join(Pyro4.util.getPyroTraceback())
-                    exception_file = file_format_classes.UnhandledExceptionFile(payload=payload,request_id=file_format_classes.DEFAULT_REQUEST_ID,
-                                                                                camera_id=self.peer_polling_order[self.peer_polling_order_idx])
+                    exception_file = file_format_classes.UnhandledExceptionFile(payload=payload,
+                                                                                request_id=file_format_classes.DEFAULT_REQUEST_ID,
+                                                                                camera_id=self.peer_polling_order[
+                                                                                    self.peer_polling_order_idx])
                     next_data = exception_file.to_buffer()
 
                 if not next_data:
@@ -256,11 +260,9 @@ class Communicator(GlobalConfiguration):
             if self.check_peer_connection(peer):
                 logger.debug("Synchronizing images by requesting standard image closest to timestamp %f from peer %r" %
                              (timestamp, peer))
-                queued_items = peer.get_downlink_queue_depth() # pyro call
+                queued_items = peer.get_downlink_queue_depth()  # pyro call
                 if queued_items == 0:
-                    peer.request_standard_image_at(timestamp) # pyro call
-
-
+                    peer.request_standard_image_at(timestamp)  # pyro call
 
     ##### Methods called by leader via pyro
 
@@ -286,7 +288,6 @@ class Communicator(GlobalConfiguration):
             return None
         except Exception as e:
             raise Exception(str(e) + "".join(Pyro4.util.getPyroTraceback()))
-
 
     ### The following two functions respond to SIP requests
     def respond_to_science_data_request(self):
@@ -369,7 +370,6 @@ class Communicator(GlobalConfiguration):
                 except Pyro4.errors.CommunicationError:
                     logger.debug('Unable to connect to peer %d' % i)
 
-
         camera_status = self.summarize_status_to_255_bytes(summary_dict)
         self.buffer_for_downlink = camera_status + self.buffer_for_downlink[len(camera_status):]
 
@@ -388,7 +388,6 @@ class Communicator(GlobalConfiguration):
 
     def ping(self):
         return True
-
 
     ##################################################################################################
     # The following methods correspond to commands defined in pmc_turbo.communication.command_table
@@ -421,10 +420,23 @@ class Communicator(GlobalConfiguration):
     def set_exposure(self, exposure_time_us):
         self.controller.set_exposure(exposure_time_us)
 
+    def run_focus_sweep(self, request_id, row_offset, column_offset, num_rows, num_columns, scale_by, quality,
+                        start, stop, step):
+        request_params = dict(request_id=request_id, row_offset=row_offset, column_offset=column_offset,
+                              num_rows=num_rows, num_columns=num_columns, scale_by=scale_by, quality=quality)
+        self.controller.run_focus_sweep(request_params=request_params, start=start, stop=stop, step=step)
+
+    def send_arbitrary_camera_command(self, command):
+        try:
+            parameter,value = command.split(':')
+        except ValueError:
+            raise ValueError("Failed to parse command string %r" % command)
+        self.controller.send_arbitrary_camera_command(parameter, value)
+
     def set_standard_image_parameters(self, row_offset, column_offset, num_rows, num_columns, scale_by, quality):
         self.controller.set_standard_image_parameters(row_offset=row_offset, column_offset=column_offset,
-                                                     num_rows=num_rows,
-                                                     num_columns=num_columns, scale_by=scale_by, quality=quality)
+                                                      num_rows=num_rows, num_columns=num_columns,
+                                                      scale_by=scale_by, quality=quality)
 
     def request_specific_images(self, timestamp, request_id, row_offset, column_offset, num_rows, num_columns,
                                 scale_by, quality, step):
@@ -446,7 +458,7 @@ class Communicator(GlobalConfiguration):
     def use_synchronized_images(self, synchronize):
         self.synchronize_image_time_across_cameras = bool(synchronize)
 
-    def set_leader(self,leader):
+    def set_leader(self, leader):
         if leader == self.cam_id:
             self.election_enabled = False
             if not self.leader:
@@ -457,10 +469,10 @@ class Communicator(GlobalConfiguration):
         elif leader == command_table.USE_BULLY_ELECTION:
             self.election_enabled = True
             logger.info("Requested to use bully election")
-            #self.run_election
+            # self.run_election
         else:
             if self.leader:
-                #self.stop_leader_things
+                # self.stop_leader_things
                 logger.warning("I was leader but Camera %d has been commanded to be leader" % leader)
             else:
                 logger.info("Camera %d has been requested to become leader," % leader)
@@ -503,4 +515,3 @@ class Communicator(GlobalConfiguration):
             self.respond_to_science_data_request()
         if id_byte == chr(constants.SCIENCE_COMMAND_MESSAGE):
             self.process_science_command_packet(packet)  ### peer methods
-

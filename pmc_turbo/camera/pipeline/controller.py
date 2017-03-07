@@ -103,6 +103,8 @@ class Controller(GlobalConfiguration):
 
     @require_pipeline
     def send_arbitrary_camera_command(self, command_string, argument_string):
+        if argument_string == "None":
+            argument_string = None
         tag = self.pipeline.send_camera_command(command_string, argument_string)
         logger.debug("Set camera parameter %s to %r" % (command_string,argument_string))
         self.counters.send_arbitrary_command.increment()
