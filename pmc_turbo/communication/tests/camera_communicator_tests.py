@@ -1,13 +1,14 @@
 import shutil
 import tempfile
-import unittest
+import copy
 
 import Pyro4
+import time
 from nose.tools import timed
 from pmc_turbo.communication import command_table
 from pmc_turbo.communication import packet_classes
 
-from pmc_turbo.camera.pipeline import controller
+from pmc_turbo.camera.pipeline import controller, basic_pipeline
 from pmc_turbo.communication import camera_communicator
 from pmc_turbo.utils.tests.test_config import BasicTestHarness
 from copy import deepcopy
@@ -37,7 +38,12 @@ class TestCommunicator(BasicTestHarness):
         cc.close()
 
     def test_basic_command_path(self):
-        cont = controller.Controller(pipeline=None, config=self.basic_config)
+        config = copy.deepcopy(self.basic_config)
+        config.BasicPipeline.default_write_enable = 0
+        bpl = basic_pipeline.BasicPipeline(config=config)
+
+        bpl.initialize()
+        cont = controller.Controller(pipeline=bpl, config=self.basic_config)
         config1 = deepcopy(self.basic_config)
         config1.Communicator.lowrate_link_parameters = [(('localhost', 6501), 6501)]
         cc1 = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, leader=True, start_pyro=False,
@@ -94,6 +100,8 @@ class TestCommunicator(BasicTestHarness):
                                                         destination=1).to_buffer())
         cc1.close()
         cc2.close()
+        bpl.close()
+        time.sleep(1)
 
         # command = command_table.command_manager.
 
