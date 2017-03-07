@@ -168,7 +168,7 @@ class BasicPipeline(GlobalConfiguration):
                 tag,name,value,result,gate_time = self.acquire_image_command_results_queue.get_nowait()
                 self.acquire_image_command_results_dict[tag] = (name,value,result,gate_time)
                 self.counters.commands_completed.increment()
-            except EmptyException:
+            except EmptyException: # pragma: no cover
                 break
 
     def send_camera_command_get_result(self,name,value,timeout=1):
@@ -198,26 +198,13 @@ class BasicPipeline(GlobalConfiguration):
             self.acquire_image_output_queue.put(None)
         self.acquire_images.child.join(timeout=1)
         logger.debug("acquire process status at exit: %s" % self.acquire_status.value)
-        #self.write_images.child.join()
         for k,writer in enumerate(self.writers):
             writer.child.join(timeout=1)
             logger.debug("writer process status at exit: %s" % self.disk_statuses[k].value)
             writer.child.terminate()
         self.acquire_images.child.terminate()
         self.daemon.shutdown()
-    def exit(self,signum,frame):
+    def exit(self,signum,frame):  # pragma: no cover
         print "exiting with signum",signum,frame
         self.close()
         sys.exit(0)
-
-# import netCDF4
-#
-# def write_image_to_netcdf(filename,data):
-#     ds = netCDF4.Dataset(filename,mode='w')
-#     dimx = ds.createDimension('x',size=data.shape[0])
-#     dimy = ds.createDimension('y',size=data.shape[1])
-#     var = ds.createVariable('image',dimensions=('x','y'),datatype=data.dtype,zlib=True,complevel=1)#,contiguous=True)
-#     var[:] = data[:]
-#     ds.sync()
-#     ds.close()
-
