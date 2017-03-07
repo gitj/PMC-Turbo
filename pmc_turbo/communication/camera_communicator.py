@@ -140,7 +140,8 @@ class Communicator(GlobalConfiguration):
         except Exception:
             pass
         try:
-            self.lowrate_uplink.uplink_socket.close()
+            for lowrate_uplink in self.lowrate_uplinks:
+                lowrate_uplink.uplink_socket.close()
         except Exception:
             print "cant's close"
             pass
@@ -153,18 +154,19 @@ class Communicator(GlobalConfiguration):
 
     def setup_links(self):
         # , sip_uplink_port, lowrate_downlink_ip, lowrate_downlink_port, tdrss_hirate_downlink_ip,
-        # tdrss_hirate_downlink_port, tdrss_downlink_speed, openport_downlink_ip, openport_downlink_port,
+        # tdrss_hirate_downlink_port, tdrss_downlink_speed, openport_downlink_ipopenport_downlink_ip, openport_downlink_port,
         # openport_downlink_speed):
         self.sip_leftover_buffer = ''
         self.leftover_buffer = ''
         self.file_id = 0
-        print self.lowrate_link_parameters
         self.lowrate_uplinks = []
         self.lowrate_downlinks = []
+        self.downlinks = []
+
         for lowrate_link_parameters in self.lowrate_link_parameters:
             self.lowrate_uplinks.append(uplink_classes.Uplink(lowrate_link_parameters[1]))
             self.lowrate_downlinks.append(downlink_classes.LowrateDownlink(*lowrate_link_parameters[0]))
-        self.downlinks = []
+
         for name, (address, port), initial_rate in self.hirate_link_parameters:
             self.downlinks.append(downlink_classes.HirateDownlink(ip=address, port=port,
                                                                   speed_bytes_per_sec=initial_rate, name=name))
@@ -485,8 +487,8 @@ class Communicator(GlobalConfiguration):
         valid_packets = []
         for lowrate_uplink in self.lowrate_uplinks:
             packets = lowrate_uplink.get_sip_packets()
-            if packets:
-                valid_packets.append(lowrate_uplink.get_sip_packets())
+            for packet in packets:
+                valid_packets.append(packet)
         if valid_packets:
             for packet in valid_packets:
                 logger.debug('Found packet: %r' % packet)

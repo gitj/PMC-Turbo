@@ -85,6 +85,9 @@ class FakeLowrateUplink():
 
 
 class FakeLowrateDownlink():
+    def __init__(self):
+        self.buffer = '\xff'*255
+
     def send(self, msg):
         self.buffer = msg
 
