@@ -45,8 +45,8 @@ class Communicator(GlobalConfiguration):
     initial_peer_polling_order = List(trait=Int).tag(
         config=True)  # , default_value=[0, 1, 2, 3, 4, 5, 6]).tag(config=True)
     loop_interval = Float(default_value=0.01, allow_none=False, min=0).tag(config=True)
-    lowrate_link_parameters = List(trait=Tuple(TCPAddress(), Int(default_value=5001, min=1024, max=65535)),
-                                   help='List of tuples - lowrate downlink address and lowrate uplink port.'
+    lowrate_link_parameters = List(trait=Tuple(Enum(("comm1", "comm2")), TCPAddress(), Int(default_value=5001, min=1024, max=65535)),
+                                   help='List of tuples - link name, lowrate downlink address and lowrate uplink port.'
                                         'e.g. [(("pmc-serial-1", 5001), 5001), ...]').tag(config=True)
     hirate_link_parameters = List(trait=Tuple(Enum(("openport", "highrate", "los")), TCPAddress(), Int(min=0)),
                                   help='List of tuples - hirate downlink name, Enum(("openport", "highrate", "los"))'
@@ -167,8 +167,8 @@ class Communicator(GlobalConfiguration):
         self.downlinks = []
 
         for lowrate_link_parameters in self.lowrate_link_parameters:
-            self.lowrate_uplinks.append(uplink_classes.Uplink(lowrate_link_parameters[1]))
-            self.lowrate_downlinks.append(downlink_classes.LowrateDownlink(*lowrate_link_parameters[0]))
+            self.lowrate_uplinks.append(uplink_classes.Uplink(lowrate_link_parameters[0], lowrate_link_parameters[2]))
+            self.lowrate_downlinks.append(downlink_classes.LowrateDownlink(lowrate_link_parameters[0], *lowrate_link_parameters[1]))
 
         for name, (address, port), initial_rate in self.hirate_link_parameters:
             self.downlinks.append(downlink_classes.HirateDownlink(ip=address, port=port,
@@ -292,7 +292,7 @@ class Communicator(GlobalConfiguration):
 
     ### The following two functions respond to SIP requests
     def respond_to_science_data_request(self, lowrate_index):
-        logger.debug("Science data request received.")
+        logger.debug("Science data request received from %s." % self.lowrate_uplinks[lowrate_index].name)
         self.get_all_status_summaries()
         self.lowrate_downlinks[lowrate_index].send(self.buffer_for_downlink)
 
@@ -501,14 +501,14 @@ class Communicator(GlobalConfiguration):
         for i, lowrate_uplink in enumerate(self.lowrate_uplinks):
             packets = lowrate_uplink.get_sip_packets()
             for packet in packets:
-                logger.debug('Found packet on lowrate link %d: %r' % (i, packet))
+                logger.debug('Found packet on lowrate link %s: %r' % (lowrate_uplink.name, packet))
                 if self.leader:
                     self.execute_packet(packet, i)
 
     def execute_packet(self, packet, lowrate_index):
         # Improve readability here - constants in uplink classes
         id_byte = packet[1]
-        logger.debug('Got packet with id %r from uplink with port' % id_byte)
+        logger.debug('Got packet with id %r from uplink' % id_byte)
         if id_byte == chr(constants.SCIENCE_DATA_REQUEST_MESSAGE):
             self.respond_to_science_data_request(lowrate_index)
         if id_byte == chr(constants.SCIENCE_COMMAND_MESSAGE):

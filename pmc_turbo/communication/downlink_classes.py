@@ -77,7 +77,8 @@ class LowrateDownlink():
     HEADER = '\x10\x53'
     FOOTER = '\x03'
 
-    def __init__(self, downlink_ip, downlink_port):
+    def __init__(self, name, downlink_ip, downlink_port):
+        self.name = name
         self.downlink_ip, self.downlink_port = downlink_ip, downlink_port
 
     def _send(self, msg):

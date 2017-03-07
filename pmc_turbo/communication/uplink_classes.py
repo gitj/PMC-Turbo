@@ -9,7 +9,8 @@ from pmc_turbo.communication import constants
 logger = logging.getLogger(__name__)
 
 class Uplink():
-    def __init__(self, uplink_port):
+    def __init__(self, name, uplink_port):
+        self.name = name
         self.uplink_port = uplink_port
         socket_ = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         socket_.bind(('0.0.0.0', self.uplink_port))

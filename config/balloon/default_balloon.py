@@ -60,7 +60,8 @@ c.Communicator.loop_interval = 0.01
 
 ## List of tuples - lowrate downlink address and lowrate uplink port.e.g.
 #  [(("pmc-serial-1", 5001), 5001), ...]
-c.Communicator.lowrate_link_parameters = [(("pmc-serial-1", 5001), 5001), (('pmc-serial-2', 5003), 5003)]
+c.Communicator.lowrate_link_parameters = [('comm1', ("pmc-serial-1", 5001), 5001),
+                                          ('comm2', ('pmc-serial-2', 5003), 5003)]
 
 ##
 c.Communicator.use_controller = True
