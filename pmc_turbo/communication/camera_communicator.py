@@ -291,12 +291,10 @@ class Communicator(GlobalConfiguration):
             raise Exception(str(e) + "".join(Pyro4.util.getPyroTraceback()))
 
     ### The following two functions respond to SIP requests
-    def respond_to_science_data_request(self):
+    def respond_to_science_data_request(self, lowrate_index):
         logger.debug("Science data request received.")
         self.get_all_status_summaries()
-        for lowrate_downlink in self.lowrate_downlinks:
-            lowrate_downlink.send(self.buffer_for_downlink)
-            # TODO: Think about this - do I want to broadcast to both or select which one - make signature?
+        self.lowrate_downlinks[lowrate_index].send(self.buffer_for_downlink)
 
     def check_peer_connection(self, peer):
         initial_timeout = peer._pyroTimeout
@@ -497,22 +495,24 @@ class Communicator(GlobalConfiguration):
     ##### SIP socket methods
 
     def get_and_process_sip_bytes(self):
-        valid_packets = []
-        for lowrate_uplink in self.lowrate_uplinks:
+        for i, lowrate_uplink in enumerate(self.lowrate_uplinks):
             packets = lowrate_uplink.get_sip_packets()
             for packet in packets:
-                valid_packets.append(packet)
-        if valid_packets:
-            for packet in valid_packets:
                 logger.debug('Found packet: %r' % packet)
                 if self.leader:
-                    self.execute_packet(packet)
+                    self.execute_packet(packet, i)
 
-    def execute_packet(self, packet):
+    def execute_packet(self, packet, lowrate_index):
         # Improve readability here - constants in uplink classes
         id_byte = packet[1]
-        logger.debug('Got packet with id %r' % id_byte)
+        logger.debug('Got packet with id %r from uplink with port' % id_byte)
         if id_byte == chr(constants.SCIENCE_DATA_REQUEST_MESSAGE):
-            self.respond_to_science_data_request()
+            self.respond_to_science_data_request(lowrate_index)
         if id_byte == chr(constants.SCIENCE_COMMAND_MESSAGE):
             self.process_science_command_packet(packet)  ### peer methods
+
+    ###################################################################################################################
+
+    def populate_short_status(self):
+        # Populate short status class with housekeeping summary.
+        return

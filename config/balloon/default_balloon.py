@@ -53,14 +53,14 @@ c.Communicator.hirate_link_parameters = [('highrate', ('pmc-serial-0', 5002), 70
                                          ('los', ('pmc-serial-2', 5004), 0)]
 
 ##
-c.Communicator.initial_peer_polling_order = [0, 1, 2, 3]#, 4, 5, 6]
+c.Communicator.initial_peer_polling_order = [0, 1, 2, 3]  # , 4, 5, 6]
 
 ##
 c.Communicator.loop_interval = 0.01
 
 ## List of tuples - lowrate downlink address and lowrate uplink port.e.g.
 #  [(("pmc-serial-1", 5001), 5001), ...]
-c.Communicator.lowrate_link_parameters = [(("pmc-serial-1", 5001), 5001)]
+c.Communicator.lowrate_link_parameters = [(("pmc-serial-1", 5001), 5001), (('pmc-serial-2', 5003), 5003)]
 
 ##
 c.Communicator.use_controller = True
