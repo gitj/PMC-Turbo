@@ -26,7 +26,7 @@ Pyro4.config.SERVERTYPE = "multiplex"
 Pyro4.config.SERIALIZER = 'pickle'
 Pyro4.config.SERIALIZERS_ACCEPTED = ['pickle', ]
 # Caution: If COMMTIMEOUT is too low, camera communicator gets a timeout error when it requests data from another communicator.
-Pyro4.config.COMMTIMEOUT = 1.5
+Pyro4.config.COMMTIMEOUT = 5
 # Tests show COMMTIMEOUT works.
 # Note that there is another timeout POLLTIMEOUT
 # "For the multiplexing server only: the timeout of the select or poll calls"
@@ -410,8 +410,8 @@ class Communicator(GlobalConfiguration):
 
         self.controller.add_file_to_downlink_queue(json_file.to_buffer())
 
-    def set_peer_polling_order(self, new_peer_polling_order):
-        self.peer_polling_order = new_peer_polling_order
+    def set_peer_polling_order(self, list_argument):
+        self.peer_polling_order = list_argument
         self.peer_polling_order_idx = 0
 
     def set_focus(self, focus_step):
@@ -438,9 +438,9 @@ class Communicator(GlobalConfiguration):
                                                       num_rows=num_rows, num_columns=num_columns,
                                                       scale_by=scale_by, quality=quality)
 
-    def request_specific_images(self, timestamp, request_id, row_offset, column_offset, num_rows, num_columns,
+    def request_specific_images(self, timestamp, request_id, num_images, row_offset, column_offset, num_rows, num_columns,
                                 scale_by, quality, step):
-        self.controller.request_specific_images(timestamp=timestamp, request_id=request_id, row_offset=row_offset,
+        self.controller.request_specific_images(timestamp=timestamp, request_id=request_id, num_images=num_images, row_offset=row_offset,
                                                 column_offset=column_offset, num_rows=num_rows, num_columns=num_columns,
                                                 scale_by=scale_by, quality=quality, step=step)
 

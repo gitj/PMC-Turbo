@@ -221,7 +221,7 @@ class Controller(GlobalConfiguration):
                      % (timestamp, num_images, step, first_index, last_index, self.merged_index.df.shape[0]))
         if first_index > last_index:
             first_index, last_index = last_index, first_index
-        selection = self.merged_index.df.iloc[first_index, last_index, abs(step)]
+        selection = self.merged_index.df.iloc[first_index:last_index:abs(step)]
         logger.debug("selected %d rows" % selection.shape[0])
         for _, index_row in selection.iterrows():
             self.downlink_queue.append(self.get_image_by_info(index_row, row_offset=row_offset,
