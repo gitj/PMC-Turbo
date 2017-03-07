@@ -63,19 +63,19 @@ class TestCommunicator(BasicTestHarness):
         cc1.destination_lists = {0: [cc1], 1: [cc2]}
         command = command_table.command_manager.set_focus(focus_step=1000)
         command_packet = packet_classes.CommandPacket(payload=command, sequence_number=1, destination=1)
-        cc1.execute_packet(command_packet.to_buffer())
+        cc1.execute_packet(command_packet.to_buffer(), lowrate_index=0)
 
         bad_buffer = command_packet.to_buffer()[:-2] + 'AA'
-        cc1.execute_packet(bad_buffer)
+        cc1.execute_packet(bad_buffer, lowrate_index=0)
 
         bad_crc_buffer = command_packet.to_buffer()[:-2] + 'A\x03'
-        cc1.execute_packet(bad_crc_buffer)
+        cc1.execute_packet(bad_crc_buffer, lowrate_index=0)
 
-        cc1.execute_packet('bad packet')
+        cc1.execute_packet('bad packet', lowrate_index=0)
 
         non_existant_command = '\xfe' + command
         cc1.execute_packet(packet_classes.CommandPacket(payload=non_existant_command, sequence_number=1,
-                                                        destination=1).to_buffer())
+                                                        destination=1).to_buffer(), lowrate_index=0)
 
         cm = command_table.command_manager
         commands = [cm.set_exposure(exposure_time_us=1000),
@@ -101,7 +101,7 @@ class TestCommunicator(BasicTestHarness):
         for command in commands:
             print cm.decode_commands(command)
             cc1.execute_packet(packet_classes.CommandPacket(payload=command, sequence_number=1,
-                                                        destination=1).to_buffer())
+                                                        destination=1).to_buffer(), lowrate_index=0)
 
         cc1.close()
         cc2.close()

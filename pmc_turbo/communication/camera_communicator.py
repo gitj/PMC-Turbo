@@ -216,7 +216,7 @@ class Communicator(GlobalConfiguration):
     def send_data_on_downlinks(self):
         if not self.peers:
             raise RuntimeError(
-                'Communicator has no peers. This should never happen; leader at minimum has self as peer.') # pragma: no cover
+                'Communicator has no peers. This should never happen; leader at minimum has self as peer.')  # pragma: no cover
         for link in self.downlinks:
             if link.has_bandwidth():
                 if self.synchronize_image_time_across_cameras and self.peer_polling_order_idx == 0:
@@ -314,7 +314,8 @@ class Communicator(GlobalConfiguration):
         finally:
             peer._pyroTimeout = initial_timeout
 
-    def process_science_command_packet(self, msg):
+    def process_science_command_packet(self, msg, lowrate_index):
+        logger.debug('Received command with msg %r from link %d' % (msg, lowrate_index))
         try:
             command_packet = packet_classes.CommandPacket(buffer=msg)
         except (packet_classes.PacketError, ValueError) as e:
@@ -427,7 +428,7 @@ class Communicator(GlobalConfiguration):
 
     def send_arbitrary_camera_command(self, command):
         try:
-            parameter,value = command.split(':')
+            parameter, value = command.split(':')
         except ValueError:
             raise ValueError("Failed to parse command string %r" % command)
         self.controller.send_arbitrary_camera_command(parameter, value)
@@ -437,9 +438,11 @@ class Communicator(GlobalConfiguration):
                                                       num_rows=num_rows, num_columns=num_columns,
                                                       scale_by=scale_by, quality=quality)
 
-    def request_specific_images(self, timestamp, request_id, num_images, row_offset, column_offset, num_rows, num_columns,
+    def request_specific_images(self, timestamp, request_id, num_images, row_offset, column_offset, num_rows,
+                                num_columns,
                                 scale_by, quality, step):
-        self.controller.request_specific_images(timestamp=timestamp, request_id=request_id, num_images=num_images, row_offset=row_offset,
+        self.controller.request_specific_images(timestamp=timestamp, request_id=request_id, num_images=num_images,
+                                                row_offset=row_offset,
                                                 column_offset=column_offset, num_rows=num_rows, num_columns=num_columns,
                                                 scale_by=scale_by, quality=quality, step=step)
 
@@ -498,7 +501,7 @@ class Communicator(GlobalConfiguration):
         for i, lowrate_uplink in enumerate(self.lowrate_uplinks):
             packets = lowrate_uplink.get_sip_packets()
             for packet in packets:
-                logger.debug('Found packet: %r' % packet)
+                logger.debug('Found packet on lowrate link %d: %r' % (i, packet))
                 if self.leader:
                     self.execute_packet(packet, i)
 
@@ -509,7 +512,7 @@ class Communicator(GlobalConfiguration):
         if id_byte == chr(constants.SCIENCE_DATA_REQUEST_MESSAGE):
             self.respond_to_science_data_request(lowrate_index)
         if id_byte == chr(constants.SCIENCE_COMMAND_MESSAGE):
-            self.process_science_command_packet(packet)  ### peer methods
+            self.process_science_command_packet(packet, lowrate_index)  ### peer methods
 
     ###################################################################################################################
 
