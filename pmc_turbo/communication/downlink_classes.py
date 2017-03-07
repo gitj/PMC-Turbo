@@ -87,6 +87,9 @@ class LowrateDownlink():
         sock.close()
 
     def send(self, msg):
+        if len(msg) > 255:
+            logger.critical("Attempt to send %d length packet on lowrate downlink. Truncating to 255 bytes" % len(msg))
+            msg = msg[:255]
         packed_length = struct.pack('>1B', len(msg))
         msg = self.HEADER + packed_length + msg + self.FOOTER
         self._send(msg)

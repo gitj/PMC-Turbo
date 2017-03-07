@@ -20,6 +20,7 @@ from pmc_turbo.communication import constants
 from pmc_turbo.communication import downlink_classes, uplink_classes, packet_classes
 from pmc_turbo.communication import file_format_classes
 from pmc_turbo.communication.command_table import command_manager, CommandStatus
+from pmc_turbo.communication.short_status import ShortStatusLeader, ShortStatusCamera
 from pmc_turbo.utils import error_counter, camera_id
 
 Pyro4.config.SERVERTYPE = "multiplex"
