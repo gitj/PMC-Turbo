@@ -189,9 +189,9 @@ class GSEPacket(object):
 
 class FilePacket(object):
     _metadata_table = [('1B', 'start_byte'),
-                       ('1L', 'file_id'),
-                       ('1B', 'packet_number'),
-                       ('1B', 'total_packet_number'),
+                       ('1I', 'file_id'),
+                       ('1H', 'packet_number'),
+                       ('1H', 'total_packet_number'),
                        ('1H', 'payload_length')]
     _header_format_string = '>' + ''.join([format for format, name in _metadata_table])
     _valid_start_byte = 0xFA
