@@ -433,6 +433,9 @@ class Communicator(GlobalConfiguration):
     def set_exposure(self, exposure_time_us):
         self.controller.set_exposure(exposure_time_us)
 
+    def set_fstop(self, fstop):
+        self.controller.set_fstop(fstop)
+
     def run_focus_sweep(self, request_id, row_offset, column_offset, num_rows, num_columns, scale_by, quality,
                         start, stop, step):
         request_params = dict(request_id=request_id, row_offset=row_offset, column_offset=column_offset,

@@ -14,6 +14,7 @@ USE_BULLY_ELECTION = 254
 command_manager = CommandManager()
 command_manager.add_command(Command("set_focus", [("focus_step", 'H')]))
 command_manager.add_command(Command("set_exposure", [("exposure_time_us", 'I')]))
+command_manager.add_command(Command("set_fstop", [("fstop", 'f')]))
 command_manager.add_command(Command("run_focus_sweep", [('request_id', 'I'),
                                                         ('row_offset', 'H'),
                                                         ('column_offset', 'H'),

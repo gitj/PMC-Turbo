@@ -63,6 +63,7 @@ class Controller(GlobalConfiguration):
         self.counters = CounterCollection('controller', self.counters_dir)
         self.counters.set_focus.reset()
         self.counters.set_exposure.reset()
+        self.counters.set_fstop.reset()
         self.counters.send_arbitrary_command.reset()
         self.counters.run_focus_sweep.reset()
 
@@ -100,6 +101,12 @@ class Controller(GlobalConfiguration):
         logger.debug("Set exposure to %s us" % exposure_time_us)
         self.counters.set_exposure.increment()
         return tag
+
+    @require_pipeline
+    def set_fstop(self, fstop):
+        tag = self.pipeline.send_camera_command("EFLensFStopCurrent", str(fstop))
+        logger.debug("Set fstop to %s" % fstop)
+        self.counters.set_fstop.increment()
 
     @require_pipeline
     def send_arbitrary_camera_command(self, command_string, argument_string):

@@ -10,10 +10,10 @@ INDEX_FILENAME = 'index.csv'
 
 
 class MergedIndex(object):
-    def __init__(self, subdirectory_name, data_dirs=DEFAULT_DATA_DIRS):
+    def __init__(self, subdirectory_name, data_dirs=DEFAULT_DATA_DIRS, index_filename=INDEX_FILENAME):
         self.index_filenames = []
         for data_dir in data_dirs:
-            self.index_filenames.extend(glob.glob(os.path.join(data_dir, subdirectory_name, INDEX_FILENAME)))
+            self.index_filenames.extend(glob.glob(os.path.join(data_dir, subdirectory_name, index_filename)))
         self.watchers = [IndexWatcher(fn) for fn in self.index_filenames]
         self.df = None
         self.update()
