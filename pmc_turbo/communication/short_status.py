@@ -145,7 +145,7 @@ class ShortStatusCamera(ShortStatusBase):
                               ("camera_packet_resent", "I"),
                               ("camera_packet_missed", "I"),
                               ("camera_frames_dropped", "I"),
-                              ("camera_timestamp_offset_us", "H"),
+                              ("camera_timestamp_offset_us", "h"),
 
                               ("exposure_us", "I"),
                               ("focus_step", "H"),

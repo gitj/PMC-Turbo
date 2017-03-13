@@ -47,9 +47,10 @@ END_BYTE = chr(constants.SIP_END_BYTE)
 class Communicator(GlobalConfiguration):
     initial_peer_polling_order = List(trait=Int).tag(config=True)
     loop_interval = Float(default_value=0.01, allow_none=False, min=0).tag(config=True)
-    lowrate_link_parameters = List(trait=Tuple(Enum(("comm1", "comm2")), TCPAddress(), Int(default_value=5001, min=1024, max=65535)),
-                                   help='List of tuples - link name, lowrate downlink address and lowrate uplink port.'
-                                        'e.g. [(("pmc-serial-1", 5001), 5001), ...]').tag(config=True)
+    lowrate_link_parameters = List(
+        trait=Tuple(Enum(("comm1", "comm2")), TCPAddress(), Int(default_value=5001, min=1024, max=65535)),
+        help='List of tuples - link name, lowrate downlink address and lowrate uplink port.'
+             'e.g. [(("pmc-serial-1", 5001), 5001), ...]').tag(config=True)
     hirate_link_parameters = List(trait=Tuple(Enum(("openport", "highrate", "los")), TCPAddress(), Int(min=0)),
                                   help='List of tuples - hirate downlink name, Enum(("openport", "highrate", "los"))'
                                        'hirate downlink address,'
@@ -177,7 +178,8 @@ class Communicator(GlobalConfiguration):
 
         for lowrate_link_parameters in self.lowrate_link_parameters:
             self.lowrate_uplinks.append(uplink_classes.Uplink(lowrate_link_parameters[0], lowrate_link_parameters[2]))
-            self.lowrate_downlinks.append(downlink_classes.LowrateDownlink(lowrate_link_parameters[0], *lowrate_link_parameters[1]))
+            self.lowrate_downlinks.append(
+                downlink_classes.LowrateDownlink(lowrate_link_parameters[0], *lowrate_link_parameters[1]))
 
         for name, (address, port), initial_rate in self.hirate_link_parameters:
             self.downlinks.append(downlink_classes.HirateDownlink(ip=address, port=port,
@@ -378,13 +380,21 @@ class Communicator(GlobalConfiguration):
         for i, peer in enumerate(self.peers):
             if self.check_peer_connection(peer):
                 try:
-                    summary_dict[i] = peer.get_status_summary()
+                    # summary_dict[i] = peer.get_status_summary()
+                    summary_dict[i] = peer.get_full_status()
                     logger.debug('Received status summary from peer %d' % i)
                 except Pyro4.errors.CommunicationError:
                     logger.debug('Unable to connect to peer %d' % i)
 
-        camera_status = self.summarize_status_to_255_bytes(summary_dict)
-        self.buffer_for_downlink = camera_status + self.buffer_for_downlink[len(camera_status):]
+        status_summary = self.populate_short_status(ShortStatusLeader, summary_dict)
+        self.buffer_for_downlink = status_summary + self.buffer_for_downlink[len(status_summary):]
+
+    def get_full_status(self):
+        summary = {}
+        for group in self.status_groups:
+            group.update()
+            summary[group.name] = group.get_status()
+        return summary
 
     def get_status_summary(self):
         if len(self.status_groups) == 0:
@@ -393,11 +403,8 @@ class Communicator(GlobalConfiguration):
         for group in self.status_groups:
             group.update()
             summary.append(group.get_status_summary())
+        print summary
         return summary
-
-    def summarize_status_to_255_bytes(self, summary):
-        # This stub function needs to be filled out.
-        return '\xff' * 255
 
     def ping(self):
         return True
@@ -532,6 +539,56 @@ class Communicator(GlobalConfiguration):
 
     ###################################################################################################################
 
-    def populate_short_status(self):
+    def populate_short_status(self, short_status_type, data_dict):
+        print data_dict
         # Populate short status class with housekeeping summary.
+        if short_status_type == ShortStatusCamera:
+            return self.populate_short_status_camera(data_dict)
+        else:
+            return self.populate_short_status_leader(data_dict)
+
+    def populate_short_status_leader(self, data_dict):
+        ss = ShortStatusCamera()
+        ss.message_id = 0
+        ss.timestamp = data_dict[0]['supergroup']['subgroup_0'][
+            "/home/pmc/logs/housekeeping/camera/*.csv"][
+            "GevTimestampValue"][
+            "epoch"]
+        ss.leader_id = self.cam_id
+        ss.free_disk_root_mb = 12300000000
+        ss.free_disk_data_1_mb = 123000
+        ss.free_disk_data_2_mb = 123000
+        ss.free_disk_data_3_mb = 123000
+        ss.free_disk_data_4_mb = 123000
+        ss.total_images_captured = 49494
+        ss.camera_packet_resent = 0
+        ss.camera_packet_missed = 0
+        ss.camera_frames_dropped = 0
+        ss.camera_timestamp_offset_us = data_dict[0]['supergroup']['subgroup_0'][
+            "/home/pmc/logs/housekeeping/camera/*.csv"]['camera_timestamp_offset']['value']
+        ss.exposure_us = data_dict[0]['supergroup']['subgroup_0'][
+            "/home/pmc/logs/housekeeping/camera/*.csv"]['ExposureTimeAbs']['value']*1000
+        ss.focus_step = data_dict[0]['supergroup']['subgroup_0'][
+            "/home/pmc/logs/housekeeping/camera/*.csv"]['EFLensFocusCurrent']['value']
+        ss.aperture_times_100 = data_dict[0]['supergroup']['subgroup_0'][
+            "/home/pmc/logs/housekeeping/camera/*.csv"]['EFLensFStopCurrent']['value']*100
+        ss.pressure = 101033.3
+        ss.lens_wall_temp = 300
+        ss.dcdc_wall_temp = -225
+        ss.labjack_temp = 28
+        ss.camera_temp = data_dict[0]['supergroup']['subgroup_0'][
+            "/home/pmc/logs/housekeeping/camera/*.csv"]['main_temperature']['value']
+        ss.ccd_temp = data_dict[0]['supergroup']['subgroup_0'][
+            "/home/pmc/logs/housekeeping/camera/*.csv"]['sensor_temperature']['value']
+        ss.rail_12_mv = 12000
+        ss.cpu_temp = 70
+        ss.sda_temp = 55
+        ss.sdb_temp = 45
+        ss.sdc_temp = 48
+        ss.sdd_temp = 47
+        ss.sde_temp = 46
+        ss.sdf_temp = 77
+        return ss.encode()
+
+    def populate_short_status_camera(self, data_dict):
         return
