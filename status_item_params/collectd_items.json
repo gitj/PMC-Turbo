@@ -2,3291 +2,1076 @@
     "cpu-0_cpu-idle": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-0_cpu-idle",
-        "max_value": 302862940,
-        "mean_value": 298580668.89398146,
-        "min_value": 294289988,
-        "partial_glob": "cpu-0/cpu-idle-*",
-        "scaling_value": 1.0,
-        "std_value": 2475159.8179054414
+        "partial_glob": "cpu-0/cpu-idle-*"
     },
     "cpu-0_cpu-interrupt": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-0_cpu-interrupt",
-        "max_value": 101,
-        "mean_value": 101.0,
-        "min_value": 101,
-        "partial_glob": "cpu-0/cpu-interrupt-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "cpu-0/cpu-interrupt-*"
     },
     "cpu-0_cpu-nice": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-0_cpu-nice",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "cpu-0/cpu-nice-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "cpu-0/cpu-nice-*"
     },
     "cpu-0_cpu-softirq": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-0_cpu-softirq",
-        "max_value": 584703,
-        "mean_value": 583608.42858796299,
-        "min_value": 582768,
-        "partial_glob": "cpu-0/cpu-softirq-*",
-        "scaling_value": 1.0,
-        "std_value": 553.28687684696831
+        "partial_glob": "cpu-0/cpu-softirq-*"
     },
     "cpu-0_cpu-steal": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-0_cpu-steal",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "cpu-0/cpu-steal-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "cpu-0/cpu-steal-*"
     },
     "cpu-0_cpu-system": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-0_cpu-system",
-        "max_value": 3636770,
-        "mean_value": 3627131.3672453705,
-        "min_value": 3618276,
-        "partial_glob": "cpu-0/cpu-system-*",
-        "scaling_value": 1.0,
-        "std_value": 5400.4658252962035
+        "partial_glob": "cpu-0/cpu-system-*"
     },
     "cpu-0_cpu-user": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-0_cpu-user",
-        "max_value": 12215868,
-        "mean_value": 12207205.884375,
-        "min_value": 12202155,
-        "partial_glob": "cpu-0/cpu-user-*",
-        "scaling_value": 1.0,
-        "std_value": 3911.3797991586871
+        "partial_glob": "cpu-0/cpu-user-*"
     },
     "cpu-0_cpu-wait": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-0_cpu-wait",
-        "max_value": 1327498,
-        "mean_value": 1313281.2434027777,
-        "min_value": 1301700,
-        "partial_glob": "cpu-0/cpu-wait-*",
-        "scaling_value": 1.0,
-        "std_value": 7890.5122801055268
+        "partial_glob": "cpu-0/cpu-wait-*"
     },
     "cpu-1_cpu-idle": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-1_cpu-idle",
-        "max_value": 303479043,
-        "mean_value": 299197124.55914354,
-        "min_value": 294905270,
-        "partial_glob": "cpu-1/cpu-idle-*",
-        "scaling_value": 1.0,
-        "std_value": 2475596.3949503899
+        "partial_glob": "cpu-1/cpu-idle-*"
     },
     "cpu-1_cpu-interrupt": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-1_cpu-interrupt",
-        "max_value": 84,
-        "mean_value": 83.392592592592592,
-        "min_value": 83,
-        "partial_glob": "cpu-1/cpu-interrupt-*",
-        "scaling_value": 1.0,
-        "std_value": 0.48835566136596031
+        "partial_glob": "cpu-1/cpu-interrupt-*"
     },
     "cpu-1_cpu-nice": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-1_cpu-nice",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "cpu-1/cpu-nice-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "cpu-1/cpu-nice-*"
     },
     "cpu-1_cpu-softirq": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-1_cpu-softirq",
-        "max_value": 291535,
-        "mean_value": 291109.86550925928,
-        "min_value": 290740,
-        "partial_glob": "cpu-1/cpu-softirq-*",
-        "scaling_value": 1.0,
-        "std_value": 226.99868201082595
+        "partial_glob": "cpu-1/cpu-softirq-*"
     },
     "cpu-1_cpu-steal": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-1_cpu-steal",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "cpu-1/cpu-steal-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "cpu-1/cpu-steal-*"
     },
     "cpu-1_cpu-system": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-1_cpu-system",
-        "max_value": 3441540,
-        "mean_value": 3432074.0313657406,
-        "min_value": 3423343,
-        "partial_glob": "cpu-1/cpu-system-*",
-        "scaling_value": 1.0,
-        "std_value": 5312.2258913425849
+        "partial_glob": "cpu-1/cpu-system-*"
     },
     "cpu-1_cpu-user": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-1_cpu-user",
-        "max_value": 12110692,
-        "mean_value": 12101793.524074074,
-        "min_value": 12096767,
-        "partial_glob": "cpu-1/cpu-user-*",
-        "scaling_value": 1.0,
-        "std_value": 3888.1477158935213
+        "partial_glob": "cpu-1/cpu-user-*"
     },
     "cpu-1_cpu-wait": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-1_cpu-wait",
-        "max_value": 1262683,
-        "mean_value": 1248590.1887731482,
-        "min_value": 1238395,
-        "partial_glob": "cpu-1/cpu-wait-*",
-        "scaling_value": 1.0,
-        "std_value": 7296.0387024672737
+        "partial_glob": "cpu-1/cpu-wait-*"
     },
     "cpu-2_cpu-idle": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-2_cpu-idle",
-        "max_value": 304406530,
-        "mean_value": 300129305.87893516,
-        "min_value": 295838998,
-        "partial_glob": "cpu-2/cpu-idle-*",
-        "scaling_value": 1.0,
-        "std_value": 2474064.26935062
+        "partial_glob": "cpu-2/cpu-idle-*"
     },
     "cpu-2_cpu-interrupt": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-2_cpu-interrupt",
-        "max_value": 92,
-        "mean_value": 92.0,
-        "min_value": 92,
-        "partial_glob": "cpu-2/cpu-interrupt-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "cpu-2/cpu-interrupt-*"
     },
     "cpu-2_cpu-nice": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-2_cpu-nice",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "cpu-2/cpu-nice-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "cpu-2/cpu-nice-*"
     },
     "cpu-2_cpu-softirq": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-2_cpu-softirq",
-        "max_value": 416537,
-        "mean_value": 415307.05972222221,
-        "min_value": 414119,
-        "partial_glob": "cpu-2/cpu-softirq-*",
-        "scaling_value": 1.0,
-        "std_value": 735.83029549888113
+        "partial_glob": "cpu-2/cpu-softirq-*"
     },
     "cpu-2_cpu-steal": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-2_cpu-steal",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "cpu-2/cpu-steal-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "cpu-2/cpu-steal-*"
     },
     "cpu-2_cpu-system": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-2_cpu-system",
-        "max_value": 3473731,
-        "mean_value": 3464436.6960648149,
-        "min_value": 3456500,
-        "partial_glob": "cpu-2/cpu-system-*",
-        "scaling_value": 1.0,
-        "std_value": 4893.2949844952182
+        "partial_glob": "cpu-2/cpu-system-*"
     },
     "cpu-2_cpu-user": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-2_cpu-user",
-        "max_value": 10844008,
-        "mean_value": 10835568.541203704,
-        "min_value": 10831149,
-        "partial_glob": "cpu-2/cpu-user-*",
-        "scaling_value": 1.0,
-        "std_value": 3605.2215710198334
+        "partial_glob": "cpu-2/cpu-user-*"
     },
     "cpu-2_cpu-wait": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-2_cpu-wait",
-        "max_value": 1357766,
-        "mean_value": 1337384.6582175926,
-        "min_value": 1323101,
-        "partial_glob": "cpu-2/cpu-wait-*",
-        "scaling_value": 1.0,
-        "std_value": 10287.579514779725
+        "partial_glob": "cpu-2/cpu-wait-*"
     },
     "cpu-3_cpu-idle": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-3_cpu-idle",
-        "max_value": 304688075,
-        "mean_value": 300408985.83460647,
-        "min_value": 296114229,
-        "partial_glob": "cpu-3/cpu-idle-*",
-        "scaling_value": 1.0,
-        "std_value": 2476323.1635853723
+        "partial_glob": "cpu-3/cpu-idle-*"
     },
     "cpu-3_cpu-interrupt": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-3_cpu-interrupt",
-        "max_value": 92,
-        "mean_value": 92.0,
-        "min_value": 92,
-        "partial_glob": "cpu-3/cpu-interrupt-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "cpu-3/cpu-interrupt-*"
     },
     "cpu-3_cpu-nice": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-3_cpu-nice",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "cpu-3/cpu-nice-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "cpu-3/cpu-nice-*"
     },
     "cpu-3_cpu-softirq": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-3_cpu-softirq",
-        "max_value": 228502,
-        "mean_value": 228076.97210648149,
-        "min_value": 227711,
-        "partial_glob": "cpu-3/cpu-softirq-*",
-        "scaling_value": 1.0,
-        "std_value": 239.271162075105
+        "partial_glob": "cpu-3/cpu-softirq-*"
     },
     "cpu-3_cpu-steal": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-3_cpu-steal",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "cpu-3/cpu-steal-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "cpu-3/cpu-steal-*"
     },
     "cpu-3_cpu-system": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-3_cpu-system",
-        "max_value": 3437282,
-        "mean_value": 3428050.3019675924,
-        "min_value": 3420144,
-        "partial_glob": "cpu-3/cpu-system-*",
-        "scaling_value": 1.0,
-        "std_value": 4828.6789339720935
+        "partial_glob": "cpu-3/cpu-system-*"
     },
     "cpu-3_cpu-user": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-3_cpu-user",
-        "max_value": 10921056,
-        "mean_value": 10912776.410879629,
-        "min_value": 10908426,
-        "partial_glob": "cpu-3/cpu-user-*",
-        "scaling_value": 1.0,
-        "std_value": 3565.1907176569712
+        "partial_glob": "cpu-3/cpu-user-*"
     },
     "cpu-3_cpu-wait": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-3_cpu-wait",
-        "max_value": 1293302,
-        "mean_value": 1274365.85625,
-        "min_value": 1264172,
-        "partial_glob": "cpu-3/cpu-wait-*",
-        "scaling_value": 1.0,
-        "std_value": 8429.1071405780403
+        "partial_glob": "cpu-3/cpu-wait-*"
     },
     "cpu-4_cpu-idle": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-4_cpu-idle",
-        "max_value": 304845165,
-        "mean_value": 300564898.94907409,
-        "min_value": 296273386,
-        "partial_glob": "cpu-4/cpu-idle-*",
-        "scaling_value": 1.0,
-        "std_value": 2475534.7602914907
+        "partial_glob": "cpu-4/cpu-idle-*"
     },
     "cpu-4_cpu-interrupt": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-4_cpu-interrupt",
-        "max_value": 94,
-        "mean_value": 94.0,
-        "min_value": 94,
-        "partial_glob": "cpu-4/cpu-interrupt-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "cpu-4/cpu-interrupt-*"
     },
     "cpu-4_cpu-nice": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-4_cpu-nice",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "cpu-4/cpu-nice-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "cpu-4/cpu-nice-*"
     },
     "cpu-4_cpu-softirq": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-4_cpu-softirq",
-        "max_value": 291810,
-        "mean_value": 291507.00624999998,
-        "min_value": 291166,
-        "partial_glob": "cpu-4/cpu-softirq-*",
-        "scaling_value": 1.0,
-        "std_value": 183.23416017766289
+        "partial_glob": "cpu-4/cpu-softirq-*"
     },
     "cpu-4_cpu-steal": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-4_cpu-steal",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "cpu-4/cpu-steal-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "cpu-4/cpu-steal-*"
     },
     "cpu-4_cpu-system": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-4_cpu-system",
-        "max_value": 4075332,
-        "mean_value": 4063377.926273148,
-        "min_value": 4052176,
-        "partial_glob": "cpu-4/cpu-system-*",
-        "scaling_value": 1.0,
-        "std_value": 6570.6968756480728
+        "partial_glob": "cpu-4/cpu-system-*"
     },
     "cpu-4_cpu-user": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-4_cpu-user",
-        "max_value": 9871322,
-        "mean_value": 9864096.8916666675,
-        "min_value": 9860429,
-        "partial_glob": "cpu-4/cpu-user-*",
-        "scaling_value": 1.0,
-        "std_value": 2948.2885431309342
+        "partial_glob": "cpu-4/cpu-user-*"
     },
     "cpu-4_cpu-wait": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-4_cpu-wait",
-        "max_value": 1227168,
-        "mean_value": 1211078.533912037,
-        "min_value": 1200428,
-        "partial_glob": "cpu-4/cpu-wait-*",
-        "scaling_value": 1.0,
-        "std_value": 7781.7489391177414
+        "partial_glob": "cpu-4/cpu-wait-*"
     },
     "cpu-5_cpu-idle": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-5_cpu-idle",
-        "max_value": 303198926,
-        "mean_value": 298956458.21747684,
-        "min_value": 294703698,
-        "partial_glob": "cpu-5/cpu-idle-*",
-        "scaling_value": 1.0,
-        "std_value": 2453346.129705356
+        "partial_glob": "cpu-5/cpu-idle-*"
     },
     "cpu-5_cpu-interrupt": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-5_cpu-interrupt",
-        "max_value": 86,
-        "mean_value": 86.0,
-        "min_value": 86,
-        "partial_glob": "cpu-5/cpu-interrupt-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "cpu-5/cpu-interrupt-*"
     },
     "cpu-5_cpu-nice": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-5_cpu-nice",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "cpu-5/cpu-nice-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "cpu-5/cpu-nice-*"
     },
     "cpu-5_cpu-softirq": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-5_cpu-softirq",
-        "max_value": 212508,
-        "mean_value": 212251.24895833334,
-        "min_value": 211985,
-        "partial_glob": "cpu-5/cpu-softirq-*",
-        "scaling_value": 1.0,
-        "std_value": 145.3075234181623
+        "partial_glob": "cpu-5/cpu-softirq-*"
     },
     "cpu-5_cpu-steal": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-5_cpu-steal",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "cpu-5/cpu-steal-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "cpu-5/cpu-steal-*"
     },
     "cpu-5_cpu-system": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-5_cpu-system",
-        "max_value": 5875700,
-        "mean_value": 5828128.0652777776,
-        "min_value": 5780854,
-        "partial_glob": "cpu-5/cpu-system-*",
-        "scaling_value": 1.0,
-        "std_value": 27132.178213783624
+        "partial_glob": "cpu-5/cpu-system-*"
     },
     "cpu-5_cpu-user": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-5_cpu-user",
-        "max_value": 9981886,
-        "mean_value": 9975006.6689814813,
-        "min_value": 9971588,
-        "partial_glob": "cpu-5/cpu-user-*",
-        "scaling_value": 1.0,
-        "std_value": 2819.5865147306708
+        "partial_glob": "cpu-5/cpu-user-*"
     },
     "cpu-5_cpu-wait": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-5_cpu-wait",
-        "max_value": 1130133,
-        "mean_value": 1113112.7503472222,
-        "min_value": 1101557,
-        "partial_glob": "cpu-5/cpu-wait-*",
-        "scaling_value": 1.0,
-        "std_value": 8466.7163770461357
+        "partial_glob": "cpu-5/cpu-wait-*"
     },
     "cpu-6_cpu-idle": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-6_cpu-idle",
-        "max_value": 305315212,
-        "mean_value": 301029949.64849538,
-        "min_value": 296735455,
-        "partial_glob": "cpu-6/cpu-idle-*",
-        "scaling_value": 1.0,
-        "std_value": 2477375.6439673738
+        "partial_glob": "cpu-6/cpu-idle-*"
     },
     "cpu-6_cpu-interrupt": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-6_cpu-interrupt",
-        "max_value": 100,
-        "mean_value": 100.0,
-        "min_value": 100,
-        "partial_glob": "cpu-6/cpu-interrupt-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "cpu-6/cpu-interrupt-*"
     },
     "cpu-6_cpu-nice": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-6_cpu-nice",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "cpu-6/cpu-nice-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "cpu-6/cpu-nice-*"
     },
     "cpu-6_cpu-softirq": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-6_cpu-softirq",
-        "max_value": 270008,
-        "mean_value": 269593.93807870371,
-        "min_value": 269160,
-        "partial_glob": "cpu-6/cpu-softirq-*",
-        "scaling_value": 1.0,
-        "std_value": 241.82484074741495
+        "partial_glob": "cpu-6/cpu-softirq-*"
     },
     "cpu-6_cpu-steal": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-6_cpu-steal",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "cpu-6/cpu-steal-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "cpu-6/cpu-steal-*"
     },
     "cpu-6_cpu-system": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-6_cpu-system",
-        "max_value": 3412018,
-        "mean_value": 3402288.5491898148,
-        "min_value": 3392921,
-        "partial_glob": "cpu-6/cpu-system-*",
-        "scaling_value": 1.0,
-        "std_value": 5559.6332065814313
+        "partial_glob": "cpu-6/cpu-system-*"
     },
     "cpu-6_cpu-user": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-6_cpu-user",
-        "max_value": 10040100,
-        "mean_value": 10031757.292476851,
-        "min_value": 10026922,
-        "partial_glob": "cpu-6/cpu-user-*",
-        "scaling_value": 1.0,
-        "std_value": 3944.1209723706429
+        "partial_glob": "cpu-6/cpu-user-*"
     },
     "cpu-6_cpu-wait": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-6_cpu-wait",
-        "max_value": 1279301,
-        "mean_value": 1266019.8975694445,
-        "min_value": 1256534,
-        "partial_glob": "cpu-6/cpu-wait-*",
-        "scaling_value": 1.0,
-        "std_value": 6529.0605649590907
+        "partial_glob": "cpu-6/cpu-wait-*"
     },
     "cpu-7_cpu-idle": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-7_cpu-idle",
-        "max_value": 305329378,
-        "mean_value": 301044179.23668981,
-        "min_value": 296748158,
-        "partial_glob": "cpu-7/cpu-idle-*",
-        "scaling_value": 1.0,
-        "std_value": 2478156.9059883705
+        "partial_glob": "cpu-7/cpu-idle-*"
     },
     "cpu-7_cpu-interrupt": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-7_cpu-interrupt",
-        "max_value": 87,
-        "mean_value": 87.0,
-        "min_value": 87,
-        "partial_glob": "cpu-7/cpu-interrupt-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "cpu-7/cpu-interrupt-*"
     },
     "cpu-7_cpu-nice": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-7_cpu-nice",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "cpu-7/cpu-nice-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "cpu-7/cpu-nice-*"
     },
     "cpu-7_cpu-softirq": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-7_cpu-softirq",
-        "max_value": 193626,
-        "mean_value": 193246.00694444444,
-        "min_value": 192882,
-        "partial_glob": "cpu-7/cpu-softirq-*",
-        "scaling_value": 1.0,
-        "std_value": 209.3638813571136
+        "partial_glob": "cpu-7/cpu-softirq-*"
     },
     "cpu-7_cpu-steal": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-7_cpu-steal",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "cpu-7/cpu-steal-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "cpu-7/cpu-steal-*"
     },
     "cpu-7_cpu-system": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-7_cpu-system",
-        "max_value": 3597479,
-        "mean_value": 3587714.6217592591,
-        "min_value": 3579045,
-        "partial_glob": "cpu-7/cpu-system-*",
-        "scaling_value": 1.0,
-        "std_value": 5261.2873145957719
+        "partial_glob": "cpu-7/cpu-system-*"
     },
     "cpu-7_cpu-user": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-7_cpu-user",
-        "max_value": 10235101,
-        "mean_value": 10226134.211921297,
-        "min_value": 10221132,
-        "partial_glob": "cpu-7/cpu-user-*",
-        "scaling_value": 1.0,
-        "std_value": 4121.5884783682841
+        "partial_glob": "cpu-7/cpu-user-*"
     },
     "cpu-7_cpu-wait": {
         "class_type": "FloatStatusItem",
         "column_name": "cpu-7_cpu-wait",
-        "max_value": 1160749,
-        "mean_value": 1147641.7868055555,
-        "min_value": 1139006,
-        "partial_glob": "cpu-7/cpu-wait-*",
-        "scaling_value": 1.0,
-        "std_value": 6077.3780615252308
+        "partial_glob": "cpu-7/cpu-wait-*"
     },
     "df-data1_df_complex-free": {
         "class_type": "FloatStatusItem",
         "column_name": "df-data1_df_complex-free",
-        "max_value": 102957056.0,
-        "mean_value": 102957056.0,
-        "min_value": 102957056.0,
-        "partial_glob": "df-data1/df_complex-free-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "df-data1/df_complex-free-*"
     },
     "df-data1_df_complex-reserved": {
         "class_type": "FloatStatusItem",
         "column_name": "df-data1_df_complex-reserved",
-        "max_value": 400094883840.0,
-        "mean_value": 400094883840.0,
-        "min_value": 400094883840.0,
-        "partial_glob": "df-data1/df_complex-reserved-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "df-data1/df_complex-reserved-*"
     },
     "df-data1_df_complex-used": {
         "class_type": "FloatStatusItem",
         "column_name": "df-data1_df_complex-used",
-        "max_value": 7538184761344.0,
-        "mean_value": 7538184761344.0,
-        "min_value": 7538184761344.0,
-        "partial_glob": "df-data1/df_complex-used-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "df-data1/df_complex-used-*"
     },
     "df-data2_df_complex-free": {
         "class_type": "FloatStatusItem",
         "column_name": "df-data2_df_complex-free",
-        "max_value": 95944704.0,
-        "mean_value": 95944704.0,
-        "min_value": 95944704.0,
-        "partial_glob": "df-data2/df_complex-free-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "df-data2/df_complex-free-*"
     },
     "df-data2_df_complex-reserved": {
         "class_type": "FloatStatusItem",
         "column_name": "df-data2_df_complex-reserved",
-        "max_value": 400094883840.0,
-        "mean_value": 400094883840.0,
-        "min_value": 400094883840.0,
-        "partial_glob": "df-data2/df_complex-reserved-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "df-data2/df_complex-reserved-*"
     },
     "df-data2_df_complex-used": {
         "class_type": "FloatStatusItem",
         "column_name": "df-data2_df_complex-used",
-        "max_value": 7538191773696.0,
-        "mean_value": 7538191773696.0,
-        "min_value": 7538191773696.0,
-        "partial_glob": "df-data2/df_complex-used-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "df-data2/df_complex-used-*"
     },
     "df-data3_df_complex-free": {
         "class_type": "FloatStatusItem",
         "column_name": "df-data3_df_complex-free",
-        "max_value": 105029632.0,
-        "mean_value": 105029632.0,
-        "min_value": 105029632.0,
-        "partial_glob": "df-data3/df_complex-free-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "df-data3/df_complex-free-*"
     },
     "df-data3_df_complex-reserved": {
         "class_type": "FloatStatusItem",
         "column_name": "df-data3_df_complex-reserved",
-        "max_value": 400094883840.0,
-        "mean_value": 400094883840.0,
-        "min_value": 400094883840.0,
-        "partial_glob": "df-data3/df_complex-reserved-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "df-data3/df_complex-reserved-*"
     },
     "df-data3_df_complex-used": {
         "class_type": "FloatStatusItem",
         "column_name": "df-data3_df_complex-used",
-        "max_value": 7538182688768.0,
-        "mean_value": 7538182688768.0,
-        "min_value": 7538182688768.0,
-        "partial_glob": "df-data3/df_complex-used-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "df-data3/df_complex-used-*"
     },
     "df-data4_df_complex-free": {
         "class_type": "FloatStatusItem",
         "column_name": "df-data4_df_complex-free",
-        "max_value": 104390656.0,
-        "mean_value": 104390656.0,
-        "min_value": 104390656.0,
-        "partial_glob": "df-data4/df_complex-free-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "df-data4/df_complex-free-*"
     },
     "df-data4_df_complex-reserved": {
         "class_type": "FloatStatusItem",
         "column_name": "df-data4_df_complex-reserved",
-        "max_value": 400094883840.0,
-        "mean_value": 400094883840.0,
-        "min_value": 400094883840.0,
-        "partial_glob": "df-data4/df_complex-reserved-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "df-data4/df_complex-reserved-*"
     },
     "df-data4_df_complex-used": {
         "class_type": "FloatStatusItem",
         "column_name": "df-data4_df_complex-used",
-        "max_value": 7538183327744.0,
-        "mean_value": 7538183327744.0,
-        "min_value": 7538183327744.0,
-        "partial_glob": "df-data4/df_complex-used-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "df-data4/df_complex-used-*"
     },
     "df-home-pmc-pmchome_df_complex-free": {
         "class_type": "FloatStatusItem",
         "column_name": "df-home-pmc-pmchome_df_complex-free",
-        "max_value": 1870167650304.0,
-        "mean_value": 1870166537521.3037,
-        "min_value": 1870151028736.0,
-        "partial_glob": "df-home-pmc-pmchome/df_complex-free-*",
-        "scaling_value": 1.0,
-        "std_value": 1074790.5222888966
+        "partial_glob": "df-home-pmc-pmchome/df_complex-free-*"
     },
     "df-home-pmc-pmchome_df_complex-reserved": {
         "class_type": "FloatStatusItem",
         "column_name": "df-home-pmc-pmchome_df_complex-reserved",
-        "max_value": 0.0,
-        "mean_value": 0.0,
-        "min_value": 0.0,
-        "partial_glob": "df-home-pmc-pmchome/df_complex-reserved-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "df-home-pmc-pmchome/df_complex-reserved-*"
     },
     "df-home-pmc-pmchome_df_complex-used": {
         "class_type": "FloatStatusItem",
         "column_name": "df-home-pmc-pmchome_df_complex-used",
-        "max_value": 1460543696896.0,
-        "mean_value": 1460528188110.6963,
-        "min_value": 1460527075328.0,
-        "partial_glob": "df-home-pmc-pmchome/df_complex-used-*",
-        "scaling_value": 1.0,
-        "std_value": 1074790.5222888966
+        "partial_glob": "df-home-pmc-pmchome/df_complex-used-*"
     },
     "df-root_df_complex-free": {
         "class_type": "FloatStatusItem",
         "column_name": "df-root_df_complex-free",
-        "max_value": 10485116928.0,
-        "mean_value": 10447944466.014814,
-        "min_value": 10407301120.0,
-        "partial_glob": "df-root/df_complex-free-*",
-        "scaling_value": 1.0,
-        "std_value": 22068161.536679365
+        "partial_glob": "df-root/df_complex-free-*"
     },
     "df-root_df_complex-reserved": {
         "class_type": "FloatStatusItem",
         "column_name": "df-root_df_complex-reserved",
-        "max_value": 1578315776.0,
-        "mean_value": 1578315776.0,
-        "min_value": 1578315776.0,
-        "partial_glob": "df-root/df_complex-reserved-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "df-root/df_complex-reserved-*"
     },
     "df-root_df_complex-used": {
         "class_type": "FloatStatusItem",
         "column_name": "df-root_df_complex-used",
-        "max_value": 18950467584.0,
-        "mean_value": 18909824237.985184,
-        "min_value": 18872651776.0,
-        "partial_glob": "df-root/df_complex-used-*",
-        "scaling_value": 1.0,
-        "std_value": 22068161.536679368
+        "partial_glob": "df-root/df_complex-used-*"
     },
     "disk-sda1_disk_merged": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sda1_disk_merged",
-        "max_value": 1700931,
-        "mean_value": 1700929.7870370371,
-        "min_value": 1700929,
-        "partial_glob": "disk-sda1/disk_merged-*",
-        "scaling_value": 1.0,
-        "std_value": 0.97711682040630832
+        "partial_glob": "disk-sda1/disk_merged-*"
     },
     "disk-sda1_disk_octets": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sda1_disk_octets",
-        "max_value": 8248181915648,
-        "mean_value": 8248181900740.2666,
-        "min_value": 8248181891072,
-        "partial_glob": "disk-sda1/disk_octets-*",
-        "scaling_value": 1.0,
-        "std_value": 12004.249929027637
+        "partial_glob": "disk-sda1/disk_octets-*"
     },
     "disk-sda1_disk_ops": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sda1_disk_ops",
-        "max_value": 16942659,
-        "mean_value": 16942656.573379628,
-        "min_value": 16942655,
-        "partial_glob": "disk-sda1/disk_ops-*",
-        "scaling_value": 1.0,
-        "std_value": 1.9537266847372325
+        "partial_glob": "disk-sda1/disk_ops-*"
     },
     "disk-sda1_disk_time": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sda1_disk_time",
-        "max_value": 139626053,
-        "mean_value": 139626040.87037036,
-        "min_value": 139626033,
-        "partial_glob": "disk-sda1/disk_time-*",
-        "scaling_value": 1.0,
-        "std_value": 9.7711682040630823
+        "partial_glob": "disk-sda1/disk_time-*"
     },
     "disk-sda_disk_merged": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sda_disk_merged",
-        "max_value": 1700931,
-        "mean_value": 1700929.7870370371,
-        "min_value": 1700929,
-        "partial_glob": "disk-sda/disk_merged-*",
-        "scaling_value": 1.0,
-        "std_value": 0.97711682040630832
+        "partial_glob": "disk-sda/disk_merged-*"
     },
     "disk-sda_disk_octets": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sda_disk_octets",
-        "max_value": 8248181915648,
-        "mean_value": 8248181900740.2666,
-        "min_value": 8248181891072,
-        "partial_glob": "disk-sda/disk_octets-*",
-        "scaling_value": 1.0,
-        "std_value": 12004.249929027637
+        "partial_glob": "disk-sda/disk_octets-*"
     },
     "disk-sda_disk_ops": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sda_disk_ops",
-        "max_value": 16942672,
-        "mean_value": 16942669.573379628,
-        "min_value": 16942668,
-        "partial_glob": "disk-sda/disk_ops-*",
-        "scaling_value": 1.0,
-        "std_value": 1.9537266847372325
+        "partial_glob": "disk-sda/disk_ops-*"
     },
     "disk-sda_disk_time": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sda_disk_time",
-        "max_value": 139625946,
-        "mean_value": 139625933.87037036,
-        "min_value": 139625926,
-        "partial_glob": "disk-sda/disk_time-*",
-        "scaling_value": 1.0,
-        "std_value": 9.7711682040630823
+        "partial_glob": "disk-sda/disk_time-*"
     },
     "disk-sdb1_disk_merged": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdb1_disk_merged",
-        "max_value": 1070845,
-        "mean_value": 1070844.3935185184,
-        "min_value": 1070844,
-        "partial_glob": "disk-sdb1/disk_merged-*",
-        "scaling_value": 1.0,
-        "std_value": 0.48855841020315421
+        "partial_glob": "disk-sdb1/disk_merged-*"
     },
     "disk-sdb1_disk_octets": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdb1_disk_octets",
-        "max_value": 3788347551744,
-        "mean_value": 3788347541805.9854,
-        "min_value": 3788347535360,
-        "partial_glob": "disk-sdb1/disk_octets-*",
-        "scaling_value": 1.0,
-        "std_value": 8003.1389605090699
+        "partial_glob": "disk-sdb1/disk_octets-*"
     },
     "disk-sdb1_disk_ops": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdb1_disk_ops",
-        "max_value": 7968725,
-        "mean_value": 7968723.1802083338,
-        "min_value": 7968722,
-        "partial_glob": "disk-sdb1/disk_ops-*",
-        "scaling_value": 1.0,
-        "std_value": 1.4653625401645065
+        "partial_glob": "disk-sdb1/disk_ops-*"
     },
     "disk-sdb1_disk_time": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdb1_disk_time",
-        "max_value": 95978215,
-        "mean_value": 95978178.611111104,
-        "min_value": 95978155,
-        "partial_glob": "disk-sdb1/disk_time-*",
-        "scaling_value": 1.0,
-        "std_value": 29.313504612189252
+        "partial_glob": "disk-sdb1/disk_time-*"
     },
     "disk-sdb_disk_merged": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdb_disk_merged",
-        "max_value": 1070845,
-        "mean_value": 1070844.3935185184,
-        "min_value": 1070844,
-        "partial_glob": "disk-sdb/disk_merged-*",
-        "scaling_value": 1.0,
-        "std_value": 0.48855841020315421
+        "partial_glob": "disk-sdb/disk_merged-*"
     },
     "disk-sdb_disk_octets": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdb_disk_octets",
-        "max_value": 3788347551744,
-        "mean_value": 3788347541805.9854,
-        "min_value": 3788347535360,
-        "partial_glob": "disk-sdb/disk_octets-*",
-        "scaling_value": 1.0,
-        "std_value": 8003.1389605090699
+        "partial_glob": "disk-sdb/disk_octets-*"
     },
     "disk-sdb_disk_ops": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdb_disk_ops",
-        "max_value": 7968740,
-        "mean_value": 7968738.1802083338,
-        "min_value": 7968737,
-        "partial_glob": "disk-sdb/disk_ops-*",
-        "scaling_value": 1.0,
-        "std_value": 1.4653625401645065
+        "partial_glob": "disk-sdb/disk_ops-*"
     },
     "disk-sdb_disk_time": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdb_disk_time",
-        "max_value": 95978228,
-        "mean_value": 95978191.611111104,
-        "min_value": 95978168,
-        "partial_glob": "disk-sdb/disk_time-*",
-        "scaling_value": 1.0,
-        "std_value": 29.313504612189252
+        "partial_glob": "disk-sdb/disk_time-*"
     },
     "disk-sdc1_disk_merged": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdc1_disk_merged",
-        "max_value": 85090,
-        "mean_value": 85090.0,
-        "min_value": 85090,
-        "partial_glob": "disk-sdc1/disk_merged-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "disk-sdc1/disk_merged-*"
     },
     "disk-sdc1_disk_octets": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdc1_disk_octets",
-        "max_value": 208626057216,
-        "mean_value": 208626057216.0,
-        "min_value": 208626057216,
-        "partial_glob": "disk-sdc1/disk_octets-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "disk-sdc1/disk_octets-*"
     },
     "disk-sdc1_disk_ops": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdc1_disk_ops",
-        "max_value": 451708,
-        "mean_value": 451708.0,
-        "min_value": 451708,
-        "partial_glob": "disk-sdc1/disk_ops-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "disk-sdc1/disk_ops-*"
     },
     "disk-sdc1_disk_time": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdc1_disk_time",
-        "max_value": 3838433,
-        "mean_value": 3838433.0,
-        "min_value": 3838433,
-        "partial_glob": "disk-sdc1/disk_time-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "disk-sdc1/disk_time-*"
     },
     "disk-sdc_disk_merged": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdc_disk_merged",
-        "max_value": 85090,
-        "mean_value": 85090.0,
-        "min_value": 85090,
-        "partial_glob": "disk-sdc/disk_merged-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "disk-sdc/disk_merged-*"
     },
     "disk-sdc_disk_octets": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdc_disk_octets",
-        "max_value": 208626057216,
-        "mean_value": 208626057216.0,
-        "min_value": 208626057216,
-        "partial_glob": "disk-sdc/disk_octets-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "disk-sdc/disk_octets-*"
     },
     "disk-sdc_disk_ops": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdc_disk_ops",
-        "max_value": 451708,
-        "mean_value": 451708.0,
-        "min_value": 451708,
-        "partial_glob": "disk-sdc/disk_ops-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "disk-sdc/disk_ops-*"
     },
     "disk-sdc_disk_time": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdc_disk_time",
-        "max_value": 3838433,
-        "mean_value": 3838433.0,
-        "min_value": 3838433,
-        "partial_glob": "disk-sdc/disk_time-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "disk-sdc/disk_time-*"
     },
     "disk-sdd1_disk_merged": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdd1_disk_merged",
-        "max_value": 50361144,
-        "mean_value": 49799958.939351849,
-        "min_value": 49001016,
-        "partial_glob": "disk-sdd1/disk_merged-*",
-        "scaling_value": 1.0,
-        "std_value": 386795.53543883376
+        "partial_glob": "disk-sdd1/disk_merged-*"
     },
     "disk-sdd1_disk_octets": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdd1_disk_octets",
-        "max_value": 549768356864,
-        "mean_value": 542408525986.01483,
-        "min_value": 535076347392,
-        "partial_glob": "disk-sdd1/disk_octets-*",
-        "scaling_value": 1.0,
-        "std_value": 4260688814.7234182
+        "partial_glob": "disk-sdd1/disk_octets-*"
     },
     "disk-sdd1_disk_ops": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdd1_disk_ops",
-        "max_value": 80846550,
-        "mean_value": 79634011.796180561,
-        "min_value": 78714972,
-        "partial_glob": "disk-sdd1/disk_ops-*",
-        "scaling_value": 1.0,
-        "std_value": 636593.57598867232
+        "partial_glob": "disk-sdd1/disk_ops-*"
     },
     "disk-sdd1_disk_time": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdd1_disk_time",
-        "max_value": 77918950,
-        "mean_value": 75644908.658217594,
-        "min_value": 73646227,
-        "partial_glob": "disk-sdd1/disk_time-*",
-        "scaling_value": 1.0,
-        "std_value": 1363094.9207915307
+        "partial_glob": "disk-sdd1/disk_time-*"
     },
     "disk-sdd2_disk_merged": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdd2_disk_merged",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "disk-sdd2/disk_merged-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "disk-sdd2/disk_merged-*"
     },
     "disk-sdd2_disk_octets": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdd2_disk_octets",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "disk-sdd2/disk_octets-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "disk-sdd2/disk_octets-*"
     },
     "disk-sdd2_disk_ops": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdd2_disk_ops",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "disk-sdd2/disk_ops-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "disk-sdd2/disk_ops-*"
     },
     "disk-sdd5_disk_merged": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdd5_disk_merged",
-        "max_value": 4155,
-        "mean_value": 4155.0,
-        "min_value": 4155,
-        "partial_glob": "disk-sdd5/disk_merged-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "disk-sdd5/disk_merged-*"
     },
     "disk-sdd5_disk_octets": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdd5_disk_octets",
-        "max_value": 19078656,
-        "mean_value": 19078656.0,
-        "min_value": 19078656,
-        "partial_glob": "disk-sdd5/disk_octets-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "disk-sdd5/disk_octets-*"
     },
     "disk-sdd5_disk_ops": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdd5_disk_ops",
-        "max_value": 649,
-        "mean_value": 649.0,
-        "min_value": 649,
-        "partial_glob": "disk-sdd5/disk_ops-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "disk-sdd5/disk_ops-*"
     },
     "disk-sdd5_disk_time": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdd5_disk_time",
-        "max_value": 371645,
-        "mean_value": 371645.0,
-        "min_value": 371645,
-        "partial_glob": "disk-sdd5/disk_time-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "disk-sdd5/disk_time-*"
     },
     "disk-sdd_disk_merged": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdd_disk_merged",
-        "max_value": 50365299,
-        "mean_value": 49804113.939351849,
-        "min_value": 49005171,
-        "partial_glob": "disk-sdd/disk_merged-*",
-        "scaling_value": 1.0,
-        "std_value": 386795.53543883376
+        "partial_glob": "disk-sdd/disk_merged-*"
     },
     "disk-sdd_disk_octets": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdd_disk_octets",
-        "max_value": 549787435520,
-        "mean_value": 542427604641.8963,
-        "min_value": 535095426048,
-        "partial_glob": "disk-sdd/disk_octets-*",
-        "scaling_value": 1.0,
-        "std_value": 4260688814.6073308
+        "partial_glob": "disk-sdd/disk_octets-*"
     },
     "disk-sdd_disk_ops": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdd_disk_ops",
-        "max_value": 80847199,
-        "mean_value": 79634660.796180561,
-        "min_value": 78715621,
-        "partial_glob": "disk-sdd/disk_ops-*",
-        "scaling_value": 1.0,
-        "std_value": 636593.57598867232
+        "partial_glob": "disk-sdd/disk_ops-*"
     },
     "disk-sdd_disk_time": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdd_disk_time",
-        "max_value": 77920192,
-        "mean_value": 75646150.658217594,
-        "min_value": 73647469,
-        "partial_glob": "disk-sdd/disk_time-*",
-        "scaling_value": 1.0,
-        "std_value": 1363094.9207915307
+        "partial_glob": "disk-sdd/disk_time-*"
     },
     "disk-sde1_disk_merged": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sde1_disk_merged",
-        "max_value": 50360442,
-        "mean_value": 49800075.514814816,
-        "min_value": 49007885,
-        "partial_glob": "disk-sde1/disk_merged-*",
-        "scaling_value": 1.0,
-        "std_value": 383533.1245828683
+        "partial_glob": "disk-sde1/disk_merged-*"
     },
     "disk-sde1_disk_octets": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sde1_disk_octets",
-        "max_value": 549768356864,
-        "mean_value": 542408537976.82965,
-        "min_value": 535076347392,
-        "partial_glob": "disk-sde1/disk_octets-*",
-        "scaling_value": 1.0,
-        "std_value": 4260681433.4201026
+        "partial_glob": "disk-sde1/disk_octets-*"
     },
     "disk-sde1_disk_ops": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sde1_disk_ops",
-        "max_value": 80846851,
-        "mean_value": 79633081.071527779,
-        "min_value": 78706331,
-        "partial_glob": "disk-sde1/disk_ops-*",
-        "scaling_value": 1.0,
-        "std_value": 639677.18958854571
+        "partial_glob": "disk-sde1/disk_ops-*"
     },
     "disk-sde1_disk_time": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sde1_disk_time",
-        "max_value": 103017721,
-        "mean_value": 100672149.36759259,
-        "min_value": 99102731,
-        "partial_glob": "disk-sde1/disk_time-*",
-        "scaling_value": 1.0,
-        "std_value": 1161276.5881121545
+        "partial_glob": "disk-sde1/disk_time-*"
     },
     "disk-sde2_disk_merged": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sde2_disk_merged",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "disk-sde2/disk_merged-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "disk-sde2/disk_merged-*"
     },
     "disk-sde2_disk_octets": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sde2_disk_octets",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "disk-sde2/disk_octets-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "disk-sde2/disk_octets-*"
     },
     "disk-sde2_disk_ops": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sde2_disk_ops",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "disk-sde2/disk_ops-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "disk-sde2/disk_ops-*"
     },
     "disk-sde5_disk_merged": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sde5_disk_merged",
-        "max_value": 4147,
-        "mean_value": 4147.0,
-        "min_value": 4147,
-        "partial_glob": "disk-sde5/disk_merged-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "disk-sde5/disk_merged-*"
     },
     "disk-sde5_disk_octets": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sde5_disk_octets",
-        "max_value": 19078656,
-        "mean_value": 19078656.0,
-        "min_value": 19078656,
-        "partial_glob": "disk-sde5/disk_octets-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "disk-sde5/disk_octets-*"
     },
     "disk-sde5_disk_ops": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sde5_disk_ops",
-        "max_value": 657,
-        "mean_value": 657.0,
-        "min_value": 657,
-        "partial_glob": "disk-sde5/disk_ops-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "disk-sde5/disk_ops-*"
     },
     "disk-sde5_disk_time": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sde5_disk_time",
-        "max_value": 295749,
-        "mean_value": 295749.0,
-        "min_value": 295749,
-        "partial_glob": "disk-sde5/disk_time-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "disk-sde5/disk_time-*"
     },
     "disk-sde_disk_merged": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sde_disk_merged",
-        "max_value": 50364589,
-        "mean_value": 49804222.514814816,
-        "min_value": 49012032,
-        "partial_glob": "disk-sde/disk_merged-*",
-        "scaling_value": 1.0,
-        "std_value": 383533.1245828683
+        "partial_glob": "disk-sde/disk_merged-*"
     },
     "disk-sde_disk_octets": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sde_disk_octets",
-        "max_value": 549787435520,
-        "mean_value": 542427616632.82965,
-        "min_value": 535095426048,
-        "partial_glob": "disk-sde/disk_octets-*",
-        "scaling_value": 1.0,
-        "std_value": 4260681433.4201026
+        "partial_glob": "disk-sde/disk_octets-*"
     },
     "disk-sde_disk_ops": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sde_disk_ops",
-        "max_value": 80847508,
-        "mean_value": 79633738.071527779,
-        "min_value": 78706988,
-        "partial_glob": "disk-sde/disk_ops-*",
-        "scaling_value": 1.0,
-        "std_value": 639677.18958854571
+        "partial_glob": "disk-sde/disk_ops-*"
     },
     "disk-sde_disk_time": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sde_disk_time",
-        "max_value": 103015763,
-        "mean_value": 100670191.36759259,
-        "min_value": 99100773,
-        "partial_glob": "disk-sde/disk_time-*",
-        "scaling_value": 1.0,
-        "std_value": 1161276.5881121545
+        "partial_glob": "disk-sde/disk_time-*"
     },
     "disk-sdf1_disk_merged": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdf1_disk_merged",
-        "max_value": 861380,
-        "mean_value": 861379.39351851854,
-        "min_value": 861379,
-        "partial_glob": "disk-sdf1/disk_merged-*",
-        "scaling_value": 1.0,
-        "std_value": 0.48855841020315416
+        "partial_glob": "disk-sdf1/disk_merged-*"
     },
     "disk-sdf1_disk_octets": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdf1_disk_octets",
-        "max_value": 2860933271552,
-        "mean_value": 2860933261613.9854,
-        "min_value": 2860933255168,
-        "partial_glob": "disk-sdf1/disk_octets-*",
-        "scaling_value": 1.0,
-        "std_value": 8003.1389605090699
+        "partial_glob": "disk-sdf1/disk_octets-*"
     },
     "disk-sdf1_disk_ops": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdf1_disk_ops",
-        "max_value": 6054062,
-        "mean_value": 6054060.1802083338,
-        "min_value": 6054059,
-        "partial_glob": "disk-sdf1/disk_ops-*",
-        "scaling_value": 1.0,
-        "std_value": 1.4653625401645065
+        "partial_glob": "disk-sdf1/disk_ops-*"
     },
     "disk-sdf1_disk_time": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdf1_disk_time",
-        "max_value": 74784529,
-        "mean_value": 74784492.611111104,
-        "min_value": 74784469,
-        "partial_glob": "disk-sdf1/disk_time-*",
-        "scaling_value": 1.0,
-        "std_value": 29.313504612189252
+        "partial_glob": "disk-sdf1/disk_time-*"
     },
     "disk-sdf_disk_merged": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdf_disk_merged",
-        "max_value": 861380,
-        "mean_value": 861379.39351851854,
-        "min_value": 861379,
-        "partial_glob": "disk-sdf/disk_merged-*",
-        "scaling_value": 1.0,
-        "std_value": 0.48855841020315416
+        "partial_glob": "disk-sdf/disk_merged-*"
     },
     "disk-sdf_disk_octets": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdf_disk_octets",
-        "max_value": 2860933271552,
-        "mean_value": 2860933261613.9854,
-        "min_value": 2860933255168,
-        "partial_glob": "disk-sdf/disk_octets-*",
-        "scaling_value": 1.0,
-        "std_value": 8003.1389605090699
+        "partial_glob": "disk-sdf/disk_octets-*"
     },
     "disk-sdf_disk_ops": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdf_disk_ops",
-        "max_value": 6054069,
-        "mean_value": 6054067.1802083338,
-        "min_value": 6054066,
-        "partial_glob": "disk-sdf/disk_ops-*",
-        "scaling_value": 1.0,
-        "std_value": 1.4653625401645065
+        "partial_glob": "disk-sdf/disk_ops-*"
     },
     "disk-sdf_disk_time": {
         "class_type": "FloatStatusItem",
         "column_name": "disk-sdf_disk_time",
-        "max_value": 74784477,
-        "mean_value": 74784440.611111104,
-        "min_value": 74784417,
-        "partial_glob": "disk-sdf/disk_time-*",
-        "scaling_value": 1.0,
-        "std_value": 29.313504612189252
+        "partial_glob": "disk-sdf/disk_time-*"
     },
     "entropy_entropy": {
         "class_type": "FloatStatusItem",
         "column_name": "entropy_entropy",
-        "max_value": 2698.0,
-        "mean_value": 1748.1547453703704,
-        "min_value": 1303.0,
-        "partial_glob": "entropy/entropy-*",
-        "scaling_value": 1.0,
-        "std_value": 282.52556398585614
-    },
-    "ethstat-eth1_derive-collisions": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-collisions",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-collisions-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-dropped_smbus": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-dropped_smbus",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-dropped_smbus-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-multicast": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-multicast",
-        "max_value": 2833706,
-        "mean_value": 2795850.8773148148,
-        "min_value": 2758008,
-        "partial_glob": "ethstat-eth1/derive-multicast-*",
-        "scaling_value": 1.0,
-        "std_value": 21880.236563686296
-    },
-    "ethstat-eth1_derive-os2bmc_rx_by_bmc": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-os2bmc_rx_by_bmc",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-os2bmc_rx_by_bmc-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-os2bmc_rx_by_host": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-os2bmc_rx_by_host",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-os2bmc_rx_by_host-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-os2bmc_tx_by_bmc": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-os2bmc_tx_by_bmc",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-os2bmc_tx_by_bmc-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-os2bmc_tx_by_host": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-os2bmc_tx_by_host",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-os2bmc_tx_by_host-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_align_errors": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_align_errors",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_align_errors-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_broadcast": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_broadcast",
-        "max_value": 15,
-        "mean_value": 15.0,
-        "min_value": 15,
-        "partial_glob": "ethstat-eth1/derive-rx_broadcast-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_bytes": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_bytes",
-        "max_value": 101631394230667,
-        "mean_value": 101631390823705.97,
-        "min_value": 101631387417847,
-        "partial_glob": "ethstat-eth1/derive-rx_bytes-*",
-        "scaling_value": 1.0,
-        "std_value": 1969221.2907317665
-    },
-    "ethstat-eth1_derive-rx_crc_errors": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_crc_errors",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_crc_errors-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_errors": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_errors",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_errors-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_fifo_errors": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_fifo_errors",
-        "max_value": 141074,
-        "mean_value": 141074.0,
-        "min_value": 141074,
-        "partial_glob": "ethstat-eth1/derive-rx_fifo_errors-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_flow_control_xoff": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_flow_control_xoff",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_flow_control_xoff-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_flow_control_xon": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_flow_control_xon",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_flow_control_xon-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_frame_errors": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_frame_errors",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_frame_errors-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_hwtstamp_cleared": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_hwtstamp_cleared",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_hwtstamp_cleared-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_length_errors": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_length_errors",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_length_errors-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_long_byte_count": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_long_byte_count",
-        "max_value": 101631394230667,
-        "mean_value": 101631390823705.97,
-        "min_value": 101631387417847,
-        "partial_glob": "ethstat-eth1/derive-rx_long_byte_count-*",
-        "scaling_value": 1.0,
-        "std_value": 1969221.2907317665
-    },
-    "ethstat-eth1_derive-rx_long_length_errors": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_long_length_errors",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_long_length_errors-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_missed_errors": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_missed_errors",
-        "max_value": 243,
-        "mean_value": 243.0,
-        "min_value": 243,
-        "partial_glob": "ethstat-eth1/derive-rx_missed_errors-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_multicast": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_multicast",
-        "max_value": 2833706,
-        "mean_value": 2795850.8773148148,
-        "min_value": 2758008,
-        "partial_glob": "ethstat-eth1/derive-rx_multicast-*",
-        "scaling_value": 1.0,
-        "std_value": 21880.236563686296
-    },
-    "ethstat-eth1_derive-rx_no_buffer_count": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_no_buffer_count",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_no_buffer_count-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_over_errors": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_over_errors",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_over_errors-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_packets": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_packets",
-        "max_value": 67062261500,
-        "mean_value": 67062223644.877312,
-        "min_value": 67062185802,
-        "partial_glob": "ethstat-eth1/derive-rx_packets-*",
-        "scaling_value": 1.0,
-        "std_value": 21880.236563686296
-    },
-    "ethstat-eth1_derive-rx_queue_0_alloc_failed": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_0_alloc_failed",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_0_alloc_failed-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_0_bytes": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_0_bytes",
-        "max_value": 101362688283811,
-        "mean_value": 101362688283811.0,
-        "min_value": 101362688283811,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_0_bytes-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_0_csum_err": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_0_csum_err",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_0_csum_err-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_0_drops": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_0_drops",
-        "max_value": 140831,
-        "mean_value": 140831.0,
-        "min_value": 140831,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_0_drops-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_0_packets": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_0_packets",
-        "max_value": 67059286963,
-        "mean_value": 67059286963.0,
-        "min_value": 67059286963,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_0_packets-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_1_alloc_failed": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_1_alloc_failed",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_1_alloc_failed-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_1_bytes": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_1_bytes",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_1_bytes-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_1_csum_err": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_1_csum_err",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_1_csum_err-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_1_drops": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_1_drops",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_1_drops-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_1_packets": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_1_packets",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_1_packets-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_2_alloc_failed": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_2_alloc_failed",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_2_alloc_failed-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_2_bytes": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_2_bytes",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_2_bytes-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_2_csum_err": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_2_csum_err",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_2_csum_err-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_2_drops": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_2_drops",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_2_drops-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_2_packets": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_2_packets",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_2_packets-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_3_alloc_failed": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_3_alloc_failed",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_3_alloc_failed-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_3_bytes": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_3_bytes",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_3_bytes-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_3_csum_err": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_3_csum_err",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_3_csum_err-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_3_drops": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_3_drops",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_3_drops-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_3_packets": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_3_packets",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_3_packets-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_4_alloc_failed": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_4_alloc_failed",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_4_alloc_failed-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_4_bytes": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_4_bytes",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_4_bytes-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_4_csum_err": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_4_csum_err",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_4_csum_err-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_4_drops": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_4_drops",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_4_drops-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_4_packets": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_4_packets",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_4_packets-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_5_alloc_failed": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_5_alloc_failed",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_5_alloc_failed-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_5_bytes": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_5_bytes",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_5_bytes-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_5_csum_err": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_5_csum_err",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_5_csum_err-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_5_drops": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_5_drops",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_5_drops-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_5_packets": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_5_packets",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_5_packets-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_6_alloc_failed": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_6_alloc_failed",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_6_alloc_failed-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_6_bytes": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_6_bytes",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_6_bytes-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_6_csum_err": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_6_csum_err",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_6_csum_err-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_6_drops": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_6_drops",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_6_drops-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_6_packets": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_6_packets",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_6_packets-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_7_alloc_failed": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_7_alloc_failed",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_7_alloc_failed-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_7_bytes": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_7_bytes",
-        "max_value": 243698716,
-        "mean_value": 240443175.44907406,
-        "min_value": 237188688,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_7_bytes-*",
-        "scaling_value": 1.0,
-        "std_value": 1881700.3444770211
-    },
-    "ethstat-eth1_derive-rx_queue_7_csum_err": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_7_csum_err",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_7_csum_err-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_7_drops": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_7_drops",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_7_drops-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_queue_7_packets": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_queue_7_packets",
-        "max_value": 2833706,
-        "mean_value": 2795850.8773148148,
-        "min_value": 2758008,
-        "partial_glob": "ethstat-eth1/derive-rx_queue_7_packets-*",
-        "scaling_value": 1.0,
-        "std_value": 21880.236563686296
-    },
-    "ethstat-eth1_derive-rx_short_length_errors": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_short_length_errors",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_short_length_errors-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-rx_smbus": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-rx_smbus",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-rx_smbus-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_abort_late_coll": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_abort_late_coll",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-tx_abort_late_coll-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_aborted_errors": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_aborted_errors",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-tx_aborted_errors-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_broadcast": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_broadcast",
-        "max_value": 1,
-        "mean_value": 1.0,
-        "min_value": 1,
-        "partial_glob": "ethstat-eth1/derive-tx_broadcast-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_bytes": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_bytes",
-        "max_value": 7882729446,
-        "mean_value": 7868651577.1166668,
-        "min_value": 7854574476,
-        "partial_glob": "ethstat-eth1/derive-tx_bytes-*",
-        "scaling_value": 1.0,
-        "std_value": 8131547.92059753
-    },
-    "ethstat-eth1_derive-tx_carrier_errors": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_carrier_errors",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-tx_carrier_errors-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_deferred_ok": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_deferred_ok",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-tx_deferred_ok-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_dma_out_of_sync": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_dma_out_of_sync",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-tx_dma_out_of_sync-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_dropped": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_dropped",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-tx_dropped-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_errors": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_errors",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-tx_errors-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_fifo_errors": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_fifo_errors",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-tx_fifo_errors-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_flow_control_xoff": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_flow_control_xoff",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-tx_flow_control_xoff-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_flow_control_xon": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_flow_control_xon",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-tx_flow_control_xon-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_heartbeat_errors": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_heartbeat_errors",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-tx_heartbeat_errors-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_hwtstamp_timeouts": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_hwtstamp_timeouts",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-tx_hwtstamp_timeouts-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_multi_coll_ok": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_multi_coll_ok",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-tx_multi_coll_ok-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_multicast": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_multicast",
-        "max_value": 11071405,
-        "mean_value": 10923350.945833333,
-        "min_value": 10775302,
-        "partial_glob": "ethstat-eth1/derive-tx_multicast-*",
-        "scaling_value": 1.0,
-        "std_value": 85517.763967830047
-    },
-    "ethstat-eth1_derive-tx_packets": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_packets",
-        "max_value": 117673634,
-        "mean_value": 117525579.94583334,
-        "min_value": 117377531,
-        "partial_glob": "ethstat-eth1/derive-tx_packets-*",
-        "scaling_value": 1.0,
-        "std_value": 85517.763967830033
-    },
-    "ethstat-eth1_derive-tx_queue_0_bytes": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_queue_0_bytes",
-        "max_value": 721515036,
-        "mean_value": 711876839.22222221,
-        "min_value": 702239818,
-        "partial_glob": "ethstat-eth1/derive-tx_queue_0_bytes-*",
-        "scaling_value": 1.0,
-        "std_value": 5567574.7920619724
-    },
-    "ethstat-eth1_derive-tx_queue_0_packets": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_queue_0_packets",
-        "max_value": 7690429,
-        "mean_value": 7587781.3773148144,
-        "min_value": 7485146,
-        "partial_glob": "ethstat-eth1/derive-tx_queue_0_packets-*",
-        "scaling_value": 1.0,
-        "std_value": 59294.68383114921
-    },
-    "ethstat-eth1_derive-tx_queue_0_restart": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_queue_0_restart",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-tx_queue_0_restart-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_queue_1_bytes": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_queue_1_bytes",
-        "max_value": 3303466776,
-        "mean_value": 3303347358.6999998,
-        "min_value": 3303227556,
-        "partial_glob": "ethstat-eth1/derive-tx_queue_1_bytes-*",
-        "scaling_value": 1.0,
-        "std_value": 69125.947687008869
-    },
-    "ethstat-eth1_derive-tx_queue_1_packets": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_queue_1_packets",
-        "max_value": 60857066,
-        "mean_value": 60854854.568518519,
-        "min_value": 60852636,
-        "partial_glob": "ethstat-eth1/derive-tx_queue_1_packets-*",
-        "scaling_value": 1.0,
-        "std_value": 1280.1101423520161
-    },
-    "ethstat-eth1_derive-tx_queue_1_restart": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_queue_1_restart",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-tx_queue_1_restart-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_queue_2_bytes": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_queue_2_bytes",
-        "max_value": 665717854,
-        "mean_value": 665717854.0,
-        "min_value": 665717854,
-        "partial_glob": "ethstat-eth1/derive-tx_queue_2_bytes-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_queue_2_packets": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_queue_2_packets",
-        "max_value": 12210221,
-        "mean_value": 12210221.0,
-        "min_value": 12210221,
-        "partial_glob": "ethstat-eth1/derive-tx_queue_2_packets-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_queue_2_restart": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_queue_2_restart",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-tx_queue_2_restart-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_queue_3_bytes": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_queue_3_bytes",
-        "max_value": 1120186702,
-        "mean_value": 1120186702.0,
-        "min_value": 1120186702,
-        "partial_glob": "ethstat-eth1/derive-tx_queue_3_bytes-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_queue_3_packets": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_queue_3_packets",
-        "max_value": 20557419,
-        "mean_value": 20557419.0,
-        "min_value": 20557419,
-        "partial_glob": "ethstat-eth1/derive-tx_queue_3_packets-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_queue_3_restart": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_queue_3_restart",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-tx_queue_3_restart-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_queue_4_bytes": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_queue_4_bytes",
-        "max_value": 89736410,
-        "mean_value": 89736410.0,
-        "min_value": 89736410,
-        "partial_glob": "ethstat-eth1/derive-tx_queue_4_bytes-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_queue_4_packets": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_queue_4_packets",
-        "max_value": 1626091,
-        "mean_value": 1626091.0,
-        "min_value": 1626091,
-        "partial_glob": "ethstat-eth1/derive-tx_queue_4_packets-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_queue_4_restart": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_queue_4_restart",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-tx_queue_4_restart-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_queue_5_bytes": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_queue_5_bytes",
-        "max_value": 326716,
-        "mean_value": 326716.0,
-        "min_value": 326716,
-        "partial_glob": "ethstat-eth1/derive-tx_queue_5_bytes-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_queue_5_packets": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_queue_5_packets",
-        "max_value": 6530,
-        "mean_value": 6530.0,
-        "min_value": 6530,
-        "partial_glob": "ethstat-eth1/derive-tx_queue_5_packets-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_queue_5_restart": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_queue_5_restart",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-tx_queue_5_restart-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_queue_6_bytes": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_queue_6_bytes",
-        "max_value": 359416430,
-        "mean_value": 359416430.0,
-        "min_value": 359416430,
-        "partial_glob": "ethstat-eth1/derive-tx_queue_6_bytes-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_queue_6_packets": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_queue_6_packets",
-        "max_value": 6616753,
-        "mean_value": 6616753.0,
-        "min_value": 6616753,
-        "partial_glob": "ethstat-eth1/derive-tx_queue_6_packets-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_queue_6_restart": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_queue_6_restart",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-tx_queue_6_restart-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_queue_7_bytes": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_queue_7_bytes",
-        "max_value": 545542624,
-        "mean_value": 541827854.0,
-        "min_value": 538113084,
-        "partial_glob": "ethstat-eth1/derive-tx_queue_7_bytes-*",
-        "scaling_value": 1.0,
-        "std_value": 2145095.846809648
-    },
-    "ethstat-eth1_derive-tx_queue_7_packets": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_queue_7_packets",
-        "max_value": 8109125,
-        "mean_value": 8065930.0,
-        "min_value": 8022735,
-        "partial_glob": "ethstat-eth1/derive-tx_queue_7_packets-*",
-        "scaling_value": 1.0,
-        "std_value": 24942.974962902881
-    },
-    "ethstat-eth1_derive-tx_queue_7_restart": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_queue_7_restart",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-tx_queue_7_restart-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_single_coll_ok": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_single_coll_ok",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-tx_single_coll_ok-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_smbus": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_smbus",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-tx_smbus-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_tcp_seg_failed": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_tcp_seg_failed",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-tx_tcp_seg_failed-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_tcp_seg_good": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_tcp_seg_good",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-tx_tcp_seg_good-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_timeout_count": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_timeout_count",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-tx_timeout_count-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "ethstat-eth1_derive-tx_window_errors": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ethstat-eth1_derive-tx_window_errors",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "ethstat-eth1/derive-tx_window_errors-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "entropy/entropy-*"
     },
     "interface-eth0_if_errors": {
         "class_type": "FloatStatusItem",
         "column_name": "interface-eth0_if_errors",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "interface-eth0/if_errors-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "interface-eth0/if_errors-*"
     },
     "interface-eth0_if_octets": {
         "class_type": "FloatStatusItem",
         "column_name": "interface-eth0_if_octets",
-        "max_value": 8322112247,
-        "mean_value": 8252565171.8041668,
-        "min_value": 8220338457,
-        "partial_glob": "interface-eth0/if_octets-*",
-        "scaling_value": 1.0,
-        "std_value": 36426087.785647586
+        "partial_glob": "interface-eth0/if_octets-*"
     },
     "interface-eth0_if_packets": {
         "class_type": "FloatStatusItem",
         "column_name": "interface-eth0_if_packets",
-        "max_value": 18651731,
-        "mean_value": 18431636.727199074,
-        "min_value": 18273857,
-        "partial_glob": "interface-eth0/if_packets-*",
-        "scaling_value": 1.0,
-        "std_value": 114882.25599615184
+        "partial_glob": "interface-eth0/if_packets-*"
     },
     "interface-eth1_if_errors": {
         "class_type": "FloatStatusItem",
         "column_name": "interface-eth1_if_errors",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "interface-eth1/if_errors-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "interface-eth1/if_errors-*"
     },
     "interface-eth1_if_octets": {
         "class_type": "FloatStatusItem",
         "column_name": "interface-eth1_if_octets",
-        "max_value": 6805908548,
-        "mean_value": 6792436163.9222221,
-        "min_value": 6778964570,
-        "partial_glob": "interface-eth1/if_octets-*",
-        "scaling_value": 1.0,
-        "std_value": 7781796.2178359786
+        "partial_glob": "interface-eth1/if_octets-*"
     },
     "interface-eth1_if_packets": {
         "class_type": "FloatStatusItem",
         "column_name": "interface-eth1_if_packets",
-        "max_value": 117673634,
-        "mean_value": 117525579.94583334,
-        "min_value": 117377531,
-        "partial_glob": "interface-eth1/if_packets-*",
-        "scaling_value": 1.0,
-        "std_value": 85517.763967830033
+        "partial_glob": "interface-eth1/if_packets-*"
     },
     "interface-eth2_if_errors": {
         "class_type": "FloatStatusItem",
         "column_name": "interface-eth2_if_errors",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "interface-eth2/if_errors-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "interface-eth2/if_errors-*"
     },
     "interface-eth2_if_octets": {
         "class_type": "FloatStatusItem",
         "column_name": "interface-eth2_if_octets",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "interface-eth2/if_octets-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "interface-eth2/if_octets-*"
     },
     "interface-eth2_if_packets": {
         "class_type": "FloatStatusItem",
         "column_name": "interface-eth2_if_packets",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "interface-eth2/if_packets-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "interface-eth2/if_packets-*"
     },
     "interface-eth3_if_errors": {
         "class_type": "FloatStatusItem",
         "column_name": "interface-eth3_if_errors",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "interface-eth3/if_errors-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "interface-eth3/if_errors-*"
     },
     "interface-eth3_if_octets": {
         "class_type": "FloatStatusItem",
         "column_name": "interface-eth3_if_octets",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "interface-eth3/if_octets-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "interface-eth3/if_octets-*"
     },
     "interface-eth3_if_packets": {
         "class_type": "FloatStatusItem",
         "column_name": "interface-eth3_if_packets",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "interface-eth3/if_packets-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "interface-eth3/if_packets-*"
     },
     "interface-lo_if_errors": {
         "class_type": "FloatStatusItem",
         "column_name": "interface-lo_if_errors",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "interface-lo/if_errors-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "interface-lo/if_errors-*"
     },
     "interface-lo_if_octets": {
         "class_type": "FloatStatusItem",
         "column_name": "interface-lo_if_octets",
-        "max_value": 11617030565,
-        "mean_value": 11563239430.853704,
-        "min_value": 11544604739,
-        "partial_glob": "interface-lo/if_octets-*",
-        "scaling_value": 1.0,
-        "std_value": 27755932.353154235
+        "partial_glob": "interface-lo/if_octets-*"
     },
     "interface-lo_if_packets": {
         "class_type": "FloatStatusItem",
         "column_name": "interface-lo_if_packets",
-        "max_value": 3729977,
-        "mean_value": 3708850.4684027778,
-        "min_value": 3701248,
-        "partial_glob": "interface-lo/if_packets-*",
-        "scaling_value": 1.0,
-        "std_value": 10297.394650490896
+        "partial_glob": "interface-lo/if_packets-*"
     },
     "ipmi_temperature-CPU Temp processor (3.1)": {
         "class_type": "FloatStatusItem",
         "column_name": "ipmi_temperature-CPU Temp processor (3.1)",
-        "max_value": 42.0,
-        "mean_value": 40.288425925925928,
-        "min_value": 39.0,
-        "partial_glob": "ipmi/temperature-CPU Temp processor (3.1)-*",
-        "scaling_value": 1.0,
-        "std_value": 0.45763229466371752
+        "partial_glob": "ipmi/temperature-CPU Temp processor (3.1)-*"
     },
     "ipmi_temperature-DIMMA1 Temp memory_device (32.64)": {
         "class_type": "FloatStatusItem",
         "column_name": "ipmi_temperature-DIMMA1 Temp memory_device (32.64)",
-        "max_value": 36.0,
-        "mean_value": 34.303587962962965,
-        "min_value": 34.0,
-        "partial_glob": "ipmi/temperature-DIMMA1 Temp memory_device (32.64)-*",
-        "scaling_value": 1.0,
-        "std_value": 0.46083925377525647
+        "partial_glob": "ipmi/temperature-DIMMA1 Temp memory_device (32.64)-*"
     },
     "ipmi_temperature-DIMMB1 Temp memory_device (32.68)": {
         "class_type": "FloatStatusItem",
         "column_name": "ipmi_temperature-DIMMB1 Temp memory_device (32.68)",
-        "max_value": 33.0,
-        "mean_value": 32.121296296296293,
-        "min_value": 31.0,
-        "partial_glob": "ipmi/temperature-DIMMB1 Temp memory_device (32.68)-*",
-        "scaling_value": 1.0,
-        "std_value": 0.38953813187532121
+        "partial_glob": "ipmi/temperature-DIMMB1 Temp memory_device (32.68)-*"
     },
     "ipmi_temperature-Peripheral Temp system_board (7.2)": {
         "class_type": "FloatStatusItem",
         "column_name": "ipmi_temperature-Peripheral Temp system_board (7.2)",
-        "max_value": 39.0,
-        "mean_value": 37.978703703703701,
-        "min_value": 37.0,
-        "partial_glob": "ipmi/temperature-Peripheral Temp system_board (7.2)-*",
-        "scaling_value": 1.0,
-        "std_value": 0.33440683206231753
+        "partial_glob": "ipmi/temperature-Peripheral Temp system_board (7.2)-*"
     },
     "ipmi_temperature-System Temp system_board (7.1)": {
         "class_type": "FloatStatusItem",
         "column_name": "ipmi_temperature-System Temp system_board (7.1)",
-        "max_value": 35.0,
-        "mean_value": 34.176620370370372,
-        "min_value": 32.0,
-        "partial_glob": "ipmi/temperature-System Temp system_board (7.1)-*",
-        "scaling_value": 1.0,
-        "std_value": 0.56219573858181104
+        "partial_glob": "ipmi/temperature-System Temp system_board (7.1)-*"
     },
     "ipmi_voltage-12V system_board (7.17)": {
         "class_type": "FloatStatusItem",
         "column_name": "ipmi_voltage-12V system_board (7.17)",
-        "max_value": 12.896000000000001,
-        "mean_value": 12.831792592592587,
-        "min_value": 12.768000000000001,
-        "partial_glob": "ipmi/voltage-12V system_board (7.17)-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0037657463657500101
+        "partial_glob": "ipmi/voltage-12V system_board (7.17)-*"
     },
     "ipmi_voltage-3.3V AUX system_board (7.12)": {
         "class_type": "FloatStatusItem",
         "column_name": "ipmi_voltage-3.3V AUX system_board (7.12)",
-        "max_value": 3.2989999999999999,
-        "mean_value": 3.2989921296296294,
-        "min_value": 3.282,
-        "partial_glob": "ipmi/voltage-3.3V AUX system_board (7.12)-*",
-        "scaling_value": 1.0,
-        "std_value": 0.00036571824383174295
+        "partial_glob": "ipmi/voltage-3.3V AUX system_board (7.12)-*"
     },
     "ipmi_voltage-3.3VCC system_board (7.32)": {
         "class_type": "FloatStatusItem",
         "column_name": "ipmi_voltage-3.3VCC system_board (7.32)",
-        "max_value": 3.2989999999999999,
-        "mean_value": 3.2873439814814813,
-        "min_value": 3.2650000000000001,
-        "partial_glob": "ipmi/voltage-3.3VCC system_board (7.32)-*",
-        "scaling_value": 1.0,
-        "std_value": 0.010743371702626989
+        "partial_glob": "ipmi/voltage-3.3VCC system_board (7.32)-*"
     },
     "ipmi_voltage-5V Dual system_board (7.15)": {
         "class_type": "FloatStatusItem",
         "column_name": "ipmi_voltage-5V Dual system_board (7.15)",
-        "max_value": 4.7569999999999997,
-        "mean_value": 4.754543749999999,
-        "min_value": 4.7300000000000004,
-        "partial_glob": "ipmi/voltage-5V Dual system_board (7.15)-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0077648286680095735
+        "partial_glob": "ipmi/voltage-5V Dual system_board (7.15)-*"
     },
     "ipmi_voltage-5VCC system_board (7.33)": {
         "class_type": "FloatStatusItem",
         "column_name": "ipmi_voltage-5VCC system_board (7.33)",
-        "max_value": 4.8179999999999996,
-        "mean_value": 4.7920030092592603,
-        "min_value": 4.766,
-        "partial_glob": "ipmi/voltage-5VCC system_board (7.33)-*",
-        "scaling_value": 1.0,
-        "std_value": 0.00048450008833977892
+        "partial_glob": "ipmi/voltage-5VCC system_board (7.33)-*"
     },
     "ipmi_voltage-VBAT system_board (7.18)": {
         "class_type": "FloatStatusItem",
         "column_name": "ipmi_voltage-VBAT system_board (7.18)",
-        "max_value": 3.0600000000000001,
-        "mean_value": 3.0599670138888895,
-        "min_value": 3.0449999999999999,
-        "partial_glob": "ipmi/voltage-VBAT system_board (7.18)-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0007026811021887796
+        "partial_glob": "ipmi/voltage-VBAT system_board (7.18)-*"
     },
     "ipmi_voltage-VCCP processor (3.2)": {
         "class_type": "FloatStatusItem",
         "column_name": "ipmi_voltage-VCCP processor (3.2)",
-        "max_value": 0.93600000000000005,
-        "mean_value": 0.92701770833333297,
-        "min_value": 0.92700000000000005,
-        "partial_glob": "ipmi/voltage-VCCP processor (3.2)-*",
-        "scaling_value": 1.0,
-        "std_value": 0.00039884812516490978
+        "partial_glob": "ipmi/voltage-VCCP processor (3.2)-*"
     },
     "ipmi_voltage-VDIMM memory_device (32.1)": {
         "class_type": "FloatStatusItem",
         "column_name": "ipmi_voltage-VDIMM memory_device (32.1)",
-        "max_value": 1.335,
-        "mean_value": 1.3349375000000003,
-        "min_value": 1.3260000000000001,
-        "partial_glob": "ipmi/voltage-VDIMM memory_device (32.1)-*",
-        "scaling_value": 1.0,
-        "std_value": 0.00074743455200982527
+        "partial_glob": "ipmi/voltage-VDIMM memory_device (32.1)-*"
     },
     "load_load": {
         "class_type": "FloatStatusItem",
         "column_name": "load_load",
-        "max_value": 0.42999999999999999,
-        "mean_value": 0.16739699074074074,
-        "min_value": 0.050000000000000003,
-        "partial_glob": "load/load-*",
-        "scaling_value": 1.0,
-        "std_value": 0.059843874430357144
+        "partial_glob": "load/load-*"
     },
     "md-0_md_disks-active": {
         "class_type": "FloatStatusItem",
         "column_name": "md-0_md_disks-active",
-        "max_value": 2.0,
-        "mean_value": 2.0,
-        "min_value": 2.0,
-        "partial_glob": "md-0/md_disks-active-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "md-0/md_disks-active-*"
     },
     "md-0_md_disks-failed": {
         "class_type": "FloatStatusItem",
         "column_name": "md-0_md_disks-failed",
-        "max_value": 0.0,
-        "mean_value": 0.0,
-        "min_value": 0.0,
-        "partial_glob": "md-0/md_disks-failed-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "md-0/md_disks-failed-*"
     },
     "md-0_md_disks-missing": {
         "class_type": "FloatStatusItem",
         "column_name": "md-0_md_disks-missing",
-        "max_value": 0.0,
-        "mean_value": 0.0,
-        "min_value": 0.0,
-        "partial_glob": "md-0/md_disks-missing-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "md-0/md_disks-missing-*"
     },
     "md-0_md_disks-spare": {
         "class_type": "FloatStatusItem",
         "column_name": "md-0_md_disks-spare",
-        "max_value": 0.0,
-        "mean_value": 0.0,
-        "min_value": 0.0,
-        "partial_glob": "md-0/md_disks-spare-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "md-0/md_disks-spare-*"
     },
     "md-1_md_disks-active": {
         "class_type": "FloatStatusItem",
         "column_name": "md-1_md_disks-active",
-        "max_value": 2.0,
-        "mean_value": 2.0,
-        "min_value": 2.0,
-        "partial_glob": "md-1/md_disks-active-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "md-1/md_disks-active-*"
     },
     "md-1_md_disks-failed": {
         "class_type": "FloatStatusItem",
         "column_name": "md-1_md_disks-failed",
-        "max_value": 0.0,
-        "mean_value": 0.0,
-        "min_value": 0.0,
-        "partial_glob": "md-1/md_disks-failed-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "md-1/md_disks-failed-*"
     },
     "md-1_md_disks-missing": {
         "class_type": "FloatStatusItem",
         "column_name": "md-1_md_disks-missing",
-        "max_value": 0.0,
-        "mean_value": 0.0,
-        "min_value": 0.0,
-        "partial_glob": "md-1/md_disks-missing-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "md-1/md_disks-missing-*"
     },
     "md-1_md_disks-spare": {
         "class_type": "FloatStatusItem",
         "column_name": "md-1_md_disks-spare",
-        "max_value": 0.0,
-        "mean_value": 0.0,
-        "min_value": 0.0,
-        "partial_glob": "md-1/md_disks-spare-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "md-1/md_disks-spare-*"
     },
     "memory_memory-buffered": {
         "class_type": "FloatStatusItem",
         "column_name": "memory_memory-buffered",
-        "max_value": 1458069504.0,
-        "mean_value": 1454033758.3407407,
-        "min_value": 1451679744.0,
-        "partial_glob": "memory/memory-buffered-*",
-        "scaling_value": 1.0,
-        "std_value": 2773646.2438975768
+        "partial_glob": "memory/memory-buffered-*"
     },
     "memory_memory-cached": {
         "class_type": "FloatStatusItem",
         "column_name": "memory_memory-cached",
-        "max_value": 3025170432.0,
-        "mean_value": 2950975452.4444447,
-        "min_value": 2896302080.0,
-        "partial_glob": "memory/memory-cached-*",
-        "scaling_value": 1.0,
-        "std_value": 44263159.915213495
+        "partial_glob": "memory/memory-cached-*"
     },
     "memory_memory-free": {
         "class_type": "FloatStatusItem",
         "column_name": "memory_memory-free",
-        "max_value": 2429399040.0,
-        "mean_value": 2225493241.8370371,
-        "min_value": 1812283392.0,
-        "partial_glob": "memory/memory-free-*",
-        "scaling_value": 1.0,
-        "std_value": 230836852.29450375
+        "partial_glob": "memory/memory-free-*"
     },
     "memory_memory-used": {
         "class_type": "FloatStatusItem",
         "column_name": "memory_memory-used",
-        "max_value": 2071646208.0,
-        "mean_value": 1735196619.3777778,
-        "min_value": 1528561664.0,
-        "partial_glob": "memory/memory-used-*",
-        "scaling_value": 1.0,
-        "std_value": 186122112.27926642
+        "partial_glob": "memory/memory-used-*"
     },
     "processes_fork_rate": {
         "class_type": "FloatStatusItem",
         "column_name": "processes_fork_rate",
-        "max_value": 24692922,
-        "mean_value": 24690419.546412036,
-        "min_value": 24688929,
-        "partial_glob": "processes/fork_rate-*",
-        "scaling_value": 1.0,
-        "std_value": 1641.9855813343684
+        "partial_glob": "processes/fork_rate-*"
     },
     "processes_ps_state-blocked": {
         "class_type": "FloatStatusItem",
         "column_name": "processes_ps_state-blocked",
-        "max_value": 2.0,
-        "mean_value": 0.014467592592592593,
-        "min_value": 0.0,
-        "partial_glob": "processes/ps_state-blocked-*",
-        "scaling_value": 1.0,
-        "std_value": 0.1448228981495806
+        "partial_glob": "processes/ps_state-blocked-*"
     },
     "processes_ps_state-paging": {
         "class_type": "FloatStatusItem",
         "column_name": "processes_ps_state-paging",
-        "max_value": 0.0,
-        "mean_value": 0.0,
-        "min_value": 0.0,
-        "partial_glob": "processes/ps_state-paging-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "processes/ps_state-paging-*"
     },
     "processes_ps_state-running": {
         "class_type": "FloatStatusItem",
         "column_name": "processes_ps_state-running",
-        "max_value": 2.0,
-        "mean_value": 0.02476851851851852,
-        "min_value": 0.0,
-        "partial_glob": "processes/ps_state-running-*",
-        "scaling_value": 1.0,
-        "std_value": 0.15617087862678217
+        "partial_glob": "processes/ps_state-running-*"
     },
     "processes_ps_state-sleeping": {
         "class_type": "FloatStatusItem",
         "column_name": "processes_ps_state-sleeping",
-        "max_value": 216.0,
-        "mean_value": 204.87280092592593,
-        "min_value": 197.0,
-        "partial_glob": "processes/ps_state-sleeping-*",
-        "scaling_value": 1.0,
-        "std_value": 7.9681273305800442
+        "partial_glob": "processes/ps_state-sleeping-*"
     },
     "processes_ps_state-stopped": {
         "class_type": "FloatStatusItem",
         "column_name": "processes_ps_state-stopped",
-        "max_value": 0.0,
-        "mean_value": 0.0,
-        "min_value": 0.0,
-        "partial_glob": "processes/ps_state-stopped-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "processes/ps_state-stopped-*"
     },
     "processes_ps_state-zombies": {
         "class_type": "FloatStatusItem",
         "column_name": "processes_ps_state-zombies",
-        "max_value": 0.0,
-        "mean_value": 0.0,
-        "min_value": 0.0,
-        "partial_glob": "processes/ps_state-zombies-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "processes/ps_state-zombies-*"
     },
     "protocols-Udp_protocol_counter-InCsumErrors": {
         "class_type": "FloatStatusItem",
         "column_name": "protocols-Udp_protocol_counter-InCsumErrors",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "protocols-Udp/protocol_counter-InCsumErrors-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "protocols-Udp/protocol_counter-InCsumErrors-*"
     },
     "protocols-Udp_protocol_counter-InDatagrams": {
         "class_type": "FloatStatusItem",
         "column_name": "protocols-Udp_protocol_counter-InDatagrams",
-        "max_value": 66997525697,
-        "mean_value": 66997382581.479401,
-        "min_value": 66997241418,
-        "partial_glob": "protocols-Udp/protocol_counter-InDatagrams-*",
-        "scaling_value": 1.0,
-        "std_value": 81954.662305950653
+        "partial_glob": "protocols-Udp/protocol_counter-InDatagrams-*"
     },
     "protocols-Udp_protocol_counter-InErrors": {
         "class_type": "FloatStatusItem",
         "column_name": "protocols-Udp_protocol_counter-InErrors",
-        "max_value": 72247531,
-        "mean_value": 72247531.0,
-        "min_value": 72247531,
-        "partial_glob": "protocols-Udp/protocol_counter-InErrors-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "protocols-Udp/protocol_counter-InErrors-*"
     },
     "protocols-Udp_protocol_counter-NoPorts": {
         "class_type": "FloatStatusItem",
         "column_name": "protocols-Udp_protocol_counter-NoPorts",
-        "max_value": 251146,
-        "mean_value": 249284.65416666667,
-        "min_value": 245503,
-        "partial_glob": "protocols-Udp/protocol_counter-NoPorts-*",
-        "scaling_value": 1.0,
-        "std_value": 1880.841683635063
+        "partial_glob": "protocols-Udp/protocol_counter-NoPorts-*"
     },
     "protocols-Udp_protocol_counter-OutDatagrams": {
         "class_type": "FloatStatusItem",
         "column_name": "protocols-Udp_protocol_counter-OutDatagrams",
-        "max_value": 125493141,
-        "mean_value": 125225084.70046297,
-        "min_value": 124968379,
-        "partial_glob": "protocols-Udp/protocol_counter-OutDatagrams-*",
-        "scaling_value": 1.0,
-        "std_value": 150488.38566198156
+        "partial_glob": "protocols-Udp/protocol_counter-OutDatagrams-*"
     },
     "protocols-Udp_protocol_counter-RcvbufErrors": {
         "class_type": "FloatStatusItem",
         "column_name": "protocols-Udp_protocol_counter-RcvbufErrors",
-        "max_value": 72247531,
-        "mean_value": 72247531.0,
-        "min_value": 72247531,
-        "partial_glob": "protocols-Udp/protocol_counter-RcvbufErrors-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "protocols-Udp/protocol_counter-RcvbufErrors-*"
     },
     "protocols-Udp_protocol_counter-SndbufErrors": {
         "class_type": "FloatStatusItem",
         "column_name": "protocols-Udp_protocol_counter-SndbufErrors",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "protocols-Udp/protocol_counter-SndbufErrors-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "protocols-Udp/protocol_counter-SndbufErrors-*"
     },
     "sensors-coretemp-isa-0000_temperature-temp2": {
         "class_type": "FloatStatusItem",
         "column_name": "sensors-coretemp-isa-0000_temperature-temp2",
-        "max_value": 46.0,
-        "mean_value": 46.0,
-        "min_value": 46.0,
-        "partial_glob": "sensors-coretemp-isa-0000/temperature-temp2-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "sensors-coretemp-isa-0000/temperature-temp2-*"
     },
     "sensors-coretemp-isa-0000_temperature-temp3": {
         "class_type": "FloatStatusItem",
         "column_name": "sensors-coretemp-isa-0000_temperature-temp3",
-        "max_value": 46.0,
-        "mean_value": 46.0,
-        "min_value": 46.0,
-        "partial_glob": "sensors-coretemp-isa-0000/temperature-temp3-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "sensors-coretemp-isa-0000/temperature-temp3-*"
     },
     "sensors-coretemp-isa-0000_temperature-temp4": {
         "class_type": "FloatStatusItem",
         "column_name": "sensors-coretemp-isa-0000_temperature-temp4",
-        "max_value": 45.0,
-        "mean_value": 45.0,
-        "min_value": 45.0,
-        "partial_glob": "sensors-coretemp-isa-0000/temperature-temp4-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "sensors-coretemp-isa-0000/temperature-temp4-*"
     },
     "sensors-coretemp-isa-0000_temperature-temp5": {
         "class_type": "FloatStatusItem",
         "column_name": "sensors-coretemp-isa-0000_temperature-temp5",
-        "max_value": 45.0,
-        "mean_value": 45.0,
-        "min_value": 45.0,
-        "partial_glob": "sensors-coretemp-isa-0000/temperature-temp5-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "sensors-coretemp-isa-0000/temperature-temp5-*"
     },
     "sensors-coretemp-isa-0000_temperature-temp6": {
         "class_type": "FloatStatusItem",
         "column_name": "sensors-coretemp-isa-0000_temperature-temp6",
-        "max_value": 44.0,
-        "mean_value": 44.0,
-        "min_value": 44.0,
-        "partial_glob": "sensors-coretemp-isa-0000/temperature-temp6-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "sensors-coretemp-isa-0000/temperature-temp6-*"
     },
     "sensors-coretemp-isa-0000_temperature-temp7": {
         "class_type": "FloatStatusItem",
         "column_name": "sensors-coretemp-isa-0000_temperature-temp7",
-        "max_value": 44.0,
-        "mean_value": 44.0,
-        "min_value": 44.0,
-        "partial_glob": "sensors-coretemp-isa-0000/temperature-temp7-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "sensors-coretemp-isa-0000/temperature-temp7-*"
     },
     "sensors-coretemp-isa-0000_temperature-temp8": {
         "class_type": "FloatStatusItem",
         "column_name": "sensors-coretemp-isa-0000_temperature-temp8",
-        "max_value": 44.0,
-        "mean_value": 44.0,
-        "min_value": 44.0,
-        "partial_glob": "sensors-coretemp-isa-0000/temperature-temp8-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "sensors-coretemp-isa-0000/temperature-temp8-*"
     },
     "sensors-coretemp-isa-0000_temperature-temp9": {
         "class_type": "FloatStatusItem",
         "column_name": "sensors-coretemp-isa-0000_temperature-temp9",
-        "max_value": 44.0,
-        "mean_value": 44.0,
-        "min_value": 44.0,
-        "partial_glob": "sensors-coretemp-isa-0000/temperature-temp9-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "sensors-coretemp-isa-0000/temperature-temp9-*"
     },
     "sensors-jc42-i2c-1-18_temperature-temp1": {
         "class_type": "FloatStatusItem",
         "column_name": "sensors-jc42-i2c-1-18_temperature-temp1",
-        "max_value": 36.0,
-        "mean_value": 34.804571759259261,
-        "min_value": 34.25,
-        "partial_glob": "sensors-jc42-i2c-1-18/temperature-temp1-*",
-        "scaling_value": 1.0,
-        "std_value": 0.20959709653619865
+        "partial_glob": "sensors-jc42-i2c-1-18/temperature-temp1-*"
     },
     "swap_swap-cached": {
         "class_type": "FloatStatusItem",
         "column_name": "swap_swap-cached",
-        "max_value": 577536.0,
-        "mean_value": 537386.66666666663,
-        "min_value": 516096.0,
-        "partial_glob": "swap/swap-cached-*",
-        "scaling_value": 1.0,
-        "std_value": 29238.758869507325
+        "partial_glob": "swap/swap-cached-*"
     },
     "swap_swap-free": {
         "class_type": "FloatStatusItem",
         "column_name": "swap_swap-free",
-        "max_value": 405348352.0,
-        "mean_value": 405348352.0,
-        "min_value": 405348352.0,
-        "partial_glob": "swap/swap-free-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "swap/swap-free-*"
     },
     "swap_swap-used": {
         "class_type": "FloatStatusItem",
         "column_name": "swap_swap-used",
-        "max_value": 18477056.0,
-        "mean_value": 18455765.333333332,
-        "min_value": 18415616.0,
-        "partial_glob": "swap/swap-used-*",
-        "scaling_value": 1.0,
-        "std_value": 29238.758869507325
+        "partial_glob": "swap/swap-used-*"
     },
     "swap_swap_io-in": {
         "class_type": "FloatStatusItem",
         "column_name": "swap_swap_io-in",
-        "max_value": 77,
-        "mean_value": 67.197916666666671,
-        "min_value": 62,
-        "partial_glob": "swap/swap_io-in-*",
-        "scaling_value": 1.0,
-        "std_value": 7.1383688646258117
+        "partial_glob": "swap/swap_io-in-*"
     },
     "swap_swap_io-out": {
         "class_type": "FloatStatusItem",
         "column_name": "swap_swap_io-out",
-        "max_value": 4637,
-        "mean_value": 4637.0,
-        "min_value": 4637,
-        "partial_glob": "swap/swap_io-out-*",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+        "partial_glob": "swap/swap_io-out-*"
     },
     "users_users": {
         "class_type": "FloatStatusItem",
         "column_name": "users_users",
-        "max_value": 13.0,
-        "mean_value": 12.346643518518519,
-        "min_value": 12.0,
-        "partial_glob": "users/users-*",
-        "scaling_value": 1.0,
-        "std_value": 0.4759285721534211
+        "partial_glob": "users/users-*"
     }
 }

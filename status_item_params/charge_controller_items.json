@@ -1,922 +1,597 @@
 {
-    "register_1": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_1",
-        "max_value": 180,
-        "mean_value": 180.0,
-        "min_value": 180,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_10": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_10",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_11": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_11",
-        "max_value": 5596,
-        "mean_value": 5576.880733944954,
-        "min_value": 5531,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 14.613365755896083
-    },
-    "register_12": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_12",
-        "max_value": 4126,
-        "mean_value": 4058.5229357798166,
-        "min_value": 3975,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 34.463506283828217
-    },
-    "register_13": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_13",
-        "max_value": 867,
-        "mean_value": 824.41284403669727,
-        "min_value": 776,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 18.899936806270166
-    },
-    "register_14": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_14",
-        "max_value": 45,
-        "mean_value": 42.798165137614681,
-        "min_value": 40,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 1.0782342949003647
-    },
-    "register_15": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_15",
-        "max_value": 47,
-        "mean_value": 44.422018348623851,
-        "min_value": 42,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 1.0826371949810829
-    },
-    "register_16": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_16",
-        "max_value": 23456,
-        "mean_value": 23441.247706422018,
-        "min_value": 23424,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 5.6750851899345029
-    },
-    "register_17": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_17",
-        "max_value": 18016,
-        "mean_value": 18002.715596330276,
-        "min_value": 17992,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 4.8953714782042876
-    },
-    "register_18": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_18",
-        "max_value": 22904,
-        "mean_value": 22891.376146788993,
-        "min_value": 22880,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 4.9042479523626739
-    },
-    "register_19": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_19",
-        "max_value": 19568,
-        "mean_value": 19538.862385321099,
-        "min_value": 19520,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 11.18321153262721
-    },
-    "register_2": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_2",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_20": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_20",
-        "max_value": 23920,
-        "mean_value": 23869.504587155963,
-        "min_value": 23824,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 21.017023018042885
-    },
-    "register_21": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_21",
-        "max_value": 62528,
-        "mean_value": 62496.587155963301,
-        "min_value": 62464,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 11.298320925051218
-    },
-    "register_22": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_22",
-        "max_value": 22368,
-        "mean_value": 22355.596330275228,
-        "min_value": 22344,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 4.5524093459256525
-    },
-    "register_23": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_23",
-        "max_value": 2,
-        "mean_value": 0.78899082568807344,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.52833411313319323
-    },
-    "register_24": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_24",
-        "max_value": 29349,
-        "mean_value": 29349.0,
-        "min_value": 29349,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_25": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_25",
-        "max_value": 4988,
-        "mean_value": 4988.0,
-        "min_value": 4988,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_26": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_26",
-        "max_value": 4999,
-        "mean_value": 4987.1376146788989,
-        "min_value": 4976,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 5.2870699893584856
-    },
-    "register_27": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_27",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_28": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_28",
-        "max_value": 5578,
-        "mean_value": 5575.9449541284403,
-        "min_value": 5575,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.62115278709296129
-    },
-    "register_29": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_29",
-        "max_value": 941,
-        "mean_value": 909.77981651376149,
-        "min_value": 870,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 17.297161937067369
-    },
-    "register_3": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_3",
-        "max_value": 80,
-        "mean_value": 80.0,
-        "min_value": 80,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_30": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_30",
-        "max_value": 788,
-        "mean_value": 749.75229357798162,
-        "min_value": 703,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 16.911072399194317
-    },
-    "register_31": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_31",
-        "max_value": 23443,
-        "mean_value": 23440.339449541283,
-        "min_value": 23438,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.88422579115583255
-    },
-    "register_32": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_32",
-        "max_value": 18004,
-        "mean_value": 18001.816513761467,
-        "min_value": 18000,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.77178409971191275
-    },
-    "register_33": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_33",
-        "max_value": 22892,
-        "mean_value": 22890.16513761468,
-        "min_value": 22889,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.79946465268131151
-    },
-    "register_34": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_34",
-        "max_value": 19546,
-        "mean_value": 19539.0,
-        "min_value": 19532,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 2.7722166555276999
-    },
-    "register_35": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_35",
-        "max_value": 22358,
-        "mean_value": 22355.504587155963,
-        "min_value": 22354,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.84572840850039699
-    },
-    "register_36": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_36",
-        "max_value": 22,
-        "mean_value": 22.0,
-        "min_value": 22,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_37": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_37",
-        "max_value": 25,
-        "mean_value": 25.0,
-        "min_value": 25,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_38": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_38",
-        "max_value": 25,
-        "mean_value": 25.0,
-        "min_value": 25,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_39": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_39",
-        "max_value": 4988,
-        "mean_value": 4988.0,
-        "min_value": 4988,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_4": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_4",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_40": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_40",
-        "max_value": 936,
-        "mean_value": 910.89908256880733,
-        "min_value": 875,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 14.948643536955824
-    },
-    "register_41": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_41",
-        "max_value": 65535,
-        "mean_value": 65535.0,
-        "min_value": 65535,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_42": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_42",
-        "max_value": 5201,
-        "mean_value": 5201.0,
-        "min_value": 5201,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_43": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_43",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_44": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_44",
-        "max_value": 1512,
-        "mean_value": 1512.0,
-        "min_value": 1512,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_45": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_45",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_46": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_46",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_47": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_47",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_48": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_48",
-        "max_value": 1,
-        "mean_value": 1.0,
-        "min_value": 1,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_49": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_49",
-        "max_value": 162,
-        "mean_value": 162.0,
-        "min_value": 162,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_5": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_5",
-        "max_value": 24,
-        "mean_value": 24.0,
-        "min_value": 24,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_50": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_50",
-        "max_value": 4,
-        "mean_value": 4.0,
-        "min_value": 4,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_51": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_51",
-        "max_value": 7,
-        "mean_value": 7.0,
-        "min_value": 7,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_52": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_52",
-        "max_value": 4988,
-        "mean_value": 4988.0,
-        "min_value": 4988,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_53": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_53",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_54": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_54",
-        "max_value": 19312,
-        "mean_value": 19308.926605504588,
-        "min_value": 19306,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 1.961227988420013
-    },
-    "register_55": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_55",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_56": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_56",
-        "max_value": 19312,
-        "mean_value": 19308.926605504588,
-        "min_value": 19306,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 1.961227988420013
-    },
-    "register_57": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_57",
-        "max_value": 51,
-        "mean_value": 51.0,
-        "min_value": 51,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_58": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_58",
-        "max_value": 51,
-        "mean_value": 51.0,
-        "min_value": 51,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_59": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_59",
-        "max_value": 572,
-        "mean_value": 553.46788990825689,
-        "min_value": 529,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 10.593122163599961
-    },
-    "register_6": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_6",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_60": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_60",
-        "max_value": 558,
-        "mean_value": 508.70642201834863,
-        "min_value": 472,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 14.771909498357308
-    },
-    "register_61": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_61",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_62": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_62",
-        "max_value": 4188,
-        "mean_value": 4188.0,
-        "min_value": 4188,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_63": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_63",
-        "max_value": 5584,
-        "mean_value": 5584.0,
-        "min_value": 5584,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_64": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_64",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_65": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_65",
-        "max_value": 4749,
-        "mean_value": 4749.0,
-        "min_value": 4749,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_66": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_66",
-        "max_value": 5002,
-        "mean_value": 5002.0,
-        "min_value": 5002,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_67": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_67",
-        "max_value": 5586,
-        "mean_value": 5586.0,
-        "min_value": 5586,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_68": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_68",
-        "max_value": 468,
-        "mean_value": 464.92660550458714,
-        "min_value": 462,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 1.9612279884200132
-    },
-    "register_69": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_69",
-        "max_value": 1280,
-        "mean_value": 1272.7522935779816,
-        "min_value": 1260,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 6.2169957662409896
-    },
-    "register_7": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_7",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_70": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_70",
-        "max_value": 8,
-        "mean_value": 8.0,
-        "min_value": 8,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_71": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_71",
-        "max_value": 628,
-        "mean_value": 628.0,
-        "min_value": 628,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_72": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_72",
-        "max_value": 25,
-        "mean_value": 25.0,
-        "min_value": 25,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_73": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_73",
-        "max_value": 25,
-        "mean_value": 25.0,
-        "min_value": 25,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_74": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_74",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_75": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_75",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_76": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_76",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_77": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_77",
-        "max_value": 1,
-        "mean_value": 1.0,
-        "min_value": 1,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_78": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_78",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_79": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_79",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_8": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_8",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_80": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_80",
-        "max_value": 65535,
-        "mean_value": 65535.0,
-        "min_value": 65535,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_81": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_81",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_82": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_82",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_83": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_83",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_84": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_84",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_85": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_85",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_86": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_86",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_87": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_87",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_88": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_88",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_89": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_89",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_9": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_9",
-        "max_value": 5001,
-        "mean_value": 4986.7981651376149,
-        "min_value": 4965,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 9.0346860575042811
-    },
-    "register_90": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_90",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_91": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_91",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
-    },
-    "register_92": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_92",
-        "max_value": 0,
-        "mean_value": 0.0,
-        "min_value": 0,
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
-        "scaling_value": 1.0,
-        "std_value": 0.0
+    "eeprom_5403": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_5403",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_5404": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_5404",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_5405": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_5405",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_5406": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_5406",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_5407": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_5407",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_5408": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_5408",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_5409": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_5409",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57344": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57344",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57345": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57345",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57346": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57346",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57347": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57347",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57348": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57348",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57349": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57349",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57350": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57350",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57351": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57351",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57352": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57352",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57353": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57353",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57354": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57354",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57355": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57355",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57356": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57356",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57357": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57357",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57358": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57358",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57359": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57359",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57360": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57360",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57361": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57361",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57362": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57362",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57363": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57363",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57364": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57364",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57365": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57365",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57366": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57366",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57367": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57367",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57368": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57368",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57369": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57369",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57370": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57370",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57371": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57371",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57372": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57372",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57373": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57373",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57374": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57374",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57375": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57375",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57376": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57376",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57377": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57377",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57472": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57472",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57473": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57473",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57474": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57474",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57475": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57475",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57476": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57476",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57477": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57477",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57478": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57478",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57479": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57479",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57480": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57480",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57481": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57481",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57482": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57482",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57483": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57483",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57484": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57484",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57485": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57485",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57486": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57486",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57487": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57487",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57488": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57488",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57489": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57489",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57490": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57490",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57491": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57491",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57492": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57492",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57493": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57493",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57494": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57494",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57495": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57495",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57496": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57496",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57497": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57497",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57498": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57498",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57499": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57499",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57500": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57500",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57501": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57501",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57502": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57502",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57503": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57503",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57504": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57504",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57505": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57505",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57506": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57506",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57507": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57507",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57508": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57508",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57509": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57509",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57510": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57510",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57511": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57511",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57512": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57512",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57513": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57513",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57514": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57514",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57515": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57515",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57516": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57516",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57517": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57517",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57518": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57518",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57519": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57519",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57520": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57520",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57521": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57521",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57522": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57522",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57523": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57523",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57524": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57524",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57525": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57525",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57526": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57526",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57527": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57527",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57528": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57528",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57529": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57529",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57530": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57530",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57531": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57531",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57532": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57532",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57533": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57533",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57534": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57534",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57535": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57535",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57536": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57536",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57537": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57537",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57538": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57538",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57539": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57539",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57540": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57540",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57541": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57541",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57542": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57542",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57543": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57543",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57544": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57544",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57545": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57545",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57546": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57546",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57547": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57547",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57548": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57548",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
+    },
+    "eeprom_57549": {
+        "class_type": "FloatStatusItem",
+        "column_name": "eeprom_57549",
+        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv"
     }
 }

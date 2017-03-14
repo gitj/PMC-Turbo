@@ -1,1290 +1,1073 @@
 {
-    "register_1": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_1",
+    "eeprom_5403": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_10": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_10",
+    "eeprom_5404": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_11": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_11",
+    "eeprom_5405": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_12": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_12",
+    "eeprom_5406": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_13": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_13",
+    "eeprom_5407": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_14": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_14",
+    "eeprom_5408": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_15": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_15",
+    "eeprom_5409": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_16": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_16",
+    "eeprom_57344": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_17": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_17",
+    "eeprom_57345": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_18": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_18",
+    "eeprom_57346": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_19": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_19",
+    "eeprom_57347": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_2": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_2",
+    "eeprom_57348": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_20": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_20",
+    "eeprom_57349": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_21": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_21",
+    "eeprom_57350": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_22": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_22",
+    "eeprom_57351": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_23": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_23",
+    "eeprom_57352": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_24": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_24",
+    "eeprom_57353": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_25": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_25",
+    "eeprom_57354": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_26": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_26",
+    "eeprom_57355": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_27": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_27",
+    "eeprom_57356": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_28": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_28",
+    "eeprom_57357": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_29": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_29",
+    "eeprom_57358": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_3": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_3",
+    "eeprom_57359": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_30": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_30",
+    "eeprom_57360": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_31": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_31",
+    "eeprom_57361": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_32": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_32",
+    "eeprom_57362": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_33": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_33",
+    "eeprom_57363": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_34": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_34",
+    "eeprom_57364": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_35": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_35",
+    "eeprom_57365": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_36": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_36",
+    "eeprom_57366": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_37": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_37",
+    "eeprom_57367": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_38": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_38",
+    "eeprom_57368": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_39": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_39",
+    "eeprom_57369": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_4": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_4",
+    "eeprom_57370": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_40": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_40",
+    "eeprom_57371": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_41": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_41",
+    "eeprom_57372": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_42": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_42",
+    "eeprom_57373": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_43": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_43",
+    "eeprom_57374": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_44": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_44",
+    "eeprom_57375": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_45": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_45",
+    "eeprom_57376": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_46": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_46",
+    "eeprom_57377": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_47": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_47",
+    "eeprom_57472": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_48": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_48",
+    "eeprom_57473": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_49": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_49",
+    "eeprom_57474": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_5": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_5",
+    "eeprom_57475": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_50": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_50",
+    "eeprom_57476": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_51": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_51",
+    "eeprom_57477": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_52": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_52",
+    "eeprom_57478": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_53": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_53",
+    "eeprom_57479": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_54": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_54",
+    "eeprom_57480": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_55": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_55",
+    "eeprom_57481": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_56": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_56",
+    "eeprom_57482": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_57": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_57",
+    "eeprom_57483": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_58": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_58",
+    "eeprom_57484": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_59": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_59",
+    "eeprom_57485": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_6": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_6",
+    "eeprom_57486": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_60": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_60",
+    "eeprom_57487": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_61": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_61",
+    "eeprom_57488": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_62": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_62",
+    "eeprom_57489": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_63": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_63",
+    "eeprom_57490": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_64": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_64",
+    "eeprom_57491": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_65": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_65",
+    "eeprom_57492": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_66": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_66",
+    "eeprom_57493": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_67": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_67",
+    "eeprom_57494": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_68": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_68",
+    "eeprom_57495": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_69": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_69",
+    "eeprom_57496": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_7": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_7",
+    "eeprom_57497": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_70": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_70",
+    "eeprom_57498": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_71": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_71",
+    "eeprom_57499": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_72": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_72",
+    "eeprom_57500": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_73": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_73",
+    "eeprom_57501": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_74": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_74",
+    "eeprom_57502": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_75": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_75",
+    "eeprom_57503": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_76": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_76",
+    "eeprom_57504": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_77": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_77",
+    "eeprom_57505": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_78": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_78",
+    "eeprom_57506": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_79": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_79",
+    "eeprom_57507": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_8": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_8",
+    "eeprom_57508": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_80": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_80",
+    "eeprom_57509": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_81": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_81",
+    "eeprom_57510": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_82": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_82",
+    "eeprom_57511": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_83": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_83",
+    "eeprom_57512": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_84": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_84",
+    "eeprom_57513": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_85": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_85",
+    "eeprom_57514": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_86": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_86",
+    "eeprom_57515": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_87": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_87",
+    "eeprom_57516": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_88": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_88",
+    "eeprom_57517": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_89": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_89",
+    "eeprom_57518": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_9": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_9",
+    "eeprom_57519": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_90": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_90",
+    "eeprom_57520": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_91": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_91",
+    "eeprom_57521": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
     },
-    "register_92": {
-        "class_type": "FloatStatusItem",
-        "column_name": "register_92",
+    "eeprom_57522": {
         "good_range_high": "nan",
         "good_range_low": "nan",
-        "good_string": "",
         "normal_range_high": "nan",
         "normal_range_low": "nan",
-        "normal_string": "",
-        "partial_glob": "/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv",
+        "scaling": 1.0,
         "warning_range_high": "nan",
-        "warning_range_low": "nan",
-        "warning_string": ""
+        "warning_range_low": "nan"
+    },
+    "eeprom_57523": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57524": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57525": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57526": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57527": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57528": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57529": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57530": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57531": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57532": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57533": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57534": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57535": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57536": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57537": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57538": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57539": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57540": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57541": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57542": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57543": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57544": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57545": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57546": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57547": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57548": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57549": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
     }
 }

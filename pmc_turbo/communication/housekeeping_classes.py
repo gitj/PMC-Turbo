@@ -20,48 +20,8 @@ CRITICAL = 4
 DELIMITER = ','
 
 
-def construct_super_group_from_csv_list(group_name, csv_paths_and_preambles):
-    """
-    Parameters
-    ----------
-    group_name - string
-    csv_paths_and_preambles - tuple - string csv_path, string csv_preamble_to_glob
-    Returns
-    -------
-    SuperStatusGroup
-    """
-    super_group = SuperStatusGroup(group_name, groups=[])
-    for csv_path_and_preamble in csv_paths_and_preambles:
-        csv_path, csv_preamble = csv_path_and_preamble
-        status_group = construct_status_group_from_csv(csv_path, csv_path, csv_preamble)
-        super_group.groups[status_group.name] = status_group
-    return super_group
-
-
-def construct_status_group_from_csv(group_name, csv_path, csv_preamble):
-    status_group = StatusGroup(group_name, filewatchers=[])
-    with open(csv_path, 'r') as f:
-        lines = f.readlines()
-    column_names = lines[0].strip('\n').split(',')
-    for line in lines[1:]:
-        values = line.strip('\n').split(',')
-        value_dict = dict(zip(column_names, values))
-        if not value_dict['partial_glob'] in status_group.filewatchers.keys():
-            status_filewatcher = StatusFileWatcher(name=value_dict['partial_glob'], items=[],
-                                                   filename_glob=os.path.join(csv_preamble, value_dict['partial_glob']))
-            status_group.filewatchers[value_dict['partial_glob']] = status_filewatcher
-        try:
-            status_item = eval(value_dict['class_type'])(value_dict)
-        except Exception as e:
-            logger.debug('Problem while trying to create status_item. Value dict is: %r' % value_dict)
-            raise e
-
-        status_group.filewatchers[value_dict['partial_glob']].items[status_item.name] = status_item
-
-    return status_group
-
-
-def construct_status_group_from_json(group_name, json_path, json_range_path):
+def construct_status_group_from_json(json_path, json_range_path):
+    group_name = json_path.strip('.json')
     status_group = StatusGroup(group_name, filewatchers=[])
 
     with open(json_path, 'r') as f:
@@ -95,11 +55,12 @@ def construct_status_group_from_json(group_name, json_path, json_range_path):
     return status_group
 
 
-def construct_super_group_from_json_list(group_name, json_paths, json_range_paths):
+def construct_super_group_from_json_list(json_paths, json_range_paths):
+    group_name = 'SuperGroup'
     super_group = SuperStatusGroup(group_name, groups=[])
     for i, (json_path, json_range_path) in enumerate(zip(json_paths, json_range_paths)):
         try:
-            status_group = construct_status_group_from_json(('subgroup_%d' % i), json_path, json_range_path)
+            status_group = construct_status_group_from_json(json_path, json_range_path)
             super_group.groups[status_group.name] = status_group
         except ValueError as e:
             logger.error(str(e))
@@ -322,7 +283,7 @@ class FloatStatusItem():
             self.unscaled_value = float(value_dict[self.column_name])
             self.value = self.unscaled_value * self.scaling
         self.epoch = float(value_dict['epoch'])
-        #logger.debug('Item %r updated with value %r' % (self.name, self.value)) # This is too much logging
+        # logger.debug('Item %r updated with value %r' % (self.name, self.value)) # This is too much logging
 
     def get_status_summary(self):
         if self.silenced:
@@ -366,15 +327,31 @@ class StringStatusItem():
     def get_status_summary(self):
         if self.silenced:
             return SILENCE
+
         if self.normal_string:
-            if self.normal_string in self.value:
-                return NOMINAL
+            if isinstance(self.normal_string, list):
+                if self.value in self.normal_string:
+                    return NOMINAL
+            else:
+                if self.value == self.normal_string:
+                    return NOMINAL
+
         if self.good_string:
-            if self.good_string in self.value:
-                return GOOD
+            if isinstance(self.good_string, list):
+                if self.value in self.good_string:
+                    return GOOD
+            else:
+                if self.value == self.good_string:
+                    return GOOD
+
         if self.warning_string:
-            if self.warning_string in self.value:
-                return WARNING
+            if isinstance(self.warning_string, list):
+                if self.value in self.warning_string:
+                    return WARNING
+            else:
+                if self.value == self.warning_string:
+                    return WARNING
+
         return CRITICAL
 
     def get_status(self):

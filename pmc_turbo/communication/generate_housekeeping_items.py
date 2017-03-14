@@ -11,162 +11,108 @@ def get_range_outline(partial_glob, json_filename=None):
     print "using file", fn
     df = pd.read_csv(fn, index_col='epoch', comment='#')
 
-    result = []
+    result_dict = {}
     for colname in df.columns:
         col = df[colname]
         if col.dtype == 'O':  # string columns are Objects
-            class_type = 'StringStatusItem'
+            # StringStatusItem
 
-            good_range_low, good_range_high = '', ''
-            normal_range_low, normal_range_high = '', ''
-            warning_range_low, warning_range_high = '', ''
             normal_string, good_string, critical_string = '', '', ''
+            result_dict[colname] = {'normal_string': normal_string,
+                                    'good_string': good_string,
+                                    'critical_string': critical_string}
+
         else:
-            class_type = 'FloatStatusItem'
+            # FloatStatusItem
 
             good_range_low, good_range_high = 'nan', 'nan'
             normal_range_low, normal_range_high = 'nan', 'nan'
             warning_range_low, warning_range_high = 'nan', 'nan'
-            normal_string, good_string, critical_string = '', '', ''
-        result.append((partial_glob, colname, class_type,
-                       good_range_low, good_range_high, normal_range_low, normal_range_high,
-                       warning_range_low, warning_range_high,
-                       normal_string, good_string, critical_string))
-
-    title_list = ['partial_glob', 'column_name', 'class_type',
-                  'good_range_low', 'good_range_high', 'normal_range_low', 'normal_range_high',
-                  'warning_range_low', 'warning_range_high', 'normal_string', 'good_string',
-                  'warning_string']
+            scaling = 1.0
+            result_dict[colname] = {'normal_range_low': normal_range_low,
+                                    'normal_range_high': normal_range_high,
+                                    'good_range_low': good_range_low,
+                                    'good_range_high': good_range_high,
+                                    'warning_range_low': warning_range_low,
+                                    'warning_range_high': warning_range_high,
+                                    'scaling': scaling}
 
     if json_filename:
-        result_list = [dict(zip(title_list, row)) for row in result]
-        result_keys = [row[1] for row in result]
-
-        result_dict = dict(zip(result_keys, result_list))
-
         with open(json_filename, 'w') as fh:
             fh.write(
                 json.dumps(result_dict, separators=(',', ': '), indent=4, sort_keys=True)
             )
-    return result
+    return result_dict
 
 
-def get_collectd_items(csv_filename=None, json_filename=None):
+def get_collectd_items(json_filename=None):
     collectd_files = glob.glob('/var/lib/collectd/csv/*/*/*-2017-01-25')
     collectd_files.sort()
-    result = []
-    result_range = []
+    result_dict = {}
+    range_result_dict = {}
     for fn in collectd_files:
         name = os.path.join(os.path.split(os.path.split(fn)[0])[-1], os.path.split(fn)[-1])
         name = name.replace('2017-01-25', '*')
         df = pd.read_csv(fn, index_col='epoch', comment='#')
         for col in df.columns:
             class_type = 'FloatStatusItem'
-            scaling = 1.0
-            good_range_low, good_range_high = 'nan', 'nan'
-            normal_range_low, normal_range_high = 0, 0
-            warning_range_low, warning_range_high = 0, 0
-            normal_string, warning_string, good_string = '', '', ''
-
             col_name = name.replace('/', '_').strip('-*')
 
-            result.append((name, col_name, class_type, df[col].min(), df[col].mean(), df[col].max(), df[col].std(),
-                           scaling,))
+            result_dict[col_name] = {'partial_glob': name, 'column_name': col_name, 'class_type': class_type}
 
-            result_range.append((name, col_name, class_type, good_range_low, good_range_high, normal_range_low,
-                                 normal_range_high, warning_range_low, warning_range_high, normal_string,
-                                 good_string, warning_string))
+            good_range_low, good_range_high = 'nan', 'nan'
+            normal_range_low, normal_range_high = 'nan', 'nan'
+            warning_range_low, warning_range_high = 'nan', 'nan'
+            scaling = 1.0
+            range_result_dict[col_name] = {'normal_range_low': normal_range_low,
+                                           'normal_range_high': normal_range_high,
+                                           'good_range_low': good_range_low,
+                                           'good_range_high': good_range_high,
+                                           'warning_range_low': warning_range_low,
+                                           'warning_range_high': warning_range_high,
+                                           'scaling': scaling}
 
     if json_filename:
-        title_list = ['partial_glob', 'column_name', 'class_type', 'min_value', 'mean_value', 'max_value', 'std_value',
-                      'scaling_value']
-        result_list = [dict(zip(title_list, row)) for row in result]
-        result_keys = [row[1] for row in result]
-
-        result_dict = dict(zip(result_keys, result_list))
-
-        with open(json_filename, 'w') as fh:
+        with open(json_filename + '.json', 'w') as fh:
             fh.write(
-                json.dumps(result_dict, separators=(',', ': '), indent=4, sort_keys=True))
+                json.dumps(result_dict, separators=(',', ': '), indent=4, sort_keys=True)
+            )
 
-        title_list = ['partial_glob', 'column_name', 'class_type',
-                      'good_range_low', 'good_range_high', 'normal_range_low', 'normal_range_high',
-                      'warning_range_low', 'warning_range_high', 'normal_string', 'good_string',
-                      'warning_string']
-
-        result_range_list = [dict(zip(title_list, row)) for row in result_range]
-        result_range_keys = [row[1] for row in result_range]
-        result_range_dict = dict(zip(result_range_keys, result_range_list))
-
-        with open((json_filename + '_range.json'), 'w') as fh:
-            fh.write(json.dumps(result_range_dict, separators=(',', ': '), indent=4, sort_keys=True))
-
-    if csv_filename:
-        with open(csv_filename, 'w') as fh:
+        with open(json_filename + '_ranges.json', 'w') as fh:
             fh.write(
-                ','.join(
-                    ['partial_glob', 'column_name', 'class_type', 'min_value', 'mean_value', 'max_value', 'std_value',
-                     'scaling_value', 'good_range_low', 'good_range_high', 'normal_range_low', 'normal_range_high',
-                     'warning_range_low', 'warning_range_high', 'normal_string', 'good_string',
-                     'warning_string']) + '\n')
-            for row in result:
-                fh.write(','.join([str(x) for x in row]) + '\n')
+                json.dumps(range_result_dict, separators=(',', ': '), indent=4, sort_keys=True)
+            )
 
-    return result, result_range
+    return result_dict
 
 
-def get_items(partial_glob, csv_filename=None, json_filename=None):
+def get_items(partial_glob, json_filename=None):
     files = glob.glob(partial_glob)
     files.sort()
     fn = files[-1]
     print "using file", fn
     df = pd.read_csv(fn, index_col='epoch', comment='#')
 
-    result = []
+    result_dict = {}
     for colname in df.columns:
         col = df[colname]
         if col.dtype == 'O':  # string columns are Objects
             class_type = 'StringStatusItem'
-            min = ''
-            max = ''
-            mean = col.value_counts().index[0]
-            std = ''
-            scaling = ''
+            result_dict[colname] = {'partial_glob': partial_glob, 'column_name': colname, 'class_type': class_type}
         else:
             class_type = 'FloatStatusItem'
-            min = col.min()
-            max = col.max()
-            mean = col.mean()
-            std = col.std()
-            scaling = 1.0
-        result.append((partial_glob, colname, class_type, min, mean, max, std, scaling))
-
-    title_list = ['partial_glob', 'column_name', 'class_type', 'min_value', 'mean_value', 'max_value', 'std_value',
-                  'scaling_value']
-
-    if csv_filename:
-        with open(csv_filename, 'w') as fh:
-            fh.write(
-                ','.join(title_list) + '\n')
-            for row in result:
-                fh.write(','.join([str(x) for x in row]) + '\n')
+            result_dict[colname] = {'partial_glob': partial_glob, 'column_name': colname, 'class_type': class_type}
 
     if json_filename:
-        result_list = [dict(zip(title_list, row)) for row in result]
-        result_keys = [row[1] for row in result]
-
-        result_dict = dict(zip(result_keys, result_list))
-
         with open(json_filename, 'w') as fh:
             fh.write(
                 json.dumps(result_dict, separators=(',', ': '), indent=4, sort_keys=True)
             )
-    return result
+    return result_dict
 
 
-def get_camera_items(csv_filename=None, json_filename=None):
-    a = get_items(partial_glob='/home/pmc/logs/housekeeping/camera/*.csv', csv_filename=csv_filename,
-                  json_filename=json_filename + '.json')
+def get_camera_items(json_filename=None):
+    a = get_items(partial_glob='/home/pmc/logs/housekeeping/camera/*.csv', json_filename=json_filename + '.json')
 
     b = get_range_outline(partial_glob='/home/pmc/logs/housekeeping/camera/*.csv',
                           json_filename=json_filename + '_ranges.json')
@@ -174,14 +120,13 @@ def get_camera_items(csv_filename=None, json_filename=None):
     return a, b
 
 
-def get_labjack_items(csv_filename=None, json_filename=None):
-    return get_items(partial_glob='/home/pmc/logs/housekeeping/labjack/*.csv', csv_filename=csv_filename,
-                     json_filename=json_filename)
+def get_labjack_items(json_filename=None):
+    return get_items(partial_glob='/home/pmc/logs/housekeeping/labjack/*.csv', json_filename=json_filename)
 
 
-def get_charge_controller_items(csv_filename=None, json_filename=None):
+def get_charge_controller_items(json_filename=None):
     a = get_items(partial_glob='/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv',
-                  csv_filename=csv_filename, json_filename=json_filename + '.json')
+                  json_filename=json_filename + '.json')
 
     b = get_range_outline(partial_glob='/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv',
                           json_filename=json_filename + '_ranges.json')
