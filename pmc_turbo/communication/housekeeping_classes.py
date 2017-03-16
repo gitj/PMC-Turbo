@@ -63,7 +63,7 @@ def construct_super_group_from_json_list(json_paths, json_range_paths):
             status_group = construct_status_group_from_json(json_path, json_range_path)
             super_group.groups[status_group.name] = status_group
         except ValueError as e:
-            logger.error(str(e))
+            logger.exception("Error processing json_path %s with range path %s" % (json_path,json_range_path))
     return super_group
 
 
@@ -274,7 +274,7 @@ class FloatStatusItem():
         self.good_range = Range(float(value_dict['good_range_low']), float(value_dict['good_range_high']))
         self.warning_range = Range(float(value_dict['warning_range_low']), float(value_dict['warning_range_high']))
         self.silenced = False
-        self.scaling = float(value_dict['scaling_value'])
+        self.scaling = float(value_dict['scaling'])
 
     # Add silence, epoch
 
@@ -313,7 +313,7 @@ class StringStatusItem():
         self.epoch = None
         self.normal_string = value_dict['normal_string']
         self.good_string = value_dict['good_string']
-        self.warning_string = value_dict['warning_string']
+        self.warning_string = value_dict.get('warning_string','')
         self.silenced = False
 
     # Add silence, epoch
