@@ -1,4 +1,5 @@
 #!/bin/bash
+pushd $HOME
 curl -L -O https://cdn.alliedvision.com/fileadmin/content/software/software/Vimba/Vimba_v2.0_Linux.tgz
 tar -xf Vimba_v2.0_Linux.tgz
 export VIMBA_ROOT="$PWD/Vimba_2_0"
@@ -12,9 +13,11 @@ conda update -q conda
 conda info -a
 conda env create -q -n pmc -f environment.yml
 source activate pmc
+pushd $HOME
 git clone --depth=10 --branch=master https://github.com/labjack/LabJackPython.git
 cd LabJackPython
 pip install .
+popd
 pushd pmc_turbo/camera/pycamera/_pyvimba
 make
 popd
