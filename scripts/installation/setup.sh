@@ -11,7 +11,9 @@ hash -r
 conda update -q conda
   # Useful for debugging any issues with conda
 conda info -a
+pushd pmc-turbo
 conda env create -q -n pmc -f environment.yml
+popd
 source activate pmc
 pushd $HOME
 git clone --depth=10 --branch=master https://github.com/labjack/LabJackPython.git
