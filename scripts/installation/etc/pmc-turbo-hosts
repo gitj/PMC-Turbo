@@ -1,3 +1,5 @@
+127.0.0.1       localhost
+
 # primary IP addresses for the camera computers
 192.168.1.30 pmc-camera-0
 192.168.1.31 pmc-camera-1
@@ -27,6 +29,13 @@
 192.168.1.55 pmc-serial-1
 192.168.1.56 pmc-serial-2
 
+192.168.1.72 pmc-ops
+
+
 # LIDAR (TBD)
 
-# Batteries?
+
+# The following lines are desirable for IPv6 capable hosts
+::1     localhost ip6-localhost ip6-loopback
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
