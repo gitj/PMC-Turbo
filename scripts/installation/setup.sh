@@ -20,7 +20,9 @@ git clone --depth=10 --branch=master https://github.com/labjack/LabJackPython.gi
 cd LabJackPython
 pip install .
 popd
+cd $HOME
 pushd pmc_turbo/camera/pycamera/_pyvimba
 make
 popd
+cd pmc-turbo
 nosetests -v -s --with-coverage --cover-erase --cover-xml --cover-inclusive --cover-package=pmc_turbo
