@@ -48,7 +48,7 @@ class CommunicatorApp(Application):
 
     def start(self):
         group = housekeeping_classes.construct_super_group_from_json_list(startup_script_constants.JSON_PATHS,
-                                                                          startup_script_constants.JSON_RANGE_PATHS)
+                                                                          startup_script_constants.JSON_PATH_PREAMBLES)
         self.communicator.add_status_group(group)
         self.communicator.setup_pyro_daemon()
         self.communicator.start_pyro_thread()

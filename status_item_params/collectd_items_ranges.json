@@ -737,7 +737,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sda1_disk_merged": {
+    "disk-sda1_disk_merged_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -746,7 +746,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sda1_disk_octets": {
+    "disk-sda1_disk_merged_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -755,7 +755,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sda1_disk_ops": {
+    "disk-sda1_disk_octets_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -764,7 +764,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sda1_disk_time": {
+    "disk-sda1_disk_octets_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -773,7 +773,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sda_disk_merged": {
+    "disk-sda1_disk_ops_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -782,7 +782,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sda_disk_octets": {
+    "disk-sda1_disk_ops_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -791,7 +791,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sda_disk_ops": {
+    "disk-sda1_disk_time_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -800,7 +800,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sda_disk_time": {
+    "disk-sda1_disk_time_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -809,7 +809,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdb1_disk_merged": {
+    "disk-sda_disk_merged_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -818,7 +818,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdb1_disk_octets": {
+    "disk-sda_disk_merged_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -827,7 +827,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdb1_disk_ops": {
+    "disk-sda_disk_octets_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -836,7 +836,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdb1_disk_time": {
+    "disk-sda_disk_octets_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -845,7 +845,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdb_disk_merged": {
+    "disk-sda_disk_ops_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -854,7 +854,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdb_disk_octets": {
+    "disk-sda_disk_ops_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -863,7 +863,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdb_disk_ops": {
+    "disk-sda_disk_time_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -872,7 +872,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdb_disk_time": {
+    "disk-sda_disk_time_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -881,7 +881,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdc1_disk_merged": {
+    "disk-sdb1_disk_merged_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -890,7 +890,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdc1_disk_octets": {
+    "disk-sdb1_disk_merged_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -899,7 +899,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdc1_disk_ops": {
+    "disk-sdb1_disk_octets_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -908,7 +908,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdc1_disk_time": {
+    "disk-sdb1_disk_octets_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -917,7 +917,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdc_disk_merged": {
+    "disk-sdb1_disk_ops_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -926,7 +926,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdc_disk_octets": {
+    "disk-sdb1_disk_ops_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -935,7 +935,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdc_disk_ops": {
+    "disk-sdb1_disk_time_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -944,7 +944,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdc_disk_time": {
+    "disk-sdb1_disk_time_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -953,7 +953,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdd1_disk_merged": {
+    "disk-sdb_disk_merged_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -962,7 +962,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdd1_disk_octets": {
+    "disk-sdb_disk_merged_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -971,7 +971,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdd1_disk_ops": {
+    "disk-sdb_disk_octets_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -980,7 +980,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdd1_disk_time": {
+    "disk-sdb_disk_octets_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -989,7 +989,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdd2_disk_merged": {
+    "disk-sdb_disk_ops_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -998,7 +998,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdd2_disk_octets": {
+    "disk-sdb_disk_ops_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1007,7 +1007,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdd2_disk_ops": {
+    "disk-sdb_disk_time_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1016,7 +1016,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdd5_disk_merged": {
+    "disk-sdb_disk_time_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1025,7 +1025,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdd5_disk_octets": {
+    "disk-sdc1_disk_merged_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1034,7 +1034,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdd5_disk_ops": {
+    "disk-sdc1_disk_merged_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1043,7 +1043,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdd5_disk_time": {
+    "disk-sdc1_disk_octets_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1052,7 +1052,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdd_disk_merged": {
+    "disk-sdc1_disk_octets_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1061,7 +1061,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdd_disk_octets": {
+    "disk-sdc1_disk_ops_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1070,7 +1070,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdd_disk_ops": {
+    "disk-sdc1_disk_ops_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1079,7 +1079,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdd_disk_time": {
+    "disk-sdc1_disk_time_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1088,7 +1088,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sde1_disk_merged": {
+    "disk-sdc1_disk_time_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1097,7 +1097,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sde1_disk_octets": {
+    "disk-sdc_disk_merged_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1106,7 +1106,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sde1_disk_ops": {
+    "disk-sdc_disk_merged_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1115,7 +1115,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sde1_disk_time": {
+    "disk-sdc_disk_octets_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1124,7 +1124,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sde2_disk_merged": {
+    "disk-sdc_disk_octets_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1133,7 +1133,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sde2_disk_octets": {
+    "disk-sdc_disk_ops_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1142,7 +1142,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sde2_disk_ops": {
+    "disk-sdc_disk_ops_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1151,7 +1151,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sde5_disk_merged": {
+    "disk-sdc_disk_time_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1160,7 +1160,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sde5_disk_octets": {
+    "disk-sdc_disk_time_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1169,7 +1169,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sde5_disk_ops": {
+    "disk-sdd1_disk_merged_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1178,7 +1178,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sde5_disk_time": {
+    "disk-sdd1_disk_merged_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1187,7 +1187,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sde_disk_merged": {
+    "disk-sdd1_disk_octets_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1196,7 +1196,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sde_disk_octets": {
+    "disk-sdd1_disk_octets_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1205,7 +1205,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sde_disk_ops": {
+    "disk-sdd1_disk_ops_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1214,7 +1214,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sde_disk_time": {
+    "disk-sdd1_disk_ops_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1223,7 +1223,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdf1_disk_merged": {
+    "disk-sdd1_disk_time_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1232,7 +1232,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdf1_disk_octets": {
+    "disk-sdd1_disk_time_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1241,7 +1241,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdf1_disk_ops": {
+    "disk-sdd2_disk_merged_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1250,7 +1250,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdf1_disk_time": {
+    "disk-sdd2_disk_merged_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1259,7 +1259,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdf_disk_merged": {
+    "disk-sdd2_disk_octets_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1268,7 +1268,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdf_disk_octets": {
+    "disk-sdd2_disk_octets_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1277,7 +1277,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdf_disk_ops": {
+    "disk-sdd2_disk_ops_read": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1286,7 +1286,565 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "disk-sdf_disk_time": {
+    "disk-sdd2_disk_ops_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdd5_disk_merged_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdd5_disk_merged_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdd5_disk_octets_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdd5_disk_octets_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdd5_disk_ops_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdd5_disk_ops_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdd5_disk_time_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdd5_disk_time_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdd_disk_merged_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdd_disk_merged_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdd_disk_octets_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdd_disk_octets_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdd_disk_ops_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdd_disk_ops_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdd_disk_time_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdd_disk_time_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde1_disk_merged_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde1_disk_merged_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde1_disk_octets_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde1_disk_octets_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde1_disk_ops_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde1_disk_ops_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde1_disk_time_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde1_disk_time_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde2_disk_merged_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde2_disk_merged_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde2_disk_octets_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde2_disk_octets_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde2_disk_ops_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde2_disk_ops_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde5_disk_merged_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde5_disk_merged_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde5_disk_octets_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde5_disk_octets_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde5_disk_ops_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde5_disk_ops_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde5_disk_time_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde5_disk_time_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde_disk_merged_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde_disk_merged_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde_disk_octets_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde_disk_octets_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde_disk_ops_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde_disk_ops_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde_disk_time_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sde_disk_time_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdf1_disk_merged_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdf1_disk_merged_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdf1_disk_octets_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdf1_disk_octets_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdf1_disk_ops_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdf1_disk_ops_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdf1_disk_time_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdf1_disk_time_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdf_disk_merged_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdf_disk_merged_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdf_disk_octets_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdf_disk_octets_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdf_disk_ops_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdf_disk_ops_write": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdf_disk_time_read": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "disk-sdf_disk_time_write": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1304,7 +1862,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "interface-eth0_if_errors": {
+    "interface-eth0_if_errors_rx": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1313,7 +1871,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "interface-eth0_if_octets": {
+    "interface-eth0_if_errors_tx": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1322,7 +1880,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "interface-eth0_if_packets": {
+    "interface-eth0_if_octets_rx": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1331,7 +1889,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "interface-eth1_if_errors": {
+    "interface-eth0_if_octets_tx": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1340,7 +1898,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "interface-eth1_if_octets": {
+    "interface-eth0_if_packets_rx": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1349,7 +1907,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "interface-eth1_if_packets": {
+    "interface-eth0_if_packets_tx": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1358,7 +1916,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "interface-eth2_if_errors": {
+    "interface-eth1_if_errors_rx": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1367,7 +1925,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "interface-eth2_if_octets": {
+    "interface-eth1_if_errors_tx": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1376,7 +1934,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "interface-eth2_if_packets": {
+    "interface-eth1_if_octets_rx": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1385,7 +1943,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "interface-eth3_if_errors": {
+    "interface-eth1_if_octets_tx": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1394,7 +1952,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "interface-eth3_if_octets": {
+    "interface-eth1_if_packets_rx": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1403,7 +1961,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "interface-eth3_if_packets": {
+    "interface-eth1_if_packets_tx": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1412,7 +1970,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "interface-lo_if_errors": {
+    "interface-eth2_if_errors_rx": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1421,7 +1979,7 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "interface-lo_if_octets": {
+    "interface-eth2_if_errors_tx": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1430,7 +1988,142 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "interface-lo_if_packets": {
+    "interface-eth2_if_octets_rx": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "interface-eth2_if_octets_tx": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "interface-eth2_if_packets_rx": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "interface-eth2_if_packets_tx": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "interface-eth3_if_errors_rx": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "interface-eth3_if_errors_tx": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "interface-eth3_if_octets_rx": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "interface-eth3_if_octets_tx": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "interface-eth3_if_packets_rx": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "interface-eth3_if_packets_tx": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "interface-lo_if_errors_rx": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "interface-lo_if_errors_tx": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "interface-lo_if_octets_rx": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "interface-lo_if_octets_tx": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "interface-lo_if_packets_rx": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "interface-lo_if_packets_tx": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",
@@ -1556,7 +2249,25 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
-    "load_load": {
+    "load_load_longterm": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "load_load_midterm": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "load_load_shortterm": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",

@@ -9,7 +9,7 @@ class StatusDictTest(unittest.TestCase):
         item_value_dict = dict(name='test_item', column_name='value',
                                normal_range_low=0, normal_range_high=1,
                                good_range_low=1, good_range_high=2,
-                               warning_range_low=2, warning_range_high=3, scaling_value=1)
+                               warning_range_low=2, warning_range_high=3, scaling=1)
 
         item = housekeeping_classes.FloatStatusItem(item_value_dict)
         value_dict = {'epoch': 1000, 'value': 0.5}
@@ -32,14 +32,14 @@ class StatusDictTest(unittest.TestCase):
         value_dict_0 = dict(name='data0', column_name='data0',
                             normal_range_low=0, normal_range_high=1,
                             good_range_low=1, good_range_high=2,
-                            warning_range_low=2, warning_range_high=3, scaling_value=1)
+                            warning_range_low=2, warning_range_high=3, scaling=1)
 
         item0 = housekeeping_classes.FloatStatusItem(value_dict_0)
 
         value_dict_1 = dict(name='data1', column_name='data1',
                             normal_range_low=0, normal_range_high=1,
                             good_range_low=1, good_range_high=2,
-                            warning_range_low=2, warning_range_high=3, scaling_value=1)
+                            warning_range_low=2, warning_range_high=3, scaling=1)
         item1 = housekeeping_classes.FloatStatusItem(value_dict_1)
         items = [item0, item1]
         filewatcher = housekeeping_classes.StatusFileWatcher(name='test_filewatcher', items=items,
@@ -68,13 +68,13 @@ class StatusDictTest(unittest.TestCase):
         value_dict_0 = dict(name='data0', column_name='data0',
                             normal_range_low=0, normal_range_high=1,
                             good_range_low=1, good_range_high=2,
-                            warning_range_low=2, warning_range_high=3, scaling_value=1)
+                            warning_range_low=2, warning_range_high=3, scaling=1)
         item0 = housekeeping_classes.FloatStatusItem(value_dict_0)
 
         value_dict_1 = dict(name='data1', column_name='data1',
                             normal_range_low=0, normal_range_high=1,
                             good_range_low=1, good_range_high=2,
-                            warning_range_low=2, warning_range_high=3, scaling_value=1)
+                            warning_range_low=2, warning_range_high=3, scaling=1)
         item1 = housekeeping_classes.FloatStatusItem(value_dict_1)
         items0 = [item0, item1]
         filewatcher0 = housekeeping_classes.StatusFileWatcher(name='test_filewatcher0', items=items0,
@@ -83,12 +83,12 @@ class StatusDictTest(unittest.TestCase):
         value_dict_2 = dict(name='data2', column_name='data2',
                             normal_range_low=0, normal_range_high=1,
                             good_range_low=1, good_range_high=2,
-                            warning_range_low=2, warning_range_high=3, scaling_value=1)
+                            warning_range_low=2, warning_range_high=3, scaling=1)
         item2 = housekeeping_classes.FloatStatusItem(value_dict_2)
         value_dict_3 = dict(name='data3', column_name='data3',
                             normal_range_low=0, normal_range_high=1,
                             good_range_low=1, good_range_high=2,
-                            warning_range_low=2, warning_range_high=3, scaling_value=1)
+                            warning_range_low=2, warning_range_high=3, scaling=1)
         item3 = housekeeping_classes.FloatStatusItem(value_dict_3)
         items1 = [item2, item3]
         filewatcher1 = housekeeping_classes.StatusFileWatcher(name='test_filewatcher1', items=items1,

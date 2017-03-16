@@ -16,20 +16,20 @@ def get_range_outline(partial_glob, json_filename=None):
         col = df[colname]
         if col.dtype == 'O':  # string columns are Objects
             # StringStatusItem
-
+            name = colname
             normal_string, good_string, critical_string = '', '', ''
-            result_dict[colname] = {'normal_string': normal_string,
+            result_dict[name] = {'normal_string': normal_string,
                                     'good_string': good_string,
                                     'critical_string': critical_string}
 
         else:
             # FloatStatusItem
-
+            name = colname
             good_range_low, good_range_high = 'nan', 'nan'
             normal_range_low, normal_range_high = 'nan', 'nan'
             warning_range_low, warning_range_high = 'nan', 'nan'
             scaling = 1.0
-            result_dict[colname] = {'normal_range_low': normal_range_low,
+            result_dict[name] = {'normal_range_low': normal_range_low,
                                     'normal_range_high': normal_range_high,
                                     'good_range_low': good_range_low,
                                     'good_range_high': good_range_high,
@@ -51,26 +51,28 @@ def get_collectd_items(json_filename=None):
     result_dict = {}
     range_result_dict = {}
     for fn in collectd_files:
-        name = os.path.join(os.path.split(os.path.split(fn)[0])[-1], os.path.split(fn)[-1])
-        name = name.replace('2017-01-25', '*')
+        partial_glob = os.path.join(os.path.split(os.path.split(fn)[0])[-1], os.path.split(fn)[-1])
+        partial_glob = partial_glob.replace('2017-01-25', '*')
         df = pd.read_csv(fn, index_col='epoch', comment='#')
-        for col in df.columns:
+        for colname in df.columns:
             class_type = 'FloatStatusItem'
-            col_name = name.replace('/', '_').strip('-*')
+            name = partial_glob.replace('/', '_').strip('-*')
+            if colname != 'value':
+                name += '_' + colname
 
-            result_dict[col_name] = {'partial_glob': name, 'column_name': col_name, 'class_type': class_type}
+            result_dict[name] = {'name': name, 'partial_glob': partial_glob, 'column_name': colname, 'class_type': class_type}
 
             good_range_low, good_range_high = 'nan', 'nan'
             normal_range_low, normal_range_high = 'nan', 'nan'
             warning_range_low, warning_range_high = 'nan', 'nan'
             scaling = 1.0
-            range_result_dict[col_name] = {'normal_range_low': normal_range_low,
-                                           'normal_range_high': normal_range_high,
-                                           'good_range_low': good_range_low,
-                                           'good_range_high': good_range_high,
-                                           'warning_range_low': warning_range_low,
-                                           'warning_range_high': warning_range_high,
-                                           'scaling': scaling}
+            range_result_dict[name] = {'normal_range_low': normal_range_low,
+                                       'normal_range_high': normal_range_high,
+                                       'good_range_low': good_range_low,
+                                       'good_range_high': good_range_high,
+                                       'warning_range_low': warning_range_low,
+                                       'warning_range_high': warning_range_high,
+                                       'scaling': scaling}
 
     if json_filename:
         with open(json_filename + '.json', 'w') as fh:
@@ -98,10 +100,12 @@ def get_items(partial_glob, json_filename=None):
         col = df[colname]
         if col.dtype == 'O':  # string columns are Objects
             class_type = 'StringStatusItem'
-            result_dict[colname] = {'partial_glob': partial_glob, 'column_name': colname, 'class_type': class_type}
+            name = colname
+            result_dict[name] = {'name': name, 'partial_glob': partial_glob, 'column_name': colname, 'class_type': class_type}
         else:
             class_type = 'FloatStatusItem'
-            result_dict[colname] = {'partial_glob': partial_glob, 'column_name': colname, 'class_type': class_type}
+            name = colname
+            result_dict[name] = {'name': name, 'partial_glob': partial_glob, 'column_name': colname, 'class_type': class_type}
 
     if json_filename:
         with open(json_filename, 'w') as fh:

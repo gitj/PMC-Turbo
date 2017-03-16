@@ -20,12 +20,16 @@ CRITICAL = 4
 DELIMITER = ','
 
 
-def construct_status_group_from_json(json_path, json_range_path):
-    group_name = json_path.strip('.json')
+def construct_status_group_from_json(json_path, preamble=None):
+    print '#### json path:', json_path
+    # group_name = json_path.strip('.json')
+    group_name = os.path.split(json_path)[-1][:-5]
+    print '#### group name:', group_name
     status_group = StatusGroup(group_name, filewatchers=[])
 
     with open(json_path, 'r') as f:
         result = json.loads(f.read())
+    json_range_path = os.path.splitext(json_path)[0] + '_ranges.json'
     with open(json_range_path, 'r') as f:
         range_result = json.loads(f.read())
 
@@ -40,13 +44,13 @@ def construct_status_group_from_json(json_path, json_range_path):
         value_dict = result[value_key]
         if not value_dict['partial_glob'] in status_group.filewatchers.keys():
             status_filewatcher = StatusFileWatcher(name=value_dict['partial_glob'], items=[],
-                                                   filename_glob=os.path.join(value_dict['partial_glob']))
+                                                   filename_glob=os.path.join(preamble, value_dict['partial_glob']))
             status_group.filewatchers[value_dict['partial_glob']] = status_filewatcher
         try:
             status_item = eval(value_dict['class_type'])(value_dict)
         except Exception as e:
-            logger.debug('Problem while trying to create status_item. Value dict is: %r' % value_dict)
-            raise e
+            logger.exception('Problem while trying to create status_item. Value dict is: %r' % value_dict)
+            continue
 
         status_group.filewatchers[value_dict['partial_glob']].items.update({status_item.name: status_item})
 
@@ -55,15 +59,16 @@ def construct_status_group_from_json(json_path, json_range_path):
     return status_group
 
 
-def construct_super_group_from_json_list(json_paths, json_range_paths):
+def construct_super_group_from_json_list(json_paths, preambles):
     group_name = 'SuperGroup'
     super_group = SuperStatusGroup(group_name, groups=[])
-    for i, (json_path, json_range_path) in enumerate(zip(json_paths, json_range_paths)):
+    print json_paths
+    for i, (json_path, preamble) in enumerate(zip(json_paths, preambles)):
         try:
-            status_group = construct_status_group_from_json(json_path, json_range_path)
+            status_group = construct_status_group_from_json(json_path, preamble)
             super_group.groups[status_group.name] = status_group
         except ValueError as e:
-            logger.exception("Error processing json_path %s with range path %s" % (json_path,json_range_path))
+            logger.exception("Error processing json_path %s" % (json_path))
     return super_group
 
 
@@ -131,7 +136,7 @@ class StatusGroup():
         return (max_value, name_list)
 
     def update(self):
-        logger.debug('Updating %r' % self.name)
+        logger.debug('Updating group with name %r' % self.name)
         for key in self.filewatchers.keys():
             self.filewatchers[key].update()
 
@@ -226,9 +231,8 @@ class StatusFileWatcher():
         return dict(zip(self.items.keys(), entries))
 
     def update(self):
-        logger.debug('Updating %r' % self.name)
         if self.column_names is None:
-            logger.debug('Getting column names')
+            logger.debug('Getting column names for %r' % self.name)
             with open(self.source_file, 'r') as f:
                 f.seek(0, 0)
                 name_line = f.readline()
@@ -241,22 +245,24 @@ class StatusFileWatcher():
                         'First column of file %r is not epoch, it is %r' % (self.source_file, self.column_names[0]))
         last_update = os.path.getctime(self.source_file)
         if last_update == self.last_update:  # if the file not has changed since last check
-            logger.debug('File up to date.')
+            logger.debug('File %r up to date.' % self.name)
             return
         else:
             if self.last_update and not (
                         time.localtime(last_update).tm_mday == time.localtime(self.last_update).tm_mday):
                 # Flips over to new file for a new day.
-                logger.debug('New day, new file')
+                logger.debug('Flip over filewatcher %r - New day, new file' % self.name)
                 self.assign_file(self.glob)
 
             last_line = file_reading.read_last_line(self.source_file)
             values = last_line.split(DELIMITER)
             self.last_update = last_update
+            logger.debug('Filewatcher %r updated with values %r' % (self.name, values))
 
         if len(values) != len(self.column_names):
-            raise ValueError('Number of values and column names mismatch. %d Values, %d column names' %
-                             (len(values), len(self.column_names)))
+            raise ValueError(
+                'For filewatcher %r: Number of values and column names mismatch. %d Values, %d column names' %
+                (self.name, len(values), len(self.column_names)))
         value_dict = dict(zip(self.column_names, values))
 
         for key in self.items.keys():
@@ -266,7 +272,7 @@ class StatusFileWatcher():
 class FloatStatusItem():
     def __init__(self, value_dict):
         # Example solar cell voltage
-        self.name = value_dict['column_name']
+        self.name = value_dict['name']
         self.column_name = value_dict['column_name']
         self.value = None
         self.epoch = None
@@ -282,8 +288,10 @@ class FloatStatusItem():
         if self.column_name in value_dict:
             self.unscaled_value = float(value_dict[self.column_name])
             self.value = self.unscaled_value * self.scaling
+        else:
+            raise ValueError('Column name for item %r, set to be %r, is not in value dict: %r' % (self.name, self.column_name, value_dict))
+            #logger.warning('Column name for item %r, set to be %r, is not in value dict: %r' % (self.name, self.column_name, value_dict))
         self.epoch = float(value_dict['epoch'])
-        # logger.debug('Item %r updated with value %r' % (self.name, self.value)) # This is too much logging
 
     def get_status_summary(self):
         if self.silenced:
@@ -307,13 +315,13 @@ class FloatStatusItem():
 class StringStatusItem():
     def __init__(self, value_dict):
         # Example solar cell voltage
-        self.name = value_dict['column_name']
+        self.name = value_dict['name']
         self.column_name = value_dict['column_name']
         self.value = None
         self.epoch = None
         self.normal_string = value_dict['normal_string']
         self.good_string = value_dict['good_string']
-        self.warning_string = value_dict.get('warning_string','')
+        self.warning_string = value_dict.get('warning_string', '')
         self.silenced = False
 
     # Add silence, epoch

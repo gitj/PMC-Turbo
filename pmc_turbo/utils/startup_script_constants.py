@@ -17,7 +17,7 @@ if CAM_ID == 0:
 else:
     LEADER = False
 
-if False: # I use this for testing code on a single machine
+if False:  # I use this for testing code on a single machine
     PEER_URIS = ['PYRO:communicator@0.0.0.0:40000',
                  'PYRO:communicator@0.0.0.0:40001',
                  'PYRO:communicator@0.0.0.0:40002',
@@ -26,7 +26,7 @@ if False: # I use this for testing code on a single machine
                  'PYRO:communicator@0.0.0.0:40005',
                  'PYRO:communicator@0.0.0.0:40006',
                  'PYRO:communicator@0.0.0.0:40007']
-if True: # This is what we will want to use in flight
+if True:  # This is what we will want to use in flight
     PEER_URIS = ['PYRO:communicator@0.0.0.0:40000',
                  'PYRO:communicator@pmc-camera-1:40000',
                  'PYRO:communicator@pmc-camera-2:40000',
@@ -36,7 +36,7 @@ if True: # This is what we will want to use in flight
                  'PYRO:communicator@pmc-camera-6:40000',
                  'PYRO:communicator@pmc-camera-7:40000', ]
 
-#PEER_POLLING_ORDER = [0, 1, 2, 3, 4, 5, 6, 7]
+# PEER_POLLING_ORDER = [0, 1, 2, 3, 4, 5, 6, 7]
 
 CONTROLLER_URI = 'PYRO:image@192.168.1.30:50001'
 
@@ -64,9 +64,14 @@ JSON_PATHS = ['/home/pmc/pmchome/pmc-turbo/status_item_params/camera_items.json'
               '/home/pmc/pmchome/pmc-turbo/status_item_params/counter_items.json',
               '/home/pmc/pmchome/pmc-turbo/status_item_params/collectd_items.json'
               ]
-JSON_RANGE_PATHS = ['/home/pmc/pmchome/pmc-turbo/status_item_params/camera_items_ranges.json',
-                    '/home/pmc/pmchome/pmc-turbo/status_item_params/charge_controller_items_ranges.json',
-                    '/home/pmc/pmchome/pmc-turbo/status_item_params/counter_items_ranges.json',
-                    '/home/pmc/pmchome/pmc-turbo/status_item_params/collectd_items_ranges.json'
-                    ]
-                    # TODO: Add preambles to the collectd_items like I did with the CSV preambles.
+
+JSON_PATH_PREAMBLES = ['',
+                       ''
+                       '',
+                       '/var/lib/collectd/csv/*/']
+# JSON_RANGE_PATHS = ['/home/pmc/pmchome/pmc-turbo/status_item_params/camera_items_ranges.json',
+#                     '/home/pmc/pmchome/pmc-turbo/status_item_params/charge_controller_items_ranges.json',
+#                     '/home/pmc/pmchome/pmc-turbo/status_item_params/counter_items_ranges.json',
+#                     '/home/pmc/pmchome/pmc-turbo/status_item_params/collectd_items_ranges.json'
+#                     ]
+# TODO: Add preambles to the collectd_items like I did with the CSV preambles.

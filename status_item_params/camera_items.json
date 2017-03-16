@@ -2,296 +2,355 @@
     "AcquisitionFrameCount": {
         "class_type": "FloatStatusItem",
         "column_name": "AcquisitionFrameCount",
+        "name": "AcquisitionFrameCount",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "AcquisitionFrameRateAbs": {
         "class_type": "FloatStatusItem",
         "column_name": "AcquisitionFrameRateAbs",
+        "name": "AcquisitionFrameRateAbs",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "AcquisitionFrameRateLimit": {
         "class_type": "FloatStatusItem",
         "column_name": "AcquisitionFrameRateLimit",
+        "name": "AcquisitionFrameRateLimit",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "AcquisitionMode": {
         "class_type": "StringStatusItem",
         "column_name": "AcquisitionMode",
+        "name": "AcquisitionMode",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "ChunkModeActive": {
         "class_type": "FloatStatusItem",
         "column_name": "ChunkModeActive",
+        "name": "ChunkModeActive",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "DeviceTemperature": {
         "class_type": "FloatStatusItem",
         "column_name": "DeviceTemperature",
+        "name": "DeviceTemperature",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "DeviceTemperatureSelector": {
         "class_type": "StringStatusItem",
         "column_name": "DeviceTemperatureSelector",
+        "name": "DeviceTemperatureSelector",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "EFLensFStopCurrent": {
         "class_type": "FloatStatusItem",
         "column_name": "EFLensFStopCurrent",
+        "name": "EFLensFStopCurrent",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "EFLensFStopMax": {
         "class_type": "FloatStatusItem",
         "column_name": "EFLensFStopMax",
+        "name": "EFLensFStopMax",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "EFLensFStopMin": {
         "class_type": "FloatStatusItem",
         "column_name": "EFLensFStopMin",
+        "name": "EFLensFStopMin",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "EFLensFStopStepSize": {
         "class_type": "FloatStatusItem",
         "column_name": "EFLensFStopStepSize",
+        "name": "EFLensFStopStepSize",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "EFLensFocusCurrent": {
         "class_type": "FloatStatusItem",
         "column_name": "EFLensFocusCurrent",
+        "name": "EFLensFocusCurrent",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "EFLensFocusMax": {
         "class_type": "FloatStatusItem",
         "column_name": "EFLensFocusMax",
+        "name": "EFLensFocusMax",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "EFLensFocusMin": {
         "class_type": "FloatStatusItem",
         "column_name": "EFLensFocusMin",
+        "name": "EFLensFocusMin",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "EFLensFocusSwitch": {
         "class_type": "StringStatusItem",
         "column_name": "EFLensFocusSwitch",
+        "name": "EFLensFocusSwitch",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "EFLensID": {
         "class_type": "FloatStatusItem",
         "column_name": "EFLensID",
+        "name": "EFLensID",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "EFLensLastError": {
         "class_type": "StringStatusItem",
         "column_name": "EFLensLastError",
+        "name": "EFLensLastError",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "EFLensState": {
         "class_type": "StringStatusItem",
         "column_name": "EFLensState",
+        "name": "EFLensState",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "ExposureAuto": {
         "class_type": "StringStatusItem",
         "column_name": "ExposureAuto",
+        "name": "ExposureAuto",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "ExposureAutoAdjustTol": {
         "class_type": "FloatStatusItem",
         "column_name": "ExposureAutoAdjustTol",
+        "name": "ExposureAutoAdjustTol",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "ExposureAutoAlg": {
         "class_type": "StringStatusItem",
         "column_name": "ExposureAutoAlg",
+        "name": "ExposureAutoAlg",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "ExposureAutoMax": {
         "class_type": "FloatStatusItem",
         "column_name": "ExposureAutoMax",
+        "name": "ExposureAutoMax",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "ExposureAutoMin": {
         "class_type": "FloatStatusItem",
         "column_name": "ExposureAutoMin",
+        "name": "ExposureAutoMin",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "ExposureAutoOutliers": {
         "class_type": "FloatStatusItem",
         "column_name": "ExposureAutoOutliers",
+        "name": "ExposureAutoOutliers",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "ExposureAutoRate": {
         "class_type": "FloatStatusItem",
         "column_name": "ExposureAutoRate",
+        "name": "ExposureAutoRate",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "ExposureAutoTarget": {
         "class_type": "FloatStatusItem",
         "column_name": "ExposureAutoTarget",
+        "name": "ExposureAutoTarget",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "ExposureMode": {
         "class_type": "StringStatusItem",
         "column_name": "ExposureMode",
+        "name": "ExposureMode",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "ExposureTimeAbs": {
         "class_type": "FloatStatusItem",
         "column_name": "ExposureTimeAbs",
+        "name": "ExposureTimeAbs",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "Gain": {
         "class_type": "FloatStatusItem",
         "column_name": "Gain",
+        "name": "Gain",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "GainAuto": {
         "class_type": "StringStatusItem",
         "column_name": "GainAuto",
+        "name": "GainAuto",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "GevTimestampValue": {
         "class_type": "FloatStatusItem",
         "column_name": "GevTimestampValue",
+        "name": "GevTimestampValue",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "PixelFormat": {
         "class_type": "StringStatusItem",
         "column_name": "PixelFormat",
+        "name": "PixelFormat",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "PtpAcquisitionGateTime": {
         "class_type": "FloatStatusItem",
         "column_name": "PtpAcquisitionGateTime",
+        "name": "PtpAcquisitionGateTime",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "PtpMode": {
         "class_type": "StringStatusItem",
         "column_name": "PtpMode",
+        "name": "PtpMode",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "PtpStatus": {
         "class_type": "StringStatusItem",
         "column_name": "PtpStatus",
+        "name": "PtpStatus",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "StatFrameDelivered": {
         "class_type": "FloatStatusItem",
         "column_name": "StatFrameDelivered",
+        "name": "StatFrameDelivered",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "StatFrameDropped": {
         "class_type": "FloatStatusItem",
         "column_name": "StatFrameDropped",
+        "name": "StatFrameDropped",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "StatFrameRate": {
         "class_type": "FloatStatusItem",
         "column_name": "StatFrameRate",
+        "name": "StatFrameRate",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "StatFrameRescued": {
         "class_type": "FloatStatusItem",
         "column_name": "StatFrameRescued",
+        "name": "StatFrameRescued",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "StatFrameShoved": {
         "class_type": "FloatStatusItem",
         "column_name": "StatFrameShoved",
+        "name": "StatFrameShoved",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "StatFrameUnderrun": {
         "class_type": "FloatStatusItem",
         "column_name": "StatFrameUnderrun",
+        "name": "StatFrameUnderrun",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "StatLocalRate": {
         "class_type": "FloatStatusItem",
         "column_name": "StatLocalRate",
+        "name": "StatLocalRate",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "StatPacketErrors": {
         "class_type": "FloatStatusItem",
         "column_name": "StatPacketErrors",
+        "name": "StatPacketErrors",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "StatPacketMissed": {
         "class_type": "FloatStatusItem",
         "column_name": "StatPacketMissed",
+        "name": "StatPacketMissed",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "StatPacketReceived": {
         "class_type": "FloatStatusItem",
         "column_name": "StatPacketReceived",
+        "name": "StatPacketReceived",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "StatPacketRequested": {
         "class_type": "FloatStatusItem",
         "column_name": "StatPacketRequested",
+        "name": "StatPacketRequested",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "StatPacketResent": {
         "class_type": "FloatStatusItem",
         "column_name": "StatPacketResent",
+        "name": "StatPacketResent",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "StatTimeElapsed": {
         "class_type": "FloatStatusItem",
         "column_name": "StatTimeElapsed",
+        "name": "StatTimeElapsed",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "StreamAnnouncedBufferCount": {
         "class_type": "FloatStatusItem",
         "column_name": "StreamAnnouncedBufferCount",
+        "name": "StreamAnnouncedBufferCount",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "StreamBytesPerSecond": {
         "class_type": "FloatStatusItem",
         "column_name": "StreamBytesPerSecond",
+        "name": "StreamBytesPerSecond",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "StreamHoldEnable": {
         "class_type": "StringStatusItem",
         "column_name": "StreamHoldEnable",
+        "name": "StreamHoldEnable",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "StreamID": {
         "class_type": "StringStatusItem",
         "column_name": "StreamID",
+        "name": "StreamID",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "StreamType": {
         "class_type": "StringStatusItem",
         "column_name": "StreamType",
+        "name": "StreamType",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "TriggerMode": {
         "class_type": "StringStatusItem",
         "column_name": "TriggerMode",
+        "name": "TriggerMode",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "TriggerSource": {
         "class_type": "StringStatusItem",
         "column_name": "TriggerSource",
+        "name": "TriggerSource",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "camera_timestamp_offset": {
         "class_type": "FloatStatusItem",
         "column_name": "camera_timestamp_offset",
+        "name": "camera_timestamp_offset",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "main_temperature": {
         "class_type": "FloatStatusItem",
         "column_name": "main_temperature",
+        "name": "main_temperature",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "sensor_temperature": {
         "class_type": "FloatStatusItem",
         "column_name": "sensor_temperature",
+        "name": "sensor_temperature",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     },
     "total_frames": {
         "class_type": "FloatStatusItem",
         "column_name": "total_frames",
+        "name": "total_frames",
         "partial_glob": "/home/pmc/logs/housekeeping/camera/*.csv"
     }
 }

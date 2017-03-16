@@ -1,1077 +1,1766 @@
 {
     "cpu-0_cpu-idle": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-0_cpu-idle",
+        "column_name": "value",
+        "name": "cpu-0_cpu-idle",
         "partial_glob": "cpu-0/cpu-idle-*"
     },
     "cpu-0_cpu-interrupt": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-0_cpu-interrupt",
+        "column_name": "value",
+        "name": "cpu-0_cpu-interrupt",
         "partial_glob": "cpu-0/cpu-interrupt-*"
     },
     "cpu-0_cpu-nice": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-0_cpu-nice",
+        "column_name": "value",
+        "name": "cpu-0_cpu-nice",
         "partial_glob": "cpu-0/cpu-nice-*"
     },
     "cpu-0_cpu-softirq": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-0_cpu-softirq",
+        "column_name": "value",
+        "name": "cpu-0_cpu-softirq",
         "partial_glob": "cpu-0/cpu-softirq-*"
     },
     "cpu-0_cpu-steal": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-0_cpu-steal",
+        "column_name": "value",
+        "name": "cpu-0_cpu-steal",
         "partial_glob": "cpu-0/cpu-steal-*"
     },
     "cpu-0_cpu-system": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-0_cpu-system",
+        "column_name": "value",
+        "name": "cpu-0_cpu-system",
         "partial_glob": "cpu-0/cpu-system-*"
     },
     "cpu-0_cpu-user": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-0_cpu-user",
+        "column_name": "value",
+        "name": "cpu-0_cpu-user",
         "partial_glob": "cpu-0/cpu-user-*"
     },
     "cpu-0_cpu-wait": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-0_cpu-wait",
+        "column_name": "value",
+        "name": "cpu-0_cpu-wait",
         "partial_glob": "cpu-0/cpu-wait-*"
     },
     "cpu-1_cpu-idle": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-1_cpu-idle",
+        "column_name": "value",
+        "name": "cpu-1_cpu-idle",
         "partial_glob": "cpu-1/cpu-idle-*"
     },
     "cpu-1_cpu-interrupt": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-1_cpu-interrupt",
+        "column_name": "value",
+        "name": "cpu-1_cpu-interrupt",
         "partial_glob": "cpu-1/cpu-interrupt-*"
     },
     "cpu-1_cpu-nice": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-1_cpu-nice",
+        "column_name": "value",
+        "name": "cpu-1_cpu-nice",
         "partial_glob": "cpu-1/cpu-nice-*"
     },
     "cpu-1_cpu-softirq": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-1_cpu-softirq",
+        "column_name": "value",
+        "name": "cpu-1_cpu-softirq",
         "partial_glob": "cpu-1/cpu-softirq-*"
     },
     "cpu-1_cpu-steal": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-1_cpu-steal",
+        "column_name": "value",
+        "name": "cpu-1_cpu-steal",
         "partial_glob": "cpu-1/cpu-steal-*"
     },
     "cpu-1_cpu-system": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-1_cpu-system",
+        "column_name": "value",
+        "name": "cpu-1_cpu-system",
         "partial_glob": "cpu-1/cpu-system-*"
     },
     "cpu-1_cpu-user": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-1_cpu-user",
+        "column_name": "value",
+        "name": "cpu-1_cpu-user",
         "partial_glob": "cpu-1/cpu-user-*"
     },
     "cpu-1_cpu-wait": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-1_cpu-wait",
+        "column_name": "value",
+        "name": "cpu-1_cpu-wait",
         "partial_glob": "cpu-1/cpu-wait-*"
     },
     "cpu-2_cpu-idle": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-2_cpu-idle",
+        "column_name": "value",
+        "name": "cpu-2_cpu-idle",
         "partial_glob": "cpu-2/cpu-idle-*"
     },
     "cpu-2_cpu-interrupt": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-2_cpu-interrupt",
+        "column_name": "value",
+        "name": "cpu-2_cpu-interrupt",
         "partial_glob": "cpu-2/cpu-interrupt-*"
     },
     "cpu-2_cpu-nice": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-2_cpu-nice",
+        "column_name": "value",
+        "name": "cpu-2_cpu-nice",
         "partial_glob": "cpu-2/cpu-nice-*"
     },
     "cpu-2_cpu-softirq": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-2_cpu-softirq",
+        "column_name": "value",
+        "name": "cpu-2_cpu-softirq",
         "partial_glob": "cpu-2/cpu-softirq-*"
     },
     "cpu-2_cpu-steal": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-2_cpu-steal",
+        "column_name": "value",
+        "name": "cpu-2_cpu-steal",
         "partial_glob": "cpu-2/cpu-steal-*"
     },
     "cpu-2_cpu-system": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-2_cpu-system",
+        "column_name": "value",
+        "name": "cpu-2_cpu-system",
         "partial_glob": "cpu-2/cpu-system-*"
     },
     "cpu-2_cpu-user": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-2_cpu-user",
+        "column_name": "value",
+        "name": "cpu-2_cpu-user",
         "partial_glob": "cpu-2/cpu-user-*"
     },
     "cpu-2_cpu-wait": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-2_cpu-wait",
+        "column_name": "value",
+        "name": "cpu-2_cpu-wait",
         "partial_glob": "cpu-2/cpu-wait-*"
     },
     "cpu-3_cpu-idle": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-3_cpu-idle",
+        "column_name": "value",
+        "name": "cpu-3_cpu-idle",
         "partial_glob": "cpu-3/cpu-idle-*"
     },
     "cpu-3_cpu-interrupt": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-3_cpu-interrupt",
+        "column_name": "value",
+        "name": "cpu-3_cpu-interrupt",
         "partial_glob": "cpu-3/cpu-interrupt-*"
     },
     "cpu-3_cpu-nice": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-3_cpu-nice",
+        "column_name": "value",
+        "name": "cpu-3_cpu-nice",
         "partial_glob": "cpu-3/cpu-nice-*"
     },
     "cpu-3_cpu-softirq": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-3_cpu-softirq",
+        "column_name": "value",
+        "name": "cpu-3_cpu-softirq",
         "partial_glob": "cpu-3/cpu-softirq-*"
     },
     "cpu-3_cpu-steal": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-3_cpu-steal",
+        "column_name": "value",
+        "name": "cpu-3_cpu-steal",
         "partial_glob": "cpu-3/cpu-steal-*"
     },
     "cpu-3_cpu-system": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-3_cpu-system",
+        "column_name": "value",
+        "name": "cpu-3_cpu-system",
         "partial_glob": "cpu-3/cpu-system-*"
     },
     "cpu-3_cpu-user": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-3_cpu-user",
+        "column_name": "value",
+        "name": "cpu-3_cpu-user",
         "partial_glob": "cpu-3/cpu-user-*"
     },
     "cpu-3_cpu-wait": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-3_cpu-wait",
+        "column_name": "value",
+        "name": "cpu-3_cpu-wait",
         "partial_glob": "cpu-3/cpu-wait-*"
     },
     "cpu-4_cpu-idle": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-4_cpu-idle",
+        "column_name": "value",
+        "name": "cpu-4_cpu-idle",
         "partial_glob": "cpu-4/cpu-idle-*"
     },
     "cpu-4_cpu-interrupt": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-4_cpu-interrupt",
+        "column_name": "value",
+        "name": "cpu-4_cpu-interrupt",
         "partial_glob": "cpu-4/cpu-interrupt-*"
     },
     "cpu-4_cpu-nice": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-4_cpu-nice",
+        "column_name": "value",
+        "name": "cpu-4_cpu-nice",
         "partial_glob": "cpu-4/cpu-nice-*"
     },
     "cpu-4_cpu-softirq": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-4_cpu-softirq",
+        "column_name": "value",
+        "name": "cpu-4_cpu-softirq",
         "partial_glob": "cpu-4/cpu-softirq-*"
     },
     "cpu-4_cpu-steal": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-4_cpu-steal",
+        "column_name": "value",
+        "name": "cpu-4_cpu-steal",
         "partial_glob": "cpu-4/cpu-steal-*"
     },
     "cpu-4_cpu-system": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-4_cpu-system",
+        "column_name": "value",
+        "name": "cpu-4_cpu-system",
         "partial_glob": "cpu-4/cpu-system-*"
     },
     "cpu-4_cpu-user": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-4_cpu-user",
+        "column_name": "value",
+        "name": "cpu-4_cpu-user",
         "partial_glob": "cpu-4/cpu-user-*"
     },
     "cpu-4_cpu-wait": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-4_cpu-wait",
+        "column_name": "value",
+        "name": "cpu-4_cpu-wait",
         "partial_glob": "cpu-4/cpu-wait-*"
     },
     "cpu-5_cpu-idle": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-5_cpu-idle",
+        "column_name": "value",
+        "name": "cpu-5_cpu-idle",
         "partial_glob": "cpu-5/cpu-idle-*"
     },
     "cpu-5_cpu-interrupt": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-5_cpu-interrupt",
+        "column_name": "value",
+        "name": "cpu-5_cpu-interrupt",
         "partial_glob": "cpu-5/cpu-interrupt-*"
     },
     "cpu-5_cpu-nice": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-5_cpu-nice",
+        "column_name": "value",
+        "name": "cpu-5_cpu-nice",
         "partial_glob": "cpu-5/cpu-nice-*"
     },
     "cpu-5_cpu-softirq": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-5_cpu-softirq",
+        "column_name": "value",
+        "name": "cpu-5_cpu-softirq",
         "partial_glob": "cpu-5/cpu-softirq-*"
     },
     "cpu-5_cpu-steal": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-5_cpu-steal",
+        "column_name": "value",
+        "name": "cpu-5_cpu-steal",
         "partial_glob": "cpu-5/cpu-steal-*"
     },
     "cpu-5_cpu-system": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-5_cpu-system",
+        "column_name": "value",
+        "name": "cpu-5_cpu-system",
         "partial_glob": "cpu-5/cpu-system-*"
     },
     "cpu-5_cpu-user": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-5_cpu-user",
+        "column_name": "value",
+        "name": "cpu-5_cpu-user",
         "partial_glob": "cpu-5/cpu-user-*"
     },
     "cpu-5_cpu-wait": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-5_cpu-wait",
+        "column_name": "value",
+        "name": "cpu-5_cpu-wait",
         "partial_glob": "cpu-5/cpu-wait-*"
     },
     "cpu-6_cpu-idle": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-6_cpu-idle",
+        "column_name": "value",
+        "name": "cpu-6_cpu-idle",
         "partial_glob": "cpu-6/cpu-idle-*"
     },
     "cpu-6_cpu-interrupt": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-6_cpu-interrupt",
+        "column_name": "value",
+        "name": "cpu-6_cpu-interrupt",
         "partial_glob": "cpu-6/cpu-interrupt-*"
     },
     "cpu-6_cpu-nice": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-6_cpu-nice",
+        "column_name": "value",
+        "name": "cpu-6_cpu-nice",
         "partial_glob": "cpu-6/cpu-nice-*"
     },
     "cpu-6_cpu-softirq": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-6_cpu-softirq",
+        "column_name": "value",
+        "name": "cpu-6_cpu-softirq",
         "partial_glob": "cpu-6/cpu-softirq-*"
     },
     "cpu-6_cpu-steal": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-6_cpu-steal",
+        "column_name": "value",
+        "name": "cpu-6_cpu-steal",
         "partial_glob": "cpu-6/cpu-steal-*"
     },
     "cpu-6_cpu-system": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-6_cpu-system",
+        "column_name": "value",
+        "name": "cpu-6_cpu-system",
         "partial_glob": "cpu-6/cpu-system-*"
     },
     "cpu-6_cpu-user": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-6_cpu-user",
+        "column_name": "value",
+        "name": "cpu-6_cpu-user",
         "partial_glob": "cpu-6/cpu-user-*"
     },
     "cpu-6_cpu-wait": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-6_cpu-wait",
+        "column_name": "value",
+        "name": "cpu-6_cpu-wait",
         "partial_glob": "cpu-6/cpu-wait-*"
     },
     "cpu-7_cpu-idle": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-7_cpu-idle",
+        "column_name": "value",
+        "name": "cpu-7_cpu-idle",
         "partial_glob": "cpu-7/cpu-idle-*"
     },
     "cpu-7_cpu-interrupt": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-7_cpu-interrupt",
+        "column_name": "value",
+        "name": "cpu-7_cpu-interrupt",
         "partial_glob": "cpu-7/cpu-interrupt-*"
     },
     "cpu-7_cpu-nice": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-7_cpu-nice",
+        "column_name": "value",
+        "name": "cpu-7_cpu-nice",
         "partial_glob": "cpu-7/cpu-nice-*"
     },
     "cpu-7_cpu-softirq": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-7_cpu-softirq",
+        "column_name": "value",
+        "name": "cpu-7_cpu-softirq",
         "partial_glob": "cpu-7/cpu-softirq-*"
     },
     "cpu-7_cpu-steal": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-7_cpu-steal",
+        "column_name": "value",
+        "name": "cpu-7_cpu-steal",
         "partial_glob": "cpu-7/cpu-steal-*"
     },
     "cpu-7_cpu-system": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-7_cpu-system",
+        "column_name": "value",
+        "name": "cpu-7_cpu-system",
         "partial_glob": "cpu-7/cpu-system-*"
     },
     "cpu-7_cpu-user": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-7_cpu-user",
+        "column_name": "value",
+        "name": "cpu-7_cpu-user",
         "partial_glob": "cpu-7/cpu-user-*"
     },
     "cpu-7_cpu-wait": {
         "class_type": "FloatStatusItem",
-        "column_name": "cpu-7_cpu-wait",
+        "column_name": "value",
+        "name": "cpu-7_cpu-wait",
         "partial_glob": "cpu-7/cpu-wait-*"
     },
     "df-data1_df_complex-free": {
         "class_type": "FloatStatusItem",
-        "column_name": "df-data1_df_complex-free",
+        "column_name": "value",
+        "name": "df-data1_df_complex-free",
         "partial_glob": "df-data1/df_complex-free-*"
     },
     "df-data1_df_complex-reserved": {
         "class_type": "FloatStatusItem",
-        "column_name": "df-data1_df_complex-reserved",
+        "column_name": "value",
+        "name": "df-data1_df_complex-reserved",
         "partial_glob": "df-data1/df_complex-reserved-*"
     },
     "df-data1_df_complex-used": {
         "class_type": "FloatStatusItem",
-        "column_name": "df-data1_df_complex-used",
+        "column_name": "value",
+        "name": "df-data1_df_complex-used",
         "partial_glob": "df-data1/df_complex-used-*"
     },
     "df-data2_df_complex-free": {
         "class_type": "FloatStatusItem",
-        "column_name": "df-data2_df_complex-free",
+        "column_name": "value",
+        "name": "df-data2_df_complex-free",
         "partial_glob": "df-data2/df_complex-free-*"
     },
     "df-data2_df_complex-reserved": {
         "class_type": "FloatStatusItem",
-        "column_name": "df-data2_df_complex-reserved",
+        "column_name": "value",
+        "name": "df-data2_df_complex-reserved",
         "partial_glob": "df-data2/df_complex-reserved-*"
     },
     "df-data2_df_complex-used": {
         "class_type": "FloatStatusItem",
-        "column_name": "df-data2_df_complex-used",
+        "column_name": "value",
+        "name": "df-data2_df_complex-used",
         "partial_glob": "df-data2/df_complex-used-*"
     },
     "df-data3_df_complex-free": {
         "class_type": "FloatStatusItem",
-        "column_name": "df-data3_df_complex-free",
+        "column_name": "value",
+        "name": "df-data3_df_complex-free",
         "partial_glob": "df-data3/df_complex-free-*"
     },
     "df-data3_df_complex-reserved": {
         "class_type": "FloatStatusItem",
-        "column_name": "df-data3_df_complex-reserved",
+        "column_name": "value",
+        "name": "df-data3_df_complex-reserved",
         "partial_glob": "df-data3/df_complex-reserved-*"
     },
     "df-data3_df_complex-used": {
         "class_type": "FloatStatusItem",
-        "column_name": "df-data3_df_complex-used",
+        "column_name": "value",
+        "name": "df-data3_df_complex-used",
         "partial_glob": "df-data3/df_complex-used-*"
     },
     "df-data4_df_complex-free": {
         "class_type": "FloatStatusItem",
-        "column_name": "df-data4_df_complex-free",
+        "column_name": "value",
+        "name": "df-data4_df_complex-free",
         "partial_glob": "df-data4/df_complex-free-*"
     },
     "df-data4_df_complex-reserved": {
         "class_type": "FloatStatusItem",
-        "column_name": "df-data4_df_complex-reserved",
+        "column_name": "value",
+        "name": "df-data4_df_complex-reserved",
         "partial_glob": "df-data4/df_complex-reserved-*"
     },
     "df-data4_df_complex-used": {
         "class_type": "FloatStatusItem",
-        "column_name": "df-data4_df_complex-used",
+        "column_name": "value",
+        "name": "df-data4_df_complex-used",
         "partial_glob": "df-data4/df_complex-used-*"
     },
     "df-home-pmc-pmchome_df_complex-free": {
         "class_type": "FloatStatusItem",
-        "column_name": "df-home-pmc-pmchome_df_complex-free",
+        "column_name": "value",
+        "name": "df-home-pmc-pmchome_df_complex-free",
         "partial_glob": "df-home-pmc-pmchome/df_complex-free-*"
     },
     "df-home-pmc-pmchome_df_complex-reserved": {
         "class_type": "FloatStatusItem",
-        "column_name": "df-home-pmc-pmchome_df_complex-reserved",
+        "column_name": "value",
+        "name": "df-home-pmc-pmchome_df_complex-reserved",
         "partial_glob": "df-home-pmc-pmchome/df_complex-reserved-*"
     },
     "df-home-pmc-pmchome_df_complex-used": {
         "class_type": "FloatStatusItem",
-        "column_name": "df-home-pmc-pmchome_df_complex-used",
+        "column_name": "value",
+        "name": "df-home-pmc-pmchome_df_complex-used",
         "partial_glob": "df-home-pmc-pmchome/df_complex-used-*"
     },
     "df-root_df_complex-free": {
         "class_type": "FloatStatusItem",
-        "column_name": "df-root_df_complex-free",
+        "column_name": "value",
+        "name": "df-root_df_complex-free",
         "partial_glob": "df-root/df_complex-free-*"
     },
     "df-root_df_complex-reserved": {
         "class_type": "FloatStatusItem",
-        "column_name": "df-root_df_complex-reserved",
+        "column_name": "value",
+        "name": "df-root_df_complex-reserved",
         "partial_glob": "df-root/df_complex-reserved-*"
     },
     "df-root_df_complex-used": {
         "class_type": "FloatStatusItem",
-        "column_name": "df-root_df_complex-used",
+        "column_name": "value",
+        "name": "df-root_df_complex-used",
         "partial_glob": "df-root/df_complex-used-*"
     },
-    "disk-sda1_disk_merged": {
+    "disk-sda1_disk_merged_read": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sda1_disk_merged",
+        "column_name": "read",
+        "name": "disk-sda1_disk_merged_read",
         "partial_glob": "disk-sda1/disk_merged-*"
     },
-    "disk-sda1_disk_octets": {
+    "disk-sda1_disk_merged_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sda1_disk_octets",
+        "column_name": "write",
+        "name": "disk-sda1_disk_merged_write",
+        "partial_glob": "disk-sda1/disk_merged-*"
+    },
+    "disk-sda1_disk_octets_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sda1_disk_octets_read",
         "partial_glob": "disk-sda1/disk_octets-*"
     },
-    "disk-sda1_disk_ops": {
+    "disk-sda1_disk_octets_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sda1_disk_ops",
+        "column_name": "write",
+        "name": "disk-sda1_disk_octets_write",
+        "partial_glob": "disk-sda1/disk_octets-*"
+    },
+    "disk-sda1_disk_ops_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sda1_disk_ops_read",
         "partial_glob": "disk-sda1/disk_ops-*"
     },
-    "disk-sda1_disk_time": {
+    "disk-sda1_disk_ops_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sda1_disk_time",
+        "column_name": "write",
+        "name": "disk-sda1_disk_ops_write",
+        "partial_glob": "disk-sda1/disk_ops-*"
+    },
+    "disk-sda1_disk_time_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sda1_disk_time_read",
         "partial_glob": "disk-sda1/disk_time-*"
     },
-    "disk-sda_disk_merged": {
+    "disk-sda1_disk_time_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sda_disk_merged",
+        "column_name": "write",
+        "name": "disk-sda1_disk_time_write",
+        "partial_glob": "disk-sda1/disk_time-*"
+    },
+    "disk-sda_disk_merged_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sda_disk_merged_read",
         "partial_glob": "disk-sda/disk_merged-*"
     },
-    "disk-sda_disk_octets": {
+    "disk-sda_disk_merged_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sda_disk_octets",
+        "column_name": "write",
+        "name": "disk-sda_disk_merged_write",
+        "partial_glob": "disk-sda/disk_merged-*"
+    },
+    "disk-sda_disk_octets_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sda_disk_octets_read",
         "partial_glob": "disk-sda/disk_octets-*"
     },
-    "disk-sda_disk_ops": {
+    "disk-sda_disk_octets_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sda_disk_ops",
+        "column_name": "write",
+        "name": "disk-sda_disk_octets_write",
+        "partial_glob": "disk-sda/disk_octets-*"
+    },
+    "disk-sda_disk_ops_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sda_disk_ops_read",
         "partial_glob": "disk-sda/disk_ops-*"
     },
-    "disk-sda_disk_time": {
+    "disk-sda_disk_ops_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sda_disk_time",
+        "column_name": "write",
+        "name": "disk-sda_disk_ops_write",
+        "partial_glob": "disk-sda/disk_ops-*"
+    },
+    "disk-sda_disk_time_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sda_disk_time_read",
         "partial_glob": "disk-sda/disk_time-*"
     },
-    "disk-sdb1_disk_merged": {
+    "disk-sda_disk_time_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdb1_disk_merged",
+        "column_name": "write",
+        "name": "disk-sda_disk_time_write",
+        "partial_glob": "disk-sda/disk_time-*"
+    },
+    "disk-sdb1_disk_merged_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdb1_disk_merged_read",
         "partial_glob": "disk-sdb1/disk_merged-*"
     },
-    "disk-sdb1_disk_octets": {
+    "disk-sdb1_disk_merged_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdb1_disk_octets",
+        "column_name": "write",
+        "name": "disk-sdb1_disk_merged_write",
+        "partial_glob": "disk-sdb1/disk_merged-*"
+    },
+    "disk-sdb1_disk_octets_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdb1_disk_octets_read",
         "partial_glob": "disk-sdb1/disk_octets-*"
     },
-    "disk-sdb1_disk_ops": {
+    "disk-sdb1_disk_octets_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdb1_disk_ops",
+        "column_name": "write",
+        "name": "disk-sdb1_disk_octets_write",
+        "partial_glob": "disk-sdb1/disk_octets-*"
+    },
+    "disk-sdb1_disk_ops_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdb1_disk_ops_read",
         "partial_glob": "disk-sdb1/disk_ops-*"
     },
-    "disk-sdb1_disk_time": {
+    "disk-sdb1_disk_ops_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdb1_disk_time",
+        "column_name": "write",
+        "name": "disk-sdb1_disk_ops_write",
+        "partial_glob": "disk-sdb1/disk_ops-*"
+    },
+    "disk-sdb1_disk_time_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdb1_disk_time_read",
         "partial_glob": "disk-sdb1/disk_time-*"
     },
-    "disk-sdb_disk_merged": {
+    "disk-sdb1_disk_time_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdb_disk_merged",
+        "column_name": "write",
+        "name": "disk-sdb1_disk_time_write",
+        "partial_glob": "disk-sdb1/disk_time-*"
+    },
+    "disk-sdb_disk_merged_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdb_disk_merged_read",
         "partial_glob": "disk-sdb/disk_merged-*"
     },
-    "disk-sdb_disk_octets": {
+    "disk-sdb_disk_merged_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdb_disk_octets",
+        "column_name": "write",
+        "name": "disk-sdb_disk_merged_write",
+        "partial_glob": "disk-sdb/disk_merged-*"
+    },
+    "disk-sdb_disk_octets_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdb_disk_octets_read",
         "partial_glob": "disk-sdb/disk_octets-*"
     },
-    "disk-sdb_disk_ops": {
+    "disk-sdb_disk_octets_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdb_disk_ops",
+        "column_name": "write",
+        "name": "disk-sdb_disk_octets_write",
+        "partial_glob": "disk-sdb/disk_octets-*"
+    },
+    "disk-sdb_disk_ops_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdb_disk_ops_read",
         "partial_glob": "disk-sdb/disk_ops-*"
     },
-    "disk-sdb_disk_time": {
+    "disk-sdb_disk_ops_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdb_disk_time",
+        "column_name": "write",
+        "name": "disk-sdb_disk_ops_write",
+        "partial_glob": "disk-sdb/disk_ops-*"
+    },
+    "disk-sdb_disk_time_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdb_disk_time_read",
         "partial_glob": "disk-sdb/disk_time-*"
     },
-    "disk-sdc1_disk_merged": {
+    "disk-sdb_disk_time_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdc1_disk_merged",
+        "column_name": "write",
+        "name": "disk-sdb_disk_time_write",
+        "partial_glob": "disk-sdb/disk_time-*"
+    },
+    "disk-sdc1_disk_merged_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdc1_disk_merged_read",
         "partial_glob": "disk-sdc1/disk_merged-*"
     },
-    "disk-sdc1_disk_octets": {
+    "disk-sdc1_disk_merged_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdc1_disk_octets",
+        "column_name": "write",
+        "name": "disk-sdc1_disk_merged_write",
+        "partial_glob": "disk-sdc1/disk_merged-*"
+    },
+    "disk-sdc1_disk_octets_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdc1_disk_octets_read",
         "partial_glob": "disk-sdc1/disk_octets-*"
     },
-    "disk-sdc1_disk_ops": {
+    "disk-sdc1_disk_octets_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdc1_disk_ops",
+        "column_name": "write",
+        "name": "disk-sdc1_disk_octets_write",
+        "partial_glob": "disk-sdc1/disk_octets-*"
+    },
+    "disk-sdc1_disk_ops_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdc1_disk_ops_read",
         "partial_glob": "disk-sdc1/disk_ops-*"
     },
-    "disk-sdc1_disk_time": {
+    "disk-sdc1_disk_ops_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdc1_disk_time",
+        "column_name": "write",
+        "name": "disk-sdc1_disk_ops_write",
+        "partial_glob": "disk-sdc1/disk_ops-*"
+    },
+    "disk-sdc1_disk_time_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdc1_disk_time_read",
         "partial_glob": "disk-sdc1/disk_time-*"
     },
-    "disk-sdc_disk_merged": {
+    "disk-sdc1_disk_time_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdc_disk_merged",
+        "column_name": "write",
+        "name": "disk-sdc1_disk_time_write",
+        "partial_glob": "disk-sdc1/disk_time-*"
+    },
+    "disk-sdc_disk_merged_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdc_disk_merged_read",
         "partial_glob": "disk-sdc/disk_merged-*"
     },
-    "disk-sdc_disk_octets": {
+    "disk-sdc_disk_merged_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdc_disk_octets",
+        "column_name": "write",
+        "name": "disk-sdc_disk_merged_write",
+        "partial_glob": "disk-sdc/disk_merged-*"
+    },
+    "disk-sdc_disk_octets_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdc_disk_octets_read",
         "partial_glob": "disk-sdc/disk_octets-*"
     },
-    "disk-sdc_disk_ops": {
+    "disk-sdc_disk_octets_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdc_disk_ops",
+        "column_name": "write",
+        "name": "disk-sdc_disk_octets_write",
+        "partial_glob": "disk-sdc/disk_octets-*"
+    },
+    "disk-sdc_disk_ops_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdc_disk_ops_read",
         "partial_glob": "disk-sdc/disk_ops-*"
     },
-    "disk-sdc_disk_time": {
+    "disk-sdc_disk_ops_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdc_disk_time",
+        "column_name": "write",
+        "name": "disk-sdc_disk_ops_write",
+        "partial_glob": "disk-sdc/disk_ops-*"
+    },
+    "disk-sdc_disk_time_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdc_disk_time_read",
         "partial_glob": "disk-sdc/disk_time-*"
     },
-    "disk-sdd1_disk_merged": {
+    "disk-sdc_disk_time_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdd1_disk_merged",
+        "column_name": "write",
+        "name": "disk-sdc_disk_time_write",
+        "partial_glob": "disk-sdc/disk_time-*"
+    },
+    "disk-sdd1_disk_merged_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdd1_disk_merged_read",
         "partial_glob": "disk-sdd1/disk_merged-*"
     },
-    "disk-sdd1_disk_octets": {
+    "disk-sdd1_disk_merged_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdd1_disk_octets",
+        "column_name": "write",
+        "name": "disk-sdd1_disk_merged_write",
+        "partial_glob": "disk-sdd1/disk_merged-*"
+    },
+    "disk-sdd1_disk_octets_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdd1_disk_octets_read",
         "partial_glob": "disk-sdd1/disk_octets-*"
     },
-    "disk-sdd1_disk_ops": {
+    "disk-sdd1_disk_octets_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdd1_disk_ops",
+        "column_name": "write",
+        "name": "disk-sdd1_disk_octets_write",
+        "partial_glob": "disk-sdd1/disk_octets-*"
+    },
+    "disk-sdd1_disk_ops_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdd1_disk_ops_read",
         "partial_glob": "disk-sdd1/disk_ops-*"
     },
-    "disk-sdd1_disk_time": {
+    "disk-sdd1_disk_ops_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdd1_disk_time",
+        "column_name": "write",
+        "name": "disk-sdd1_disk_ops_write",
+        "partial_glob": "disk-sdd1/disk_ops-*"
+    },
+    "disk-sdd1_disk_time_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdd1_disk_time_read",
         "partial_glob": "disk-sdd1/disk_time-*"
     },
-    "disk-sdd2_disk_merged": {
+    "disk-sdd1_disk_time_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdd2_disk_merged",
+        "column_name": "write",
+        "name": "disk-sdd1_disk_time_write",
+        "partial_glob": "disk-sdd1/disk_time-*"
+    },
+    "disk-sdd2_disk_merged_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdd2_disk_merged_read",
         "partial_glob": "disk-sdd2/disk_merged-*"
     },
-    "disk-sdd2_disk_octets": {
+    "disk-sdd2_disk_merged_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdd2_disk_octets",
+        "column_name": "write",
+        "name": "disk-sdd2_disk_merged_write",
+        "partial_glob": "disk-sdd2/disk_merged-*"
+    },
+    "disk-sdd2_disk_octets_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdd2_disk_octets_read",
         "partial_glob": "disk-sdd2/disk_octets-*"
     },
-    "disk-sdd2_disk_ops": {
+    "disk-sdd2_disk_octets_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdd2_disk_ops",
+        "column_name": "write",
+        "name": "disk-sdd2_disk_octets_write",
+        "partial_glob": "disk-sdd2/disk_octets-*"
+    },
+    "disk-sdd2_disk_ops_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdd2_disk_ops_read",
         "partial_glob": "disk-sdd2/disk_ops-*"
     },
-    "disk-sdd5_disk_merged": {
+    "disk-sdd2_disk_ops_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdd5_disk_merged",
+        "column_name": "write",
+        "name": "disk-sdd2_disk_ops_write",
+        "partial_glob": "disk-sdd2/disk_ops-*"
+    },
+    "disk-sdd5_disk_merged_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdd5_disk_merged_read",
         "partial_glob": "disk-sdd5/disk_merged-*"
     },
-    "disk-sdd5_disk_octets": {
+    "disk-sdd5_disk_merged_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdd5_disk_octets",
+        "column_name": "write",
+        "name": "disk-sdd5_disk_merged_write",
+        "partial_glob": "disk-sdd5/disk_merged-*"
+    },
+    "disk-sdd5_disk_octets_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdd5_disk_octets_read",
         "partial_glob": "disk-sdd5/disk_octets-*"
     },
-    "disk-sdd5_disk_ops": {
+    "disk-sdd5_disk_octets_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdd5_disk_ops",
+        "column_name": "write",
+        "name": "disk-sdd5_disk_octets_write",
+        "partial_glob": "disk-sdd5/disk_octets-*"
+    },
+    "disk-sdd5_disk_ops_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdd5_disk_ops_read",
         "partial_glob": "disk-sdd5/disk_ops-*"
     },
-    "disk-sdd5_disk_time": {
+    "disk-sdd5_disk_ops_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdd5_disk_time",
+        "column_name": "write",
+        "name": "disk-sdd5_disk_ops_write",
+        "partial_glob": "disk-sdd5/disk_ops-*"
+    },
+    "disk-sdd5_disk_time_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdd5_disk_time_read",
         "partial_glob": "disk-sdd5/disk_time-*"
     },
-    "disk-sdd_disk_merged": {
+    "disk-sdd5_disk_time_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdd_disk_merged",
+        "column_name": "write",
+        "name": "disk-sdd5_disk_time_write",
+        "partial_glob": "disk-sdd5/disk_time-*"
+    },
+    "disk-sdd_disk_merged_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdd_disk_merged_read",
         "partial_glob": "disk-sdd/disk_merged-*"
     },
-    "disk-sdd_disk_octets": {
+    "disk-sdd_disk_merged_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdd_disk_octets",
+        "column_name": "write",
+        "name": "disk-sdd_disk_merged_write",
+        "partial_glob": "disk-sdd/disk_merged-*"
+    },
+    "disk-sdd_disk_octets_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdd_disk_octets_read",
         "partial_glob": "disk-sdd/disk_octets-*"
     },
-    "disk-sdd_disk_ops": {
+    "disk-sdd_disk_octets_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdd_disk_ops",
+        "column_name": "write",
+        "name": "disk-sdd_disk_octets_write",
+        "partial_glob": "disk-sdd/disk_octets-*"
+    },
+    "disk-sdd_disk_ops_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdd_disk_ops_read",
         "partial_glob": "disk-sdd/disk_ops-*"
     },
-    "disk-sdd_disk_time": {
+    "disk-sdd_disk_ops_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdd_disk_time",
+        "column_name": "write",
+        "name": "disk-sdd_disk_ops_write",
+        "partial_glob": "disk-sdd/disk_ops-*"
+    },
+    "disk-sdd_disk_time_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdd_disk_time_read",
         "partial_glob": "disk-sdd/disk_time-*"
     },
-    "disk-sde1_disk_merged": {
+    "disk-sdd_disk_time_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sde1_disk_merged",
+        "column_name": "write",
+        "name": "disk-sdd_disk_time_write",
+        "partial_glob": "disk-sdd/disk_time-*"
+    },
+    "disk-sde1_disk_merged_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sde1_disk_merged_read",
         "partial_glob": "disk-sde1/disk_merged-*"
     },
-    "disk-sde1_disk_octets": {
+    "disk-sde1_disk_merged_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sde1_disk_octets",
+        "column_name": "write",
+        "name": "disk-sde1_disk_merged_write",
+        "partial_glob": "disk-sde1/disk_merged-*"
+    },
+    "disk-sde1_disk_octets_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sde1_disk_octets_read",
         "partial_glob": "disk-sde1/disk_octets-*"
     },
-    "disk-sde1_disk_ops": {
+    "disk-sde1_disk_octets_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sde1_disk_ops",
+        "column_name": "write",
+        "name": "disk-sde1_disk_octets_write",
+        "partial_glob": "disk-sde1/disk_octets-*"
+    },
+    "disk-sde1_disk_ops_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sde1_disk_ops_read",
         "partial_glob": "disk-sde1/disk_ops-*"
     },
-    "disk-sde1_disk_time": {
+    "disk-sde1_disk_ops_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sde1_disk_time",
+        "column_name": "write",
+        "name": "disk-sde1_disk_ops_write",
+        "partial_glob": "disk-sde1/disk_ops-*"
+    },
+    "disk-sde1_disk_time_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sde1_disk_time_read",
         "partial_glob": "disk-sde1/disk_time-*"
     },
-    "disk-sde2_disk_merged": {
+    "disk-sde1_disk_time_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sde2_disk_merged",
+        "column_name": "write",
+        "name": "disk-sde1_disk_time_write",
+        "partial_glob": "disk-sde1/disk_time-*"
+    },
+    "disk-sde2_disk_merged_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sde2_disk_merged_read",
         "partial_glob": "disk-sde2/disk_merged-*"
     },
-    "disk-sde2_disk_octets": {
+    "disk-sde2_disk_merged_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sde2_disk_octets",
+        "column_name": "write",
+        "name": "disk-sde2_disk_merged_write",
+        "partial_glob": "disk-sde2/disk_merged-*"
+    },
+    "disk-sde2_disk_octets_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sde2_disk_octets_read",
         "partial_glob": "disk-sde2/disk_octets-*"
     },
-    "disk-sde2_disk_ops": {
+    "disk-sde2_disk_octets_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sde2_disk_ops",
+        "column_name": "write",
+        "name": "disk-sde2_disk_octets_write",
+        "partial_glob": "disk-sde2/disk_octets-*"
+    },
+    "disk-sde2_disk_ops_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sde2_disk_ops_read",
         "partial_glob": "disk-sde2/disk_ops-*"
     },
-    "disk-sde5_disk_merged": {
+    "disk-sde2_disk_ops_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sde5_disk_merged",
+        "column_name": "write",
+        "name": "disk-sde2_disk_ops_write",
+        "partial_glob": "disk-sde2/disk_ops-*"
+    },
+    "disk-sde5_disk_merged_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sde5_disk_merged_read",
         "partial_glob": "disk-sde5/disk_merged-*"
     },
-    "disk-sde5_disk_octets": {
+    "disk-sde5_disk_merged_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sde5_disk_octets",
+        "column_name": "write",
+        "name": "disk-sde5_disk_merged_write",
+        "partial_glob": "disk-sde5/disk_merged-*"
+    },
+    "disk-sde5_disk_octets_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sde5_disk_octets_read",
         "partial_glob": "disk-sde5/disk_octets-*"
     },
-    "disk-sde5_disk_ops": {
+    "disk-sde5_disk_octets_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sde5_disk_ops",
+        "column_name": "write",
+        "name": "disk-sde5_disk_octets_write",
+        "partial_glob": "disk-sde5/disk_octets-*"
+    },
+    "disk-sde5_disk_ops_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sde5_disk_ops_read",
         "partial_glob": "disk-sde5/disk_ops-*"
     },
-    "disk-sde5_disk_time": {
+    "disk-sde5_disk_ops_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sde5_disk_time",
+        "column_name": "write",
+        "name": "disk-sde5_disk_ops_write",
+        "partial_glob": "disk-sde5/disk_ops-*"
+    },
+    "disk-sde5_disk_time_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sde5_disk_time_read",
         "partial_glob": "disk-sde5/disk_time-*"
     },
-    "disk-sde_disk_merged": {
+    "disk-sde5_disk_time_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sde_disk_merged",
+        "column_name": "write",
+        "name": "disk-sde5_disk_time_write",
+        "partial_glob": "disk-sde5/disk_time-*"
+    },
+    "disk-sde_disk_merged_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sde_disk_merged_read",
         "partial_glob": "disk-sde/disk_merged-*"
     },
-    "disk-sde_disk_octets": {
+    "disk-sde_disk_merged_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sde_disk_octets",
+        "column_name": "write",
+        "name": "disk-sde_disk_merged_write",
+        "partial_glob": "disk-sde/disk_merged-*"
+    },
+    "disk-sde_disk_octets_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sde_disk_octets_read",
         "partial_glob": "disk-sde/disk_octets-*"
     },
-    "disk-sde_disk_ops": {
+    "disk-sde_disk_octets_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sde_disk_ops",
+        "column_name": "write",
+        "name": "disk-sde_disk_octets_write",
+        "partial_glob": "disk-sde/disk_octets-*"
+    },
+    "disk-sde_disk_ops_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sde_disk_ops_read",
         "partial_glob": "disk-sde/disk_ops-*"
     },
-    "disk-sde_disk_time": {
+    "disk-sde_disk_ops_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sde_disk_time",
+        "column_name": "write",
+        "name": "disk-sde_disk_ops_write",
+        "partial_glob": "disk-sde/disk_ops-*"
+    },
+    "disk-sde_disk_time_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sde_disk_time_read",
         "partial_glob": "disk-sde/disk_time-*"
     },
-    "disk-sdf1_disk_merged": {
+    "disk-sde_disk_time_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdf1_disk_merged",
+        "column_name": "write",
+        "name": "disk-sde_disk_time_write",
+        "partial_glob": "disk-sde/disk_time-*"
+    },
+    "disk-sdf1_disk_merged_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdf1_disk_merged_read",
         "partial_glob": "disk-sdf1/disk_merged-*"
     },
-    "disk-sdf1_disk_octets": {
+    "disk-sdf1_disk_merged_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdf1_disk_octets",
+        "column_name": "write",
+        "name": "disk-sdf1_disk_merged_write",
+        "partial_glob": "disk-sdf1/disk_merged-*"
+    },
+    "disk-sdf1_disk_octets_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdf1_disk_octets_read",
         "partial_glob": "disk-sdf1/disk_octets-*"
     },
-    "disk-sdf1_disk_ops": {
+    "disk-sdf1_disk_octets_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdf1_disk_ops",
+        "column_name": "write",
+        "name": "disk-sdf1_disk_octets_write",
+        "partial_glob": "disk-sdf1/disk_octets-*"
+    },
+    "disk-sdf1_disk_ops_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdf1_disk_ops_read",
         "partial_glob": "disk-sdf1/disk_ops-*"
     },
-    "disk-sdf1_disk_time": {
+    "disk-sdf1_disk_ops_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdf1_disk_time",
+        "column_name": "write",
+        "name": "disk-sdf1_disk_ops_write",
+        "partial_glob": "disk-sdf1/disk_ops-*"
+    },
+    "disk-sdf1_disk_time_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdf1_disk_time_read",
         "partial_glob": "disk-sdf1/disk_time-*"
     },
-    "disk-sdf_disk_merged": {
+    "disk-sdf1_disk_time_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdf_disk_merged",
+        "column_name": "write",
+        "name": "disk-sdf1_disk_time_write",
+        "partial_glob": "disk-sdf1/disk_time-*"
+    },
+    "disk-sdf_disk_merged_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdf_disk_merged_read",
         "partial_glob": "disk-sdf/disk_merged-*"
     },
-    "disk-sdf_disk_octets": {
+    "disk-sdf_disk_merged_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdf_disk_octets",
+        "column_name": "write",
+        "name": "disk-sdf_disk_merged_write",
+        "partial_glob": "disk-sdf/disk_merged-*"
+    },
+    "disk-sdf_disk_octets_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdf_disk_octets_read",
         "partial_glob": "disk-sdf/disk_octets-*"
     },
-    "disk-sdf_disk_ops": {
+    "disk-sdf_disk_octets_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdf_disk_ops",
+        "column_name": "write",
+        "name": "disk-sdf_disk_octets_write",
+        "partial_glob": "disk-sdf/disk_octets-*"
+    },
+    "disk-sdf_disk_ops_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdf_disk_ops_read",
         "partial_glob": "disk-sdf/disk_ops-*"
     },
-    "disk-sdf_disk_time": {
+    "disk-sdf_disk_ops_write": {
         "class_type": "FloatStatusItem",
-        "column_name": "disk-sdf_disk_time",
+        "column_name": "write",
+        "name": "disk-sdf_disk_ops_write",
+        "partial_glob": "disk-sdf/disk_ops-*"
+    },
+    "disk-sdf_disk_time_read": {
+        "class_type": "FloatStatusItem",
+        "column_name": "read",
+        "name": "disk-sdf_disk_time_read",
+        "partial_glob": "disk-sdf/disk_time-*"
+    },
+    "disk-sdf_disk_time_write": {
+        "class_type": "FloatStatusItem",
+        "column_name": "write",
+        "name": "disk-sdf_disk_time_write",
         "partial_glob": "disk-sdf/disk_time-*"
     },
     "entropy_entropy": {
         "class_type": "FloatStatusItem",
-        "column_name": "entropy_entropy",
+        "column_name": "value",
+        "name": "entropy_entropy",
         "partial_glob": "entropy/entropy-*"
     },
-    "interface-eth0_if_errors": {
+    "interface-eth0_if_errors_rx": {
         "class_type": "FloatStatusItem",
-        "column_name": "interface-eth0_if_errors",
+        "column_name": "rx",
+        "name": "interface-eth0_if_errors_rx",
         "partial_glob": "interface-eth0/if_errors-*"
     },
-    "interface-eth0_if_octets": {
+    "interface-eth0_if_errors_tx": {
         "class_type": "FloatStatusItem",
-        "column_name": "interface-eth0_if_octets",
+        "column_name": "tx",
+        "name": "interface-eth0_if_errors_tx",
+        "partial_glob": "interface-eth0/if_errors-*"
+    },
+    "interface-eth0_if_octets_rx": {
+        "class_type": "FloatStatusItem",
+        "column_name": "rx",
+        "name": "interface-eth0_if_octets_rx",
         "partial_glob": "interface-eth0/if_octets-*"
     },
-    "interface-eth0_if_packets": {
+    "interface-eth0_if_octets_tx": {
         "class_type": "FloatStatusItem",
-        "column_name": "interface-eth0_if_packets",
+        "column_name": "tx",
+        "name": "interface-eth0_if_octets_tx",
+        "partial_glob": "interface-eth0/if_octets-*"
+    },
+    "interface-eth0_if_packets_rx": {
+        "class_type": "FloatStatusItem",
+        "column_name": "rx",
+        "name": "interface-eth0_if_packets_rx",
         "partial_glob": "interface-eth0/if_packets-*"
     },
-    "interface-eth1_if_errors": {
+    "interface-eth0_if_packets_tx": {
         "class_type": "FloatStatusItem",
-        "column_name": "interface-eth1_if_errors",
+        "column_name": "tx",
+        "name": "interface-eth0_if_packets_tx",
+        "partial_glob": "interface-eth0/if_packets-*"
+    },
+    "interface-eth1_if_errors_rx": {
+        "class_type": "FloatStatusItem",
+        "column_name": "rx",
+        "name": "interface-eth1_if_errors_rx",
         "partial_glob": "interface-eth1/if_errors-*"
     },
-    "interface-eth1_if_octets": {
+    "interface-eth1_if_errors_tx": {
         "class_type": "FloatStatusItem",
-        "column_name": "interface-eth1_if_octets",
+        "column_name": "tx",
+        "name": "interface-eth1_if_errors_tx",
+        "partial_glob": "interface-eth1/if_errors-*"
+    },
+    "interface-eth1_if_octets_rx": {
+        "class_type": "FloatStatusItem",
+        "column_name": "rx",
+        "name": "interface-eth1_if_octets_rx",
         "partial_glob": "interface-eth1/if_octets-*"
     },
-    "interface-eth1_if_packets": {
+    "interface-eth1_if_octets_tx": {
         "class_type": "FloatStatusItem",
-        "column_name": "interface-eth1_if_packets",
+        "column_name": "tx",
+        "name": "interface-eth1_if_octets_tx",
+        "partial_glob": "interface-eth1/if_octets-*"
+    },
+    "interface-eth1_if_packets_rx": {
+        "class_type": "FloatStatusItem",
+        "column_name": "rx",
+        "name": "interface-eth1_if_packets_rx",
         "partial_glob": "interface-eth1/if_packets-*"
     },
-    "interface-eth2_if_errors": {
+    "interface-eth1_if_packets_tx": {
         "class_type": "FloatStatusItem",
-        "column_name": "interface-eth2_if_errors",
+        "column_name": "tx",
+        "name": "interface-eth1_if_packets_tx",
+        "partial_glob": "interface-eth1/if_packets-*"
+    },
+    "interface-eth2_if_errors_rx": {
+        "class_type": "FloatStatusItem",
+        "column_name": "rx",
+        "name": "interface-eth2_if_errors_rx",
         "partial_glob": "interface-eth2/if_errors-*"
     },
-    "interface-eth2_if_octets": {
+    "interface-eth2_if_errors_tx": {
         "class_type": "FloatStatusItem",
-        "column_name": "interface-eth2_if_octets",
+        "column_name": "tx",
+        "name": "interface-eth2_if_errors_tx",
+        "partial_glob": "interface-eth2/if_errors-*"
+    },
+    "interface-eth2_if_octets_rx": {
+        "class_type": "FloatStatusItem",
+        "column_name": "rx",
+        "name": "interface-eth2_if_octets_rx",
         "partial_glob": "interface-eth2/if_octets-*"
     },
-    "interface-eth2_if_packets": {
+    "interface-eth2_if_octets_tx": {
         "class_type": "FloatStatusItem",
-        "column_name": "interface-eth2_if_packets",
+        "column_name": "tx",
+        "name": "interface-eth2_if_octets_tx",
+        "partial_glob": "interface-eth2/if_octets-*"
+    },
+    "interface-eth2_if_packets_rx": {
+        "class_type": "FloatStatusItem",
+        "column_name": "rx",
+        "name": "interface-eth2_if_packets_rx",
         "partial_glob": "interface-eth2/if_packets-*"
     },
-    "interface-eth3_if_errors": {
+    "interface-eth2_if_packets_tx": {
         "class_type": "FloatStatusItem",
-        "column_name": "interface-eth3_if_errors",
+        "column_name": "tx",
+        "name": "interface-eth2_if_packets_tx",
+        "partial_glob": "interface-eth2/if_packets-*"
+    },
+    "interface-eth3_if_errors_rx": {
+        "class_type": "FloatStatusItem",
+        "column_name": "rx",
+        "name": "interface-eth3_if_errors_rx",
         "partial_glob": "interface-eth3/if_errors-*"
     },
-    "interface-eth3_if_octets": {
+    "interface-eth3_if_errors_tx": {
         "class_type": "FloatStatusItem",
-        "column_name": "interface-eth3_if_octets",
+        "column_name": "tx",
+        "name": "interface-eth3_if_errors_tx",
+        "partial_glob": "interface-eth3/if_errors-*"
+    },
+    "interface-eth3_if_octets_rx": {
+        "class_type": "FloatStatusItem",
+        "column_name": "rx",
+        "name": "interface-eth3_if_octets_rx",
         "partial_glob": "interface-eth3/if_octets-*"
     },
-    "interface-eth3_if_packets": {
+    "interface-eth3_if_octets_tx": {
         "class_type": "FloatStatusItem",
-        "column_name": "interface-eth3_if_packets",
+        "column_name": "tx",
+        "name": "interface-eth3_if_octets_tx",
+        "partial_glob": "interface-eth3/if_octets-*"
+    },
+    "interface-eth3_if_packets_rx": {
+        "class_type": "FloatStatusItem",
+        "column_name": "rx",
+        "name": "interface-eth3_if_packets_rx",
         "partial_glob": "interface-eth3/if_packets-*"
     },
-    "interface-lo_if_errors": {
+    "interface-eth3_if_packets_tx": {
         "class_type": "FloatStatusItem",
-        "column_name": "interface-lo_if_errors",
+        "column_name": "tx",
+        "name": "interface-eth3_if_packets_tx",
+        "partial_glob": "interface-eth3/if_packets-*"
+    },
+    "interface-lo_if_errors_rx": {
+        "class_type": "FloatStatusItem",
+        "column_name": "rx",
+        "name": "interface-lo_if_errors_rx",
         "partial_glob": "interface-lo/if_errors-*"
     },
-    "interface-lo_if_octets": {
+    "interface-lo_if_errors_tx": {
         "class_type": "FloatStatusItem",
-        "column_name": "interface-lo_if_octets",
+        "column_name": "tx",
+        "name": "interface-lo_if_errors_tx",
+        "partial_glob": "interface-lo/if_errors-*"
+    },
+    "interface-lo_if_octets_rx": {
+        "class_type": "FloatStatusItem",
+        "column_name": "rx",
+        "name": "interface-lo_if_octets_rx",
         "partial_glob": "interface-lo/if_octets-*"
     },
-    "interface-lo_if_packets": {
+    "interface-lo_if_octets_tx": {
         "class_type": "FloatStatusItem",
-        "column_name": "interface-lo_if_packets",
+        "column_name": "tx",
+        "name": "interface-lo_if_octets_tx",
+        "partial_glob": "interface-lo/if_octets-*"
+    },
+    "interface-lo_if_packets_rx": {
+        "class_type": "FloatStatusItem",
+        "column_name": "rx",
+        "name": "interface-lo_if_packets_rx",
+        "partial_glob": "interface-lo/if_packets-*"
+    },
+    "interface-lo_if_packets_tx": {
+        "class_type": "FloatStatusItem",
+        "column_name": "tx",
+        "name": "interface-lo_if_packets_tx",
         "partial_glob": "interface-lo/if_packets-*"
     },
     "ipmi_temperature-CPU Temp processor (3.1)": {
         "class_type": "FloatStatusItem",
-        "column_name": "ipmi_temperature-CPU Temp processor (3.1)",
+        "column_name": "value",
+        "name": "ipmi_temperature-CPU Temp processor (3.1)",
         "partial_glob": "ipmi/temperature-CPU Temp processor (3.1)-*"
     },
     "ipmi_temperature-DIMMA1 Temp memory_device (32.64)": {
         "class_type": "FloatStatusItem",
-        "column_name": "ipmi_temperature-DIMMA1 Temp memory_device (32.64)",
+        "column_name": "value",
+        "name": "ipmi_temperature-DIMMA1 Temp memory_device (32.64)",
         "partial_glob": "ipmi/temperature-DIMMA1 Temp memory_device (32.64)-*"
     },
     "ipmi_temperature-DIMMB1 Temp memory_device (32.68)": {
         "class_type": "FloatStatusItem",
-        "column_name": "ipmi_temperature-DIMMB1 Temp memory_device (32.68)",
+        "column_name": "value",
+        "name": "ipmi_temperature-DIMMB1 Temp memory_device (32.68)",
         "partial_glob": "ipmi/temperature-DIMMB1 Temp memory_device (32.68)-*"
     },
     "ipmi_temperature-Peripheral Temp system_board (7.2)": {
         "class_type": "FloatStatusItem",
-        "column_name": "ipmi_temperature-Peripheral Temp system_board (7.2)",
+        "column_name": "value",
+        "name": "ipmi_temperature-Peripheral Temp system_board (7.2)",
         "partial_glob": "ipmi/temperature-Peripheral Temp system_board (7.2)-*"
     },
     "ipmi_temperature-System Temp system_board (7.1)": {
         "class_type": "FloatStatusItem",
-        "column_name": "ipmi_temperature-System Temp system_board (7.1)",
+        "column_name": "value",
+        "name": "ipmi_temperature-System Temp system_board (7.1)",
         "partial_glob": "ipmi/temperature-System Temp system_board (7.1)-*"
     },
     "ipmi_voltage-12V system_board (7.17)": {
         "class_type": "FloatStatusItem",
-        "column_name": "ipmi_voltage-12V system_board (7.17)",
+        "column_name": "value",
+        "name": "ipmi_voltage-12V system_board (7.17)",
         "partial_glob": "ipmi/voltage-12V system_board (7.17)-*"
     },
     "ipmi_voltage-3.3V AUX system_board (7.12)": {
         "class_type": "FloatStatusItem",
-        "column_name": "ipmi_voltage-3.3V AUX system_board (7.12)",
+        "column_name": "value",
+        "name": "ipmi_voltage-3.3V AUX system_board (7.12)",
         "partial_glob": "ipmi/voltage-3.3V AUX system_board (7.12)-*"
     },
     "ipmi_voltage-3.3VCC system_board (7.32)": {
         "class_type": "FloatStatusItem",
-        "column_name": "ipmi_voltage-3.3VCC system_board (7.32)",
+        "column_name": "value",
+        "name": "ipmi_voltage-3.3VCC system_board (7.32)",
         "partial_glob": "ipmi/voltage-3.3VCC system_board (7.32)-*"
     },
     "ipmi_voltage-5V Dual system_board (7.15)": {
         "class_type": "FloatStatusItem",
-        "column_name": "ipmi_voltage-5V Dual system_board (7.15)",
+        "column_name": "value",
+        "name": "ipmi_voltage-5V Dual system_board (7.15)",
         "partial_glob": "ipmi/voltage-5V Dual system_board (7.15)-*"
     },
     "ipmi_voltage-5VCC system_board (7.33)": {
         "class_type": "FloatStatusItem",
-        "column_name": "ipmi_voltage-5VCC system_board (7.33)",
+        "column_name": "value",
+        "name": "ipmi_voltage-5VCC system_board (7.33)",
         "partial_glob": "ipmi/voltage-5VCC system_board (7.33)-*"
     },
     "ipmi_voltage-VBAT system_board (7.18)": {
         "class_type": "FloatStatusItem",
-        "column_name": "ipmi_voltage-VBAT system_board (7.18)",
+        "column_name": "value",
+        "name": "ipmi_voltage-VBAT system_board (7.18)",
         "partial_glob": "ipmi/voltage-VBAT system_board (7.18)-*"
     },
     "ipmi_voltage-VCCP processor (3.2)": {
         "class_type": "FloatStatusItem",
-        "column_name": "ipmi_voltage-VCCP processor (3.2)",
+        "column_name": "value",
+        "name": "ipmi_voltage-VCCP processor (3.2)",
         "partial_glob": "ipmi/voltage-VCCP processor (3.2)-*"
     },
     "ipmi_voltage-VDIMM memory_device (32.1)": {
         "class_type": "FloatStatusItem",
-        "column_name": "ipmi_voltage-VDIMM memory_device (32.1)",
+        "column_name": "value",
+        "name": "ipmi_voltage-VDIMM memory_device (32.1)",
         "partial_glob": "ipmi/voltage-VDIMM memory_device (32.1)-*"
     },
-    "load_load": {
+    "load_load_longterm": {
         "class_type": "FloatStatusItem",
-        "column_name": "load_load",
+        "column_name": "longterm",
+        "name": "load_load_longterm",
+        "partial_glob": "load/load-*"
+    },
+    "load_load_midterm": {
+        "class_type": "FloatStatusItem",
+        "column_name": "midterm",
+        "name": "load_load_midterm",
+        "partial_glob": "load/load-*"
+    },
+    "load_load_shortterm": {
+        "class_type": "FloatStatusItem",
+        "column_name": "shortterm",
+        "name": "load_load_shortterm",
         "partial_glob": "load/load-*"
     },
     "md-0_md_disks-active": {
         "class_type": "FloatStatusItem",
-        "column_name": "md-0_md_disks-active",
+        "column_name": "value",
+        "name": "md-0_md_disks-active",
         "partial_glob": "md-0/md_disks-active-*"
     },
     "md-0_md_disks-failed": {
         "class_type": "FloatStatusItem",
-        "column_name": "md-0_md_disks-failed",
+        "column_name": "value",
+        "name": "md-0_md_disks-failed",
         "partial_glob": "md-0/md_disks-failed-*"
     },
     "md-0_md_disks-missing": {
         "class_type": "FloatStatusItem",
-        "column_name": "md-0_md_disks-missing",
+        "column_name": "value",
+        "name": "md-0_md_disks-missing",
         "partial_glob": "md-0/md_disks-missing-*"
     },
     "md-0_md_disks-spare": {
         "class_type": "FloatStatusItem",
-        "column_name": "md-0_md_disks-spare",
+        "column_name": "value",
+        "name": "md-0_md_disks-spare",
         "partial_glob": "md-0/md_disks-spare-*"
     },
     "md-1_md_disks-active": {
         "class_type": "FloatStatusItem",
-        "column_name": "md-1_md_disks-active",
+        "column_name": "value",
+        "name": "md-1_md_disks-active",
         "partial_glob": "md-1/md_disks-active-*"
     },
     "md-1_md_disks-failed": {
         "class_type": "FloatStatusItem",
-        "column_name": "md-1_md_disks-failed",
+        "column_name": "value",
+        "name": "md-1_md_disks-failed",
         "partial_glob": "md-1/md_disks-failed-*"
     },
     "md-1_md_disks-missing": {
         "class_type": "FloatStatusItem",
-        "column_name": "md-1_md_disks-missing",
+        "column_name": "value",
+        "name": "md-1_md_disks-missing",
         "partial_glob": "md-1/md_disks-missing-*"
     },
     "md-1_md_disks-spare": {
         "class_type": "FloatStatusItem",
-        "column_name": "md-1_md_disks-spare",
+        "column_name": "value",
+        "name": "md-1_md_disks-spare",
         "partial_glob": "md-1/md_disks-spare-*"
     },
     "memory_memory-buffered": {
         "class_type": "FloatStatusItem",
-        "column_name": "memory_memory-buffered",
+        "column_name": "value",
+        "name": "memory_memory-buffered",
         "partial_glob": "memory/memory-buffered-*"
     },
     "memory_memory-cached": {
         "class_type": "FloatStatusItem",
-        "column_name": "memory_memory-cached",
+        "column_name": "value",
+        "name": "memory_memory-cached",
         "partial_glob": "memory/memory-cached-*"
     },
     "memory_memory-free": {
         "class_type": "FloatStatusItem",
-        "column_name": "memory_memory-free",
+        "column_name": "value",
+        "name": "memory_memory-free",
         "partial_glob": "memory/memory-free-*"
     },
     "memory_memory-used": {
         "class_type": "FloatStatusItem",
-        "column_name": "memory_memory-used",
+        "column_name": "value",
+        "name": "memory_memory-used",
         "partial_glob": "memory/memory-used-*"
     },
     "processes_fork_rate": {
         "class_type": "FloatStatusItem",
-        "column_name": "processes_fork_rate",
+        "column_name": "value",
+        "name": "processes_fork_rate",
         "partial_glob": "processes/fork_rate-*"
     },
     "processes_ps_state-blocked": {
         "class_type": "FloatStatusItem",
-        "column_name": "processes_ps_state-blocked",
+        "column_name": "value",
+        "name": "processes_ps_state-blocked",
         "partial_glob": "processes/ps_state-blocked-*"
     },
     "processes_ps_state-paging": {
         "class_type": "FloatStatusItem",
-        "column_name": "processes_ps_state-paging",
+        "column_name": "value",
+        "name": "processes_ps_state-paging",
         "partial_glob": "processes/ps_state-paging-*"
     },
     "processes_ps_state-running": {
         "class_type": "FloatStatusItem",
-        "column_name": "processes_ps_state-running",
+        "column_name": "value",
+        "name": "processes_ps_state-running",
         "partial_glob": "processes/ps_state-running-*"
     },
     "processes_ps_state-sleeping": {
         "class_type": "FloatStatusItem",
-        "column_name": "processes_ps_state-sleeping",
+        "column_name": "value",
+        "name": "processes_ps_state-sleeping",
         "partial_glob": "processes/ps_state-sleeping-*"
     },
     "processes_ps_state-stopped": {
         "class_type": "FloatStatusItem",
-        "column_name": "processes_ps_state-stopped",
+        "column_name": "value",
+        "name": "processes_ps_state-stopped",
         "partial_glob": "processes/ps_state-stopped-*"
     },
     "processes_ps_state-zombies": {
         "class_type": "FloatStatusItem",
-        "column_name": "processes_ps_state-zombies",
+        "column_name": "value",
+        "name": "processes_ps_state-zombies",
         "partial_glob": "processes/ps_state-zombies-*"
     },
     "protocols-Udp_protocol_counter-InCsumErrors": {
         "class_type": "FloatStatusItem",
-        "column_name": "protocols-Udp_protocol_counter-InCsumErrors",
+        "column_name": "value",
+        "name": "protocols-Udp_protocol_counter-InCsumErrors",
         "partial_glob": "protocols-Udp/protocol_counter-InCsumErrors-*"
     },
     "protocols-Udp_protocol_counter-InDatagrams": {
         "class_type": "FloatStatusItem",
-        "column_name": "protocols-Udp_protocol_counter-InDatagrams",
+        "column_name": "value",
+        "name": "protocols-Udp_protocol_counter-InDatagrams",
         "partial_glob": "protocols-Udp/protocol_counter-InDatagrams-*"
     },
     "protocols-Udp_protocol_counter-InErrors": {
         "class_type": "FloatStatusItem",
-        "column_name": "protocols-Udp_protocol_counter-InErrors",
+        "column_name": "value",
+        "name": "protocols-Udp_protocol_counter-InErrors",
         "partial_glob": "protocols-Udp/protocol_counter-InErrors-*"
     },
     "protocols-Udp_protocol_counter-NoPorts": {
         "class_type": "FloatStatusItem",
-        "column_name": "protocols-Udp_protocol_counter-NoPorts",
+        "column_name": "value",
+        "name": "protocols-Udp_protocol_counter-NoPorts",
         "partial_glob": "protocols-Udp/protocol_counter-NoPorts-*"
     },
     "protocols-Udp_protocol_counter-OutDatagrams": {
         "class_type": "FloatStatusItem",
-        "column_name": "protocols-Udp_protocol_counter-OutDatagrams",
+        "column_name": "value",
+        "name": "protocols-Udp_protocol_counter-OutDatagrams",
         "partial_glob": "protocols-Udp/protocol_counter-OutDatagrams-*"
     },
     "protocols-Udp_protocol_counter-RcvbufErrors": {
         "class_type": "FloatStatusItem",
-        "column_name": "protocols-Udp_protocol_counter-RcvbufErrors",
+        "column_name": "value",
+        "name": "protocols-Udp_protocol_counter-RcvbufErrors",
         "partial_glob": "protocols-Udp/protocol_counter-RcvbufErrors-*"
     },
     "protocols-Udp_protocol_counter-SndbufErrors": {
         "class_type": "FloatStatusItem",
-        "column_name": "protocols-Udp_protocol_counter-SndbufErrors",
+        "column_name": "value",
+        "name": "protocols-Udp_protocol_counter-SndbufErrors",
         "partial_glob": "protocols-Udp/protocol_counter-SndbufErrors-*"
     },
     "sensors-coretemp-isa-0000_temperature-temp2": {
         "class_type": "FloatStatusItem",
-        "column_name": "sensors-coretemp-isa-0000_temperature-temp2",
+        "column_name": "value",
+        "name": "sensors-coretemp-isa-0000_temperature-temp2",
         "partial_glob": "sensors-coretemp-isa-0000/temperature-temp2-*"
     },
     "sensors-coretemp-isa-0000_temperature-temp3": {
         "class_type": "FloatStatusItem",
-        "column_name": "sensors-coretemp-isa-0000_temperature-temp3",
+        "column_name": "value",
+        "name": "sensors-coretemp-isa-0000_temperature-temp3",
         "partial_glob": "sensors-coretemp-isa-0000/temperature-temp3-*"
     },
     "sensors-coretemp-isa-0000_temperature-temp4": {
         "class_type": "FloatStatusItem",
-        "column_name": "sensors-coretemp-isa-0000_temperature-temp4",
+        "column_name": "value",
+        "name": "sensors-coretemp-isa-0000_temperature-temp4",
         "partial_glob": "sensors-coretemp-isa-0000/temperature-temp4-*"
     },
     "sensors-coretemp-isa-0000_temperature-temp5": {
         "class_type": "FloatStatusItem",
-        "column_name": "sensors-coretemp-isa-0000_temperature-temp5",
+        "column_name": "value",
+        "name": "sensors-coretemp-isa-0000_temperature-temp5",
         "partial_glob": "sensors-coretemp-isa-0000/temperature-temp5-*"
     },
     "sensors-coretemp-isa-0000_temperature-temp6": {
         "class_type": "FloatStatusItem",
-        "column_name": "sensors-coretemp-isa-0000_temperature-temp6",
+        "column_name": "value",
+        "name": "sensors-coretemp-isa-0000_temperature-temp6",
         "partial_glob": "sensors-coretemp-isa-0000/temperature-temp6-*"
     },
     "sensors-coretemp-isa-0000_temperature-temp7": {
         "class_type": "FloatStatusItem",
-        "column_name": "sensors-coretemp-isa-0000_temperature-temp7",
+        "column_name": "value",
+        "name": "sensors-coretemp-isa-0000_temperature-temp7",
         "partial_glob": "sensors-coretemp-isa-0000/temperature-temp7-*"
     },
     "sensors-coretemp-isa-0000_temperature-temp8": {
         "class_type": "FloatStatusItem",
-        "column_name": "sensors-coretemp-isa-0000_temperature-temp8",
+        "column_name": "value",
+        "name": "sensors-coretemp-isa-0000_temperature-temp8",
         "partial_glob": "sensors-coretemp-isa-0000/temperature-temp8-*"
     },
     "sensors-coretemp-isa-0000_temperature-temp9": {
         "class_type": "FloatStatusItem",
-        "column_name": "sensors-coretemp-isa-0000_temperature-temp9",
+        "column_name": "value",
+        "name": "sensors-coretemp-isa-0000_temperature-temp9",
         "partial_glob": "sensors-coretemp-isa-0000/temperature-temp9-*"
     },
     "sensors-jc42-i2c-1-18_temperature-temp1": {
         "class_type": "FloatStatusItem",
-        "column_name": "sensors-jc42-i2c-1-18_temperature-temp1",
+        "column_name": "value",
+        "name": "sensors-jc42-i2c-1-18_temperature-temp1",
         "partial_glob": "sensors-jc42-i2c-1-18/temperature-temp1-*"
     },
     "swap_swap-cached": {
         "class_type": "FloatStatusItem",
-        "column_name": "swap_swap-cached",
+        "column_name": "value",
+        "name": "swap_swap-cached",
         "partial_glob": "swap/swap-cached-*"
     },
     "swap_swap-free": {
         "class_type": "FloatStatusItem",
-        "column_name": "swap_swap-free",
+        "column_name": "value",
+        "name": "swap_swap-free",
         "partial_glob": "swap/swap-free-*"
     },
     "swap_swap-used": {
         "class_type": "FloatStatusItem",
-        "column_name": "swap_swap-used",
+        "column_name": "value",
+        "name": "swap_swap-used",
         "partial_glob": "swap/swap-used-*"
     },
     "swap_swap_io-in": {
         "class_type": "FloatStatusItem",
-        "column_name": "swap_swap_io-in",
+        "column_name": "value",
+        "name": "swap_swap_io-in",
         "partial_glob": "swap/swap_io-in-*"
     },
     "swap_swap_io-out": {
         "class_type": "FloatStatusItem",
-        "column_name": "swap_swap_io-out",
+        "column_name": "value",
+        "name": "swap_swap_io-out",
         "partial_glob": "swap/swap_io-out-*"
     },
     "users_users": {
         "class_type": "FloatStatusItem",
-        "column_name": "users_users",
+        "column_name": "value",
+        "name": "users_users",
         "partial_glob": "users/users-*"
     }
 }
