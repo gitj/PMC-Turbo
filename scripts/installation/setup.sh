@@ -11,9 +11,6 @@ autoreconf -vi
 make -j8
 sudo make install
 popd
-sudo cp -r etc/supervisor /etc/
-sudo supervisorctl reread
-sudo supervisorctl update
 pushd $HOME
 curl -L -O https://cdn.alliedvision.com/fileadmin/content/software/software/Vimba/Vimba_v2.0_Linux.tgz
 tar -xf Vimba_v2.0_Linux.tgz
@@ -25,7 +22,7 @@ popd
 pushd $HOME/Downloads/
 wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
 bash miniconda.sh -b -p $HOME/miniconda
-export PATH="$HOME/miniconda/bin:$PATH"
+export PATH="$HOME/miniconda/bin:$VIMBA_ROOT/Tools/Viewer/Bin/x86_64bit:$PATH"
 echo "export PATH=/home/pmc/miniconda/bin:\$PATH" >> ~/.bashrc
 hash -r
 conda update -y conda
@@ -53,3 +50,7 @@ popd
 #echo "PYTHONPATH=$PMC_TURBO" >> $HOME/.bashrc
 cd $PMC_TURBO
 nosetests -v -s
+
+sudo cp -r etc/supervisor /etc/
+sudo supervisorctl reread
+sudo supervisorctl update
