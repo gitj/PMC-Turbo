@@ -163,6 +163,19 @@ run_command("sudo mdadm --grow %s --raid-devices=%d" % (var_device, len(var_part
 time.sleep(1)
 run_command("cat /proc/mdstat")
 
+logger.info("creating /etc/mdadm/mdadm.conf")
+tempdir = tempfile.mkdtemp()
+scan_file = os.path.join(tempdir,'scan.conf')
+old_mdadm_conf_lines = open('/etc/mdadm/mdadm.conf').read().splitlines()
+mdadm_conf_lines = [line for line in old_mdadm_conf_lines if not line.startswith('ARRAY')]
+mdadm_conf_lines += ['\n# ARRAY information created at %s' % time.ctime()]
+with open(scan_file,'w') as fh:
+    fh.write('\n'.join(mdadm_conf_lines))
+
+run_command("sudo mdadm --detail --scan >> %s" % scan_file)
+run_command("cp %s /etc/mdadm/mdadm.conf" % scan_file)
+
+
 new_fstab_lines = []
 big_disk_real_devices = real_device_to_by_id.keys()
 big_disk_real_devices.sort()
@@ -193,6 +206,10 @@ run_command('sudo cp %s /etc/fstab' % tmpfile.name)
 logger.info("fstab is now:\n\n%s\n" % (open('/etc/fstab').read()))
 
 
+logger.info("installing grub")
+for partition in root_partitions:
+    if partition[:3] in BIG_DISKS_TO_RAID:
+        run_command("sudo grub-install /dev/%s" % partition[:3])
 
 
 
