@@ -110,7 +110,7 @@ class ChargeControllerLogger():
             print self.daemon.register(self, objectId='chargecontroller')
 
     def create_file(self, log_dir=LOG_DIR):
-        self.filename = os.path.join(log_dir, (self.name + '_' + time.strftime('%Y-%m-%d_%H%M%S.csv')))
+        self.filename = os.path.join(log_dir, (self.name + '_register_' + time.strftime('%Y-%m-%d_%H%M%S.csv')))
         self.file = open(self.filename, 'a')
         header = ('# %s Serial No %s\n' % (self.charge_controller.device_name, self.charge_controller.serial_number))
         self.file.write(header)
