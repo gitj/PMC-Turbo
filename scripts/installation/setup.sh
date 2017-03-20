@@ -1,4 +1,6 @@
 #!/bin/bash
+#PMC_TURBO=$HOME/pmchome/pmc-turbo-devel
+PMC_TURBO=$HOME/pmc-turbo
 sudo cp etc/interfaces.d/eth1 /etc/network/interfaces.d/
 sudo /etc/init.d/networking restart
 pushd $HOME/Downloads/
@@ -26,11 +28,11 @@ bash miniconda.sh -b -p $HOME/miniconda
 export PATH="$HOME/miniconda/bin:$PATH"
 echo "export PATH=/home/pmc/miniconda/bin:\$PATH" >> ~/.bashrc
 hash -r
-conda update -q conda
+conda update -y conda
   # Useful for debugging any issues with conda
 conda info -a
-pushd $HOME/pmc-turbo
-conda env create -q -n pmc -f environment.yml
+pushd $PMC_TURBO
+conda env create -n pmc -f environment.yml
 popd
 source activate pmc
 sudo apt-get install libusb-1.0-0-dev  #this should be preseeded, but just in case
@@ -43,10 +45,11 @@ git clone --depth=10 --branch=master https://github.com/labjack/LabJackPython.gi
 cd LabJackPython
 pip install .
 popd
-python -c "import u3; u3 = U3.U3()"
-pushd $HOME/pmc_turbo/camera/pycamera/_pyvimba
+# this test wont work until after reboot:
+#python -c "import u3; lj = u3.U3()"
+pushd $PMC_TURBO/pmc_turbo/camera/pycamera/_pyvimba
 make
 popd
-echo $HOME/pmc-turbo >> $HOME/.bashrc
-cd $HOME/pmc-turbo
-nosetests -v -s --with-coverage --cover-erase --cover-xml --cover-inclusive --cover-package=pmc_turbo
+#echo "PYTHONPATH=$PMC_TURBO" >> $HOME/.bashrc
+cd $PMC_TURBO
+nosetests -v -s
