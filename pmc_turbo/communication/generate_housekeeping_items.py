@@ -19,8 +19,8 @@ def get_range_outline(partial_glob, json_filename=None):
             name = colname
             normal_string, good_string, critical_string = '', '', ''
             result_dict[name] = {'normal_string': normal_string,
-                                    'good_string': good_string,
-                                    'critical_string': critical_string}
+                                 'good_string': good_string,
+                                 'critical_string': critical_string}
 
         else:
             # FloatStatusItem
@@ -30,12 +30,12 @@ def get_range_outline(partial_glob, json_filename=None):
             warning_range_low, warning_range_high = 'nan', 'nan'
             scaling = 1.0
             result_dict[name] = {'normal_range_low': normal_range_low,
-                                    'normal_range_high': normal_range_high,
-                                    'good_range_low': good_range_low,
-                                    'good_range_high': good_range_high,
-                                    'warning_range_low': warning_range_low,
-                                    'warning_range_high': warning_range_high,
-                                    'scaling': scaling}
+                                 'normal_range_high': normal_range_high,
+                                 'good_range_low': good_range_low,
+                                 'good_range_high': good_range_high,
+                                 'warning_range_low': warning_range_low,
+                                 'warning_range_high': warning_range_high,
+                                 'scaling': scaling}
 
     if json_filename:
         with open(json_filename, 'w') as fh:
@@ -46,8 +46,27 @@ def get_range_outline(partial_glob, json_filename=None):
 
 
 def get_collectd_items(json_filename=None):
-    collectd_files = glob.glob('/var/lib/collectd/csv/*/*/*-2017-01-25')
+    collectd_files = glob.glob('/var/lib/collectd/csv/*/*/*')
+
+    unique_files = []
+    for fn in collectd_files:
+        start = fn[:-10]
+        if start not in unique_files:
+            unique_files.append(start)
+
+    collectd_files = []
+
+    for start in unique_files:
+        try:
+            print start
+            print glob.glob(start+'*')
+            collectd_files.append(glob.glob(start+'*')[0])
+        except Exception:
+            continue
+    #return
+
     collectd_files.sort()
+
     result_dict = {}
     range_result_dict = {}
     for fn in collectd_files:
@@ -60,7 +79,8 @@ def get_collectd_items(json_filename=None):
             if colname != 'value':
                 name += '_' + colname
 
-            result_dict[name] = {'name': name, 'partial_glob': partial_glob, 'column_name': colname, 'class_type': class_type}
+            result_dict[name] = {'name': name, 'partial_glob': partial_glob, 'column_name': colname,
+                                 'class_type': class_type}
 
             good_range_low, good_range_high = 'nan', 'nan'
             normal_range_low, normal_range_high = 'nan', 'nan'
@@ -101,11 +121,13 @@ def get_items(partial_glob, json_filename=None):
         if col.dtype == 'O':  # string columns are Objects
             class_type = 'StringStatusItem'
             name = colname
-            result_dict[name] = {'name': name, 'partial_glob': partial_glob, 'column_name': colname, 'class_type': class_type}
+            result_dict[name] = {'name': name, 'partial_glob': partial_glob, 'column_name': colname,
+                                 'class_type': class_type}
         else:
             class_type = 'FloatStatusItem'
             name = colname
-            result_dict[name] = {'name': name, 'partial_glob': partial_glob, 'column_name': colname, 'class_type': class_type}
+            result_dict[name] = {'name': name, 'partial_glob': partial_glob, 'column_name': colname,
+                                 'class_type': class_type}
 
     if json_filename:
         with open(json_filename, 'w') as fh:
@@ -125,17 +147,28 @@ def get_camera_items(json_filename=None):
 
 
 def get_labjack_items(json_filename=None):
-    return get_items(partial_glob='/home/pmc/logs/housekeeping/labjack/*.csv', json_filename=json_filename)
+    a = get_items(partial_glob='/home/pmc/logs/housekeeping/labjack/*.csv', json_filename=json_filename + '.json')
 
-
-def get_charge_controller_items(json_filename=None):
-    a = get_items(partial_glob='/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv',
-                  json_filename=json_filename + '.json')
-
-    b = get_range_outline(partial_glob='/home/pmc/logs/housekeeping/charge_controller/*-??_??????.csv',
+    b = get_range_outline(partial_glob='/home/pmc/logs/housekeeping/labjack/*.csv',
                           json_filename=json_filename + '_ranges.json')
 
     return a, b
+
+
+def get_charge_controller_items(json_filename=None):
+    register_path = '/home/pmc/logs/housekeeping/charge_controller/*register*.csv'
+
+    eeprom_path = '/home/pmc/logs/housekeeping/charge_controller/*eeprom*.csv'
+
+    a = get_items(partial_glob=register_path, json_filename=json_filename + '_register.json')
+
+    b = get_range_outline(partial_glob=register_path, json_filename=json_filename + '_register_ranges.json')
+
+    c = get_items(partial_glob=eeprom_path, json_filename=json_filename + '_eeprom.json')
+
+    d = get_range_outline(partial_glob=eeprom_path, json_filename=json_filename + '_eeprom_ranges.json')
+
+    return a, b, c, d
 
 
 all_collectd_sensors = ['cpu-0/cpu-idle-*',
