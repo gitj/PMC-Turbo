@@ -1,0 +1,65 @@
+{
+    "ITEMS": {
+        "ain0": {
+            "class_type": "FloatStatusItem",
+            "column_name": "ain0",
+            "name": "ain0",
+            "partial_glob": "*"
+        },
+        "ain1": {
+            "class_type": "FloatStatusItem",
+            "column_name": "ain1",
+            "name": "ain1",
+            "partial_glob": "*"
+        },
+        "ain2": {
+            "class_type": "FloatStatusItem",
+            "column_name": "ain2",
+            "name": "ain2",
+            "partial_glob": "*"
+        },
+        "ain3": {
+            "class_type": "FloatStatusItem",
+            "column_name": "ain3",
+            "name": "ain3",
+            "partial_glob": "*"
+        },
+        "ain31": {
+            "class_type": "FloatStatusItem",
+            "column_name": "ain31",
+            "name": "ain31",
+            "partial_glob": "*"
+        },
+        "ain4": {
+            "class_type": "FloatStatusItem",
+            "column_name": "ain4",
+            "name": "ain4",
+            "partial_glob": "*"
+        },
+        "ain5": {
+            "class_type": "FloatStatusItem",
+            "column_name": "ain5",
+            "name": "ain5",
+            "partial_glob": "*"
+        },
+        "ain6": {
+            "class_type": "FloatStatusItem",
+            "column_name": "ain6",
+            "name": "ain6",
+            "partial_glob": "*"
+        },
+        "ain7": {
+            "class_type": "FloatStatusItem",
+            "column_name": "ain7",
+            "name": "ain7",
+            "partial_glob": "*"
+        },
+        "temperature": {
+            "class_type": "FloatStatusItem",
+            "column_name": "temperature",
+            "name": "temperature",
+            "partial_glob": "*"
+        }
+    },
+    "PREAMBLE": "/var/pmclogs/housekeeping/labjack/"
+}

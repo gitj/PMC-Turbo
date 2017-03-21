@@ -1,356 +1,359 @@
 {
-    "AcquisitionFrameCount": {
-        "class_type": "FloatStatusItem",
-        "column_name": "AcquisitionFrameCount",
-        "name": "AcquisitionFrameCount",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
+    "ITEMS": {
+        "AcquisitionFrameCount": {
+            "class_type": "FloatStatusItem",
+            "column_name": "AcquisitionFrameCount",
+            "name": "AcquisitionFrameCount",
+            "partial_glob": "*"
+        },
+        "AcquisitionFrameRateAbs": {
+            "class_type": "FloatStatusItem",
+            "column_name": "AcquisitionFrameRateAbs",
+            "name": "AcquisitionFrameRateAbs",
+            "partial_glob": "*"
+        },
+        "AcquisitionFrameRateLimit": {
+            "class_type": "FloatStatusItem",
+            "column_name": "AcquisitionFrameRateLimit",
+            "name": "AcquisitionFrameRateLimit",
+            "partial_glob": "*"
+        },
+        "AcquisitionMode": {
+            "class_type": "StringStatusItem",
+            "column_name": "AcquisitionMode",
+            "name": "AcquisitionMode",
+            "partial_glob": "*"
+        },
+        "ChunkModeActive": {
+            "class_type": "FloatStatusItem",
+            "column_name": "ChunkModeActive",
+            "name": "ChunkModeActive",
+            "partial_glob": "*"
+        },
+        "DeviceTemperature": {
+            "class_type": "FloatStatusItem",
+            "column_name": "DeviceTemperature",
+            "name": "DeviceTemperature",
+            "partial_glob": "*"
+        },
+        "DeviceTemperatureSelector": {
+            "class_type": "StringStatusItem",
+            "column_name": "DeviceTemperatureSelector",
+            "name": "DeviceTemperatureSelector",
+            "partial_glob": "*"
+        },
+        "EFLensFStopCurrent": {
+            "class_type": "FloatStatusItem",
+            "column_name": "EFLensFStopCurrent",
+            "name": "EFLensFStopCurrent",
+            "partial_glob": "*"
+        },
+        "EFLensFStopMax": {
+            "class_type": "FloatStatusItem",
+            "column_name": "EFLensFStopMax",
+            "name": "EFLensFStopMax",
+            "partial_glob": "*"
+        },
+        "EFLensFStopMin": {
+            "class_type": "FloatStatusItem",
+            "column_name": "EFLensFStopMin",
+            "name": "EFLensFStopMin",
+            "partial_glob": "*"
+        },
+        "EFLensFStopStepSize": {
+            "class_type": "FloatStatusItem",
+            "column_name": "EFLensFStopStepSize",
+            "name": "EFLensFStopStepSize",
+            "partial_glob": "*"
+        },
+        "EFLensFocusCurrent": {
+            "class_type": "FloatStatusItem",
+            "column_name": "EFLensFocusCurrent",
+            "name": "EFLensFocusCurrent",
+            "partial_glob": "*"
+        },
+        "EFLensFocusMax": {
+            "class_type": "FloatStatusItem",
+            "column_name": "EFLensFocusMax",
+            "name": "EFLensFocusMax",
+            "partial_glob": "*"
+        },
+        "EFLensFocusMin": {
+            "class_type": "FloatStatusItem",
+            "column_name": "EFLensFocusMin",
+            "name": "EFLensFocusMin",
+            "partial_glob": "*"
+        },
+        "EFLensFocusSwitch": {
+            "class_type": "StringStatusItem",
+            "column_name": "EFLensFocusSwitch",
+            "name": "EFLensFocusSwitch",
+            "partial_glob": "*"
+        },
+        "EFLensID": {
+            "class_type": "FloatStatusItem",
+            "column_name": "EFLensID",
+            "name": "EFLensID",
+            "partial_glob": "*"
+        },
+        "EFLensLastError": {
+            "class_type": "StringStatusItem",
+            "column_name": "EFLensLastError",
+            "name": "EFLensLastError",
+            "partial_glob": "*"
+        },
+        "EFLensState": {
+            "class_type": "StringStatusItem",
+            "column_name": "EFLensState",
+            "name": "EFLensState",
+            "partial_glob": "*"
+        },
+        "ExposureAuto": {
+            "class_type": "StringStatusItem",
+            "column_name": "ExposureAuto",
+            "name": "ExposureAuto",
+            "partial_glob": "*"
+        },
+        "ExposureAutoAdjustTol": {
+            "class_type": "FloatStatusItem",
+            "column_name": "ExposureAutoAdjustTol",
+            "name": "ExposureAutoAdjustTol",
+            "partial_glob": "*"
+        },
+        "ExposureAutoAlg": {
+            "class_type": "StringStatusItem",
+            "column_name": "ExposureAutoAlg",
+            "name": "ExposureAutoAlg",
+            "partial_glob": "*"
+        },
+        "ExposureAutoMax": {
+            "class_type": "FloatStatusItem",
+            "column_name": "ExposureAutoMax",
+            "name": "ExposureAutoMax",
+            "partial_glob": "*"
+        },
+        "ExposureAutoMin": {
+            "class_type": "FloatStatusItem",
+            "column_name": "ExposureAutoMin",
+            "name": "ExposureAutoMin",
+            "partial_glob": "*"
+        },
+        "ExposureAutoOutliers": {
+            "class_type": "FloatStatusItem",
+            "column_name": "ExposureAutoOutliers",
+            "name": "ExposureAutoOutliers",
+            "partial_glob": "*"
+        },
+        "ExposureAutoRate": {
+            "class_type": "FloatStatusItem",
+            "column_name": "ExposureAutoRate",
+            "name": "ExposureAutoRate",
+            "partial_glob": "*"
+        },
+        "ExposureAutoTarget": {
+            "class_type": "FloatStatusItem",
+            "column_name": "ExposureAutoTarget",
+            "name": "ExposureAutoTarget",
+            "partial_glob": "*"
+        },
+        "ExposureMode": {
+            "class_type": "StringStatusItem",
+            "column_name": "ExposureMode",
+            "name": "ExposureMode",
+            "partial_glob": "*"
+        },
+        "ExposureTimeAbs": {
+            "class_type": "FloatStatusItem",
+            "column_name": "ExposureTimeAbs",
+            "name": "ExposureTimeAbs",
+            "partial_glob": "*"
+        },
+        "Gain": {
+            "class_type": "FloatStatusItem",
+            "column_name": "Gain",
+            "name": "Gain",
+            "partial_glob": "*"
+        },
+        "GainAuto": {
+            "class_type": "StringStatusItem",
+            "column_name": "GainAuto",
+            "name": "GainAuto",
+            "partial_glob": "*"
+        },
+        "GevTimestampValue": {
+            "class_type": "FloatStatusItem",
+            "column_name": "GevTimestampValue",
+            "name": "GevTimestampValue",
+            "partial_glob": "*"
+        },
+        "PixelFormat": {
+            "class_type": "StringStatusItem",
+            "column_name": "PixelFormat",
+            "name": "PixelFormat",
+            "partial_glob": "*"
+        },
+        "PtpAcquisitionGateTime": {
+            "class_type": "FloatStatusItem",
+            "column_name": "PtpAcquisitionGateTime",
+            "name": "PtpAcquisitionGateTime",
+            "partial_glob": "*"
+        },
+        "PtpMode": {
+            "class_type": "StringStatusItem",
+            "column_name": "PtpMode",
+            "name": "PtpMode",
+            "partial_glob": "*"
+        },
+        "PtpStatus": {
+            "class_type": "StringStatusItem",
+            "column_name": "PtpStatus",
+            "name": "PtpStatus",
+            "partial_glob": "*"
+        },
+        "StatFrameDelivered": {
+            "class_type": "FloatStatusItem",
+            "column_name": "StatFrameDelivered",
+            "name": "StatFrameDelivered",
+            "partial_glob": "*"
+        },
+        "StatFrameDropped": {
+            "class_type": "FloatStatusItem",
+            "column_name": "StatFrameDropped",
+            "name": "StatFrameDropped",
+            "partial_glob": "*"
+        },
+        "StatFrameRate": {
+            "class_type": "FloatStatusItem",
+            "column_name": "StatFrameRate",
+            "name": "StatFrameRate",
+            "partial_glob": "*"
+        },
+        "StatFrameRescued": {
+            "class_type": "FloatStatusItem",
+            "column_name": "StatFrameRescued",
+            "name": "StatFrameRescued",
+            "partial_glob": "*"
+        },
+        "StatFrameShoved": {
+            "class_type": "FloatStatusItem",
+            "column_name": "StatFrameShoved",
+            "name": "StatFrameShoved",
+            "partial_glob": "*"
+        },
+        "StatFrameUnderrun": {
+            "class_type": "FloatStatusItem",
+            "column_name": "StatFrameUnderrun",
+            "name": "StatFrameUnderrun",
+            "partial_glob": "*"
+        },
+        "StatLocalRate": {
+            "class_type": "FloatStatusItem",
+            "column_name": "StatLocalRate",
+            "name": "StatLocalRate",
+            "partial_glob": "*"
+        },
+        "StatPacketErrors": {
+            "class_type": "FloatStatusItem",
+            "column_name": "StatPacketErrors",
+            "name": "StatPacketErrors",
+            "partial_glob": "*"
+        },
+        "StatPacketMissed": {
+            "class_type": "FloatStatusItem",
+            "column_name": "StatPacketMissed",
+            "name": "StatPacketMissed",
+            "partial_glob": "*"
+        },
+        "StatPacketReceived": {
+            "class_type": "FloatStatusItem",
+            "column_name": "StatPacketReceived",
+            "name": "StatPacketReceived",
+            "partial_glob": "*"
+        },
+        "StatPacketRequested": {
+            "class_type": "FloatStatusItem",
+            "column_name": "StatPacketRequested",
+            "name": "StatPacketRequested",
+            "partial_glob": "*"
+        },
+        "StatPacketResent": {
+            "class_type": "FloatStatusItem",
+            "column_name": "StatPacketResent",
+            "name": "StatPacketResent",
+            "partial_glob": "*"
+        },
+        "StatTimeElapsed": {
+            "class_type": "FloatStatusItem",
+            "column_name": "StatTimeElapsed",
+            "name": "StatTimeElapsed",
+            "partial_glob": "*"
+        },
+        "StreamAnnouncedBufferCount": {
+            "class_type": "FloatStatusItem",
+            "column_name": "StreamAnnouncedBufferCount",
+            "name": "StreamAnnouncedBufferCount",
+            "partial_glob": "*"
+        },
+        "StreamBytesPerSecond": {
+            "class_type": "FloatStatusItem",
+            "column_name": "StreamBytesPerSecond",
+            "name": "StreamBytesPerSecond",
+            "partial_glob": "*"
+        },
+        "StreamHoldEnable": {
+            "class_type": "StringStatusItem",
+            "column_name": "StreamHoldEnable",
+            "name": "StreamHoldEnable",
+            "partial_glob": "*"
+        },
+        "StreamID": {
+            "class_type": "StringStatusItem",
+            "column_name": "StreamID",
+            "name": "StreamID",
+            "partial_glob": "*"
+        },
+        "StreamType": {
+            "class_type": "StringStatusItem",
+            "column_name": "StreamType",
+            "name": "StreamType",
+            "partial_glob": "*"
+        },
+        "TriggerMode": {
+            "class_type": "StringStatusItem",
+            "column_name": "TriggerMode",
+            "name": "TriggerMode",
+            "partial_glob": "*"
+        },
+        "TriggerSource": {
+            "class_type": "StringStatusItem",
+            "column_name": "TriggerSource",
+            "name": "TriggerSource",
+            "partial_glob": "*"
+        },
+        "camera_timestamp_offset": {
+            "class_type": "FloatStatusItem",
+            "column_name": "camera_timestamp_offset",
+            "name": "camera_timestamp_offset",
+            "partial_glob": "*"
+        },
+        "main_temperature": {
+            "class_type": "FloatStatusItem",
+            "column_name": "main_temperature",
+            "name": "main_temperature",
+            "partial_glob": "*"
+        },
+        "sensor_temperature": {
+            "class_type": "FloatStatusItem",
+            "column_name": "sensor_temperature",
+            "name": "sensor_temperature",
+            "partial_glob": "*"
+        },
+        "total_frames": {
+            "class_type": "FloatStatusItem",
+            "column_name": "total_frames",
+            "name": "total_frames",
+            "partial_glob": "*"
+        }
     },
-    "AcquisitionFrameRateAbs": {
-        "class_type": "FloatStatusItem",
-        "column_name": "AcquisitionFrameRateAbs",
-        "name": "AcquisitionFrameRateAbs",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "AcquisitionFrameRateLimit": {
-        "class_type": "FloatStatusItem",
-        "column_name": "AcquisitionFrameRateLimit",
-        "name": "AcquisitionFrameRateLimit",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "AcquisitionMode": {
-        "class_type": "StringStatusItem",
-        "column_name": "AcquisitionMode",
-        "name": "AcquisitionMode",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "ChunkModeActive": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ChunkModeActive",
-        "name": "ChunkModeActive",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "DeviceTemperature": {
-        "class_type": "FloatStatusItem",
-        "column_name": "DeviceTemperature",
-        "name": "DeviceTemperature",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "DeviceTemperatureSelector": {
-        "class_type": "StringStatusItem",
-        "column_name": "DeviceTemperatureSelector",
-        "name": "DeviceTemperatureSelector",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "EFLensFStopCurrent": {
-        "class_type": "FloatStatusItem",
-        "column_name": "EFLensFStopCurrent",
-        "name": "EFLensFStopCurrent",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "EFLensFStopMax": {
-        "class_type": "FloatStatusItem",
-        "column_name": "EFLensFStopMax",
-        "name": "EFLensFStopMax",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "EFLensFStopMin": {
-        "class_type": "FloatStatusItem",
-        "column_name": "EFLensFStopMin",
-        "name": "EFLensFStopMin",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "EFLensFStopStepSize": {
-        "class_type": "FloatStatusItem",
-        "column_name": "EFLensFStopStepSize",
-        "name": "EFLensFStopStepSize",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "EFLensFocusCurrent": {
-        "class_type": "FloatStatusItem",
-        "column_name": "EFLensFocusCurrent",
-        "name": "EFLensFocusCurrent",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "EFLensFocusMax": {
-        "class_type": "FloatStatusItem",
-        "column_name": "EFLensFocusMax",
-        "name": "EFLensFocusMax",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "EFLensFocusMin": {
-        "class_type": "FloatStatusItem",
-        "column_name": "EFLensFocusMin",
-        "name": "EFLensFocusMin",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "EFLensFocusSwitch": {
-        "class_type": "StringStatusItem",
-        "column_name": "EFLensFocusSwitch",
-        "name": "EFLensFocusSwitch",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "EFLensID": {
-        "class_type": "FloatStatusItem",
-        "column_name": "EFLensID",
-        "name": "EFLensID",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "EFLensLastError": {
-        "class_type": "StringStatusItem",
-        "column_name": "EFLensLastError",
-        "name": "EFLensLastError",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "EFLensState": {
-        "class_type": "StringStatusItem",
-        "column_name": "EFLensState",
-        "name": "EFLensState",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "ExposureAuto": {
-        "class_type": "StringStatusItem",
-        "column_name": "ExposureAuto",
-        "name": "ExposureAuto",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "ExposureAutoAdjustTol": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ExposureAutoAdjustTol",
-        "name": "ExposureAutoAdjustTol",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "ExposureAutoAlg": {
-        "class_type": "StringStatusItem",
-        "column_name": "ExposureAutoAlg",
-        "name": "ExposureAutoAlg",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "ExposureAutoMax": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ExposureAutoMax",
-        "name": "ExposureAutoMax",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "ExposureAutoMin": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ExposureAutoMin",
-        "name": "ExposureAutoMin",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "ExposureAutoOutliers": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ExposureAutoOutliers",
-        "name": "ExposureAutoOutliers",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "ExposureAutoRate": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ExposureAutoRate",
-        "name": "ExposureAutoRate",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "ExposureAutoTarget": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ExposureAutoTarget",
-        "name": "ExposureAutoTarget",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "ExposureMode": {
-        "class_type": "StringStatusItem",
-        "column_name": "ExposureMode",
-        "name": "ExposureMode",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "ExposureTimeAbs": {
-        "class_type": "FloatStatusItem",
-        "column_name": "ExposureTimeAbs",
-        "name": "ExposureTimeAbs",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "Gain": {
-        "class_type": "FloatStatusItem",
-        "column_name": "Gain",
-        "name": "Gain",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "GainAuto": {
-        "class_type": "StringStatusItem",
-        "column_name": "GainAuto",
-        "name": "GainAuto",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "GevTimestampValue": {
-        "class_type": "FloatStatusItem",
-        "column_name": "GevTimestampValue",
-        "name": "GevTimestampValue",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "PixelFormat": {
-        "class_type": "StringStatusItem",
-        "column_name": "PixelFormat",
-        "name": "PixelFormat",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "PtpAcquisitionGateTime": {
-        "class_type": "FloatStatusItem",
-        "column_name": "PtpAcquisitionGateTime",
-        "name": "PtpAcquisitionGateTime",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "PtpMode": {
-        "class_type": "StringStatusItem",
-        "column_name": "PtpMode",
-        "name": "PtpMode",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "PtpStatus": {
-        "class_type": "StringStatusItem",
-        "column_name": "PtpStatus",
-        "name": "PtpStatus",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "StatFrameDelivered": {
-        "class_type": "FloatStatusItem",
-        "column_name": "StatFrameDelivered",
-        "name": "StatFrameDelivered",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "StatFrameDropped": {
-        "class_type": "FloatStatusItem",
-        "column_name": "StatFrameDropped",
-        "name": "StatFrameDropped",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "StatFrameRate": {
-        "class_type": "FloatStatusItem",
-        "column_name": "StatFrameRate",
-        "name": "StatFrameRate",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "StatFrameRescued": {
-        "class_type": "FloatStatusItem",
-        "column_name": "StatFrameRescued",
-        "name": "StatFrameRescued",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "StatFrameShoved": {
-        "class_type": "FloatStatusItem",
-        "column_name": "StatFrameShoved",
-        "name": "StatFrameShoved",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "StatFrameUnderrun": {
-        "class_type": "FloatStatusItem",
-        "column_name": "StatFrameUnderrun",
-        "name": "StatFrameUnderrun",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "StatLocalRate": {
-        "class_type": "FloatStatusItem",
-        "column_name": "StatLocalRate",
-        "name": "StatLocalRate",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "StatPacketErrors": {
-        "class_type": "FloatStatusItem",
-        "column_name": "StatPacketErrors",
-        "name": "StatPacketErrors",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "StatPacketMissed": {
-        "class_type": "FloatStatusItem",
-        "column_name": "StatPacketMissed",
-        "name": "StatPacketMissed",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "StatPacketReceived": {
-        "class_type": "FloatStatusItem",
-        "column_name": "StatPacketReceived",
-        "name": "StatPacketReceived",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "StatPacketRequested": {
-        "class_type": "FloatStatusItem",
-        "column_name": "StatPacketRequested",
-        "name": "StatPacketRequested",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "StatPacketResent": {
-        "class_type": "FloatStatusItem",
-        "column_name": "StatPacketResent",
-        "name": "StatPacketResent",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "StatTimeElapsed": {
-        "class_type": "FloatStatusItem",
-        "column_name": "StatTimeElapsed",
-        "name": "StatTimeElapsed",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "StreamAnnouncedBufferCount": {
-        "class_type": "FloatStatusItem",
-        "column_name": "StreamAnnouncedBufferCount",
-        "name": "StreamAnnouncedBufferCount",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "StreamBytesPerSecond": {
-        "class_type": "FloatStatusItem",
-        "column_name": "StreamBytesPerSecond",
-        "name": "StreamBytesPerSecond",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "StreamHoldEnable": {
-        "class_type": "StringStatusItem",
-        "column_name": "StreamHoldEnable",
-        "name": "StreamHoldEnable",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "StreamID": {
-        "class_type": "StringStatusItem",
-        "column_name": "StreamID",
-        "name": "StreamID",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "StreamType": {
-        "class_type": "StringStatusItem",
-        "column_name": "StreamType",
-        "name": "StreamType",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "TriggerMode": {
-        "class_type": "StringStatusItem",
-        "column_name": "TriggerMode",
-        "name": "TriggerMode",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "TriggerSource": {
-        "class_type": "StringStatusItem",
-        "column_name": "TriggerSource",
-        "name": "TriggerSource",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "camera_timestamp_offset": {
-        "class_type": "FloatStatusItem",
-        "column_name": "camera_timestamp_offset",
-        "name": "camera_timestamp_offset",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "main_temperature": {
-        "class_type": "FloatStatusItem",
-        "column_name": "main_temperature",
-        "name": "main_temperature",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "sensor_temperature": {
-        "class_type": "FloatStatusItem",
-        "column_name": "sensor_temperature",
-        "name": "sensor_temperature",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    },
-    "total_frames": {
-        "class_type": "FloatStatusItem",
-        "column_name": "total_frames",
-        "name": "total_frames",
-        "partial_glob": "/var/pmclogs/housekeeping/camera/*.csv"
-    }
+    "PREAMBLE": "/var/pmclogs/housekeeping/camera/"
 }

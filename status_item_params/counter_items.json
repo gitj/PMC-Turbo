@@ -1,4 +1,6 @@
 {
+    "PREAMBLE": "",
+    "ITEMS"
     "controller_communication_error_counts": {
         "class_type": "FloatStatusItem",
         "column_name": "controller_communicator_error_counts",

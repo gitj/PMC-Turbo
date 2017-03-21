@@ -1,6 +1,8 @@
 # This should not live here, but it will until I decide where to move it.
 
+import os
 from pmc_turbo.utils import camera_id
+from pmc_turbo import root_dir
 
 PIPELINE_IP = '0.0.0.0'
 PIPELINE_PORT = 50000
@@ -53,25 +55,19 @@ OPENPORT_DOWNLINK_IP = '192.168.1.70'
 OPENPORT_DOWNLINK_PORT = 4501
 OPENPORT_DOWNLINK_SPEED = 10000
 
-GROUP_NAME = 'supergroup'
+JSON_FILENAMES = [
+    'camera_items.json',
+    'charge_controller_register_items.json',
+    'charge_controller_eeprom_items.json',
+    'counter_items.json',
+    'collectd_items.json',
+    'labjack_items.json'
+]
 
-CSV_PATHS_AND_PREAMBLES = [('/home/pmc/camera_items.csv', '/var/lib/collectd/csv/*/'),
-                           ('/home/pmc/charge_controller_items.csv', ''), ]
-# ('/home/pmc/collectd_items.csv', '/var/lib/collectd/csv/*/')]
+JSON_PATHS = [os.path.join(os.path.split(root_dir)[0], 'status_item_params', json_fn) for json_fn in JSON_FILENAMES]
 
-JSON_PATHS = ['/home/pmc/pmchome/pmc-turbo/status_item_params/camera_items.json',
-              '/home/pmc/pmchome/pmc-turbo/status_item_params/charge_controller_items.json',
-              '/home/pmc/pmchome/pmc-turbo/status_item_params/counter_items.json',
-              '/home/pmc/pmchome/pmc-turbo/status_item_params/collectd_items.json'
-              ]
-
-JSON_PATH_PREAMBLES = ['',
-                       ''
-                       '',
-                       '/var/lib/collectd/csv/*/']
 # JSON_RANGE_PATHS = ['/home/pmc/pmchome/pmc-turbo/status_item_params/camera_items_ranges.json',
 #                     '/home/pmc/pmchome/pmc-turbo/status_item_params/charge_controller_items_ranges.json',
 #                     '/home/pmc/pmchome/pmc-turbo/status_item_params/counter_items_ranges.json',
 #                     '/home/pmc/pmchome/pmc-turbo/status_item_params/collectd_items_ranges.json'
 #                     ]
-# TODO: Add preambles to the collectd_items like I did with the CSV preambles.

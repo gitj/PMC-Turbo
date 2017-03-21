@@ -60,9 +60,11 @@ class Communicator(GlobalConfiguration):
     synchronized_image_delay = Float(2.0, min=0,
                                      help="Number of seconds in the past to request images from all cameras "
                                           "when synchronized image mode is enabled. This value should be set "
-                                          "large enough to ensure that all cameras have an image ready.").tag(config=True)
+                                          "large enough to ensure that all cameras have an image ready.").tag(
+        config=True)
     charge_controller_settings = List(trait=Tuple(TCPAddress(), Float(10, min=0), Float(3600, min=0)),
-                                      help="List of tuples ((ip,port), measurement_interval, eeprom_measurement_interval)\n").tag(config=True)
+                                      help="List of tuples ((ip,port), measurement_interval, eeprom_measurement_interval)\n").tag(
+        config=True)
 
     def __init__(self, cam_id, peers, controller, leader, base_port=BASE_PORT, **kwargs):
         super(Communicator, self).__init__(**kwargs)
@@ -111,7 +113,7 @@ class Communicator(GlobalConfiguration):
                                                              *peer_error_strings)
         self.error_counter.controller_communication_errors.reset()
         for charge_controller in self.charge_controllers:
-            getattr(self.error_counter,(charge_controller.name+'_connection_error')).reset()
+            getattr(self.error_counter, (charge_controller.name + '_connection_error')).reset()
 
         self.pyro_daemon = None
         self.pyro_thread = None
@@ -204,7 +206,7 @@ class Communicator(GlobalConfiguration):
                         charge_controller.measure_and_log()
                     except ConnectionException:
                         logger.exception("Failed to connect to %s" % charge_controller.name)
-                        getattr(self.error_counter,(charge_controller.name+'_connection_error')).increment()
+                        getattr(self.error_counter, (charge_controller.name + '_connection_error')).increment()
             time.sleep(self.loop_interval)
 
     def peer_loop(self):
@@ -550,38 +552,37 @@ class Communicator(GlobalConfiguration):
     def populate_short_status_leader(self, data_dict):
         ss = ShortStatusCamera()
         ss.message_id = 0
-        ss.timestamp = data_dict[self.cam_id]['SuperGroup']['camera_items'][
-            "/var/pmclogs/housekeeping/camera/*.csv"][
-            "GevTimestampValue"][
-            "epoch"]
+
+        camera_items = data_dict[self.cam_id]['SuperGroup']['camera_items']['*']
+        print '################'
+        print camera_items
+        print '##############'
+        collectd_items = data_dict[self.cam_id]['SuperGroup']['collectd_items']
+        labjack_items = data_dict[self.cam_id]['SuperGroup']['labjack_items']['*']
+
+        ss.timestamp = camera_items["GevTimestampValue"]["epoch"]
         ss.leader_id = self.cam_id
-        ss.free_disk_root_mb = 12300000000
-        ss.free_disk_data_1_mb = 123000
-        ss.free_disk_data_2_mb = 123000
-        ss.free_disk_data_3_mb = 123000
-        ss.free_disk_data_4_mb = 123000
-        ss.total_images_captured = 49494
-        ss.camera_packet_resent = 0
-        ss.camera_packet_missed = 0
-        ss.camera_frames_dropped = 0
-        ss.camera_timestamp_offset_us = data_dict[self.cam_id]['SuperGroup']['camera_items'][
-            "/var/pmclogs/housekeeping/camera/*.csv"]['camera_timestamp_offset']['value']
-        ss.exposure_us = data_dict[self.cam_id]['SuperGroup']['camera_items'][
-            "/var/pmclogs/housekeeping/camera/*.csv"]['ExposureTimeAbs']['value']*1000
-        ss.focus_step = data_dict[self.cam_id]['SuperGroup']['camera_items'][
-            "/var/pmclogs/housekeeping/camera/*.csv"]['EFLensFocusCurrent']['value']
-        ss.aperture_times_100 = data_dict[self.cam_id]['SuperGroup']['camera_items'][
-            "/var/pmclogs/housekeeping/camera/*.csv"]['EFLensFStopCurrent']['value']*100
-        ss.pressure = 101033.3
-        ss.lens_wall_temp = 300
-        ss.dcdc_wall_temp = -225
-        ss.labjack_temp = 28
-        ss.camera_temp = data_dict[self.cam_id]['SuperGroup']['camera_items'][
-            "/var/pmclogs/housekeeping/camera/*.csv"]['main_temperature']['value']
-        ss.ccd_temp = data_dict[self.cam_id]['SuperGroup']['camera_items'][
-            "/var/pmclogs/housekeeping/camera/*.csv"]['sensor_temperature']['value']
-        ss.rail_12_mv = 12000
-        ss.cpu_temp = 70
+        ss.free_disk_root_mb = collectd_items["df-root_df_complex-free"]
+        ss.free_disk_data_1_mb = collectd_items["df-data1_df_complex-free"]
+        ss.free_disk_data_2_mb = collectd_items["df-data2_df_complex-free"]
+        ss.free_disk_data_3_mb = collectd_items["df-data3_df_complex-free"]
+        ss.free_disk_data_4_mb = collectd_items["df-data4_df_complex-free"]
+        ss.total_images_captured = camera_items['total_frames']
+        ss.camera_packet_resent = camera_items["StatPacketResent"]
+        ss.camera_packet_missed = camera_items["StatPacketMissed"]
+        ss.camera_frames_dropped = camera_items["StatFrameDropped"]
+        ss.camera_timestamp_offset_us = camera_items['camera_timestamp_offset']['value']
+        ss.exposure_us = camera_items['ExposureTimeAbs']['value'] * 1000
+        ss.focus_step = camera_items['EFLensFocusCurrent']['value']
+        ss.aperture_times_100 = camera_items['EFLensFStopCurrent']['value'] * 100
+        ss.pressure = 101033.3  # labjack_items['???']
+        ss.lens_wall_temp = labjack_items['ain6'] * 1000
+        ss.dcdc_wall_temp = labjack_items['ain7'] * 1000
+        ss.labjack_temp = labjack_items['temperature']
+        ss.camera_temp = camera_items['main_temperature']['value']
+        ss.ccd_temp = camera_items['sensor_temperature']['value']
+        ss.rail_12_mv = collectd_items["ipmi_voltage-12V system_board (7.17)"]
+        ss.cpu_temp = collectd_items["ipmi_temperature-CPU Temp processor (3.1)"]['value']
         ss.sda_temp = 55
         ss.sdb_temp = 45
         ss.sdc_temp = 48

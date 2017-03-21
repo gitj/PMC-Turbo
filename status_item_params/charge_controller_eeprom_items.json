@@ -1,0 +1,719 @@
+{
+    "ITEMS": {
+        "eeprom_5403": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_5403",
+            "name": "eeprom_5403",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_5404": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_5404",
+            "name": "eeprom_5404",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_5405": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_5405",
+            "name": "eeprom_5405",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_5406": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_5406",
+            "name": "eeprom_5406",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_5407": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_5407",
+            "name": "eeprom_5407",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_5408": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_5408",
+            "name": "eeprom_5408",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_5409": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_5409",
+            "name": "eeprom_5409",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57344": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57344",
+            "name": "eeprom_57344",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57345": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57345",
+            "name": "eeprom_57345",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57346": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57346",
+            "name": "eeprom_57346",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57347": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57347",
+            "name": "eeprom_57347",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57348": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57348",
+            "name": "eeprom_57348",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57349": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57349",
+            "name": "eeprom_57349",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57350": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57350",
+            "name": "eeprom_57350",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57351": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57351",
+            "name": "eeprom_57351",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57352": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57352",
+            "name": "eeprom_57352",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57353": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57353",
+            "name": "eeprom_57353",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57354": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57354",
+            "name": "eeprom_57354",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57355": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57355",
+            "name": "eeprom_57355",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57356": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57356",
+            "name": "eeprom_57356",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57357": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57357",
+            "name": "eeprom_57357",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57358": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57358",
+            "name": "eeprom_57358",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57359": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57359",
+            "name": "eeprom_57359",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57360": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57360",
+            "name": "eeprom_57360",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57361": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57361",
+            "name": "eeprom_57361",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57362": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57362",
+            "name": "eeprom_57362",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57363": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57363",
+            "name": "eeprom_57363",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57364": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57364",
+            "name": "eeprom_57364",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57365": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57365",
+            "name": "eeprom_57365",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57366": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57366",
+            "name": "eeprom_57366",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57367": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57367",
+            "name": "eeprom_57367",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57368": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57368",
+            "name": "eeprom_57368",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57369": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57369",
+            "name": "eeprom_57369",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57370": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57370",
+            "name": "eeprom_57370",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57371": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57371",
+            "name": "eeprom_57371",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57372": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57372",
+            "name": "eeprom_57372",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57373": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57373",
+            "name": "eeprom_57373",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57374": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57374",
+            "name": "eeprom_57374",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57375": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57375",
+            "name": "eeprom_57375",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57376": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57376",
+            "name": "eeprom_57376",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57377": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57377",
+            "name": "eeprom_57377",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57472": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57472",
+            "name": "eeprom_57472",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57473": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57473",
+            "name": "eeprom_57473",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57474": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57474",
+            "name": "eeprom_57474",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57475": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57475",
+            "name": "eeprom_57475",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57476": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57476",
+            "name": "eeprom_57476",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57477": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57477",
+            "name": "eeprom_57477",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57478": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57478",
+            "name": "eeprom_57478",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57479": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57479",
+            "name": "eeprom_57479",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57480": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57480",
+            "name": "eeprom_57480",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57481": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57481",
+            "name": "eeprom_57481",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57482": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57482",
+            "name": "eeprom_57482",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57483": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57483",
+            "name": "eeprom_57483",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57484": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57484",
+            "name": "eeprom_57484",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57485": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57485",
+            "name": "eeprom_57485",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57486": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57486",
+            "name": "eeprom_57486",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57487": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57487",
+            "name": "eeprom_57487",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57488": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57488",
+            "name": "eeprom_57488",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57489": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57489",
+            "name": "eeprom_57489",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57490": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57490",
+            "name": "eeprom_57490",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57491": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57491",
+            "name": "eeprom_57491",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57492": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57492",
+            "name": "eeprom_57492",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57493": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57493",
+            "name": "eeprom_57493",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57494": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57494",
+            "name": "eeprom_57494",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57495": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57495",
+            "name": "eeprom_57495",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57496": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57496",
+            "name": "eeprom_57496",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57497": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57497",
+            "name": "eeprom_57497",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57498": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57498",
+            "name": "eeprom_57498",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57499": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57499",
+            "name": "eeprom_57499",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57500": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57500",
+            "name": "eeprom_57500",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57501": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57501",
+            "name": "eeprom_57501",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57502": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57502",
+            "name": "eeprom_57502",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57503": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57503",
+            "name": "eeprom_57503",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57504": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57504",
+            "name": "eeprom_57504",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57505": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57505",
+            "name": "eeprom_57505",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57506": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57506",
+            "name": "eeprom_57506",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57507": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57507",
+            "name": "eeprom_57507",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57508": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57508",
+            "name": "eeprom_57508",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57509": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57509",
+            "name": "eeprom_57509",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57510": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57510",
+            "name": "eeprom_57510",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57511": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57511",
+            "name": "eeprom_57511",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57512": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57512",
+            "name": "eeprom_57512",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57513": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57513",
+            "name": "eeprom_57513",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57514": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57514",
+            "name": "eeprom_57514",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57515": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57515",
+            "name": "eeprom_57515",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57516": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57516",
+            "name": "eeprom_57516",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57517": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57517",
+            "name": "eeprom_57517",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57518": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57518",
+            "name": "eeprom_57518",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57519": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57519",
+            "name": "eeprom_57519",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57520": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57520",
+            "name": "eeprom_57520",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57521": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57521",
+            "name": "eeprom_57521",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57522": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57522",
+            "name": "eeprom_57522",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57523": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57523",
+            "name": "eeprom_57523",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57524": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57524",
+            "name": "eeprom_57524",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57525": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57525",
+            "name": "eeprom_57525",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57526": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57526",
+            "name": "eeprom_57526",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57527": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57527",
+            "name": "eeprom_57527",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57528": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57528",
+            "name": "eeprom_57528",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57529": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57529",
+            "name": "eeprom_57529",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57530": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57530",
+            "name": "eeprom_57530",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57531": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57531",
+            "name": "eeprom_57531",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57532": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57532",
+            "name": "eeprom_57532",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57533": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57533",
+            "name": "eeprom_57533",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57534": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57534",
+            "name": "eeprom_57534",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57535": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57535",
+            "name": "eeprom_57535",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57536": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57536",
+            "name": "eeprom_57536",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57537": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57537",
+            "name": "eeprom_57537",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57538": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57538",
+            "name": "eeprom_57538",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57539": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57539",
+            "name": "eeprom_57539",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57540": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57540",
+            "name": "eeprom_57540",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57541": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57541",
+            "name": "eeprom_57541",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57542": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57542",
+            "name": "eeprom_57542",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57543": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57543",
+            "name": "eeprom_57543",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57544": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57544",
+            "name": "eeprom_57544",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57545": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57545",
+            "name": "eeprom_57545",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57546": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57546",
+            "name": "eeprom_57546",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57547": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57547",
+            "name": "eeprom_57547",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57548": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57548",
+            "name": "eeprom_57548",
+            "partial_glob": "*eeprom*"
+        },
+        "eeprom_57549": {
+            "class_type": "FloatStatusItem",
+            "column_name": "eeprom_57549",
+            "name": "eeprom_57549",
+            "partial_glob": "*eeprom*"
+        }
+    },
+    "PREAMBLE": "/var/pmclogs/housekeeping/charge_controller/"
+}

@@ -20,7 +20,7 @@ CRITICAL = 4
 DELIMITER = ','
 
 
-def construct_status_group_from_json(json_path, preamble=None):
+def construct_status_group_from_json(json_path):
     print '#### json path:', json_path
     # group_name = json_path.strip('.json')
     group_name = os.path.split(json_path)[-1][:-5]
@@ -28,20 +28,25 @@ def construct_status_group_from_json(json_path, preamble=None):
     status_group = StatusGroup(group_name, filewatchers=[])
 
     with open(json_path, 'r') as f:
-        result = json.loads(f.read())
+        json_dict = json.loads(f.read())
     json_range_path = os.path.splitext(json_path)[0] + '_ranges.json'
     with open(json_range_path, 'r') as f:
         range_result = json.loads(f.read())
 
+    preamble = json_dict['PREAMBLE']
+    items = json_dict["ITEMS"]
+
     for key in range_result.keys():
         try:
-            result[key].update(range_result[key])
+            items[key].update(range_result[key])
         except KeyError as e:
             logger.debug(' Could not find key %r in results from json.' % key)
             raise e
 
-    for value_key in result.keys():
-        value_dict = result[value_key]
+    for value_key in items.keys():
+        if value_key == 'PREAMBLE':  # This is not a file to watch.
+            continue
+        value_dict = items[value_key]
         if not value_dict['partial_glob'] in status_group.filewatchers.keys():
             status_filewatcher = StatusFileWatcher(name=value_dict['partial_glob'], items=[],
                                                    filename_glob=os.path.join(preamble, value_dict['partial_glob']))
@@ -59,13 +64,13 @@ def construct_status_group_from_json(json_path, preamble=None):
     return status_group
 
 
-def construct_super_group_from_json_list(json_paths, preambles):
+def construct_super_group_from_json_list(json_paths):
     group_name = 'SuperGroup'
     super_group = SuperStatusGroup(group_name, groups=[])
     print json_paths
-    for i, (json_path, preamble) in enumerate(zip(json_paths, preambles)):
+    for i, json_path in enumerate(json_paths):
         try:
-            status_group = construct_status_group_from_json(json_path, preamble)
+            status_group = construct_status_group_from_json(json_path)
             super_group.groups[status_group.name] = status_group
         except ValueError as e:
             logger.exception("Error processing json_path %s" % (json_path))
@@ -289,8 +294,9 @@ class FloatStatusItem():
             self.unscaled_value = float(value_dict[self.column_name])
             self.value = self.unscaled_value * self.scaling
         else:
-            raise ValueError('Column name for item %r, set to be %r, is not in value dict: %r' % (self.name, self.column_name, value_dict))
-            #logger.warning('Column name for item %r, set to be %r, is not in value dict: %r' % (self.name, self.column_name, value_dict))
+            raise ValueError('Column name for item %r, set to be %r, is not in value dict: %r' % (
+            self.name, self.column_name, value_dict))
+            # logger.warning('Column name for item %r, set to be %r, is not in value dict: %r' % (self.name, self.column_name, value_dict))
         self.epoch = float(value_dict['epoch'])
 
     def get_status_summary(self):

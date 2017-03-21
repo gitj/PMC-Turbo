@@ -4,74 +4,41 @@ import pandas as pd
 import json
 
 
-def get_range_outline(partial_glob, json_filename=None):
-    files = glob.glob(partial_glob)
-    files.sort()
-    fn = files[-1]
-    print "using file", fn
-    df = pd.read_csv(fn, index_col='epoch', comment='#')
-
-    result_dict = {}
-    for colname in df.columns:
-        col = df[colname]
-        if col.dtype == 'O':  # string columns are Objects
-            # StringStatusItem
-            name = colname
-            normal_string, good_string, critical_string = '', '', ''
-            result_dict[name] = {'normal_string': normal_string,
-                                 'good_string': good_string,
-                                 'critical_string': critical_string}
-
-        else:
-            # FloatStatusItem
-            name = colname
-            good_range_low, good_range_high = 'nan', 'nan'
-            normal_range_low, normal_range_high = 'nan', 'nan'
-            warning_range_low, warning_range_high = 'nan', 'nan'
-            scaling = 1.0
-            result_dict[name] = {'normal_range_low': normal_range_low,
-                                 'normal_range_high': normal_range_high,
-                                 'good_range_low': good_range_low,
-                                 'good_range_high': good_range_high,
-                                 'warning_range_low': warning_range_low,
-                                 'warning_range_high': warning_range_high,
-                                 'scaling': scaling}
-
-    if json_filename:
-        with open(json_filename, 'w') as fh:
-            fh.write(
-                json.dumps(result_dict, separators=(',', ': '), indent=4, sort_keys=True)
-            )
-    return result_dict
+def write_neat_json_file(json_filename, object_to_write):
+    with open(json_filename + '.json', 'w') as fh:
+        fh.write(
+            json.dumps(object_to_write, separators=(',', ': '), indent=4, sort_keys=True)
+        )
 
 
-def get_collectd_items(json_filename=None):
-    collectd_files = glob.glob('/var/lib/collectd/csv/*/*/*')
+def get_collectd_items(json_filename=None, preamble='/var/lib/collectd/csv/*/'):
+    all_collectd_files = glob.glob('/var/lib/collectd/csv/*/*/*')
 
-    unique_files = []
-    for fn in collectd_files:
-        start = fn[:-10]
-        if start not in unique_files:
-            unique_files.append(start)
+    # To create the json file, I just want the most recent log file.
+    # This finds unique glob signatures.
+    unique_files = list(set([fn[:-10] for fn in all_collectd_files]))
+    # '-10' Cuts off specific date.
+    # TODO: Switch to use REGEX
 
+    # Find most recent globs.
     collectd_files = []
-
     for start in unique_files:
-        try:
-            print start
-            print glob.glob(start+'*')
-            collectd_files.append(glob.glob(start+'*')[0])
-        except Exception:
-            continue
-    #return
-
+        myfiles = glob.glob(start + '*')
+        myfiles.sort()
+        collectd_files.append(myfiles[-1])
     collectd_files.sort()
 
     result_dict = {}
+
+    full_dict = {}
+    full_dict['PREAMBLE'] = preamble
+
     range_result_dict = {}
     for fn in collectd_files:
+        # Take only the last two directories here.
         partial_glob = os.path.join(os.path.split(os.path.split(fn)[0])[-1], os.path.split(fn)[-1])
-        partial_glob = partial_glob.replace('2017-01-25', '*')
+        partial_glob = partial_glob.replace(fn[-10:], '*')  # Cut off the date from the glob, replace with *
+        # TODO: Switch this to regex when above code is as well
         df = pd.read_csv(fn, index_col='epoch', comment='#')
         for colname in df.columns:
             class_type = 'FloatStatusItem'
@@ -94,81 +61,89 @@ def get_collectd_items(json_filename=None):
                                        'warning_range_high': warning_range_high,
                                        'scaling': scaling}
 
+    full_dict['ITEMS'] = result_dict
+
     if json_filename:
-        with open(json_filename + '.json', 'w') as fh:
-            fh.write(
-                json.dumps(result_dict, separators=(',', ': '), indent=4, sort_keys=True)
-            )
+        write_neat_json_file(json_filename, full_dict)
+        write_neat_json_file(json_filename + '_ranges', result_dict)
 
-        with open(json_filename + '_ranges.json', 'w') as fh:
-            fh.write(
-                json.dumps(range_result_dict, separators=(',', ': '), indent=4, sort_keys=True)
-            )
-
-    return result_dict
+    return full_dict
 
 
-def get_items(partial_glob, json_filename=None):
-    files = glob.glob(partial_glob)
+def get_items(common_glob, partial_glob, json_filename=None):
+    files = glob.glob(os.path.join(common_glob, partial_glob))
     files.sort()
     fn = files[-1]
     print "using file", fn
     df = pd.read_csv(fn, index_col='epoch', comment='#')
 
     result_dict = {}
+    item_dict = {}
+    range_result_dict = {}
+
+    result_dict['PREAMBLE'] = common_glob
+
     for colname in df.columns:
         col = df[colname]
         if col.dtype == 'O':  # string columns are Objects
             class_type = 'StringStatusItem'
             name = colname
-            result_dict[name] = {'name': name, 'partial_glob': partial_glob, 'column_name': colname,
-                                 'class_type': class_type}
+            item_dict[name] = {'name': name, 'partial_glob': partial_glob, 'column_name': colname,
+                               'class_type': class_type}
+
+            normal_string, good_string, critical_string = '', '', ''
+            range_result_dict[name] = {'normal_string': normal_string,
+                                       'good_string': good_string,
+                                       'critical_string': critical_string}
         else:
             class_type = 'FloatStatusItem'
             name = colname
-            result_dict[name] = {'name': name, 'partial_glob': partial_glob, 'column_name': colname,
-                                 'class_type': class_type}
+            item_dict[name] = {'name': name, 'partial_glob': partial_glob, 'column_name': colname,
+                               'class_type': class_type}
+
+            good_range_low, good_range_high = 'nan', 'nan'
+            normal_range_low, normal_range_high = 'nan', 'nan'
+            warning_range_low, warning_range_high = 'nan', 'nan'
+            scaling = 1.0
+            range_result_dict[name] = {'normal_range_low': normal_range_low,
+                                       'normal_range_high': normal_range_high,
+                                       'good_range_low': good_range_low,
+                                       'good_range_high': good_range_high,
+                                       'warning_range_low': warning_range_low,
+                                       'warning_range_high': warning_range_high,
+                                       'scaling': scaling}
+
+    result_dict['ITEMS'] = item_dict
 
     if json_filename:
-        with open(json_filename, 'w') as fh:
-            fh.write(
-                json.dumps(result_dict, separators=(',', ': '), indent=4, sort_keys=True)
-            )
+        write_neat_json_file(json_filename, result_dict)
+        write_neat_json_file(json_filename + '_ranges', range_result_dict)
     return result_dict
 
 
 def get_camera_items(json_filename=None):
-    a = get_items(partial_glob='/var/pmclogs/housekeeping/camera/*.csv', json_filename=json_filename + '.json')
-
-    b = get_range_outline(partial_glob='/var/pmclogs/housekeeping/camera/*.csv',
-                          json_filename=json_filename + '_ranges.json')
-
-    return a, b
+    a = get_items(common_glob='/var/pmclogs/housekeeping/camera/',
+                  partial_glob='*', json_filename=json_filename)
+    return a
 
 
 def get_labjack_items(json_filename=None):
-    a = get_items(partial_glob='/var/pmclogs/housekeeping/labjack/*.csv', json_filename=json_filename + '.json')
-
-    b = get_range_outline(partial_glob='/var/pmclogs/housekeeping/labjack/*.csv',
-                          json_filename=json_filename + '_ranges.json')
-
-    return a, b
+    a = get_items(common_glob='/var/pmclogs/housekeeping/labjack/', partial_glob='*', json_filename=json_filename)
+    return a
 
 
 def get_charge_controller_items(json_filename=None):
-    register_path = '/var/pmclogs/housekeeping/charge_controller/*register*.csv'
+    common_glob = '/var/pmclogs/housekeeping/charge_controller/'
+    register_glob = '*register*'
 
-    eeprom_path = '/var/pmclogs/housekeeping/charge_controller/*eeprom*.csv'
+    eeprom_glob = '*eeprom*'
 
-    a = get_items(partial_glob=register_path, json_filename=json_filename + '_register.json')
+    a = get_items(common_glob=common_glob, partial_glob=register_glob,
+                  json_filename=json_filename + '_register_items')
 
-    b = get_range_outline(partial_glob=register_path, json_filename=json_filename + '_register_ranges.json')
+    c = get_items(common_glob=common_glob, partial_glob=eeprom_glob, json_filename=json_filename + '_eeprom_items')
 
-    c = get_items(partial_glob=eeprom_path, json_filename=json_filename + '_eeprom.json')
-
-    d = get_range_outline(partial_glob=eeprom_path, json_filename=json_filename + '_eeprom_ranges.json')
-
-    return a, b, c, d
+    return a, c
 
 
 all_collectd_sensors = ['cpu-0/cpu-idle-*',
