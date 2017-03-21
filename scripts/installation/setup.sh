@@ -25,7 +25,8 @@ pushd $HOME/Downloads/
 wget https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh;
 bash miniconda.sh -b -p $HOME/miniconda
 export PATH="$HOME/miniconda/bin:$VIMBA_ROOT/Tools/Viewer/Bin/x86_64bit:$PATH"
-echo "export PATH=/home/pmc/miniconda/bin:\$PATH" >> ~/.bashrc
+
+echo "export PATH=/home/pmc/miniconda/bin:$VIMBA_ROOT/Tools/Viewer/Bin/x86_64bit:\$PATH" >> ~/.bashrc
 hash -r
 conda update -y conda
   # Useful for debugging any issues with conda
@@ -49,11 +50,11 @@ popd
 pushd $PMC_TURBO/pmc_turbo/camera/pycamera/_pyvimba
 make
 popd
-#echo "PYTHONPATH=$PMC_TURBO" >> $HOME/.bashrc
+echo "export PYTHONPATH=$PMC_TURBO" >> $HOME/.bashrc
 cd $PMC_TURBO
 nosetests -v -s
 
-sudo cp -r ./etc/supervisor /etc/
+sudo cp -r $PMC_TURBO/scripts/installation/etc/supervisor /etc/
 sudo supervisorctl reread
 sudo supervisorctl update
 sleep 1
