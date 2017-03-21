@@ -101,6 +101,8 @@ logger.info("Setting hostname %s" % hostname)
 run_command('echo "%s" | sudo tee /etc/hostname' % hostname)
 run_command("sudo chmod a+r /etc/hostname")
 
+run_command('echo 8.8.8.8 | sudo tee /etc/resolv.conf')
+
 interface_file = tempfile.NamedTemporaryFile(delete=False)
 interface_file.write(eth0_interface)
 interface_file.close()
