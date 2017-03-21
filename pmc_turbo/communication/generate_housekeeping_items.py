@@ -138,27 +138,27 @@ def get_items(partial_glob, json_filename=None):
 
 
 def get_camera_items(json_filename=None):
-    a = get_items(partial_glob='/home/pmc/logs/housekeeping/camera/*.csv', json_filename=json_filename + '.json')
+    a = get_items(partial_glob='/var/pmclogs/housekeeping/camera/*.csv', json_filename=json_filename + '.json')
 
-    b = get_range_outline(partial_glob='/home/pmc/logs/housekeeping/camera/*.csv',
+    b = get_range_outline(partial_glob='/var/pmclogs/housekeeping/camera/*.csv',
                           json_filename=json_filename + '_ranges.json')
 
     return a, b
 
 
 def get_labjack_items(json_filename=None):
-    a = get_items(partial_glob='/home/pmc/logs/housekeeping/labjack/*.csv', json_filename=json_filename + '.json')
+    a = get_items(partial_glob='/var/pmclogs/housekeeping/labjack/*.csv', json_filename=json_filename + '.json')
 
-    b = get_range_outline(partial_glob='/home/pmc/logs/housekeeping/labjack/*.csv',
+    b = get_range_outline(partial_glob='/var/pmclogs/housekeeping/labjack/*.csv',
                           json_filename=json_filename + '_ranges.json')
 
     return a, b
 
 
 def get_charge_controller_items(json_filename=None):
-    register_path = '/home/pmc/logs/housekeeping/charge_controller/*register*.csv'
+    register_path = '/var/pmclogs/housekeeping/charge_controller/*register*.csv'
 
-    eeprom_path = '/home/pmc/logs/housekeeping/charge_controller/*eeprom*.csv'
+    eeprom_path = '/var/pmclogs/housekeeping/charge_controller/*eeprom*.csv'
 
     a = get_items(partial_glob=register_path, json_filename=json_filename + '_register.json')
 

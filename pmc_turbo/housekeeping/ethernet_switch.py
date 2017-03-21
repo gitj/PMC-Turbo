@@ -2,7 +2,7 @@ import telnetlib
 import re
 import os
 import time
-log_dir = '/home/pmc/logs/housekeeping/switch'
+log_dir = '/var/pmclogs/housekeeping/switch'
 
 def get_switch_info(address='pmc-ethernet-switch-0'):
     tn = telnetlib.Telnet(address,timeout=60)

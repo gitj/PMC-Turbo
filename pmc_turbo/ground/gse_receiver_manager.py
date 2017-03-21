@@ -8,6 +8,8 @@ from traitlets import (Float, List, Enum)
 from pmc_turbo.ground.ground_configuration import GroundConfiguration
 from pmc_turbo.ground.gse_receiver import GSEReceiver
 
+print Pyro4.config.SERIALIZER, Pyro4.config.SERIALIZERS_ACCEPTED, Pyro4.config.SERVERTYPE
+
 logger = logging.getLogger(__name__)
 
 OPENPORT = 'openport'
@@ -37,11 +39,17 @@ class GSEReceiverManager(GroundConfiguration):
             self.receivers[link_name] = receiver
             receiver.start_main_loop_thread()
 
+    def get_file_status(self):
+        result = {}
+        for link_name,gse in self.receivers.items():
+            result[link_name] = gse.get_file_status()
+        return result
+
 
 if __name__ == "__main__":
     from pmc_turbo.utils import log
     log.setup_stream_handler(logging.DEBUG)
     gserm = GSEReceiverManager()
     daemon = Pyro4.Daemon('0.0.0.0',55000)
-    daemon.register(GSEReceiverManager,'gserm')
+    daemon.register(gserm,'gserm')
     daemon.requestLoop()

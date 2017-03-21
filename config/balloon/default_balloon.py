@@ -7,7 +7,7 @@ c.GlobalConfiguration.data_directories = ['/data1', '/data2', '/data3', '/data4'
 
 c.BasicPipeline.num_data_buffers = 16
 
-housekeeping_dir = '/home/pmc/logs/housekeeping'
+housekeeping_dir = '/var/pmclogs/housekeeping'
 
 c.PipelineApp.housekeeping_dir = housekeeping_dir
 c.PipelineApp.counters_dir = os.path.join(housekeeping_dir, 'counters')
@@ -29,13 +29,13 @@ c.CommunicatorApp.address_book = {0: ('pmc-camera-0', 40000), 1: ('pmc-camera-1'
 c.GlobalConfiguration.controller_pyro_port = 50001
 
 ##
-c.GlobalConfiguration.counters_dir = '/home/pmc/logs/counters'
+c.GlobalConfiguration.counters_dir = '/var/pmclogs/counters'
 
 ##
-c.GlobalConfiguration.housekeeping_dir = '/home/pmc/logs/housekeeping'
+c.GlobalConfiguration.housekeeping_dir = '/var/pmclogs/housekeeping'
 
 ##
-c.GlobalConfiguration.log_dir = '/home/pmc/logs'
+c.GlobalConfiguration.log_dir = '/var/pmclogs'
 
 ##
 c.GlobalConfiguration.pipeline_pyro_port = 50000

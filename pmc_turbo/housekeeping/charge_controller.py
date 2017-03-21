@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 from pymodbus.client.sync import ModbusTcpClient
 
-LOG_DIR = '/home/pmc/logs/housekeeping/charge_controller'
+LOG_DIR = '/var/pmclogs/housekeeping/charge_controller'
 # serial_number = 16050331
 device_name = 'TriStar-MPPT-60'
 NUM_REGISTERS = 92

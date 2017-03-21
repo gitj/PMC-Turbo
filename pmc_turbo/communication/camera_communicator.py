@@ -551,7 +551,7 @@ class Communicator(GlobalConfiguration):
         ss = ShortStatusCamera()
         ss.message_id = 0
         ss.timestamp = data_dict[self.cam_id]['SuperGroup']['camera_items'][
-            "/home/pmc/logs/housekeeping/camera/*.csv"][
+            "/var/pmclogs/housekeeping/camera/*.csv"][
             "GevTimestampValue"][
             "epoch"]
         ss.leader_id = self.cam_id
@@ -565,21 +565,21 @@ class Communicator(GlobalConfiguration):
         ss.camera_packet_missed = 0
         ss.camera_frames_dropped = 0
         ss.camera_timestamp_offset_us = data_dict[self.cam_id]['SuperGroup']['camera_items'][
-            "/home/pmc/logs/housekeeping/camera/*.csv"]['camera_timestamp_offset']['value']
+            "/var/pmclogs/housekeeping/camera/*.csv"]['camera_timestamp_offset']['value']
         ss.exposure_us = data_dict[self.cam_id]['SuperGroup']['camera_items'][
-            "/home/pmc/logs/housekeeping/camera/*.csv"]['ExposureTimeAbs']['value']*1000
+            "/var/pmclogs/housekeeping/camera/*.csv"]['ExposureTimeAbs']['value']*1000
         ss.focus_step = data_dict[self.cam_id]['SuperGroup']['camera_items'][
-            "/home/pmc/logs/housekeeping/camera/*.csv"]['EFLensFocusCurrent']['value']
+            "/var/pmclogs/housekeeping/camera/*.csv"]['EFLensFocusCurrent']['value']
         ss.aperture_times_100 = data_dict[self.cam_id]['SuperGroup']['camera_items'][
-            "/home/pmc/logs/housekeeping/camera/*.csv"]['EFLensFStopCurrent']['value']*100
+            "/var/pmclogs/housekeeping/camera/*.csv"]['EFLensFStopCurrent']['value']*100
         ss.pressure = 101033.3
         ss.lens_wall_temp = 300
         ss.dcdc_wall_temp = -225
         ss.labjack_temp = 28
         ss.camera_temp = data_dict[self.cam_id]['SuperGroup']['camera_items'][
-            "/home/pmc/logs/housekeeping/camera/*.csv"]['main_temperature']['value']
+            "/var/pmclogs/housekeeping/camera/*.csv"]['main_temperature']['value']
         ss.ccd_temp = data_dict[self.cam_id]['SuperGroup']['camera_items'][
-            "/home/pmc/logs/housekeeping/camera/*.csv"]['sensor_temperature']['value']
+            "/var/pmclogs/housekeeping/camera/*.csv"]['sensor_temperature']['value']
         ss.rail_12_mv = 12000
         ss.cpu_temp = 70
         ss.sda_temp = 55

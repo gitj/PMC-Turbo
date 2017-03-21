@@ -12,7 +12,7 @@ Pyro4.config.SERVERTYPE = 'multiplex'
 Pyro4.config.SERIALIZERS_ACCEPTED = {'pickle','json'}
 Pyro4.config.SERIALIZER = 'pickle'
 
-LOG_DIR = '/home/pmc/logs/housekeeping/labjack'
+LOG_DIR = '/var/pmclogs/housekeeping/labjack'
 
 @Pyro4.expose
 class LabJackLogger():

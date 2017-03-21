@@ -232,5 +232,5 @@ class GSEReceiver():
                 self.write_file(file_class,file_id=file_id)
                 del self.files[file_id]
 
-    def get_files_status(self):
+    def get_file_status(self):
         return self.file_status
