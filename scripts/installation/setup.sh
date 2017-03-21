@@ -1,8 +1,10 @@
 #!/bin/bash
+set -x
 #PMC_TURBO=$HOME/pmchome/pmc-turbo-devel
 PMC_TURBO=$HOME/pmc-turbo
 sudo cp etc/interfaces.d/eth1 /etc/network/interfaces.d/
 sudo /etc/init.d/networking restart
+mkdir $HOME/Downloads
 pushd $HOME/Downloads/
 git clone https://github.com/ptpd/ptpd.git
 cd ptpd
@@ -51,6 +53,8 @@ popd
 cd $PMC_TURBO
 nosetests -v -s
 
-sudo cp -r etc/supervisor /etc/
+sudo cp -r ./etc/supervisor /etc/
 sudo supervisorctl reread
 sudo supervisorctl update
+sleep 1
+sudo supervisorctl status

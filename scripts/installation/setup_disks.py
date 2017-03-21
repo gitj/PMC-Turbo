@@ -122,7 +122,7 @@ for big_disk_device in big_disk_devices:
     if real_device in BIG_DISKS_TO_RAID:
         logger.info("preparing partitions on %s to incorporate into raids" % (real_device))
         run_command("sudo parted -s /dev/%s unit s mkpart primary %s %s" % (real_device, root_partition_params[0], root_partition_params[1]))
-        run_command("sudo parted /dev/%s set 1 raid on" % real_device)
+        run_command("sudo parted /dev/%s set 1 bios_grub on" % real_device)
 
 #        run_command("sudo parted /dev/%s set 1 boot on" % real_device)  # sounds like this shouldn't be needed
 
@@ -173,7 +173,7 @@ with open(scan_file,'w') as fh:
     fh.write('\n'.join(mdadm_conf_lines))
 
 run_command("sudo mdadm --detail --scan >> %s" % scan_file)
-run_command("cp %s /etc/mdadm/mdadm.conf" % scan_file)
+run_command("sudo cp %s /etc/mdadm/mdadm.conf" % scan_file)
 
 
 new_fstab_lines = []
@@ -207,6 +207,7 @@ logger.info("fstab is now:\n\n%s\n" % (open('/etc/fstab').read()))
 
 
 logger.info("installing grub")
+run_command("sudo update-grub")
 for partition in root_partitions:
     if partition[:3] in BIG_DISKS_TO_RAID:
         run_command("sudo grub-install /dev/%s" % partition[:3])
