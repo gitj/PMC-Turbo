@@ -23,6 +23,7 @@ from pmc_turbo.communication import file_format_classes
 from pmc_turbo.communication.command_table import command_manager, CommandStatus
 from pmc_turbo.communication.short_status import ShortStatusLeader, ShortStatusCamera
 from pmc_turbo.housekeeping.charge_controller import ChargeControllerLogger
+from pmc_turbo.communication import keyring
 
 from pmc_turbo.utils import error_counter, camera_id
 
@@ -550,46 +551,61 @@ class Communicator(GlobalConfiguration):
             return self.populate_short_status_leader(data_dict)
 
     def populate_short_status_leader(self, data_dict):
-        ss = ShortStatusCamera()
-        ss.message_id = 0
-
-        camera_items = data_dict[self.cam_id]['SuperGroup']['camera_items']['*']
-        print '################'
-        print camera_items
-        print '##############'
-        collectd_items = data_dict[self.cam_id]['SuperGroup']['collectd_items']
-        labjack_items = data_dict[self.cam_id]['SuperGroup']['labjack_items']['*']
-
-        ss.timestamp = camera_items["GevTimestampValue"]["epoch"]
-        ss.leader_id = self.cam_id
-        ss.free_disk_root_mb = collectd_items["df-root_df_complex-free"]
-        ss.free_disk_data_1_mb = collectd_items["df-data1_df_complex-free"]
-        ss.free_disk_data_2_mb = collectd_items["df-data2_df_complex-free"]
-        ss.free_disk_data_3_mb = collectd_items["df-data3_df_complex-free"]
-        ss.free_disk_data_4_mb = collectd_items["df-data4_df_complex-free"]
-        ss.total_images_captured = camera_items['total_frames']
-        ss.camera_packet_resent = camera_items["StatPacketResent"]
-        ss.camera_packet_missed = camera_items["StatPacketMissed"]
-        ss.camera_frames_dropped = camera_items["StatFrameDropped"]
-        ss.camera_timestamp_offset_us = camera_items['camera_timestamp_offset']['value']
-        ss.exposure_us = camera_items['ExposureTimeAbs']['value'] * 1000
-        ss.focus_step = camera_items['EFLensFocusCurrent']['value']
-        ss.aperture_times_100 = camera_items['EFLensFStopCurrent']['value'] * 100
-        ss.pressure = 101033.3  # labjack_items['???']
-        ss.lens_wall_temp = labjack_items['ain6'] * 1000
-        ss.dcdc_wall_temp = labjack_items['ain7'] * 1000
-        ss.labjack_temp = labjack_items['temperature']
-        ss.camera_temp = camera_items['main_temperature']['value']
-        ss.ccd_temp = camera_items['sensor_temperature']['value']
-        ss.rail_12_mv = collectd_items["ipmi_voltage-12V system_board (7.17)"]
-        ss.cpu_temp = collectd_items["ipmi_temperature-CPU Temp processor (3.1)"]['value']
-        ss.sda_temp = 55
-        ss.sdb_temp = 45
-        ss.sdc_temp = 48
-        ss.sdd_temp = 47
-        ss.sde_temp = 46
-        ss.sdf_temp = 77
-        return ss.encode()
+        return
 
     def populate_short_status_camera(self, data_dict):
-        return
+
+        ss = ShortStatusCamera()
+        ss.message_id = 0
+        supergroup = data_dict[self.cam_id]['SuperGroup']
+        ss.timestamp = keyring.get_keyring_item('timestamp')
+        ss.leader_id = self.leader_id
+        ss.free_disk_root_mb = keyring.get_keyring_item("df-root_df_complex-free")
+        ss.free_disk_data_1_mb = keyring.get_keyring_item("df-data1_df_complex-free")
+        ss.free_disk_data_2_mb = keyring.get_keyring_item("df-data2_df_complex-free")
+        ss.free_disk_data_3_mb = keyring.get_keyring_item("df-data3_df_complex-free")
+        ss.free_disk_data_4_mb = keyring.get_keyring_item("df-data4_df_complex-free")
+        ss.total_images_captured = keyring.get_keyring_item('total_frames')
+        ss.camera_packet_resent = keyring.get_keyring_item("StatPacketResent")
+        ss.camera_packet_missed = keyring.get_keyring_item("StatPacketMissed")
+        ss.camera_frames_dropped = keyring.get_keyring_item("StatFrameDropped")
+        ss.camera_timestamp_offset_us = keyring.get_keyring_item('camera_timestamp_offset')
+        ss.exposure_us = keyring.get_keyring_item('ExposureTimeAbs') * 1000
+        ss.focus_step = keyring.get_keyring_item('EFLensFocusCurrent')
+        ss.aperture_times_100 = keyring.get_keyring_item(self.short_status_keyring, supergroup,
+                                                         'EFLensFStopCurrent') * 100
+        ss.pressure = 101033.3  # labjack_items['???']
+        ss.lens_wall_temp = keyring.get_keyring_item('ain6') * 1000
+        ss.dcdc_wall_temp = keyring.get_keyring_item('ain7') * 1000
+        ss.labjack_temp = keyring.get_keyring_item('temperature')
+        ss.camera_temp = keyring.get_keyring_item('main_temperature')
+        ss.ccd_temp = keyring.get_keyring_item('sensor_temperature')
+        ss.rail_12_mv = keyring.get_keyring_item("ipmi_voltage-12V system_board (7.17)")
+        ss.cpu_temp = keyring.get_keyring_item("ipmi_temperature-CPU Temp processor (3.1)")
+        ss.sda_temp = keyring.get_keyring_item("hddtemp_temperature-sda")
+        ss.sdb_temp = keyring.get_keyring_item("hddtemp_temperature-sdb")
+        ss.sdc_temp = keyring.get_keyring_item("hddtemp_temperature-sdc")
+        ss.sdd_temp = keyring.get_keyring_item("hddtemp_temperature-sdd")
+        ss.sde_temp = keyring.get_keyring_item("hddtemp_temperature-sde")
+        ss.sdf_temp = keyring.get_keyring_item("hddtemp_temperature-sdf")
+        return ss.encode()
+
+    def add_key_to_keyring(self, item_name, keyring, supergroup):
+        if item_name in keyring:
+            raise ValueError('Item name %s is already in keyring' % item_name)
+        for group_key in supergroup.keys():
+            group = supergroup[group_key]
+            for filewatcher_key in group.keys():
+                filewatcher = group[filewatcher_key]
+                if item_name in filewatcher.keys():
+                    keyring[item_name] = [group_key][filewatcher_key][item_name]
+                    return keyring
+        raise ValueError('Item name %s not found in supergroup %s' % (item_name, supergroup.name))
+
+    def setup_short_status_keyring(self, short_status_items, supergroup):
+        for status_item in short_status_items:
+            self.short_status_keyring = self.add_key_to_keyring(status_item, self.short_status_keyring, supergroup)
+
+    def get_keyring_item(self, supergroup, item_name):
+        group_key, filewatcher_key = self.keyring[item_name]
+        return supergroup[group_key][filewatcher_key][item_name]

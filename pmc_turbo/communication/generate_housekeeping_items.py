@@ -138,10 +138,16 @@ def get_charge_controller_items(json_filename=None):
 
     eeprom_glob = '*eeprom*'
 
+    if json_filename:
+        eeprom_filename = json_filename + '_eeprom_items'
+        register_filename = json_filename + '_register_items'
+    else:
+        eeprom_filename = None
+        register_filename = None
     a = get_items(common_glob=common_glob, partial_glob=register_glob,
-                  json_filename=json_filename + '_register_items')
+                  json_filename=register_filename)
 
-    c = get_items(common_glob=common_glob, partial_glob=eeprom_glob, json_filename=json_filename + '_eeprom_items')
+    c = get_items(common_glob=common_glob, partial_glob=eeprom_glob, json_filename=eeprom_filename)
 
     return a, c
 
