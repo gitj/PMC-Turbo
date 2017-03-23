@@ -164,6 +164,8 @@ class Controller(GlobalConfiguration):
         else:
             logger.debug("Forcing update of index because no commands have been executed recently")
             self.merged_index.update()
+            if self.merged_index.df is None:
+                self.update_current_image_dirs()
 
 
     def update_current_image_dirs(self):
