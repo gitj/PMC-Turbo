@@ -143,10 +143,12 @@ class Controller(GlobalConfiguration):
                 if index is None:
                     self.counters.no_index_available.increment()
                     logger.warning("No index available, is the pipeline writing? Looking for gate_time %d" % gate_time)
+                    self.update_current_image_dirs()
                     continue
                 if index == len(self.merged_index.df):
                     self.counters.command_complete_waiting_for_image_data.increment()
                     logger.info("Command tag %f - %s:%s complete, but image data not yet available" % (tag, name, value))
+                    self.update_current_image_dirs()
                     continue
                 row = self.merged_index.df.iloc[index]
                 timestamp = row.frame_timestamp_ns / 1e9
@@ -163,13 +165,12 @@ class Controller(GlobalConfiguration):
                 self.request_image_by_index(index, **request_params)
         else:
             logger.debug("Forcing update of index because no commands have been executed recently")
-            self.merged_index.update()
-            if self.merged_index.df is None:
-                self.update_current_image_dirs()
-
+            self.update_current_image_dirs()
 
     def update_current_image_dirs(self):
-        self.merged_index = MergedIndex('*', data_dirs=self.data_directories)
+        if self.merged_index is None or self.merged_index.df is None:
+            self.merged_index = MergedIndex('*', data_dirs=self.data_directories)
+        self.merged_index.update()
 
 
     def get_latest_fileinfo(self):
@@ -336,11 +337,12 @@ class Controller(GlobalConfiguration):
         self.downlink_queue.append(file_object.to_buffer())
 
     def get_next_data_for_downlink(self):
-        logger.debug('Getting next data for downlink.')
         if self.downlink_queue:
             result = self.downlink_queue[0]
             self.downlink_queue = self.downlink_queue[1:]
+            logger.debug("Sending item with length %d from queue. %d items remain in the queue" % (len(result),len(self.downlink_queue)))
         else:
+            logger.debug("Sending latest standard image")
             result = self.get_latest_standard_image().to_buffer()
         return result
 

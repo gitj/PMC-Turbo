@@ -54,6 +54,8 @@ echo "export PYTHONPATH=$PMC_TURBO" >> $HOME/.bashrc
 cd $PMC_TURBO
 nosetests -v -s
 
+sudo cp $PMC_TURBO/scripts/installation/etc/fuse.conf /etc/
+mkdir $HOME/pmchome
 sudo cp -r $PMC_TURBO/scripts/installation/etc/supervisor /etc/
 sudo supervisorctl reread
 sudo supervisorctl update
