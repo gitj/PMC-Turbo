@@ -11,14 +11,30 @@ INDEX_FILENAME = 'index.csv'
 
 class MergedIndex(object):
     def __init__(self, subdirectory_name, data_dirs=DEFAULT_DATA_DIRS, index_filename=INDEX_FILENAME):
+        self.data_dirs = data_dirs
+        self.subdirectory_name = subdirectory_name
+        self.index_filename = index_filename
         self.index_filenames = []
-        for data_dir in data_dirs:
-            self.index_filenames.extend(glob.glob(os.path.join(data_dir, subdirectory_name, index_filename)))
-        self.watchers = [IndexWatcher(fn) for fn in self.index_filenames]
+        self.watchers = []
         self.df = None
         self.update()
 
+    def get_index_filenames(self):
+        index_filenames = []
+        for data_dir in self.data_dirs:
+            index_filenames.extend(glob.glob(os.path.join(data_dir, self.subdirectory_name, self.index_filename)))
+        return  index_filenames
+
+    def update_watchers(self):
+        index_filenames = self.get_index_filenames()
+        new_index_files = list(set(index_filenames).difference(set(self.index_filenames)))
+        if new_index_files:
+            logger.info("found new index files: %r" % new_index_files)
+        new_watchers = [IndexWatcher(fn) for fn in new_index_files]
+        self.watchers = self.watchers + new_watchers
+
     def update(self):
+        self.update_watchers()
         new_rows = False
         segment = None
         for watcher in self.watchers:
