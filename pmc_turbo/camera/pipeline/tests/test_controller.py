@@ -51,11 +51,17 @@ class TestMultiIndex(BasicTestHarness):
         for k, data_dir in enumerate(self.basic_config.GlobalConfiguration.data_directories):
             shutil.copy(os.path.join(test_data_path, ('index_%d.csv' % (k + 1))),
                         os.path.join(data_dir, self.subdir, 'index.csv'))
+        print self.basic_config.GlobalConfiguration.data_directories
         mi = pmc_turbo.camera.pipeline.indexer.MergedIndex(subdirectory_name=self.subdir,
                                                            data_dirs=self.basic_config.GlobalConfiguration.data_directories)
         result = mi.get_latest(update=True)
         assert result['frame_id'] == 422
-        assert mi.get_index_of_timestamp(1482246746.160007500) == 416
+        timestamp = 1482246746.160007500
+        ts_index = mi.get_index_of_timestamp(timestamp)
+        print ts_index
+        print mi.df.iloc[ts_index]
+        ts2 = mi.df.frame_timestamp_ns.iloc[ts_index]/1e9
+        assert (timestamp-ts2) < 1e-3
         for k, data_dir in enumerate(self.basic_config.GlobalConfiguration.data_directories):
             open(os.path.join(data_dir, self.subdir, 'index.csv'), 'w').close()
 
