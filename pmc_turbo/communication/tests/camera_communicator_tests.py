@@ -18,7 +18,7 @@ from copy import deepcopy
 
 counter_dir = ''
 
-FAKE_BASE_PORT = 56654
+FAKE_PYRO_PORT = 56654
 
 
 def setup():
@@ -36,7 +36,7 @@ class TestCommunicator(BasicTestHarness):
         config = deepcopy(self.basic_config)
         config.Communicator.lowrate_link_parameters = [('comm1', ('localhost', 6501), 6501)]
         cc = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, leader=True, start_pyro=False,
-                                              base_port=FAKE_BASE_PORT, config=config)
+                                              pyro_port=FAKE_PYRO_PORT, config=config)
         cc.validate_command_table()
         cc.close()
 
@@ -51,12 +51,12 @@ class TestCommunicator(BasicTestHarness):
         config1 = deepcopy(self.basic_config)
         config1.Communicator.lowrate_link_parameters = [('comm1', ('localhost', 6501), 6501)]
         cc1 = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, leader=True, start_pyro=False,
-                                               base_port=FAKE_BASE_PORT, config=config1)
+                                               pyro_port=FAKE_PYRO_PORT, config=config1)
 
         config2 = deepcopy(self.basic_config)
         config2.Communicator.lowrate_link_parameters = [('comm2', ('localhost', 6601), 6601)]
         cc2 = camera_communicator.Communicator(cam_id=1, peers=[], controller=None, leader=True, start_pyro=False,
-                                               base_port=FAKE_BASE_PORT, config=config2)
+                                               pyro_port=FAKE_PYRO_PORT, config=config2)
         cc1.controller = cont
         cc2.controller = cont
         cc1.peers = [cc1, cc2]
@@ -167,9 +167,9 @@ class TestNoPeers(BasicTestHarness):
         super(TestNoPeers, self).setup()
         config = self.basic_config.copy()
         config.Communicator.lowrate_link_parameters = [('comm1', ('pmc-serial-1', 6501), 6501)]
-        self.base_port = FAKE_BASE_PORT
+        self.pyro_port = FAKE_PYRO_PORT
         self.c = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, leader=True,
-                                                  base_port=self.base_port, config=config)
+                                                  pyro_port=self.pyro_port, config=config)
 
     def teardown(self):
         super(TestNoPeers, self).teardown()
@@ -201,16 +201,16 @@ class TestPeers(BasicTestHarness):
         # Set up port manually.
         config = self.basic_config.copy()
         config.Communicator.lowrate_link_parameters = [('comm1', ("pmc-serial-1", 6501), 6501)]
-        self.base_port = FAKE_BASE_PORT
-        proxy = Pyro4.Proxy('PYRO:communicator@0.0.0.0:%d' % (self.base_port + 1))
+        self.pyro_port = FAKE_PYRO_PORT
+        proxy = Pyro4.Proxy('PYRO:communicator@0.0.0.0:%d' % (self.pyro_port + 1))
         self.c = camera_communicator.Communicator(cam_id=0, peers=[proxy], controller=None, leader=True,
-                                                  base_port=self.base_port, config=config)
+                                                  pyro_port=self.pyro_port, config=config)
         self.c.setup_pyro_daemon()
 
         self.c.file_id = 0
         config.Communicator.lowrate_link_parameters = [('comm1', ("pmc-serial-1", 6601), 6601)]
         self.peer = camera_communicator.Communicator(cam_id=1, peers=[], controller=None, leader=True,
-                                                     base_port=(self.base_port + 1), config=config)
+                                                     pyro_port=(self.pyro_port + 1), config=config)
         self.peer.setup_pyro_daemon()
         self.peer.start_pyro_thread()
 

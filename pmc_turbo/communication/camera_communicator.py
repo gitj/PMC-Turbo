@@ -36,8 +36,6 @@ Pyro4.config.COMMTIMEOUT = 5
 # Note that there is another timeout POLLTIMEOUT
 # "For the multiplexing server only: the timeout of the select or poll calls"
 
-BASE_PORT = 40000  # Change this const when a base port is decided upon.
-
 logger = logging.getLogger(__name__)
 
 START_BYTE = chr(constants.SIP_START_BYTE)
@@ -66,14 +64,16 @@ class Communicator(GlobalConfiguration):
     charge_controller_settings = List(trait=Tuple(TCPAddress(), Float(10, min=0), Float(3600, min=0)),
                                       help="List of tuples ((ip,port), measurement_interval, eeprom_measurement_interval)\n").tag(
         config=True)
+    cam_id = Int(default_value=0, allow_none=False, min=0).tag(config=True)
 
-    def __init__(self, cam_id, peers, controller, leader, base_port=BASE_PORT, **kwargs):
+    def __init__(self, cam_id, peers, controller, leader, pyro_port, **kwargs):
         super(Communicator, self).__init__(**kwargs)
-        self.port = base_port  # + cam_id
+        self.port = pyro_port
         logger.debug('Communicator initialized')
-        self.cam_id = cam_id
         self.leader = leader
         self.become_leader = False
+
+        self.cam_id = cam_id
 
         self.peers = []
         for peer in peers:
@@ -101,6 +101,11 @@ class Communicator(GlobalConfiguration):
 
         self.peer_polling_order_idx = 0
         self.peer_polling_order = self.initial_peer_polling_order
+
+        self.short_status_order_idx = 0
+        self.short_status_order = [command_table.DESTINATION_LEADER, 0, 1, 2, 3, 4, 5, 6, 7,
+                                   command_table.DESTINATION_LIDAR]
+
         self.synchronize_image_time_across_cameras = False
         self.end_loop = False
         self.status_groups = []
@@ -311,8 +316,8 @@ class Communicator(GlobalConfiguration):
     ### The following two functions respond to SIP requests
     def respond_to_science_data_request(self, lowrate_index):
         logger.debug("Science data request received from %s." % self.lowrate_uplinks[lowrate_index].name)
-        self.get_all_status_summaries()
-        self.lowrate_downlinks[lowrate_index].send(self.buffer_for_downlink)
+        summary = self.get_next_status_summary()
+        self.lowrate_downlinks[lowrate_index].send(summary)
 
     def check_peer_connection(self, peer):
         initial_timeout = peer._pyroTimeout
@@ -378,22 +383,35 @@ class Communicator(GlobalConfiguration):
             return
         self.command_logger.add_command_result(command_packet.sequence_number, CommandStatus.command_ok, '')
 
-    def get_all_status_summaries(self):
-        summary_dict = {}
-        for i, peer in enumerate(self.peers):
-            if self.check_peer_connection(peer):
-                try:
-                    # summary_dict[i] = peer.get_status_summary()
-                    summary_dict[i] = peer.get_full_status()
-                    logger.debug('Received status summary from peer %d' % i)
-                except Pyro4.errors.CommunicationError:
-                    logger.debug('Unable to connect to peer %d' % i)
-
-        status_summary = self.populate_short_status(ShortStatusLeader, summary_dict)
-        self.buffer_for_downlink = status_summary + self.buffer_for_downlink[len(status_summary):]
+    def get_next_status_summary(self):
+        result = None
+        while not result:
+            if self.short_status_order[self.short_status_order_idx] == command_table.DESTINATION_LEADER:
+                result = None
+                # TODO: Fill this out
+            elif self.short_status_order[self.short_status_order_idx] == command_table.DESTINATION_LIDAR:
+                result = None
+                # TODO: Fill this out
+            else:
+                peer = self.peers[self.short_status_order[self.short_status_order_idx]]
+                if self.check_peer_connection(peer):
+                    try:
+                        summary_dict = peer.get_full_status()
+                        logger.debug('Received status summary from peer %r' % peer)
+                        result = self.populate_short_status_camera(summary_dict)
+                    except Pyro4.errors.CommunicationError:
+                        logger.debug('Unable to connect to peer %r' % peer)
+                else:
+                    logger.warning('Unable to connect to peer %r' % peer)
+            self.short_status_order_idx += 1
+            self.short_status_order_idx %= len(self.short_status_order)
+        return result
 
     def get_full_status(self):
         summary = {}
+        if self.cam_id is None:
+            raise ValueError('Camera does not know its cam_id.')
+        summary['cam_id'] = self.cam_id
         for group in self.status_groups:
             group.update()
             summary[group.name] = group.get_status()
@@ -406,7 +424,7 @@ class Communicator(GlobalConfiguration):
         for group in self.status_groups:
             group.update()
             summary.append(group.get_status_summary())
-        print summary
+        # print summary
         return summary
 
     def ping(self):
@@ -543,7 +561,6 @@ class Communicator(GlobalConfiguration):
     ###################################################################################################################
 
     def populate_short_status(self, short_status_type, data_dict):
-        print data_dict
         # Populate short status class with housekeeping summary.
         if short_status_type == ShortStatusCamera:
             return self.populate_short_status_camera(data_dict)
@@ -557,55 +574,37 @@ class Communicator(GlobalConfiguration):
 
         ss = ShortStatusCamera()
         ss.message_id = 0
-        supergroup = data_dict[self.cam_id]['SuperGroup']
-        ss.timestamp = keyring.get_keyring_item('timestamp')
-        ss.leader_id = self.leader_id
-        ss.free_disk_root_mb = keyring.get_keyring_item("df-root_df_complex-free")
-        ss.free_disk_data_1_mb = keyring.get_keyring_item("df-data1_df_complex-free")
-        ss.free_disk_data_2_mb = keyring.get_keyring_item("df-data2_df_complex-free")
-        ss.free_disk_data_3_mb = keyring.get_keyring_item("df-data3_df_complex-free")
-        ss.free_disk_data_4_mb = keyring.get_keyring_item("df-data4_df_complex-free")
-        ss.total_images_captured = keyring.get_keyring_item('total_frames')
-        ss.camera_packet_resent = keyring.get_keyring_item("StatPacketResent")
-        ss.camera_packet_missed = keyring.get_keyring_item("StatPacketMissed")
-        ss.camera_frames_dropped = keyring.get_keyring_item("StatFrameDropped")
-        ss.camera_timestamp_offset_us = keyring.get_keyring_item('camera_timestamp_offset')
-        ss.exposure_us = keyring.get_keyring_item('ExposureTimeAbs') * 1000
-        ss.focus_step = keyring.get_keyring_item('EFLensFocusCurrent')
-        ss.aperture_times_100 = keyring.get_keyring_item(self.short_status_keyring, supergroup,
-                                                         'EFLensFStopCurrent') * 100
+
+        kr = keyring.KeyRing(data_dict)
+
+
+        ss.timestamp = kr["GevTimestampValue"]['value']
+        ss.leader_id = 0  # TODO: implement self.leader_id
+        ss.free_disk_root_mb = kr["df-root_df_complex-free"]['value'] / 1e6
+        ss.free_disk_data_1_mb = kr["df-data1_df_complex-free"]['value'] / 1e6
+        ss.free_disk_data_2_mb = kr["df-data2_df_complex-free"]['value'] / 1e6
+        ss.free_disk_data_3_mb = kr["df-data3_df_complex-free"]['value'] / 1e6
+        ss.free_disk_data_4_mb = kr["df-data4_df_complex-free"]['value'] / 1e6
+        ss.total_images_captured = kr['total_frames']['value']
+        ss.camera_packet_resent = kr["StatPacketResent"]['value']
+        ss.camera_packet_missed = kr["StatPacketMissed"]['value']
+        ss.camera_frames_dropped = kr["StatFrameDropped"]['value']
+        ss.camera_timestamp_offset_us = kr['camera_timestamp_offset']['value']
+        ss.exposure_us = (kr['ExposureTimeAbs']['value'] * 1000) - 273
+        ss.focus_step = kr['EFLensFocusCurrent']['value']
+        ss.aperture_times_100 = kr['EFLensFStopCurrent']['value'] * 100
         ss.pressure = 101033.3  # labjack_items['???']
-        ss.lens_wall_temp = keyring.get_keyring_item('ain6') * 1000
-        ss.dcdc_wall_temp = keyring.get_keyring_item('ain7') * 1000
-        ss.labjack_temp = keyring.get_keyring_item('temperature')
-        ss.camera_temp = keyring.get_keyring_item('main_temperature')
-        ss.ccd_temp = keyring.get_keyring_item('sensor_temperature')
-        ss.rail_12_mv = keyring.get_keyring_item("ipmi_voltage-12V system_board (7.17)")
-        ss.cpu_temp = keyring.get_keyring_item("ipmi_temperature-CPU Temp processor (3.1)")
-        ss.sda_temp = keyring.get_keyring_item("hddtemp_temperature-sda")
-        ss.sdb_temp = keyring.get_keyring_item("hddtemp_temperature-sdb")
-        ss.sdc_temp = keyring.get_keyring_item("hddtemp_temperature-sdc")
-        ss.sdd_temp = keyring.get_keyring_item("hddtemp_temperature-sdd")
-        ss.sde_temp = keyring.get_keyring_item("hddtemp_temperature-sde")
-        ss.sdf_temp = keyring.get_keyring_item("hddtemp_temperature-sdf")
+        ss.lens_wall_temp = (kr['ain6']['value'] * 1000) - 273
+        ss.dcdc_wall_temp = (kr['ain7']['value'] * 1000) - 273
+        ss.labjack_temp = kr['temperature']['value'] - 273
+        ss.camera_temp = kr['main_temperature']['value']
+        ss.ccd_temp = kr['sensor_temperature']['value']
+        ss.rail_12_mv = kr["ipmi_voltage-12V system_board (7.17)"]['value']
+        ss.cpu_temp = kr["ipmi_temperature-CPU Temp processor (3.1)"]['value']
+        ss.sda_temp = kr["hddtemp_temperature-sda"]['value']
+        ss.sdb_temp = kr["hddtemp_temperature-sdb"]['value']
+        ss.sdc_temp = kr["hddtemp_temperature-sdc"]['value']
+        ss.sdd_temp = kr["hddtemp_temperature-sdd"]['value']
+        ss.sde_temp = kr["hddtemp_temperature-sde"]['value']
+        ss.sdf_temp = kr["hddtemp_temperature-sdf"]['value']
         return ss.encode()
-
-    def add_key_to_keyring(self, item_name, keyring, supergroup):
-        if item_name in keyring:
-            raise ValueError('Item name %s is already in keyring' % item_name)
-        for group_key in supergroup.keys():
-            group = supergroup[group_key]
-            for filewatcher_key in group.keys():
-                filewatcher = group[filewatcher_key]
-                if item_name in filewatcher.keys():
-                    keyring[item_name] = [group_key][filewatcher_key][item_name]
-                    return keyring
-        raise ValueError('Item name %s not found in supergroup %s' % (item_name, supergroup.name))
-
-    def setup_short_status_keyring(self, short_status_items, supergroup):
-        for status_item in short_status_items:
-            self.short_status_keyring = self.add_key_to_keyring(status_item, self.short_status_keyring, supergroup)
-
-    def get_keyring_item(self, supergroup, item_name):
-        group_key, filewatcher_key = self.keyring[item_name]
-        return supergroup[group_key][filewatcher_key][item_name]

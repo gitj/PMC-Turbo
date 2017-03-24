@@ -7,6 +7,7 @@ import math
 
 from pmc_turbo.communication import file_format_classes
 from pmc_turbo.utils import file_reading
+from pmc_turbo.communication import keyring
 
 logger = logging.getLogger(__name__)
 
@@ -109,6 +110,11 @@ class SuperStatusGroup():
             raise ValueError('No keys - filewatcher is empty.')
         entries = {key: self.groups[key].get_status() for key in self.groups.keys()}
         return entries
+
+    def get_status_wrapped_in_keyring(self):
+        status = self.get_status()
+        return keyring.KeyRing(status)
+
 
     def get_255_byte_summary(self):
         """
@@ -250,7 +256,7 @@ class StatusFileWatcher():
                         'First column of file %r is not epoch, it is %r' % (self.source_file, self.column_names[0]))
         last_update = os.path.getctime(self.source_file)
         if last_update == self.last_update:  # if the file not has changed since last check
-            logger.debug('File %r up to date.' % self.name)
+            #logger.debug('File %r up to date.' % self.name)
             return
         else:
             if self.last_update and not (
@@ -262,7 +268,7 @@ class StatusFileWatcher():
             last_line = file_reading.read_last_line(self.source_file)
             values = last_line.split(DELIMITER)
             self.last_update = last_update
-            logger.debug('Filewatcher %r updated with values %r' % (self.name, values))
+            # logger.debug('Filewatcher %r updated with values %r' % (self.name, values))
 
         if len(values) != len(self.column_names):
             raise ValueError(

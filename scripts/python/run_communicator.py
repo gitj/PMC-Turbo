@@ -19,7 +19,6 @@ class CommunicatorApp(Application):
     classes = List([camera_communicator.Communicator])
     aliases = dict(generate_config='CommunicatorApp.write_default_config',
                    config_file='CommunicatorApp.config_file')
-
     address_book = Dict(default_value={0: ('0.0.0.0', 40000)},
                         help='Dict for mapping camera ID to Pyro address.'
                              'e.g. {3: ("pmc-camera-3", 40000)}').tag(config=True)
@@ -36,15 +35,15 @@ class CommunicatorApp(Application):
         #self.update_config(basic_config)
         print self.config
         cam_id = camera_id.get_camera_id()
-        base_port = self.address_book[cam_id][1]
+        pyro_port = self.address_book[cam_id][1]
         sorted_keys = self.address_book.keys()
         sorted_keys.sort()
         peers = ['PYRO:communicator@%s:%d' % self.address_book[key] for key in sorted_keys]
+
         start_as_leader = (cam_id == 0)
 
-        self.communicator = camera_communicator.Communicator(cam_id=cam_id, peers=peers, controller=None,
-                                                             leader=start_as_leader, base_port=base_port,
-                                                             config=self.config)
+        self.communicator = camera_communicator.Communicator(cam_id=cam_id, peers=peers, controller=None, leader=start_as_leader,
+                                                             pyro_port=pyro_port, config=self.config)
 
     def start(self):
         group = housekeeping_classes.construct_super_group_from_json_list(startup_script_constants.JSON_PATHS)
