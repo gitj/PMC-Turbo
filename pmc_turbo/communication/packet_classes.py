@@ -503,3 +503,78 @@ def separate_gse_packets_by_origin(gse_packets):
         if origin == GSEPacket.HIRATE_ORIGIN:
             hirate_gse_packets.append(packet)
     return hirate_gse_packets, lowrate_gse_packets
+
+
+class LidarTelemetryPacket(object):
+    _metadata_table = [('H', 'start_marker'),
+                       ('H', 'frame_counter'),
+                       ('B', 'frame_type'),
+                       ('I', 'onboard_time_data_length_msb'),
+                       ('B', 'data_length_lsb'),
+                       ('H', 'crc')]
+    _header_format_string = '<' + ''.join([format for format, name in _metadata_table])
+    _valid_start_marker = 0x7878
+    header_length = struct.calcsize(_header_format_string)
+
+
+    def __init__(self, buffer=None):
+
+
+        self._minimum_buffer_length = self.header_length
+        if buffer is not None:
+            self.from_buffer(buffer)
+        else:
+            raise("Building pakets not yet implemented")
+
+
+    @property
+    def total_packet_length(self):
+        return self.header_length + self.payload_length
+
+    def from_buffer(self, buffer):
+        """
+        Decode and validate the given buffer and update the class attributes accordingly
+
+        Parameters
+        ----------
+        buffer : str
+            buffer to decode as a packet
+        """
+        if len(buffer) < self._minimum_buffer_length:
+            raise PacketInsufficientLengthError(
+                "Buffer of length %d is too short to contain a packet (minimum length is %d)" %
+                (len(buffer), self._minimum_buffer_length))
+        self.start_marker, self.frame_counter, self.frame_type, self._onboard_time_data_length_msb, self._data_length_lsb, self.crc = struct.unpack(
+            self._header_format_string, buffer[:self.header_length])
+        self.payload = buffer[self.header_length:]
+        self.payload_length = ((self._onboard_time_data_length_msb & 0xFFF)<<8) + self._data_length_lsb
+        if len(self.payload) < self.payload_length:
+            raise PacketInsufficientLengthError("Received payload with length %d, is smaller than indicated length %d. Raw time/length field: %08x%02x" %
+                           (len(self.payload), self.payload_length, self._onboard_time_data_length_msb, self._data_length_lsb))
+        if len(self.payload) > self.payload_length:
+            raise PacketValidityError("Received payload length %d is too long to be a valid packet. Indicated length %d. Raw time/length field: %08x%02x" %
+                           (len(self.payload), self.payload_length, self._onboard_time_data_length_msb, self._data_length_lsb))
+        bytes_before_crc = buffer[:self.header_length-2]
+        calculated_crc = get_crc(bytes_before_crc + '\x00\x00' + self.payload)
+        if self.crc != calculated_crc:
+            raise PacketChecksumError("Received crc 0x%04x does not match calculated crc 0x%04x" % (self.crc,calculated_crc))
+
+    @staticmethod
+    def decode_header(buffer):
+        result = struct.unpack(LidarTelemetryPacket._header_format_string, buffer[:LidarTelemetryPacket.header_length])
+        names = [x[1] for x in LidarTelemetryPacket._metadata_table]
+        return dict(zip(names,result))
+
+    def to_buffer(self):
+        """
+        Construct the packet string
+
+        Returns
+        -------
+        buffer : string containing the packet
+        """
+        assert (self.file_id is not None) and (self.packet_number is not None) and (
+            self.total_packet_number is not None) and (self.payload is not None)
+        header = struct.pack(self._header_format_string, self.start_byte, self.file_id,
+                             self.packet_number, self.total_packet_number, self.payload_length)
+        return header + self.payload + struct.pack('>1H', self.payload_crc)
