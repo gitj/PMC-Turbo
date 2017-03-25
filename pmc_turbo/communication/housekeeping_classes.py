@@ -48,9 +48,13 @@ def construct_status_group_from_json(json_path):
         if value_key == 'PREAMBLE':  # This is not a file to watch.
             continue
         value_dict = items[value_key]
-        if not value_dict['partial_glob'] in status_group.filewatchers.keys():
-            status_filewatcher = StatusFileWatcher(name=value_dict['partial_glob'], items=[],
-                                                   filename_glob=os.path.join(preamble, value_dict['partial_glob']))
+        if value_dict['partial_glob'] not in status_group.filewatchers:
+            try:
+                status_filewatcher = StatusFileWatcher(name=value_dict['partial_glob'], items=[],
+                                                       filename_glob=os.path.join(preamble, value_dict['partial_glob']))
+            except ValueError:
+                logger.exception("Could not add StatusFileWatcher for glob '%r'" % value_dict['partial_glob'])
+                continue
             status_group.filewatchers[value_dict['partial_glob']] = status_filewatcher
         try:
             status_item = eval(value_dict['class_type'])(value_dict)
@@ -106,8 +110,9 @@ class SuperStatusGroup():
         return json_file
 
     def get_status(self):
-        if len(self.groups.keys()) == 0:
-            raise ValueError('No keys - filewatcher is empty.')
+        if len(self.groups) == 0:
+            logger.error('No keys for %s - filewatcher is empty.' % self.name)
+            return None
         entries = {key: self.groups[key].get_status() for key in self.groups.keys()}
         return entries
 
@@ -169,8 +174,9 @@ class StatusGroup():
         return json_file
 
     def get_status(self):
-        if len(self.filewatchers.keys()) == 0:
-            raise ValueError('No keys - filewatcher is empty.')
+        if len(self.filewatchers) == 0:
+            logger.error('No keys for %s - filewatcher is empty.' % self.name)
+            return None
         entries = {key: self.filewatchers[key].get_status() for key in self.filewatchers.keys()}
         return entries
 
