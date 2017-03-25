@@ -7,7 +7,7 @@ DESTINATION_ALL_CAMERAS = 255
 DESTINATION_WIDEFIELD_CAMERAS = 254
 DESTINATION_NARROWFIELD_CAMERAS = 253
 DESTINATION_LIDAR = 252
-# DESTINATION_SUPER_COMMAND = 251 # use for sending commands to anyone listening, i.e for manually assigning leader
+DESTINATION_SUPER_COMMAND = 251 # use for sending commands to anyone listening, i.e for manually assigning leader
 DESTINATION_LEADER = 250
 
 USE_BULLY_ELECTION = 254
@@ -67,6 +67,10 @@ command_manager.add_command(Command("set_downlink_bandwidth", [("openport", "I")
                                                                ("highrate", "I"),
                                                                ("los", "I")],
                                     docstring="bandwidths are specified in bytes per second"))
+command_manager.add_command(Command("set_leader", [("leader_id", "B")],
+                                    docstring="Set leader or election directly.\n"
+                                    "Typically used with destination SUPER_COMMAND to override"
+                                    ))
 
 # add command to set pyro comm timeout?
 
