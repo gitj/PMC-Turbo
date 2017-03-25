@@ -59,7 +59,13 @@ class ShortStatusBase(object):
                     logger.warning("Clipping %s from %d to %d" % (name, value, iinfo.max))
                     coerced_value = iinfo.max
                 else:
-                    coerced_value = coerce_value(value, description)
+                    try:
+                        coerced_value = coerce_value(value, description)
+                    except ValueError:
+                        # This likely means the value is a nan. for now, represent that as max value
+                        logger.warning("Invalid value %r encountered for parameter %s with format '%s'"
+                                       % (value,name,format_))
+                        coerced_value = iinfo.max
             else:
                 coerced_value = value
 
