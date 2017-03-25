@@ -9,6 +9,7 @@ except ImportError:
     ColoredFormatter = logging.Formatter
 
 from configuration import LOG_DIR
+from pmc_turbo import root_dir
 
 long_message_format = '%(levelname)-8.8s %(asctime)s - %(name)s.%(funcName)s:%(lineno)d  %(message)s'
 short_message_format = '%(levelname)-4.4s %(asctime)s - %(funcName)s:%(lineno)d  %(message)s'
@@ -49,6 +50,7 @@ def setup_file_handler(name, log_dir=LOG_DIR, level=logging.DEBUG, logger=None):
     if not has_file_handler:
         logger.addHandler(file_handler(name, log_dir=log_dir,level=level))
         logger.info("File handler added and initialized for %s" % name)
+        logger.info("pmc_turbo.root_dir = %s" % root_dir)
         logger.info(git_log())
         logger.info(git_status())
     if warning:
