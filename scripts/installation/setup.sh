@@ -55,6 +55,9 @@ cd $PMC_TURBO
 nosetests -v -s
 
 sudo cp $PMC_TURBO/scripts/installation/etc/fuse.conf /etc/
+sudo cp $PMC_TURBO/scripts/installation/etc/collectd.conf /etc/collectd/
+sudo cp $PMC_TURBO/scripts/installation/etc/hddtemp /etc/default/
+
 mkdir $HOME/pmchome
 sudo cp -r $PMC_TURBO/scripts/installation/etc/supervisor /etc/
 sudo supervisorctl reread
