@@ -64,16 +64,14 @@ class Communicator(GlobalConfiguration):
     charge_controller_settings = List(trait=Tuple(TCPAddress(), Float(10, min=0), Float(3600, min=0)),
                                       help="List of tuples ((ip,port), measurement_interval, eeprom_measurement_interval)\n").tag(
         config=True)
-    cam_id = Int(default_value=0, allow_none=False, min=0).tag(config=True)
 
     def __init__(self, cam_id, peers, controller, leader, pyro_port, **kwargs):
         super(Communicator, self).__init__(**kwargs)
         self.port = pyro_port
         logger.debug('Communicator initialized')
-        self.leader = leader
-        self.become_leader = False
-
         self.cam_id = cam_id
+        self.leader_id = 0 # this will be deprecated when the full election is in place.
+        self.become_leader = False
 
         self.peers = []
         for peer in peers:
@@ -132,8 +130,13 @@ class Communicator(GlobalConfiguration):
         # TODO: Set up proper destination lists, including LIDAR, narrow field, wide field, and all
         self.destination_lists = dict(enumerate([[peer] for peer in self.peers]))
         self.destination_lists[command_table.DESTINATION_ALL_CAMERAS] = self.peers
+        self.destination_lists[command_table.DESTINATION_SUPER_COMMAND] = [self]
 
         self.setup_links()
+
+    @property
+    def leader(self):
+        return self.cam_id == self.leader_id
 
     def validate_command_table(self):
         """
@@ -344,6 +347,9 @@ class Communicator(GlobalConfiguration):
         except (packet_classes.PacketError, ValueError) as e:
             logger.exception("Failed to decode command packet")
             return
+        if command_packet.destination != command_table.DESTINATION_SUPER_COMMAND and not (self.leader):
+            logger.debug("I'm not leader and this is not a super command, so I'm ignoring it")
+            return
         destinations = self.destination_lists[command_packet.destination]
         for number, destination in enumerate(destinations):
             try:
@@ -444,11 +450,11 @@ class Communicator(GlobalConfiguration):
             file_class = file_format_classes.CompressedJSONFile
         else:
             file_class = file_format_classes.JSONFile
-        json_file = file_class(payload=payload, filename=(
-            'status_summary_%s.json' % time.strftime('%Y-%M-%d-%H:%M:%s')), timestamp=time.time(),
+        json_file = file_class(payload=payload,
+                               filename=('status_summary_%s.json' % time.strftime('%Y-%m-%d_%H%M%S')),
+                               timestamp=time.time(),
                                camera_id=camera_id.get_camera_id(),
                                request_id=request_id)
-
         self.controller.add_file_to_downlink_queue(json_file.to_buffer())
 
     def set_peer_polling_order(self, list_argument):
@@ -504,25 +510,27 @@ class Communicator(GlobalConfiguration):
     def use_synchronized_images(self, synchronize):
         self.synchronize_image_time_across_cameras = bool(synchronize)
 
-    def set_leader(self, leader):
-        if leader == self.cam_id:
+    def set_leader(self, leader_id):
+        if leader_id == self.cam_id:
             self.election_enabled = False
             if not self.leader:
                 self.become_leader = True
                 logger.info("Becoming leader by direct command")
+                self.leader_id = leader_id # TODO: this should be done gracefully in the loop when become_leader is asserted.
+
             else:
                 logger.info("Requested to become leader, but I am already leader")
-        elif leader == command_table.USE_BULLY_ELECTION:
+        elif leader_id == command_table.USE_BULLY_ELECTION:
             self.election_enabled = True
             logger.info("Requested to use bully election")
             # self.run_election
         else:
             if self.leader:
                 # self.stop_leader_things
-                logger.warning("I was leader but Camera %d has been commanded to be leader" % leader)
+                logger.warning("I was leader but Camera %d has been commanded to be leader" % leader_id)
             else:
-                logger.info("Camera %d has been requested to become leader," % leader)
-            self.leader = False
+                logger.info("Camera %d has been requested to become leader," % leader_id)
+            self.leader_id = leader_id
             self.election_enabled = False
 
     def set_downlink_bandwidth(self, openport, highrate, los):
@@ -546,17 +554,17 @@ class Communicator(GlobalConfiguration):
             packets = lowrate_uplink.get_sip_packets()
             for packet in packets:
                 logger.debug('Found packet on lowrate link %s: %r' % (lowrate_uplink.name, packet))
-                if self.leader:
-                    self.execute_packet(packet, i)
+                self.execute_packet(packet, i)
 
-    def execute_packet(self, packet, lowrate_index):
+    def execute_packet(self, packet, lowrate_link_index):
         # Improve readability here - constants in uplink classes
         id_byte = packet[1]
         logger.debug('Got packet with id %r from uplink' % id_byte)
         if id_byte == chr(constants.SCIENCE_DATA_REQUEST_MESSAGE):
-            self.respond_to_science_data_request(lowrate_index)
+            if self.leader:
+                self.respond_to_science_data_request(lowrate_link_index)
         if id_byte == chr(constants.SCIENCE_COMMAND_MESSAGE):
-            self.process_science_command_packet(packet, lowrate_index)  ### peer methods
+            self.process_science_command_packet(packet, lowrate_link_index)  ### peer methods
 
     ###################################################################################################################
 

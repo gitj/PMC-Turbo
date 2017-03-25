@@ -7,7 +7,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+from pymodbus.constants import Defaults
+Defaults.Timeout = 1
 from pymodbus.client.sync import ModbusTcpClient
+
 
 LOG_DIR = '/var/pmclogs/housekeeping/charge_controller'
 # serial_number = 16050331
@@ -55,7 +58,7 @@ class ChargeController():
     def measure(self):
         self.client = ModbusTcpClient(host=self.host, port=self.port)
         measurement = OrderedDict(epoch=time.time())
-        result = self.client.read_input_registers(0, NUM_REGISTERS, unit=0x01)
+        result = self.client.read_input_registers(0, NUM_REGISTERS, unit=0x01,)
         try:
             measurement.update(zip(range(NUM_REGISTERS), result.registers))
         except AttributeError as e:
