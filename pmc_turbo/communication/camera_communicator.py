@@ -323,6 +323,7 @@ class Communicator(GlobalConfiguration):
     def respond_to_science_data_request(self, lowrate_index):
         logger.debug("Science data request received from %s." % self.lowrate_uplinks[lowrate_index].name)
         summary = self.get_next_status_summary()
+        logger.debug("sending lowrate status %d bytes, message id %d" % (len(summary),ord(summary[0])))
         self.lowrate_downlinks[lowrate_index].send(summary)
 
     def process_science_command_packet(self, msg, lowrate_index):
@@ -379,6 +380,7 @@ class Communicator(GlobalConfiguration):
         while not result:
             if self.short_status_order[self.short_status_order_idx] == command_table.DESTINATION_LEADER:
                 result = self.populate_short_status_leader()
+                logger.debug("got leader status, message id %d" % ord(result[0]))
             elif self.short_status_order[self.short_status_order_idx] == command_table.DESTINATION_LIDAR:
                 result = None
                 # TODO: Fill this out
@@ -389,6 +391,7 @@ class Communicator(GlobalConfiguration):
                         summary_dict = peer.get_full_status()
                         logger.debug('Received status summary from peer %r' % peer)
                         result = self.populate_short_status_camera(summary_dict)
+                        logger.debug("got peer status, message id %d" % ord(result[0]))
                     except Pyro4.errors.CommunicationError:
                         logger.debug('Unable to connect to peer %r' % peer)
                 else:
@@ -589,13 +592,13 @@ class Communicator(GlobalConfiguration):
         if result is None:
             last_sequence = np.nan
         else:
-            last_sequence = result[2]
+            last_sequence = result[1]
         ss.last_command_sequence = last_sequence
         result = self.command_logger.get_highest_sequence_number_result()
         if result is None:
             highest_sequence = np.nan
         else:
-            highest_sequence = result[2]
+            highest_sequence = result[1]
         ss.highest_command_sequence = highest_sequence
         sequence_skip = self.command_logger.get_last_sequence_skip()
         if sequence_skip is None:
@@ -606,7 +609,7 @@ class Communicator(GlobalConfiguration):
         if result is None:
             last_failed_sequence = np.nan
         else:
-            last_failed_sequence = result[2]
+            last_failed_sequence = result[1]
         ss.last_failed_sequence = last_failed_sequence
     
         highrate_link = self.downlinks['highrate']
