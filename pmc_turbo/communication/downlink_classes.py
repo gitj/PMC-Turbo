@@ -17,6 +17,7 @@ class HirateDownlink():
         self.downlink_speed_bytes_per_sec = speed_bytes_per_sec
         self.prev_packet_size = 0
         self.prev_packet_time = 0
+        self.total_bytes_sent = 0
         self.packets_to_send = []
         self.name = name
 
@@ -57,6 +58,7 @@ class HirateDownlink():
     def send(self, msg, ip, port):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         bytes_sent = sock.sendto(msg, (ip, port))
+        self.total_bytes_sent += bytes_sent
         logger.debug('Bytes sent on hirate downlink %s: %d' % (self.name, bytes_sent))
         sock.close()
 
