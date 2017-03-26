@@ -44,6 +44,10 @@ class PacketChecksumError(PacketError):
     pass
 
 
+def load_gse_packet_from_file(filename):
+    with open(filename) as fh:
+        return GSEPacket(buffer=fh.read())
+
 class GSEPacket(object):
     _metadata_table = [('1B', 'start_byte'),
                        ('1B', 'sync2_byte'),
