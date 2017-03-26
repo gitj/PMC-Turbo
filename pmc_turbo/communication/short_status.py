@@ -1,5 +1,7 @@
 from collections import OrderedDict
 import struct
+
+import pmc_turbo.communication.packet_classes
 from pmc_turbo.utils.struct_formats import format_description
 import numpy as np
 import logging
@@ -21,7 +23,7 @@ class ShortStatusBase(object):
         self._values = OrderedDict([(name,None) for name in self.item_table.keys()])
 
     def __dir__(self):
-        return self.item_table.keys() + ['encoded_size', 'encode', 'decode']
+        return self.item_table.keys() + ['encoded_size', 'encode', 'decode', 'values']
 
     def __setattr__(self, key, value):
         if key == '_values':
@@ -38,6 +40,10 @@ class ShortStatusBase(object):
             return self._values[item]
 
     @property
+    def values(self):
+        return self._values
+
+    @property
     def encoded_size(self):
         return struct.calcsize('>' + ''.join([format_ for name,format_ in self.item_table.items()]))
 
@@ -52,12 +58,13 @@ class ShortStatusBase(object):
             description = format_description[format_]
             if 'int' in description:
                 iinfo = np.iinfo(eval('np.%s' % description))
+                max_value = iinfo.max - 1 #maximum valid value, we use iinfo.max to represent NaN
                 if value < iinfo.min:
                     logger.warning("Clipping %s from %d to %d" % (name, value, iinfo.min))
                     coerced_value = iinfo.min
-                elif value > iinfo.max:
-                    logger.warning("Clipping %s from %d to %d" % (name, value, iinfo.max))
-                    coerced_value = iinfo.max
+                elif value > max_value:
+                    logger.warning("Clipping %s from %d to %d" % (name, value, max_value))
+                    coerced_value = max_value
                 else:
                     try:
                         coerced_value = coerce_value(value, description)
@@ -173,3 +180,25 @@ class ShortStatusCamera(ShortStatusBase):
                               ("sdf_temp", 'b'),
 
                               ])
+
+
+def load_short_status_from_file(filename):
+    """
+    Interpret file as GSE lowrate packet and convert payload to retrieve short status information
+
+    Parameters
+    ----------
+    filename
+
+    Returns
+    -------
+    ShortStatusCamera, ShortStatusLeader, or ShortStatusLidar as appropriate
+
+    """
+    gse_packet = pmc_turbo.communication.packet_classes.load_gse_packet_from_file(filename)
+    payload = gse_packet.payload
+    message_id, = struct.unpack('B',payload[0])
+    if message_id == ShortStatusLeader.LEADER_MESSAGE_ID:
+        return ShortStatusLeader(payload)
+    else:
+        return ShortStatusCamera(payload)
