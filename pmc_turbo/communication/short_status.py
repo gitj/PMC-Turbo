@@ -103,7 +103,7 @@ class ShortStatusLeader(ShortStatusBase):
                               ("highest_command_sequence", "H"),
                               ("last_outstanding_sequence", "H"),
                               ("total_commands_received","H"),
-                              ("last_failed_command","H"),
+                              ("last_failed_sequence","H"),
 
                               ("bytes_sent_highrate", "I"),
                               ("bytes_sent_openport", "I"),
