@@ -325,24 +325,6 @@ class Communicator(GlobalConfiguration):
         summary = self.get_next_status_summary()
         self.lowrate_downlinks[lowrate_index].send(summary)
 
-    def check_peer_connection(self, peer):
-        initial_timeout = peer._pyroTimeout
-        try:
-            logger.debug("Pinging peer %r" % peer)
-            peer._pyroTimeout = 0.1
-            peer.ping()
-            return True
-        except Pyro4.errors.CommunicationError:
-            details = "Ping failure for peer %s" % (peer._pyroUri)
-            if False:
-                details += traceback.format_exc()
-                pyro_details = ''.join(Pyro4.util.getPyroTraceback())
-                details = details + pyro_details
-            logger.warning(details)
-            return False
-        finally:
-            peer._pyroTimeout = initial_timeout
-
     def process_science_command_packet(self, msg, lowrate_index):
         logger.debug('Received command with msg %r from link %d' % (msg, lowrate_index))
         try:
@@ -396,7 +378,7 @@ class Communicator(GlobalConfiguration):
         result = None
         while not result:
             if self.short_status_order[self.short_status_order_idx] == command_table.DESTINATION_LEADER:
-                result = None
+                result = self.populate_short_status_leader()
                 # TODO: Fill this out
             elif self.short_status_order[self.short_status_order_idx] == command_table.DESTINATION_LIDAR:
                 result = None
@@ -438,6 +420,24 @@ class Communicator(GlobalConfiguration):
 
     def ping(self):
         return True
+
+    def check_peer_connection(self, peer):
+        initial_timeout = peer._pyroTimeout
+        try:
+            logger.debug("Pinging peer %r" % peer)
+            peer._pyroTimeout = 0.1
+            peer.ping()
+            return True
+        except Pyro4.errors.CommunicationError:
+            details = "Ping failure for peer %s" % (peer._pyroUri)
+            if False:
+                details += traceback.format_exc()
+                pyro_details = ''.join(Pyro4.util.getPyroTraceback())
+                details = details + pyro_details
+            logger.warning(details)
+            return False
+        finally:
+            peer._pyroTimeout = initial_timeout
 
     ##################################################################################################
     # The following methods correspond to commands defined in pmc_turbo.communication.command_table
@@ -576,9 +576,9 @@ class Communicator(GlobalConfiguration):
         if short_status_type == ShortStatusCamera:
             return self.populate_short_status_camera(data_dict)
         else:
-            return self.populate_short_status_leader(data_dict)
+            return self.populate_short_status_leader()
 
-    def populate_short_status_leader(self, data_dict):
+    def populate_short_status_leader(self):
         ss = ShortStatusLeader()
         ss.timestamp = time.time()
         ss.leader_id = self.leader_id  # since we're sending this, leader_id == camera_id
