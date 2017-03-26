@@ -60,15 +60,15 @@ class ShortStatusBase(object):
                 iinfo = np.iinfo(eval('np.%s' % description))
                 max_value = iinfo.max - 1 #maximum valid value, we use iinfo.max to represent NaN
                 if value < iinfo.min:
-                    logger.warning("Clipping %s from %d to %d" % (name, value, iinfo.min))
+                    logger.warning("Clipping %s from %r to %d" % (name, value, iinfo.min))
                     coerced_value = iinfo.min
                 elif value > max_value:
-                    logger.warning("Clipping %s from %d to %d" % (name, value, max_value))
+                    logger.warning("Clipping %s from %r to %d" % (name, value, max_value))
                     coerced_value = max_value
                 else:
                     try:
                         coerced_value = coerce_value(value, description)
-                    except ValueError:
+                    except (ValueError, NameError):
                         # This likely means the value is a nan. for now, represent that as max value
                         logger.warning("Invalid value %r encountered for parameter %s with format '%s'"
                                        % (value,name,format_))
