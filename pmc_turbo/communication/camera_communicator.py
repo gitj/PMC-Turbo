@@ -379,7 +379,6 @@ class Communicator(GlobalConfiguration):
         while not result:
             if self.short_status_order[self.short_status_order_idx] == command_table.DESTINATION_LEADER:
                 result = self.populate_short_status_leader()
-                # TODO: Fill this out
             elif self.short_status_order[self.short_status_order_idx] == command_table.DESTINATION_LIDAR:
                 result = None
                 # TODO: Fill this out
