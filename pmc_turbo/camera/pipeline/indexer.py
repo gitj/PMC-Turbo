@@ -32,6 +32,7 @@ class MergedIndex(object):
             logger.info("found new index files: %r" % new_index_files)
         new_watchers = [IndexWatcher(fn) for fn in new_index_files]
         self.watchers = self.watchers + new_watchers
+        self.index_filenames = index_filenames
 
     def update(self):
         self.update_watchers()
