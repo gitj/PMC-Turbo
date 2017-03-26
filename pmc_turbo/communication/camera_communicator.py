@@ -570,13 +570,6 @@ class Communicator(GlobalConfiguration):
 
     ###################################################################################################################
 
-    def populate_short_status(self, short_status_type, data_dict):
-        # Populate short status class with housekeeping summary.
-        if short_status_type == ShortStatusCamera:
-            return self.populate_short_status_camera(data_dict)
-        else:
-            return self.populate_short_status_leader()
-
     def populate_short_status_leader(self):
         ss = ShortStatusLeader()
         ss.timestamp = time.time()
@@ -598,7 +591,12 @@ class Communicator(GlobalConfiguration):
         else:
             last_sequence = result[2]
         ss.last_command_sequence = last_sequence
-        ss.highest_command_sequence = self.command_logger.get_highest_sequence_number_result()
+        result = self.command_logger.get_highest_sequence_number_result()
+        if result is None:
+            highest_sequence = np.nan
+        else:
+            highest_sequence = result[2]
+        ss.highest_command_sequence = highest_sequence
         sequence_skip = self.command_logger.get_last_sequence_skip()
         if sequence_skip is None:
             sequence_skip = np.nan
@@ -650,8 +648,8 @@ class Communicator(GlobalConfiguration):
         kr = keyring.KeyRing(data_dict)
 
 
-        ss.timestamp = kr["GevTimestampValue"]['value']
-        ss.leader_id = 0  # TODO: implement self.leader_id
+        ss.timestamp = time.time()
+        ss.leader_id = self.leader_id
         ss.free_disk_root_mb = kr["df-root_df_complex-free"]['value'] / 1e6
         ss.free_disk_data_1_mb = kr["df-data1_df_complex-free"]['value'] / 1e6
         ss.free_disk_data_2_mb = kr["df-data2_df_complex-free"]['value'] / 1e6
@@ -671,7 +669,7 @@ class Communicator(GlobalConfiguration):
         ss.labjack_temp = kr['temperature']['value'] - 273
         ss.camera_temp = kr['main_temperature']['value']
         ss.ccd_temp = kr['sensor_temperature']['value']
-        ss.rail_12_mv = kr["ipmi_voltage-12V system_board (7.17)"]['value']
+        ss.rail_12_mv = kr["ipmi_voltage-12V system_board (7.17)"]['value'] * 1000
         ss.cpu_temp = kr["ipmi_temperature-CPU Temp processor (3.1)"]['value']
         ss.sda_temp = kr["hddtemp_temperature-sda"]['value']
         ss.sdb_temp = kr["hddtemp_temperature-sdb"]['value']
