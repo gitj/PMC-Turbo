@@ -483,7 +483,7 @@ def get_packets_from_buffer(buffer, packet_class, start_byte):
         try:
             gse_packet = packet_class(buffer=buffer)
             packets.append(gse_packet)
-            logger.debug('Found valid packet. Advancing %d bytes' % gse_packet.total_packet_length)
+            logger.debug('Found valid packet %r. Advancing %d bytes' % (gse_packet,gse_packet.total_packet_length))
             buffer = buffer[gse_packet.total_packet_length:]
         except PacketInsufficientLengthError as e:
             # This triggers when there are insufficient bytes to finish a Packet
