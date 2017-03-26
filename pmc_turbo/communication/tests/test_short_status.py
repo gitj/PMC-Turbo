@@ -80,9 +80,9 @@ def test_coerce():
     ss.sdf_temp = 77
     values = ss._values.copy()
     ss2 = ShortStatusCamera(ss.encode())
-    assert ss2.free_disk_root_mb == 2**32-1
-    assert ss2.focus_step == 2**16-1
-    assert ss2.lens_wall_temp == 127
+    assert ss2.free_disk_root_mb == 2**32-2
+    assert ss2.focus_step == 2**16-2
+    assert ss2.lens_wall_temp == 126
     assert ss2.dcdc_wall_temp == -128
 
     ss._values = values
