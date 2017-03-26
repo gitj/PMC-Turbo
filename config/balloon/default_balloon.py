@@ -54,7 +54,7 @@ c.Communicator.hirate_link_parameters = [('highrate', ('pmc-serial-0', 5002), 70
 
 ## List of tuples - name, lowrate downlink address and lowrate uplink port.e.g.
 #  [(("pmc-serial-1", 5001), 5001), ...]
-c.Communicator.lowrate_link_parameters = [('comm1', ("pmc-serial-1", 5001), 5001),
+c.Communicator.lowrate_link_parameters = [('comm1', ("pmc-serial-0", 5001), 5001),
                                           ('comm2', ('pmc-serial-2', 5003), 5003)]
 
 c.Communicator.charge_controller_settings = [#(('pmc-charge-controller-0', 502), 10, 3600),

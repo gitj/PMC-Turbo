@@ -84,9 +84,9 @@ class LowrateDownlink():
         self.downlink_ip, self.downlink_port = downlink_ip, downlink_port
 
     def _send(self, msg):
-        # sip_downlink_ip='192.168.1.54', sip_downlink_port=4001 in our experimental setup.
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.sendto(msg, (self.downlink_ip, self.downlink_port))
+        logger.debug("%s: Sending %d bytes %r to %s:%d" % (self.name, len(msg), msg, self.downlink_ip,self.downlink_port))
         sock.close()
 
     def send(self, msg):

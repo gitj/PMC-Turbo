@@ -562,7 +562,6 @@ class Communicator(GlobalConfiguration):
                 self.execute_packet(packet, i)
 
     def execute_packet(self, packet, lowrate_link_index):
-        # Improve readability here - constants in uplink classes
         id_byte = packet[1]
         logger.debug('Got packet with id %r from uplink' % id_byte)
         if id_byte == chr(constants.SCIENCE_DATA_REQUEST_MESSAGE):
