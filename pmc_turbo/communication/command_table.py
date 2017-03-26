@@ -77,7 +77,3 @@ command_manager.add_command(Command("set_leader", [("leader_id", "B")],
 logger.debug("Built command manager with %d total commands" % (command_manager.total_commands))
 
 
-class CommandStatus():
-    command_ok = 0
-    failed_to_ping_destination = 1
-    command_error = 2

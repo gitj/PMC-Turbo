@@ -211,14 +211,39 @@ class CommandLogger(object):
         self.command_history.append((timestamp, sequence_number, status, details))
 
     def get_latest_result(self):
+        if not self.command_history:
+            return None
         return self.command_history[-1]
+
+    @property
+    def total_commands_received(self):
+        return len(self.command_history)
+
+    @property
+    def sequence_numbers(self):
+        return [sequence_number for _, sequence_number, _, _ in self.command_history]
 
     def get_highest_sequence_number_result(self):
         if not self.command_history:
             return None
-        sequence_numbers = [sequence_number for _, sequence_number, _, _ in self.command_history]
-        index = np.argmax(sequence_numbers)
+        index = np.argmax(self.sequence_numbers)
         return self.command_history[index]
+
+    def get_last_sequence_skip(self):
+        sequence = self.sequence_numbers
+        sequence.sort()
+        diff = np.diff(sequence)
+        indexes = np.flatnonzero(diff!=1)
+        if indexes:
+            return sequence[indexes[-1]]+1  # plus one makes this equal to the sequence number that we expected but are missing
+        else:
+            return None
+
+    def get_last_failed_result(self):
+        failures = [result for result in self.command_history if result[2] != CommandStatus.command_ok]
+        if not failures:
+            return None
+        return failures[-1]
 
 
 class CommandManager(object):
@@ -264,3 +289,9 @@ class CommandManager(object):
             kwargs, remainder = command.decode_command_and_arguments(remainder)
             commands.append((command.name, kwargs))
         return commands
+
+
+class CommandStatus():
+    command_ok = 0
+    failed_to_ping_destination = 1
+    command_error = 2
