@@ -1,5 +1,6 @@
 from __future__ import division
 
+import collections
 import json
 import logging
 import select
@@ -187,7 +188,7 @@ class Communicator(GlobalConfiguration):
         self.file_id = 0
         self.lowrate_uplinks = []
         self.lowrate_downlinks = []
-        self.downlinks = []
+        self.downlinks = collections.OrderedDict()
 
         for lowrate_link_parameters in self.lowrate_link_parameters:
             self.lowrate_uplinks.append(uplink_classes.Uplink(lowrate_link_parameters[0], lowrate_link_parameters[2]))
@@ -195,8 +196,8 @@ class Communicator(GlobalConfiguration):
                 downlink_classes.LowrateDownlink(lowrate_link_parameters[0], *lowrate_link_parameters[1]))
 
         for name, (address, port), initial_rate in self.hirate_link_parameters:
-            self.downlinks.append(downlink_classes.HirateDownlink(ip=address, port=port,
-                                                                  speed_bytes_per_sec=initial_rate, name=name))
+            self.downlinks[name] = downlink_classes.HirateDownlink(ip=address, port=port,
+                                                                  speed_bytes_per_sec=initial_rate, name=name)
 
     ### Loops to continually be run
 
@@ -245,7 +246,7 @@ class Communicator(GlobalConfiguration):
         if not self.peers:
             raise RuntimeError(
                 'Communicator has no peers. This should never happen; leader at minimum has self as peer.')  # pragma: no cover
-        for link in self.downlinks:
+        for link in self.downlinks.values():
             if link.has_bandwidth():
                 if self.synchronize_image_time_across_cameras and self.peer_polling_order_idx == 0:
                     self.request_synchronized_images()
@@ -506,7 +507,7 @@ class Communicator(GlobalConfiguration):
 
     def flush_downlink_queues(self):
         self.controller.flush_downlink_queue()
-        for link in self.downlinks:
+        for link in self.downlinks.values():
             link.flush_packet_queue()
 
     def use_synchronized_images(self, synchronize):
@@ -536,15 +537,15 @@ class Communicator(GlobalConfiguration):
             self.election_enabled = False
 
     def set_downlink_bandwidth(self, openport, highrate, los):
-        for link in self.downlinks:
-            if link.name == 'openport':
+        for name,link in self.downlinks.items():
+            if name == 'openport':
                 link.set_bandwidth(openport)
-            elif link.name == 'highrate':
+            elif name == 'highrate':
                 link.set_bandwidth(highrate)
-            elif link.name == 'los':
+            elif name == 'los':
                 link.set_bandwidth(los)
             else:
-                logger.error("Unknown link %s found, so can't set its bandwidth" % link.name)
+                logger.error("Unknown link %s found, so can't set its bandwidth" % name)
 
     # end command table methods
     ###################################################################################################################
