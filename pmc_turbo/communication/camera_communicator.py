@@ -612,16 +612,21 @@ class Communicator(GlobalConfiguration):
             last_failed_sequence = result[2]
         ss.last_failed_sequence = last_failed_sequence
     
-        ss.bytes_sent_highrate = np.nan
-        ss.bytes_sent_openport = np.nan
-        ss.bytes_sent_los = np.nan
-        ss.packets_queued_highrate = np.nan
-        ss.packets_queued_openport = np.nan
-        ss.packets_queued_los = np.nan
-        ss.bytes_per_sec_highrate = np.nan
-        ss.bytes_per_sec_openport = np.nan
-        ss.bytes_per_sec_los = np.nan
-    
+        highrate_link = self.downlinks['highrate']
+        ss.bytes_sent_highrate = highrate_link.total_bytes_sent
+        ss.packets_queued_highrate = len(highrate_link.packets_to_send)
+        ss.bytes_per_sec_highrate = highrate_link.downlink_speed_bytes_per_sec
+
+        openport_link = self.downlinks['openport']
+        ss.bytes_sent_openport = openport_link.total_bytes_sent
+        ss.packets_queued_openport = len(openport_link.packets_to_send)
+        ss.bytes_per_sec_openport = openport_link.downlink_speed_bytes_per_sec
+        
+        los_link = self.downlinks['los']
+        ss.bytes_sent_los = los_link.total_bytes_sent
+        ss.packets_queued_los = len(los_link.packets_to_send)
+        ss.bytes_per_sec_los = los_link.downlink_speed_bytes_per_sec
+
         ss.charge_cont_1_solar_voltage = np.nan
         ss.charge_cont_1_solar_current = np.nan
         ss.charge_cont_1_battery_voltage = np.nan
