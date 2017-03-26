@@ -59,6 +59,7 @@ class GSEReceiver():
         self.last_gse_remainder = ''
         self.loop_interval = loop_interval
         self.num_bytes_per_read = 10000
+        self.total_num_lowrate_packets = 0
         self._exit = False
 
     def close(self):
@@ -90,7 +91,7 @@ class GSEReceiver():
                 self.last_gse_remainder = gse_remainder
                 gse_hirate_packets, gse_lowrate_packets = packet_classes.separate_gse_packets_by_origin(gse_packets)
 
-                self.write_gse_packet_payloads_to_disk(gse_lowrate_packets)
+                self.write_gse_lowrate_packets_to_disk(gse_lowrate_packets)
 
                 file_packet_buffer = ''
                 for packet in gse_hirate_packets:
@@ -175,6 +176,10 @@ class GSEReceiver():
         self.payload_path = os.path.join(path,'payloads')
         if not os.path.exists(self.payload_path):
             os.makedirs(self.payload_path)
+        self.lowrate_path = os.path.join(path,'lowrate')
+        if not os.path.exists(self.lowrate_path):
+            os.makedirs(self.lowrate_path)
+
 
         self.by_source_path = os.path.join(self.root_path,'by-source')
 
@@ -193,11 +198,16 @@ class GSEReceiver():
                              'file_type','request_id', 'camera_id', 'frame_timestamp_ns',
                              'packets_received', 'packets_expected'])
 
-    def write_gse_packet_payloads_to_disk(self, gse_lowrate_packets):
+    def write_gse_lowrate_packets_to_disk(self, gse_lowrate_packets):
         f = open(self.lowrate_filename, 'ab+')
         for packet in gse_lowrate_packets:
             f.write(packet.to_buffer() + '\n')
         f.close()
+
+        for packet in gse_lowrate_packets:
+            with open(os.path.join(self.lowrate_path,time.strftime('%Y-%m-%d_%H%M%S')+('_%06d' % self.total_num_lowrate_packets)),'w') as fh:
+                fh.write(packet.to_buffer())
+                self.total_num_lowrate_packets += 1
 
     def gather_files_from_file_packets(self, file_packets):
         for packet in file_packets:
