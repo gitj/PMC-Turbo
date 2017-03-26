@@ -231,7 +231,7 @@ class TestPeers(BasicTestHarness):
         print 'Peers are:', self.c.peers
         print 'Peer polling order is:', self.c.peer_polling_order
         self.hirate_downlink = FakeHirateDownlink()
-        self.c.downlinks = [self.hirate_downlink]
+        self.c.downlinks = dict(highrate=self.hirate_downlink)
         self.c.send_data_on_downlinks()
         print '%r' % self.hirate_downlink.queue[0]
         assert (self.hirate_downlink.queue == ('\x00' * 1024))
