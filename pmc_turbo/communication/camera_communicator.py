@@ -10,6 +10,7 @@ import traceback
 from pymodbus.exceptions import ConnectionException
 from pmc_turbo.utils.configuration import GlobalConfiguration
 from traitlets import Int, Unicode, Bool, List, Float, Tuple, Bytes, TCPAddress, Dict, Enum
+import numpy as np
 
 import Pyro4
 import Pyro4.errors
@@ -20,7 +21,8 @@ from pmc_turbo.communication import command_table, command_classes
 from pmc_turbo.communication import constants
 from pmc_turbo.communication import downlink_classes, uplink_classes, packet_classes
 from pmc_turbo.communication import file_format_classes
-from pmc_turbo.communication.command_table import command_manager, CommandStatus
+from pmc_turbo.communication.command_table import command_manager
+from pmc_turbo.communication.command_classes import CommandStatus
 from pmc_turbo.communication.short_status import ShortStatusLeader, ShortStatusCamera
 from pmc_turbo.housekeeping.charge_controller import ChargeControllerLogger
 from pmc_turbo.communication import keyring
@@ -576,12 +578,69 @@ class Communicator(GlobalConfiguration):
             return self.populate_short_status_leader(data_dict)
 
     def populate_short_status_leader(self, data_dict):
-        return
+        ss = ShortStatusLeader()
+        ss.timestamp = time.time()
+        ss.leader_id = self.leader_id  # since we're sending this, leader_id == camera_id
+        
+        ss.status_byte_camera_0 = np.nan    
+        ss.status_byte_camera_1 = np.nan
+        ss.status_byte_camera_2 = np.nan
+        ss.status_byte_camera_3 = np.nan
+        ss.status_byte_camera_4 = np.nan
+        ss.status_byte_camera_5 = np.nan
+        ss.status_byte_camera_6 = np.nan
+        ss.status_byte_camera_7 = np.nan
+        ss.status_byte_lidar = np.nan
+
+        result = self.command_logger.get_latest_result()
+        if result is None:
+            last_sequence = np.nan
+        else:
+            last_sequence = result[2]
+        ss.last_command_sequence = last_sequence
+        ss.highest_command_sequence = self.command_logger.get_highest_sequence_number_result()
+        sequence_skip = self.command_logger.get_last_sequence_skip()
+        if sequence_skip is None:
+            sequence_skip = np.nan
+        ss.last_outstanding_sequence = sequence_skip
+        ss.total_commands_received = self.command_logger.total_commands_received
+        result = self.command_logger.get_latest_result()
+        if result is None:
+            last_failed_sequence = np.nan
+        else:
+            last_failed_sequence = result[2]
+        ss.last_failed_sequence = last_failed_sequence
+    
+        ss.bytes_sent_highrate = np.nan
+        ss.bytes_sent_openport = np.nan
+        ss.bytes_sent_los = np.nan
+        ss.packets_queued_highrate = np.nan
+        ss.packets_queued_openport = np.nan
+        ss.packets_queued_los = np.nan
+        ss.bytes_per_sec_highrate = np.nan
+        ss.bytes_per_sec_openport = np.nan
+        ss.bytes_per_sec_los = np.nan
+    
+        ss.charge_cont_1_solar_voltage = np.nan
+        ss.charge_cont_1_solar_current = np.nan
+        ss.charge_cont_1_battery_voltage = np.nan
+        ss.charge_cont_1_battery_current = np.nan
+        ss.charge_cont_1_battery_temp = np.nan
+        ss.charge_cont_1_heatsink_temp = np.nan
+    
+        ss.charge_cont_2_solar_voltage = np.nan
+        ss.charge_cont_2_solar_current = np.nan
+        ss.charge_cont_2_battery_voltage = np.nan
+        ss.charge_cont_2_battery_current = np.nan
+        ss.charge_cont_2_battery_temp = np.nan
+        ss.charge_cont_2_heatsink_temp = np.nan 
+
+        return ss.encode()
 
     def populate_short_status_camera(self, data_dict):
 
         ss = ShortStatusCamera()
-        ss.message_id = 0
+        ss.message_id = self.cam_id
 
         kr = keyring.KeyRing(data_dict)
 
