@@ -18,6 +18,8 @@ install:
   - conda env create -q -n test-environment -f environment.yml
   - source activate test-environment
   - pip install codecov
+  - conda install qtconsole # needed for gui code
+  - pip install pyqtgraph # needed for gui code
   # --
   - conda env export
   - pushd $HOME
