@@ -1,4 +1,5 @@
 import os
+from pmc_turbo import root_dir
 
 # noinspection PyUnresolvedReferences
 c = get_config()
@@ -69,3 +70,15 @@ c.Communicator.loop_interval = 0.01
 
 ##
 c.Communicator.use_controller = True
+
+
+JSON_FILENAMES = [
+    'camera_items.json',
+    'charge_controller_register_items.json',
+    'charge_controller_eeprom_items.json',
+    'counter_items.json',
+    'collectd_items.json',
+    'labjack_items.json'
+]
+
+c.Communicator.json_paths = [os.path.join(os.path.split(root_dir)[0], 'status_item_params', json_fn) for json_fn in JSON_FILENAMES]

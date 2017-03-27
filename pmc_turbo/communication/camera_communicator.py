@@ -18,6 +18,7 @@ import Pyro4.errors
 import Pyro4.socketutil
 import Pyro4.util
 
+from pmc_turbo.communication import housekeeping_classes
 from pmc_turbo.communication import command_table, command_classes
 from pmc_turbo.communication import constants
 from pmc_turbo.communication import downlink_classes, uplink_classes, packet_classes
@@ -68,12 +69,16 @@ class Communicator(GlobalConfiguration):
                                       help="List of tuples ((ip,port), measurement_interval, eeprom_measurement_interval)\n").tag(
         config=True)
 
+    json_paths = List(trait=Unicode,
+                      help='List of paths to json files that are used to construct housekeeping classes').tag(
+        config=True)
+
     def __init__(self, cam_id, peers, controller, leader, pyro_port, **kwargs):
         super(Communicator, self).__init__(**kwargs)
         self.port = pyro_port
         logger.debug('Communicator initialized')
         self.cam_id = cam_id
-        self.leader_id = 0 # this will be deprecated when the full election is in place.
+        self.leader_id = 0  # this will be deprecated when the full election is in place.
         self.become_leader = False
 
         self.peers = []
@@ -107,9 +112,10 @@ class Communicator(GlobalConfiguration):
         self.short_status_order = [command_table.DESTINATION_LEADER, 0, 1, 2, 3, 4, 5, 6, 7,
                                    command_table.DESTINATION_LIDAR]
 
+        self.housekeeping = housekeeping_classes.construct_super_group_from_json_list(self.json_paths)
+
         self.synchronize_image_time_across_cameras = False
         self.end_loop = False
-        self.status_groups = []
 
         self.charge_controllers = [ChargeControllerLogger(address=settings[0], measurement_interval=settings[1],
                                                           eeprom_measurement_interval=settings[2])
@@ -197,7 +203,7 @@ class Communicator(GlobalConfiguration):
 
         for name, (address, port), initial_rate in self.hirate_link_parameters:
             self.downlinks[name] = downlink_classes.HirateDownlink(ip=address, port=port,
-                                                                  speed_bytes_per_sec=initial_rate, name=name)
+                                                                   speed_bytes_per_sec=initial_rate, name=name)
 
     ### Loops to continually be run
 
@@ -238,9 +244,6 @@ class Communicator(GlobalConfiguration):
                 self.pyro_daemon.events(events)
             if self.end_loop == True:
                 return
-
-    def add_status_group(self, status_group):
-        self.status_groups.append(status_group)
 
     def send_data_on_downlinks(self):
         if not self.peers:
@@ -323,7 +326,7 @@ class Communicator(GlobalConfiguration):
     def respond_to_science_data_request(self, lowrate_index):
         logger.debug("Science data request received from %s." % self.lowrate_uplinks[lowrate_index].name)
         summary = self.get_next_status_summary()
-        logger.debug("sending lowrate status %d bytes, message id %d" % (len(summary),ord(summary[0])))
+        logger.debug("sending lowrate status %d bytes, message id %d" % (len(summary), ord(summary[0])))
         self.lowrate_downlinks[lowrate_index].send(summary)
 
     def process_science_command_packet(self, msg, lowrate_index):
@@ -388,10 +391,7 @@ class Communicator(GlobalConfiguration):
                 peer = self.peers[self.short_status_order[self.short_status_order_idx]]
                 if self.check_peer_connection(peer):
                     try:
-                        summary_dict = peer.get_full_status()
-                        logger.debug('Received status summary from peer %r' % peer)
-                        result = self.populate_short_status_camera(summary_dict)
-                        logger.debug("got peer status, message id %d" % ord(result[0]))
+                        result = peer.get_short_status_camera()
                     except Pyro4.errors.CommunicationError:
                         logger.debug('Unable to connect to peer %r' % peer)
                 else:
@@ -400,25 +400,27 @@ class Communicator(GlobalConfiguration):
             self.short_status_order_idx %= len(self.short_status_order)
         return result
 
-    def get_full_status(self):
-        summary = {}
-        if self.cam_id is None:
-            raise ValueError('Camera does not know its cam_id.')
-        summary['cam_id'] = self.cam_id
-        for group in self.status_groups:
-            group.update()
-            summary[group.name] = group.get_status()
-        return summary
+    # DEPRICATED - switching from self.status_groups to self.housekeeping.
+    # def get_full_status(self):
+    #     summary = {}
+    #     if self.cam_id is None:
+    #         raise ValueError('Camera does not know its cam_id.')
+    #     summary['cam_id'] = self.cam_id
+    #     for group in self.status_groups:
+    #         group.update()
+    #         summary[group.name] = group.get_status()
+    #     return summary
+    #
+    # def get_status_summary(self):
+    #     if len(self.status_groups) == 0:
+    #         raise RuntimeError('Communicator has no status_groups.')
+    #     summary = []
+    #     for group in self.status_groups:
+    #         group.update()
+    #         summary.append(group.get_status_summary())
+    #     # print summary
+    #     return summary
 
-    def get_status_summary(self):
-        if len(self.status_groups) == 0:
-            raise RuntimeError('Communicator has no status_groups.')
-        summary = []
-        for group in self.status_groups:
-            group.update()
-            summary.append(group.get_status_summary())
-        # print summary
-        return summary
 
     def ping(self):
         return True
@@ -444,23 +446,24 @@ class Communicator(GlobalConfiguration):
     ##################################################################################################
     # The following methods correspond to commands defined in pmc_turbo.communication.command_table
 
-    def get_status_report(self, compress, request_id):
-        logger.debug('Status report requested')
-        summary = []
-        for group in self.status_groups:
-            group.update()
-            summary.append(group.get_status())
-        payload = json.dumps(summary)
-        if compress:
-            file_class = file_format_classes.CompressedJSONFile
-        else:
-            file_class = file_format_classes.JSONFile
-        json_file = file_class(payload=payload,
-                               filename=('status_summary_%s.json' % time.strftime('%Y-%m-%d_%H%M%S')),
-                               timestamp=time.time(),
-                               camera_id=camera_id.get_camera_id(),
-                               request_id=request_id)
-        self.controller.add_file_to_downlink_queue(json_file.to_buffer())
+    # TODO: Update this method with self.housekeeping instead of self.status_groups
+    # def get_status_report(self, compress, request_id):
+    #     logger.debug('Status report requested')
+    #     summary = []
+    #     for group in self.status_groups:
+    #         group.update()
+    #         summary.append(group.get_status())
+    #     payload = json.dumps(summary)
+    #     if compress:
+    #         file_class = file_format_classes.CompressedJSONFile
+    #     else:
+    #         file_class = file_format_classes.JSONFile
+    #     json_file = file_class(payload=payload,
+    #                            filename=('status_summary_%s.json' % time.strftime('%Y-%m-%d_%H%M%S')),
+    #                            timestamp=time.time(),
+    #                            camera_id=camera_id.get_camera_id(),
+    #                            request_id=request_id)
+    #     self.controller.add_file_to_downlink_queue(json_file.to_buffer())
 
     def set_peer_polling_order(self, list_argument):
         self.peer_polling_order = list_argument
@@ -521,7 +524,7 @@ class Communicator(GlobalConfiguration):
             if not self.leader:
                 self.become_leader = True
                 logger.info("Becoming leader by direct command")
-                self.leader_id = leader_id # TODO: this should be done gracefully in the loop when become_leader is asserted.
+                self.leader_id = leader_id  # TODO: this should be done gracefully in the loop when become_leader is asserted.
 
             else:
                 logger.info("Requested to become leader, but I am already leader")
@@ -539,7 +542,7 @@ class Communicator(GlobalConfiguration):
             self.election_enabled = False
 
     def set_downlink_bandwidth(self, openport, highrate, los):
-        for name,link in self.downlinks.items():
+        for name, link in self.downlinks.items():
             if name == 'openport':
                 link.set_bandwidth(openport)
             elif name == 'highrate':
@@ -576,8 +579,8 @@ class Communicator(GlobalConfiguration):
         ss = ShortStatusLeader()
         ss.timestamp = time.time()
         ss.leader_id = self.leader_id  # since we're sending this, leader_id == camera_id
-        
-        ss.status_byte_camera_0 = np.nan    
+
+        ss.status_byte_camera_0 = np.nan
         ss.status_byte_camera_1 = np.nan
         ss.status_byte_camera_2 = np.nan
         ss.status_byte_camera_3 = np.nan
@@ -610,7 +613,7 @@ class Communicator(GlobalConfiguration):
         else:
             last_failed_sequence = result[1]
         ss.last_failed_sequence = last_failed_sequence
-    
+
         highrate_link = self.downlinks['highrate']
         ss.bytes_sent_highrate = highrate_link.total_bytes_sent
         ss.packets_queued_highrate = len(highrate_link.packets_to_send)
@@ -620,7 +623,7 @@ class Communicator(GlobalConfiguration):
         ss.bytes_sent_openport = openport_link.total_bytes_sent
         ss.packets_queued_openport = len(openport_link.packets_to_send)
         ss.bytes_per_sec_openport = openport_link.downlink_speed_bytes_per_sec
-        
+
         los_link = self.downlinks['los']
         ss.bytes_sent_los = los_link.total_bytes_sent
         ss.packets_queued_los = len(los_link.packets_to_send)
@@ -632,13 +635,13 @@ class Communicator(GlobalConfiguration):
         ss.charge_cont_1_battery_current = np.nan
         ss.charge_cont_1_battery_temp = np.nan
         ss.charge_cont_1_heatsink_temp = np.nan
-    
+
         ss.charge_cont_2_solar_voltage = np.nan
         ss.charge_cont_2_solar_current = np.nan
         ss.charge_cont_2_battery_voltage = np.nan
         ss.charge_cont_2_battery_current = np.nan
         ss.charge_cont_2_battery_temp = np.nan
-        ss.charge_cont_2_heatsink_temp = np.nan 
+        ss.charge_cont_2_heatsink_temp = np.nan
 
         return ss.encode()
 
@@ -648,7 +651,6 @@ class Communicator(GlobalConfiguration):
         ss.message_id = self.cam_id
 
         kr = keyring.KeyRing(data_dict)
-
 
         ss.timestamp = time.time()
         ss.leader_id = self.leader_id
@@ -679,4 +681,45 @@ class Communicator(GlobalConfiguration):
         ss.sdd_temp = kr["hddtemp_temperature-sdd"]['value']
         ss.sde_temp = kr["hddtemp_temperature-sde"]['value']
         ss.sdf_temp = kr["hddtemp_temperature-sdf"]['value']
+        return ss.encode()
+
+    def get_short_status_camera(self):
+
+        ss = ShortStatusCamera()
+        ss.message_id = self.cam_id
+
+        self.housekeeping.update()
+        data = self.housekeeping.get_three_column_data_set()
+
+        # The 0th index of the tuple is the epoch, the 1st is the value
+
+        ss.timestamp = time.time()
+        ss.leader_id = self.leader_id
+        ss.free_disk_root_mb = data["df-root_df_complex-free"][1] / 1e6
+        ss.free_disk_data_1_mb = data["df-data1_df_complex-free"][1] / 1e6
+        ss.free_disk_data_2_mb = data["df-data2_df_complex-free"][1] / 1e6
+        ss.free_disk_data_3_mb = data["df-data3_df_complex-free"][1] / 1e6
+        ss.free_disk_data_4_mb = data["df-data4_df_complex-free"][1] / 1e6
+        ss.total_images_captured = data['total_frames'][1]
+        ss.camera_packet_resent = data["StatPacketResent"][1]
+        ss.camera_packet_missed = data["StatPacketMissed"][1]
+        ss.camera_frames_dropped = data["StatFrameDropped"][1]
+        ss.camera_timestamp_offset_us = data['camera_timestamp_offset'][1]
+        ss.exposure_us = (data['ExposureTimeAbs'][1] * 1000) - 273
+        ss.focus_step = data['EFLensFocusCurrent'][1]
+        ss.aperture_times_100 = data['EFLensFStopCurrent'][1] * 100
+        ss.pressure = 101033.3  # labjack_items['???']
+        ss.lens_wall_temp = (data['Lens_Temperature'][1] * 1000) - 273
+        ss.dcdc_wall_temp = (data['DCDC_Temperature'][1] * 1000) - 273
+        ss.labjack_temp = data['Labjack_Temperature'][1] - 273
+        ss.camera_temp = data['main_temperature'][1]
+        ss.ccd_temp = data['sensor_temperature'][1]
+        ss.rail_12_mv = data["ipmi_voltage-12V system_board (7.17)"][1] * 1000
+        ss.cpu_temp = data["ipmi_temperature-CPU Temp processor (3.1)"][1]
+        ss.sda_temp = data["hddtemp_temperature-sda"][1]
+        ss.sdb_temp = data["hddtemp_temperature-sdb"][1]
+        ss.sdc_temp = data["hddtemp_temperature-sdc"][1]
+        ss.sdd_temp = data["hddtemp_temperature-sdd"][1]
+        ss.sde_temp = data["hddtemp_temperature-sde"][1]
+        ss.sdf_temp = data["hddtemp_temperature-sdf"][1]
         return ss.encode()

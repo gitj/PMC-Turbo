@@ -120,6 +120,16 @@ class SuperStatusGroup():
         status = self.get_status()
         return keyring.KeyRing(status)
 
+    def get_three_column_data_set(self):
+        data_set = {}
+        for group in self.groups.values():
+            for filewatcher in group.filewatchers.values():
+                for item in filewatcher.items.values():
+                    if item.name in data_set.keys():
+                        logger.exception('Duplicate key %r found' % item.name)
+                    data_set[item.name] = (item.epoch, item.value)
+        return data_set
+
 
 class StatusGroup():
     def __init__(self, name, filewatchers):
@@ -293,7 +303,7 @@ class FloatStatusItem():
             self.value = self.unscaled_value * self.scaling
         else:
             raise ValueError('Column name for item %r, set to be %r, is not in value dict: %r' % (
-            self.name, self.column_name, value_dict))
+                self.name, self.column_name, value_dict))
             # logger.warning('Column name for item %r, set to be %r, is not in value dict: %r' % (self.name, self.column_name, value_dict))
         self.epoch = float(value_dict['epoch'])
 

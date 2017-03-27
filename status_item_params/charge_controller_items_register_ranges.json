@@ -1,0 +1,830 @@
+{
+    "register_001": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_002": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_003": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_004": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_005": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_006": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_007": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_008": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_009": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_010": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_011": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_012": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_013": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_014": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_015": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_016": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_017": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_018": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_019": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_020": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_021": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_022": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_023": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_024": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_025": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_026": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_027": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_028": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_029": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_030": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_031": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_032": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_033": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_034": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_035": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_036": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_037": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_038": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_039": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_040": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_041": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_042": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_043": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_044": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_045": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_046": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_047": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_048": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_049": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_050": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_051": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_052": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_053": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_054": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_055": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_056": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_057": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_058": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_059": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_060": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_061": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_062": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_063": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_064": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_065": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_066": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_067": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_068": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_069": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_070": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_071": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_072": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_073": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_074": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_075": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_076": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_077": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_078": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_079": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_080": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_081": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_082": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_083": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_084": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_085": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_086": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_087": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_088": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_089": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_090": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_091": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "register_092": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    }
+}

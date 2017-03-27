@@ -1,0 +1,1073 @@
+{
+    "eeprom_5403": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_5404": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_5405": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_5406": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_5407": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_5408": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_5409": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57344": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57345": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57346": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57347": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57348": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57349": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57350": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57351": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57352": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57353": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57354": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57355": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57356": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57357": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57358": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57359": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57360": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57361": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57362": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57363": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57364": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57365": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57366": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57367": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57368": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57369": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57370": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57371": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57372": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57373": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57374": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57375": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57376": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57377": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57472": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57473": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57474": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57475": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57476": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57477": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57478": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57479": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57480": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57481": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57482": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57483": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57484": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57485": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57486": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57487": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57488": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57489": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57490": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57491": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57492": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57493": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57494": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57495": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57496": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57497": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57498": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57499": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57500": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57501": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57502": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57503": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57504": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57505": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57506": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57507": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57508": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57509": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57510": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57511": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57512": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57513": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57514": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57515": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57516": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57517": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57518": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57519": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57520": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57521": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57522": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57523": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57524": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57525": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57526": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57527": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57528": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57529": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57530": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57531": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57532": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57533": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57534": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57535": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57536": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57537": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57538": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57539": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57540": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57541": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57542": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57543": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57544": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57545": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57546": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57547": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57548": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "eeprom_57549": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    }
+}
