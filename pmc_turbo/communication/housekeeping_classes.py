@@ -121,20 +121,6 @@ class SuperStatusGroup():
         return keyring.KeyRing(status)
 
 
-    def get_255_byte_summary(self):
-        """
-
-        Returns
-        1-byte status for each status_item that has an important flag (put in correct place in 255-length array
-        -------
-
-        """
-
-        # TODO: Make important flag - fill out 255 bytes
-
-        return
-
-
 class StatusGroup():
     def __init__(self, name, filewatchers):
         self.name = name
