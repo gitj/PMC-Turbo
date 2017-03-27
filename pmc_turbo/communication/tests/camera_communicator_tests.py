@@ -183,7 +183,7 @@ class TestNoPeers(BasicTestHarness):
 
     def get_and_process_bytes_test(self):
         self.c.lowrate_uplink = FakeLowrateUplink()
-        self.c.add_status_group(FakeStatusGroup())
+        self.c.housekeeping = FakeStatusGroup()
         self.c.lowrate_uplink.assign_bytes_to_get('\x10\x13\x03')
         self.c.controller = FakeController()
         self.c.lowrate_downlink = FakeLowrateDownlink()

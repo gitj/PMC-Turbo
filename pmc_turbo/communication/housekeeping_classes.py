@@ -4,6 +4,7 @@ import logging
 import os
 import time
 import math
+import numpy as np
 
 from pmc_turbo.communication import file_format_classes
 from pmc_turbo.utils import file_reading
@@ -88,6 +89,7 @@ class SuperStatusGroup():
         self.groups = {}
         for group in groups:
             self.groups[group.name] = group
+        self.three_column_data_set = self.get_three_column_data_set()
 
     def get_status_summary(self):
         status_summaries = [self.groups[key].get_status_summary() for key in self.groups.keys()]
@@ -102,6 +104,7 @@ class SuperStatusGroup():
         logger.debug('Updating %r' % self.name)
         for key in self.groups.keys():
             self.groups[key].update()
+        self.three_column_data_set = self.get_three_column_data_set()
 
     def to_json_file(self):
         payload = json.dumps(self.get_status())
@@ -129,6 +132,20 @@ class SuperStatusGroup():
                         logger.exception('Duplicate key %r found' % item.name)
                     data_set[item.name] = (item.epoch, item.value)
         return data_set
+
+    def get_value(self, item_name):
+        try:
+            return self.three_column_data_set[item_name][1]
+        except KeyError as e:
+            logger.exception('Key %r missing from group %r' % (item_name, self.name))
+            return np.nan
+
+    def get_epoch(self, item_name):
+        try:
+            return self.three_column_data_set[item_name][0]
+        except KeyError as e:
+            logger.exception('Key %r missing from group %r' % (item_name, self.name))
+            return np.nan
 
 
 class StatusGroup():
@@ -258,7 +275,7 @@ class StatusFileWatcher():
                         'First column of file %r is not epoch, it is %r' % (self.source_file, self.column_names[0]))
         last_update = os.path.getctime(self.source_file)
         if last_update == self.last_update:  # if the file not has changed since last check
-            #logger.debug('File %r up to date.' % self.name)
+            # logger.debug('File %r up to date.' % self.name)
             return
         else:
             if self.last_update and not (

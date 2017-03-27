@@ -445,25 +445,27 @@ class Communicator(GlobalConfiguration):
 
     ##################################################################################################
     # The following methods correspond to commands defined in pmc_turbo.communication.command_table
+    # Cannot remove these commands without also removing them from the command table.
+    # DISCUSS WITH GROUP BEFORE CHANGING COMMANDS
 
-    # TODO: Update this method with self.housekeeping instead of self.status_groups
-    # def get_status_report(self, compress, request_id):
-    #     logger.debug('Status report requested')
-    #     summary = []
-    #     for group in self.status_groups:
-    #         group.update()
-    #         summary.append(group.get_status())
-    #     payload = json.dumps(summary)
-    #     if compress:
-    #         file_class = file_format_classes.CompressedJSONFile
-    #     else:
-    #         file_class = file_format_classes.JSONFile
-    #     json_file = file_class(payload=payload,
-    #                            filename=('status_summary_%s.json' % time.strftime('%Y-%m-%d_%H%M%S')),
-    #                            timestamp=time.time(),
-    #                            camera_id=camera_id.get_camera_id(),
-    #                            request_id=request_id)
-    #     self.controller.add_file_to_downlink_queue(json_file.to_buffer())
+    def get_status_report(self, compress, request_id):
+        logger.debug('Status report requested')
+        summary = []
+
+        # NOTE: When LIDAR and leader housekeeping is added, summary should also append those statuses.
+        self.housekeeping.update()
+        summary.append(self.housekeeping.get_status())
+        payload = json.dumps(summary)
+        if compress:
+            file_class = file_format_classes.CompressedJSONFile
+        else:
+            file_class = file_format_classes.JSONFile
+        json_file = file_class(payload=payload,
+                               filename=('status_summary_%s.json' % time.strftime('%Y-%m-%d_%H%M%S')),
+                               timestamp=time.time(),
+                               camera_id=camera_id.get_camera_id(),
+                               request_id=request_id)
+        self.controller.add_file_to_downlink_queue(json_file.to_buffer())
 
     def set_peer_polling_order(self, list_argument):
         self.peer_polling_order = list_argument
@@ -695,31 +697,31 @@ class Communicator(GlobalConfiguration):
 
         ss.timestamp = time.time()
         ss.leader_id = self.leader_id
-        ss.free_disk_root_mb = data["df-root_df_complex-free"][1] / 1e6
-        ss.free_disk_data_1_mb = data["df-data1_df_complex-free"][1] / 1e6
-        ss.free_disk_data_2_mb = data["df-data2_df_complex-free"][1] / 1e6
-        ss.free_disk_data_3_mb = data["df-data3_df_complex-free"][1] / 1e6
-        ss.free_disk_data_4_mb = data["df-data4_df_complex-free"][1] / 1e6
-        ss.total_images_captured = data['total_frames'][1]
-        ss.camera_packet_resent = data["StatPacketResent"][1]
-        ss.camera_packet_missed = data["StatPacketMissed"][1]
-        ss.camera_frames_dropped = data["StatFrameDropped"][1]
-        ss.camera_timestamp_offset_us = data['camera_timestamp_offset'][1]
-        ss.exposure_us = (data['ExposureTimeAbs'][1] * 1000) - 273
-        ss.focus_step = data['EFLensFocusCurrent'][1]
-        ss.aperture_times_100 = data['EFLensFStopCurrent'][1] * 100
+        ss.free_disk_root_mb = self.housekeeping.get_value("df-root_df_complex-free") / 1e6
+        ss.free_disk_data_1_mb = self.housekeeping.get_value("df-data1_df_complex-free") / 1e6
+        ss.free_disk_data_2_mb = self.housekeeping.get_value("df-data2_df_complex-free") / 1e6
+        ss.free_disk_data_3_mb = self.housekeeping.get_value("df-data3_df_complex-free") / 1e6
+        ss.free_disk_data_4_mb = self.housekeeping.get_value("df-data4_df_complex-free") / 1e6
+        ss.total_images_captured = self.housekeeping.get_value('total_frames')
+        ss.camera_packet_resent = self.housekeeping.get_value("StatPacketResent")
+        ss.camera_packet_missed = self.housekeeping.get_value("StatPacketMissed")
+        ss.camera_frames_dropped = self.housekeeping.get_value("StatFrameDropped")
+        ss.camera_timestamp_offset_us = self.housekeeping.get_value('camera_timestamp_offset')
+        ss.exposure_us = (self.housekeeping.get_value('ExposureTimeAbs') * 1000) - 273
+        ss.focus_step = self.housekeeping.get_value('EFLensFocusCurrent')
+        ss.aperture_times_100 = self.housekeeping.get_value('EFLensFStopCurrent') * 100
         ss.pressure = 101033.3  # labjack_items['???']
-        ss.lens_wall_temp = (data['Lens_Temperature'][1] * 1000) - 273
-        ss.dcdc_wall_temp = (data['DCDC_Temperature'][1] * 1000) - 273
-        ss.labjack_temp = data['Labjack_Temperature'][1] - 273
-        ss.camera_temp = data['main_temperature'][1]
-        ss.ccd_temp = data['sensor_temperature'][1]
-        ss.rail_12_mv = data["ipmi_voltage-12V system_board (7.17)"][1] * 1000
-        ss.cpu_temp = data["ipmi_temperature-CPU Temp processor (3.1)"][1]
-        ss.sda_temp = data["hddtemp_temperature-sda"][1]
-        ss.sdb_temp = data["hddtemp_temperature-sdb"][1]
-        ss.sdc_temp = data["hddtemp_temperature-sdc"][1]
-        ss.sdd_temp = data["hddtemp_temperature-sdd"][1]
-        ss.sde_temp = data["hddtemp_temperature-sde"][1]
-        ss.sdf_temp = data["hddtemp_temperature-sdf"][1]
+        ss.lens_wall_temp = (self.housekeeping.get_value('Lens_Temperature') * 1000) - 273
+        ss.dcdc_wall_temp = (self.housekeeping.get_value('DCDC_Temperature') * 1000) - 273
+        ss.labjack_temp = self.housekeeping.get_value('Labjack_Temperature') - 273
+        ss.camera_temp = self.housekeeping.get_value('main_temperature')
+        ss.ccd_temp = self.housekeeping.get_value('sensor_temperature')
+        ss.rail_12_mv = self.housekeeping.get_value("ipmi_voltage-12V system_board (7.17)") * 1000
+        ss.cpu_temp = self.housekeeping.get_value("ipmi_temperature-CPU Temp processor (3.1)")
+        ss.sda_temp = self.housekeeping.get_value("hddtemp_temperature-sda")
+        ss.sdb_temp = self.housekeeping.get_value("hddtemp_temperature-sdb")
+        ss.sdc_temp = self.housekeeping.get_value("hddtemp_temperature-sdc")
+        ss.sdd_temp = self.housekeeping.get_value("hddtemp_temperature-sdd")
+        ss.sde_temp = self.housekeeping.get_value("hddtemp_temperature-sde")
+        ss.sdf_temp = self.housekeeping.get_value("hddtemp_temperature-sdf")
         return ss.encode()
