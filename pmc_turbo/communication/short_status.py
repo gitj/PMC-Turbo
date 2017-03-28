@@ -56,7 +56,8 @@ class ShortStatusBase(object):
                 raise RuntimeError("Cannot encode status before all values have been set. Missing value for %s" % name)
             format_ = self.item_table[name]
             description = format_description[format_]
-            if 'int' in description:
+            # this is hacky, but we don't want to coerce the status_byte_ values because 0xFF is a valid status byte
+            if ('int' in description) and not ('status_byte' in name):
                 iinfo = np.iinfo(eval('np.%s' % description))
                 max_value = iinfo.max - 1 #maximum valid value, we use iinfo.max to represent NaN
                 if value < iinfo.min:
@@ -210,6 +211,9 @@ def decode_one_byte_summary(one_byte):
         result[one_byte_summary_bit_definitions[k]] = bool((1<<k) & one_byte)
     return result
 
+no_response_one_byte_status = encode_one_byte_summary(is_leader=False, controller_alive=False, pipeline_alive=True,
+                                                      files_to_downlink=True, ptp_synced=False, time_synced=False,
+                                                      taking_images=False, writing_images=False)  # this value should be impossible to achieve naturally
 
 def load_short_status_from_file(filename):
     """

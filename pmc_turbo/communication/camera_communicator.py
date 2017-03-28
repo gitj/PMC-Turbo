@@ -25,7 +25,9 @@ from pmc_turbo.communication import downlink_classes, uplink_classes, packet_cla
 from pmc_turbo.communication import file_format_classes
 from pmc_turbo.communication.command_table import command_manager
 from pmc_turbo.communication.command_classes import CommandStatus
-from pmc_turbo.communication.short_status import ShortStatusLeader, ShortStatusCamera, encode_one_byte_summary
+from pmc_turbo.communication.short_status import (ShortStatusLeader, ShortStatusCamera, 
+                                                  encode_one_byte_summary, decode_one_byte_summary,
+                                                  no_response_one_byte_status)
 from pmc_turbo.housekeeping.charge_controller import ChargeControllerLogger
 from pmc_turbo.communication import keyring
 
@@ -622,15 +624,26 @@ class Communicator(GlobalConfiguration):
         ss.timestamp = time.time()
         ss.leader_id = self.leader_id  # since we're sending this, leader_id == camera_id
 
-        ss.status_byte_camera_0 = np.nan
-        ss.status_byte_camera_1 = np.nan
-        ss.status_byte_camera_2 = np.nan
-        ss.status_byte_camera_3 = np.nan
-        ss.status_byte_camera_4 = np.nan
-        ss.status_byte_camera_5 = np.nan
-        ss.status_byte_camera_6 = np.nan
-        ss.status_byte_camera_7 = np.nan
-        ss.status_byte_lidar = np.nan
+        ss.status_byte_camera_0 = no_response_one_byte_status
+        ss.status_byte_camera_1 = no_response_one_byte_status
+        ss.status_byte_camera_2 = no_response_one_byte_status
+        ss.status_byte_camera_3 = no_response_one_byte_status
+        ss.status_byte_camera_4 = no_response_one_byte_status
+        ss.status_byte_camera_5 = no_response_one_byte_status
+        ss.status_byte_camera_6 = no_response_one_byte_status
+        ss.status_byte_camera_7 = no_response_one_byte_status
+
+        for peer_id,peer in self.peers.items():
+            connected = self.check_peer_connection(peer)
+            if connected:
+                status = peer.one_byte_summary(time.time())
+                logger.info("peer %d is connected and has status %02X:\n%r" % (peer_id, status, decode_one_byte_summary(status)))
+            else:
+                status = no_response_one_byte_status
+                logger.warning("peer %d is not connected, setting status %02X" % (peer_id,status))
+            setattr(ss,('status_byte_camera_%d' % peer_id), status)
+            
+        ss.status_byte_lidar = no_response_one_byte_status
 
         result = self.command_logger.get_latest_result()
         if result is None:
