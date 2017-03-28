@@ -651,43 +651,6 @@ class Communicator(GlobalConfiguration):
 
         return ss.encode()
 
-    def populate_short_status_camera(self, data_dict):
-
-        ss = ShortStatusCamera()
-        ss.message_id = self.cam_id
-
-        kr = keyring.KeyRing(data_dict)
-
-        ss.timestamp = time.time()
-        ss.leader_id = self.leader_id
-        ss.free_disk_root_mb = kr["df-root_df_complex-free"]['value'] / 1e6
-        ss.free_disk_data_1_mb = kr["df-data1_df_complex-free"]['value'] / 1e6
-        ss.free_disk_data_2_mb = kr["df-data2_df_complex-free"]['value'] / 1e6
-        ss.free_disk_data_3_mb = kr["df-data3_df_complex-free"]['value'] / 1e6
-        ss.free_disk_data_4_mb = kr["df-data4_df_complex-free"]['value'] / 1e6
-        ss.total_images_captured = kr['total_frames']['value']
-        ss.camera_packet_resent = kr["StatPacketResent"]['value']
-        ss.camera_packet_missed = kr["StatPacketMissed"]['value']
-        ss.camera_frames_dropped = kr["StatFrameDropped"]['value']
-        ss.camera_timestamp_offset_us = kr['camera_timestamp_offset']['value']
-        ss.exposure_us = (kr['ExposureTimeAbs']['value'] * 1000) - 273
-        ss.focus_step = kr['EFLensFocusCurrent']['value']
-        ss.aperture_times_100 = kr['EFLensFStopCurrent']['value'] * 100
-        ss.pressure = 101033.3  # labjack_items['???']
-        ss.lens_wall_temp = (kr['ain6']['value'] * 1000) - 273
-        ss.dcdc_wall_temp = (kr['ain7']['value'] * 1000) - 273
-        ss.labjack_temp = kr['temperature']['value'] - 273
-        ss.camera_temp = kr['main_temperature']['value']
-        ss.ccd_temp = kr['sensor_temperature']['value']
-        ss.rail_12_mv = kr["ipmi_voltage-12V system_board (7.17)"]['value'] * 1000
-        ss.cpu_temp = kr["ipmi_temperature-CPU Temp processor (3.1)"]['value']
-        ss.sda_temp = kr["hddtemp_temperature-sda"]['value']
-        ss.sdb_temp = kr["hddtemp_temperature-sdb"]['value']
-        ss.sdc_temp = kr["hddtemp_temperature-sdc"]['value']
-        ss.sdd_temp = kr["hddtemp_temperature-sdd"]['value']
-        ss.sde_temp = kr["hddtemp_temperature-sde"]['value']
-        ss.sdf_temp = kr["hddtemp_temperature-sdf"]['value']
-        return ss.encode()
 
     def get_short_status_camera(self):
 
