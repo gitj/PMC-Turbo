@@ -14,6 +14,15 @@ c.GlobalConfiguration.controller_pyro_port = 53001
 ##
 c.GlobalConfiguration.pipeline_pyro_port = 53000
 
+## List of tuples - hirate downlink name, Enum(("openport", "highrate", "los"))
+#  hirate downlink address,
+#  hirate downlink downlink speed in bytes per second. 0 means link is disabled.
+#  e.g. [("openport", ("192.168.1.70", 4501), 10000), ...]
+c.Communicator.hirate_link_parameters = [('highrate', ('localhost', 50002), 700000),
+                                         ('openport', ('localhost', 45001), 1000000),
+                                         ('los', ('localhost', 50004), 100000)]
+
+
 #------------------------------------------------------------------------------
 # BasicPipeline(GlobalConfiguration) configuration
 #------------------------------------------------------------------------------
