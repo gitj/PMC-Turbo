@@ -1,5 +1,6 @@
 from pmc_turbo.communication import downlink_classes
 import time
+import socket
 
 class TestHighrateDownlinks():
     def setup(self):
@@ -32,3 +33,21 @@ class TestHighrateDownlinks():
         assert len(self.downlink.packets_to_send) == 10
         self.downlink.flush_packet_queue()
         assert len(self.downlink.packets_to_send) == 0
+
+class TestLowrateDownlinks():
+    def setup(self):
+        self.downlink = downlink_classes.LowrateDownlink('comm1','localhost',52002)
+        self.receive_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+        self.receive_socket.bind(('localhost',52002))
+
+    def test_send(self):
+        self.downlink.send('a'*100) # should succeed
+        result = self.receive_socket.recv(10000)
+        #print '%r' % result
+        assert result == (downlink_classes.LowrateDownlink.HEADER + chr(100)
+                                                   +'a'*100 + downlink_classes.LowrateDownlink.FOOTER)
+        self.downlink.send('b'*1000) # should succeed but truncate
+        result = self.receive_socket.recv(10000)
+        #print '%r' % result
+        assert result == (downlink_classes.LowrateDownlink.HEADER + chr(255)
+                                                   +'b'*255 + downlink_classes.LowrateDownlink.FOOTER)
