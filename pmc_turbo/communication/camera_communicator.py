@@ -438,10 +438,6 @@ class Communicator(GlobalConfiguration):
             return True
         except Pyro4.errors.CommunicationError:
             details = "Ping failure for peer %s" % (peer._pyroUri)
-            if False:
-                details += traceback.format_exc()
-                pyro_details = ''.join(Pyro4.util.getPyroTraceback())
-                details = details + pyro_details
             logger.warning(details)
             return False
         finally:
