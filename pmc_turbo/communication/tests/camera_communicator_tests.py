@@ -1,3 +1,4 @@
+import collections
 import shutil
 import tempfile
 import copy
@@ -36,7 +37,7 @@ class TestCommunicator(BasicTestHarness):
     def test_valid_command_table(self):
         config = deepcopy(self.basic_config)
         config.Communicator.lowrate_link_parameters = [('comm1', ('localhost', 6501), 6501)]
-        cc = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, pyro_port=FAKE_PYRO_PORT,
+        cc = camera_communicator.Communicator(cam_id=0, peers={}, controller=None, pyro_port=FAKE_PYRO_PORT,
                                               start_pyro=False,  config=config)
         cc.validate_command_table()
         cc.close()
@@ -51,16 +52,16 @@ class TestCommunicator(BasicTestHarness):
         cont = controller.Controller(pipeline=bpl, config=self.basic_config)
         config1 = deepcopy(self.basic_config)
         config1.Communicator.lowrate_link_parameters = [('comm1', ('localhost', 6501), 6501)]
-        cc1 = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, pyro_port=FAKE_PYRO_PORT,
+        cc1 = camera_communicator.Communicator(cam_id=0, peers={}, controller=None, pyro_port=FAKE_PYRO_PORT,
                                                start_pyro=False, config=config1)
 
         config2 = deepcopy(self.basic_config)
         config2.Communicator.lowrate_link_parameters = []#[('comm2', ('localhost', 6601), 6601)]
-        cc2 = camera_communicator.Communicator(cam_id=1, peers=[], controller=None, pyro_port=FAKE_PYRO_PORT,
+        cc2 = camera_communicator.Communicator(cam_id=1, peers={}, controller=None, pyro_port=FAKE_PYRO_PORT,
                                                start_pyro=False, config=config2)
         cc1.controller = cont
         cc2.controller = cont
-        cc1.peers = [cc1, cc2]
+        cc1.peers = collections.OrderedDict([(0, cc1), (1, cc2)])
         cc1.destination_lists = {0: [cc1], 1: [cc2]}
         command = command_table.command_manager.set_focus(focus_step=1000)
         command_packet = packet_classes.CommandPacket(payload=command, sequence_number=1, destination=1)
@@ -169,7 +170,7 @@ class TestNoPeers(BasicTestHarness):
         config = self.basic_config.copy()
         config.Communicator.lowrate_link_parameters = [('comm1', ('localhost', 64001), 64001)]
         self.pyro_port = FAKE_PYRO_PORT
-        self.c = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, pyro_port=self.pyro_port,
+        self.c = camera_communicator.Communicator(cam_id=0, peers={}, controller=None, pyro_port=self.pyro_port,
                                                   config=config)
 
     def teardown(self):
@@ -198,7 +199,7 @@ class TestPeers(BasicTestHarness):
         config = self.basic_config.copy()
         config.Communicator.lowrate_link_parameters = [('comm1', ("localhost", 6501), 6501)]
         self.pyro_port = FAKE_PYRO_PORT
-        peers = [('PYRO:communicator@localhost:%d' % (self.pyro_port + k)) for k in range(2)]
+        peers = collections.OrderedDict([(k,('PYRO:communicator@localhost:%d' % (self.pyro_port + k))) for k in range(2)])
         self.c = camera_communicator.Communicator(cam_id=0, peers=peers, controller=None, pyro_port=self.pyro_port,
                                                   config=config)
         self.c.setup_pyro_daemon()
@@ -206,7 +207,7 @@ class TestPeers(BasicTestHarness):
 
         self.c.file_id = 0
         config.Communicator.lowrate_link_parameters = []
-        self.peer = camera_communicator.Communicator(cam_id=1, peers=[], controller=None,
+        self.peer = camera_communicator.Communicator(cam_id=1, peers={}, controller=None,
                                                      pyro_port=(self.pyro_port + 1),
                                                      config=config)
         self.peer.setup_pyro_daemon()

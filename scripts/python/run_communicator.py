@@ -1,3 +1,4 @@
+import collections
 import logging
 import os
 from pmc_turbo.communication import camera_communicator
@@ -38,9 +39,9 @@ class CommunicatorApp(Application):
         pyro_port = self.address_book[cam_id][1]
         sorted_keys = self.address_book.keys()
         sorted_keys.sort()
-        peers = ['PYRO:communicator@%s:%d' % self.address_book[key] for key in sorted_keys]
-
-        start_as_leader = (cam_id == 0)
+        peers = collections.OrderedDict()
+        for key in sorted_keys:
+            peers[key] = 'PYRO:communicator@%s:%d' % self.address_book[key]
 
         self.communicator = camera_communicator.Communicator(cam_id=cam_id, peers=peers, controller=None,
                                                              pyro_port=pyro_port,

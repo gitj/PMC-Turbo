@@ -81,16 +81,15 @@ class Communicator(GlobalConfiguration):
         self.leader_id = 0  # this will be deprecated when the full election is in place.
         self.become_leader = False
 
-        self.peers = []
-        for peer in peers:
+        self.peers = collections.OrderedDict()
+        for peer_id,peer in peers.items():
             try:
-                self.peers.append(Pyro4.Proxy(peer))
+                peer = Pyro4.Proxy(peer)
             except TypeError as e:
                 if not hasattr(peer, '_pyroUri'):
                     if not hasattr(peer, 'cam_id'):
                         raise e
-                else:
-                    self.peers.append(peer)
+            self.peers[peer_id] = peer
 
         if controller:
             try:
@@ -121,7 +120,7 @@ class Communicator(GlobalConfiguration):
                                                           eeprom_measurement_interval=settings[2])
                                    for settings in self.charge_controller_settings]
 
-        peer_error_strings = [('pmc_%d_communication_error_counts' % i) for i in range(len(self.peers))]
+        peer_error_strings = [('pmc_%d_communication_error_counts' % i) for i in self.peers.keys()]
         self.error_counter = error_counter.CounterCollection('communication_errors', self.counters_dir,
                                                              *peer_error_strings)
         self.error_counter.controller_communication_errors.reset()
@@ -137,8 +136,8 @@ class Communicator(GlobalConfiguration):
         self.command_logger = command_classes.CommandLogger()
 
         # TODO: Set up proper destination lists, including LIDAR, narrow field, wide field, and all
-        self.destination_lists = dict(enumerate([[peer] for peer in self.peers]))
-        self.destination_lists[command_table.DESTINATION_ALL_CAMERAS] = self.peers
+        self.destination_lists = dict([(peer_id,[peer]) for (peer_id,peer) in self.peers.items()])
+        self.destination_lists[command_table.DESTINATION_ALL_CAMERAS] = self.peers.values()
         self.destination_lists[command_table.DESTINATION_SUPER_COMMAND] = [self]
 
         self.setup_links()
@@ -289,7 +288,7 @@ class Communicator(GlobalConfiguration):
 
     def request_synchronized_images(self):
         timestamp = time.time() - self.synchronized_image_delay
-        for peer in self.peers:
+        for peer in self.peers.values():
             if self.check_peer_connection(peer):
                 logger.debug("Synchronizing images by requesting standard image closest to timestamp %f from peer %r" %
                              (timestamp, peer))
@@ -388,7 +387,7 @@ class Communicator(GlobalConfiguration):
             elif next_status_index == command_table.DESTINATION_LIDAR:
                 result = None
                 # TODO: Fill this out
-            elif next_status_index < len(self.peers):
+            elif next_status_index in self.peers:
                 peer = self.peers[next_status_index]
                 if self.check_peer_connection(peer):
                     try:
