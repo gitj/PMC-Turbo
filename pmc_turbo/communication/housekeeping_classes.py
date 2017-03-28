@@ -23,10 +23,10 @@ DELIMITER = ','
 
 
 def construct_status_group_from_json(json_path):
-    print '#### json path:', json_path
+    #print '#### json path:', json_path
     # group_name = json_path.strip('.json')
     group_name = os.path.split(json_path)[-1][:-5]
-    print '#### group name:', group_name
+    #print '#### group name:', group_name
     status_group = StatusGroup(group_name, filewatchers=[])
 
     with open(json_path, 'r') as f:

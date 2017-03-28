@@ -1,5 +1,6 @@
 # Basic configuration for running with no hardware
-
+import os
+from pmc_turbo import root_dir
 #------------------------------------------------------------------------------
 # GlobalConfiguration(Configurable) configuration
 #------------------------------------------------------------------------------
@@ -21,6 +22,18 @@ c.GlobalConfiguration.pipeline_pyro_port = 53000
 c.Communicator.hirate_link_parameters = [('highrate', ('localhost', 50002), 700000),
                                          ('openport', ('localhost', 45001), 1000000),
                                          ('los', ('localhost', 50004), 100000)]
+
+
+JSON_FILENAMES = [
+    'camera_items.json',
+    'charge_controller_register_items.json',
+    'charge_controller_eeprom_items.json',
+    'counter_items.json',
+    'collectd_items.json',
+    'labjack_items.json'
+]
+
+c.Communicator.json_paths = [os.path.join(os.path.split(root_dir)[0], 'status_item_params', json_fn) for json_fn in JSON_FILENAMES]
 
 
 #------------------------------------------------------------------------------
