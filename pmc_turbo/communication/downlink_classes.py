@@ -20,6 +20,8 @@ class HirateDownlink():
         self.total_bytes_sent = 0
         self.packets_to_send = []
         self.name = name
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
 
     def set_bandwidth(self,bytes_per_sec):
         self.downlink_speed_bytes_per_sec = bytes_per_sec
@@ -56,11 +58,9 @@ class HirateDownlink():
             self.packets_to_send = self.packets_to_send[1:]
 
     def send(self, msg, ip, port):
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        bytes_sent = sock.sendto(msg, (ip, port))
+        bytes_sent = self.sock.sendto(msg, (ip, port))
         self.total_bytes_sent += bytes_sent
         logger.debug('Bytes sent on hirate downlink %s: %d' % (self.name, bytes_sent))
-        sock.close()
 
     def has_bandwidth(self):
         return (not self.packets_to_send) and self.enabled
