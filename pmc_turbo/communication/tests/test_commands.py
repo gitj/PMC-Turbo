@@ -1,4 +1,4 @@
-from nose.tools import timed
+from nose.tools import timed, assert_raises
 from pmc_turbo.communication.command_classes import ListArgumentCommand,StringArgumentCommand
 from pmc_turbo.communication.command_table import command_manager
 
@@ -44,3 +44,16 @@ def test_command_padding_gets_stripped():
     assert result[0][0]=='set_focus'
     assert len(result) == 1
 
+def test_doc():
+    for command in command_manager.commands:
+        assert type(command.__doc__) is str
+        assert command.argument_table == command._argument_table
+
+def test_short_command():
+    with assert_raises(ValueError):
+        command_manager.commands[0].decode_command_and_arguments('')
+
+def test_bad_arg():
+    with assert_raises(ValueError):
+        command_manager.commands[0].encode_command(blargh=55)
+        command_manager.commands[0].encode_command()
