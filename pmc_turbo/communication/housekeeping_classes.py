@@ -73,7 +73,7 @@ def construct_status_group_from_json(json_path):
 def construct_super_group_from_json_list(json_paths):
     group_name = 'SuperGroup'
     super_group = SuperStatusGroup(group_name, groups=[])
-    print json_paths
+    #print json_paths
     for i, json_path in enumerate(json_paths):
         try:
             status_group = construct_status_group_from_json(json_path)

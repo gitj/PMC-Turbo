@@ -42,8 +42,9 @@ class CommunicatorApp(Application):
 
         start_as_leader = (cam_id == 0)
 
-        self.communicator = camera_communicator.Communicator(cam_id=cam_id, peers=peers, controller=None, leader=start_as_leader,
-                                                             pyro_port=pyro_port, config=self.config)
+        self.communicator = camera_communicator.Communicator(cam_id=cam_id, peers=peers, controller=None,
+                                                             pyro_port=pyro_port,
+                                                             config=self.config)
 
     def start(self):
 

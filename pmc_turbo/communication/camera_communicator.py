@@ -73,7 +73,7 @@ class Communicator(GlobalConfiguration):
                       help='List of paths to json files that are used to construct housekeeping classes').tag(
         config=True)
 
-    def __init__(self, cam_id, peers, controller, leader, pyro_port, **kwargs):
+    def __init__(self, cam_id, peers, controller, pyro_port, **kwargs):
         super(Communicator, self).__init__(**kwargs)
         self.port = pyro_port
         logger.debug('Communicator initialized')
@@ -381,21 +381,25 @@ class Communicator(GlobalConfiguration):
     def get_next_status_summary(self):
         result = None
         while not result:
-            if self.short_status_order[self.short_status_order_idx] == command_table.DESTINATION_LEADER:
+            next_status_index = self.short_status_order[self.short_status_order_idx]
+            if next_status_index == command_table.DESTINATION_LEADER:
                 result = self.populate_short_status_leader()
                 logger.debug("got leader status, message id %d" % ord(result[0]))
-            elif self.short_status_order[self.short_status_order_idx] == command_table.DESTINATION_LIDAR:
+            elif next_status_index == command_table.DESTINATION_LIDAR:
                 result = None
                 # TODO: Fill this out
-            else:
-                peer = self.peers[self.short_status_order[self.short_status_order_idx]]
+            elif next_status_index < len(self.peers):
+                peer = self.peers[next_status_index]
                 if self.check_peer_connection(peer):
                     try:
                         result = peer.get_short_status_camera()
+                        logger.debug("got peer status, message id %d" % ord(result[0]))
                     except Pyro4.errors.CommunicationError:
                         logger.debug('Unable to connect to peer %r' % peer)
                 else:
                     logger.warning('Unable to connect to peer %r' % peer)
+            else:
+                result = None
             self.short_status_order_idx += 1
             self.short_status_order_idx %= len(self.short_status_order)
         return result

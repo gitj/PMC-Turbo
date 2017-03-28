@@ -7,6 +7,7 @@ import time
 from nose.tools import timed
 from pmc_turbo.communication import command_table
 from pmc_turbo.communication import packet_classes
+from pmc_turbo.communication import short_status
 
 from pmc_turbo.camera.pipeline import controller, basic_pipeline
 from pmc_turbo.communication import camera_communicator
@@ -35,8 +36,8 @@ class TestCommunicator(BasicTestHarness):
     def test_valid_command_table(self):
         config = deepcopy(self.basic_config)
         config.Communicator.lowrate_link_parameters = [('comm1', ('localhost', 6501), 6501)]
-        cc = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, leader=True, start_pyro=False,
-                                              pyro_port=FAKE_PYRO_PORT, config=config)
+        cc = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, pyro_port=FAKE_PYRO_PORT,
+                                              start_pyro=False,  config=config)
         cc.validate_command_table()
         cc.close()
 
@@ -50,13 +51,13 @@ class TestCommunicator(BasicTestHarness):
         cont = controller.Controller(pipeline=bpl, config=self.basic_config)
         config1 = deepcopy(self.basic_config)
         config1.Communicator.lowrate_link_parameters = [('comm1', ('localhost', 6501), 6501)]
-        cc1 = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, leader=True, start_pyro=False,
-                                               pyro_port=FAKE_PYRO_PORT, config=config1)
+        cc1 = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, pyro_port=FAKE_PYRO_PORT,
+                                               start_pyro=False, config=config1)
 
         config2 = deepcopy(self.basic_config)
-        config2.Communicator.lowrate_link_parameters = [('comm2', ('localhost', 6601), 6601)]
-        cc2 = camera_communicator.Communicator(cam_id=1, peers=[], controller=None, leader=True, start_pyro=False,
-                                               pyro_port=FAKE_PYRO_PORT, config=config2)
+        config2.Communicator.lowrate_link_parameters = []#[('comm2', ('localhost', 6601), 6601)]
+        cc2 = camera_communicator.Communicator(cam_id=1, peers=[], controller=None, pyro_port=FAKE_PYRO_PORT,
+                                               start_pyro=False, config=config2)
         cc1.controller = cont
         cc2.controller = cont
         cc1.peers = [cc1, cc2]
@@ -166,20 +167,15 @@ class TestNoPeers(BasicTestHarness):
     def setup(self):
         super(TestNoPeers, self).setup()
         config = self.basic_config.copy()
-        config.Communicator.lowrate_link_parameters = [('comm1', ('pmc-serial-1', 6501), 6501)]
+        config.Communicator.lowrate_link_parameters = [('comm1', ('localhost', 64001), 64001)]
         self.pyro_port = FAKE_PYRO_PORT
-        self.c = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, leader=True,
-                                                  pyro_port=self.pyro_port, config=config)
+        self.c = camera_communicator.Communicator(cam_id=0, peers=[], controller=None, pyro_port=self.pyro_port,
+                                                  config=config)
 
     def teardown(self):
         super(TestNoPeers, self).teardown()
         self.c.close()
 
-    def get_bytes_test(self):
-        self.c.lowrate_uplink = FakeLowrateUplink()
-        self.c.lowrate_uplink.assign_bytes_to_get('\x10\x13\x03')
-        valid_packets = self.c.lowrate_uplink.get_sip_packets()
-        assert (valid_packets == ['\x10\x13\x03'])
 
     def get_and_process_bytes_test(self):
         self.c.lowrate_uplink = FakeLowrateUplink()
@@ -200,17 +196,19 @@ class TestPeers(BasicTestHarness):
         super(TestPeers, self).setup()
         # Set up port manually.
         config = self.basic_config.copy()
-        config.Communicator.lowrate_link_parameters = [('comm1', ("pmc-serial-1", 6501), 6501)]
+        config.Communicator.lowrate_link_parameters = [('comm1', ("localhost", 6501), 6501)]
         self.pyro_port = FAKE_PYRO_PORT
-        proxy = Pyro4.Proxy('PYRO:communicator@0.0.0.0:%d' % (self.pyro_port + 1))
-        self.c = camera_communicator.Communicator(cam_id=0, peers=[proxy], controller=None, leader=True,
-                                                  pyro_port=self.pyro_port, config=config)
+        peers = [('PYRO:communicator@localhost:%d' % (self.pyro_port + k)) for k in range(2)]
+        self.c = camera_communicator.Communicator(cam_id=0, peers=peers, controller=None, pyro_port=self.pyro_port,
+                                                  config=config)
         self.c.setup_pyro_daemon()
+        self.c.start_pyro_thread()
 
         self.c.file_id = 0
-        config.Communicator.lowrate_link_parameters = [('comm1', ("pmc-serial-1", 6601), 6601)]
-        self.peer = camera_communicator.Communicator(cam_id=1, peers=[], controller=None, leader=True,
-                                                     pyro_port=(self.pyro_port + 1), config=config)
+        config.Communicator.lowrate_link_parameters = []
+        self.peer = camera_communicator.Communicator(cam_id=1, peers=[], controller=None,
+                                                     pyro_port=(self.pyro_port + 1),
+                                                     config=config)
         self.peer.setup_pyro_daemon()
         self.peer.start_pyro_thread()
 
@@ -221,12 +219,12 @@ class TestPeers(BasicTestHarness):
 
     @timed(20)
     def ping_peer_test(self):
-        result = self.c.peers[0].ping()
+        result = self.c.peers[1].ping()
         assert (result == True)
 
     @timed(20)
     def send_data_on_downlinks_test(self):
-        self.c.peer_polling_order = [0] # This is manually set
+        self.c.peer_polling_order = [1] # This is manually set
         self.peer.controller = FakeController()
         print 'Peers are:', self.c.peers
         print 'Peer polling order is:', self.c.peer_polling_order
@@ -235,3 +233,25 @@ class TestPeers(BasicTestHarness):
         self.c.send_data_on_downlinks()
         print '%r' % self.hirate_downlink.queue[0]
         assert (self.hirate_downlink.queue == ('\x00' * 1024))
+
+    @timed(20)
+    def test_short_status(self):
+        status = self.c.get_next_status_summary()
+        ss = short_status.ShortStatusLeader(status)
+        status = self.c.get_next_status_summary()
+        ss = short_status.ShortStatusCamera(status)
+#        print ss.message_id
+        assert ss.message_id == 0
+        status = self.c.get_next_status_summary()
+        ss = short_status.ShortStatusCamera(status)
+        assert ss.message_id == 1
+        status = self.c.get_next_status_summary()
+        ss = short_status.ShortStatusLeader(status)
+        status = self.c.get_next_status_summary()
+        ss = short_status.ShortStatusCamera(status)
+#        print ss.message_id
+        assert ss.message_id == 0
+
+
+
+
