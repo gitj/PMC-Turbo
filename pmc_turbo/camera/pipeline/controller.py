@@ -128,6 +128,10 @@ class Controller(GlobalConfiguration):
         self.counters.run_focus_sweep.increment()
 
     @require_pipeline
+    def get_pipeline_status(self):
+        return self.pipeline.get_status()
+
+    @require_pipeline
     def check_for_completed_commands(self):
         for tag in self.outstanding_command_tags.keys():
             try:

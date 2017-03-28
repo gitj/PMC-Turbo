@@ -1,6 +1,6 @@
 from nose.tools import assert_raises, assert_almost_equal
 
-from pmc_turbo.communication.short_status import ShortStatusCamera, ShortStatusLeader
+from pmc_turbo.communication.short_status import ShortStatusCamera, ShortStatusLeader, decode_one_byte_summary,encode_one_byte_summary
 
 def test_incomplete_status():
     ss = ShortStatusCamera()
@@ -106,3 +106,12 @@ def test_non_existant_attribute():
     ss = ShortStatusCamera()
     with assert_raises(AttributeError):
         ss.asdfb = 45
+
+
+def test_one_byte():
+    for value in range(255):
+        result = decode_one_byte_summary(value)
+        new_byte = encode_one_byte_summary(**result)
+        assert value == new_byte
+    with assert_raises(ValueError):
+        decode_one_byte_summary(1000)

@@ -25,7 +25,7 @@ from pmc_turbo.communication import downlink_classes, uplink_classes, packet_cla
 from pmc_turbo.communication import file_format_classes
 from pmc_turbo.communication.command_table import command_manager
 from pmc_turbo.communication.command_classes import CommandStatus
-from pmc_turbo.communication.short_status import ShortStatusLeader, ShortStatusCamera
+from pmc_turbo.communication.short_status import ShortStatusLeader, ShortStatusCamera, encode_one_byte_summary
 from pmc_turbo.housekeeping.charge_controller import ChargeControllerLogger
 from pmc_turbo.communication import keyring
 
@@ -576,6 +576,47 @@ class Communicator(GlobalConfiguration):
             self.process_science_command_packet(packet, lowrate_link_index)  ### peer methods
 
     ###################################################################################################################
+
+    def one_byte_summary(self,timestamp):
+        clock_offset = time.time() - timestamp
+        try:
+            depth = self.controller.get_downlink_queue_depth()
+            controller_alive = True
+        except Pyro4.errors.CommunicationError:
+            depth = 0
+            controller_alive = False
+        status = None
+        if controller_alive:
+            try:
+                status = self.controller.get_pipeline_status()
+            except Pyro4.errors.CommunicationError:
+                pass
+        pipeline_alive = (status is not None)
+        time_synced = np.abs(clock_offset) < 1
+        if status:
+            ptp_synced = np.abs(status['camera_timestamp_offset']) < 2000
+
+            write_enable = (status['disk write enable 0'] or status['disk write enable 1'] or
+                            status['disk write enable 2'] or status['disk write enable 3'])
+            writing_images = (write_enable and
+                              (status['disk 0'] != 'exiting') and (status['disk 1'] != 'exiting') and
+                              (status['disk 2'] != 'exiting') and (status['disk 3'] != 'exiting'))
+            taking_images = False # TODO: implement this
+        else:
+            ptp_synced = False
+            writing_images = False
+            taking_images = False
+
+        return encode_one_byte_summary(is_leader=self.leader,
+                                         controller_alive=controller_alive,
+                                         pipeline_alive=pipeline_alive,
+                                         files_to_downlink=bool(depth),
+                                         ptp_synced=ptp_synced,
+                                         time_synced=time_synced,
+                                         taking_images=taking_images,
+                                         writing_images=writing_images)
+
+
 
     def populate_short_status_leader(self):
         ss = ShortStatusLeader()

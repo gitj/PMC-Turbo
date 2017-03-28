@@ -181,6 +181,35 @@ class ShortStatusCamera(ShortStatusBase):
 
                               ])
 
+one_byte_summary_bit_definitions = ['is_leader',
+                                    'controller_alive',
+                                    'pipeline_alive',
+                                    'files_to_downlink',
+                                    'ptp_synced',
+                                    'time_synced',
+                                    'taking_images',
+                                    'writing_images']
+
+def encode_one_byte_summary(is_leader,controller_alive,pipeline_alive,files_to_downlink,ptp_synced,time_synced,taking_images,writing_images):
+    result = 0
+    result += int(is_leader) << one_byte_summary_bit_definitions.index('is_leader')
+    result += int(controller_alive) << one_byte_summary_bit_definitions.index('controller_alive')
+    result += int(pipeline_alive) << one_byte_summary_bit_definitions.index('pipeline_alive')
+    result += int(files_to_downlink) << one_byte_summary_bit_definitions.index('files_to_downlink')
+    result += int(ptp_synced) << one_byte_summary_bit_definitions.index('ptp_synced')
+    result += int(time_synced) << one_byte_summary_bit_definitions.index('time_synced')
+    result += int(taking_images) << one_byte_summary_bit_definitions.index('taking_images')
+    result += int(writing_images) << one_byte_summary_bit_definitions.index('writing_images')
+    return result
+
+def decode_one_byte_summary(one_byte):
+    if one_byte > 255 or one_byte < 0:
+        raise ValueError("Cannot decode value outside of range 0-255, got %r" % one_byte)
+    result = {}
+    for k in range(len(one_byte_summary_bit_definitions)):
+        result[one_byte_summary_bit_definitions[k]] = bool((1<<k) & one_byte)
+    return result
+
 
 def load_short_status_from_file(filename):
     """
