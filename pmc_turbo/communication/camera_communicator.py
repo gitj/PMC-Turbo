@@ -723,7 +723,7 @@ class Communicator(GlobalConfiguration):
         ss.camera_packet_missed = self.housekeeping.get_value("StatPacketMissed")
         ss.camera_frames_dropped = self.housekeeping.get_value("StatFrameDropped")
         ss.camera_timestamp_offset_us = self.housekeeping.get_value('camera_timestamp_offset')
-        ss.exposure_us = (self.housekeeping.get_value('ExposureTimeAbs') * 1000) - 273
+        ss.exposure_us = self.housekeeping.get_value('ExposureTimeAbs')
         ss.focus_step = self.housekeeping.get_value('EFLensFocusCurrent')
         ss.aperture_times_100 = self.housekeeping.get_value('EFLensFStopCurrent') * 100
         ss.pressure = 101033.3  # labjack_items['???']
