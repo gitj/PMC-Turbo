@@ -25,10 +25,14 @@ class Command(object):
         self._encoded_command_size_bytes = struct.calcsize(self._command_format_prefix + self._argument_format_string)
         self._command_number = None
         self._docstring=docstring
+        self._request_id_generator = None
 
     @property
     def __doc__(self):
         return self.make_docstring()
+
+    def set_request_id_generator(self,function):
+        self._request_id_generator = function
 
     @property
     def argument_docs(self):
@@ -77,6 +81,12 @@ class Command(object):
 
     def encode_command(self, **kwargs):
         values = [self._command_number]
+        if 'request_id' in self._argument_names:
+            if 'request_id' not in kwargs:
+                if self._request_id_generator:
+                    kwargs['request_id'] = self._request_id_generator()
+                else:
+                    raise ValueError("request_id not specified for %s and no request_id generator has been set." % (self.name))
         for key in kwargs:
             if key not in self._argument_names:
                 raise ValueError("Command %s does not take argument '%s'" % (self.name, key))

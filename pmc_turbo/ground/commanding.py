@@ -77,6 +77,7 @@ class CommandSender(GroundConfiguration):
         self.current_link = OPENPORT
         self.history_logger = CommandHistoryLogger(**kwargs)
         self.sequence_number_filename = os.path.join(self.root_data_path, 'next_command_sequence_number')
+        self.request_id_filename = os.path.join(self.root_data_path, 'next_request_id')
         try:
             with open(self.sequence_number_filename) as fh:
                 self.next_sequence_number = int(fh.read())
@@ -84,8 +85,29 @@ class CommandSender(GroundConfiguration):
         except Exception as e:
             logger.exception("Could not read next command sequence number from disk, starting at zero")
             self.next_sequence_number = 0
+        try:
+            with open(self.request_id_filename) as fh:
+                self.next_request_id = int(fh.read())
+                logger.info("Read next request_id %d from disk" % self.next_request_id)
+        except Exception as e:
+            logger.exception("Could not read next request_id from disk, starting at zero")
+            self.next_request_id = 0
         for command in command_manager._command_dict.values():
             setattr(self, command.name, command)
+            command.set_request_id_generator(self._get_next_request_id)
+
+    def _get_next_request_id(self):
+        next = self.next_request_id
+        logger.info("Using request_id %d" % next)
+        self.next_request_id += 1
+        try:
+            with open(self.request_id_filename, 'w') as fh:
+                fh.write('%d' % self.next_request_id)
+                logger.debug("Next request_id %d written to disk" % self.next_request_id)
+        except Exception:
+            logger.exception("Could not write next request_id %d to disk" % self.next_request_id)
+
+        return next
 
     def set_link_openport(self):
         self.current_link = OPENPORT
