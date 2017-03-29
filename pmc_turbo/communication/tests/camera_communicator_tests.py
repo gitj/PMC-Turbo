@@ -99,6 +99,7 @@ class TestCommunicator(BasicTestHarness):
                     cm.request_specific_images(timestamp=123456789.123,request_id=1223,num_images=2,step=1,row_offset=1000,
                                                column_offset=1000, num_rows=256,num_columns=256,
                                        scale_by = 1.0, quality=90),
+                    cm.get_command_history(request_id=355)
                     ]
         for command in commands:
             print cm.decode_commands(command)

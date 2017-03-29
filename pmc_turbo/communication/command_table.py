@@ -71,6 +71,7 @@ command_manager.add_command(Command("set_leader", [("leader_id", "B")],
                                     docstring="Set leader or election directly.\n"
                                     "Typically used with destination SUPER_COMMAND to override"
                                     ))
+command_manager.add_command(Command("get_command_history", [("request_id", "I")]))
 
 # add command to set pyro comm timeout?
 

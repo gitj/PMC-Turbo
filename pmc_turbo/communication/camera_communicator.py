@@ -468,6 +468,16 @@ class Communicator(GlobalConfiguration):
                                request_id=request_id)
         self.controller.add_file_to_downlink_queue(json_file.to_buffer())
 
+    def get_command_history(self,request_id):
+        payload = json.dumps(self.command_logger.command_history)
+        json_file = file_format_classes.CompressedJSONFile(payload=payload,
+                                                           filename=(
+                                                           'status_summary_%s.json' % time.strftime('%Y-%m-%d_%H%M%S')),
+                                                           timestamp=time.time(),
+                                                           camera_id=camera_id.get_camera_id(),
+                                                           request_id=request_id)
+        self.controller.add_file_to_downlink_queue(json_file.to_buffer())
+
     def set_peer_polling_order(self, list_argument):
         self.peer_polling_order = list_argument
         self.peer_polling_order_idx = 0
