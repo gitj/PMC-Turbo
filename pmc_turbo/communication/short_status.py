@@ -94,7 +94,7 @@ class ShortStatusBase(object):
 
 class ShortStatusLeader(ShortStatusBase):
     item_table = OrderedDict([("message_id", "B"),
-                              ("timestamp", "f"),
+                              ("timestamp", "d"),
                               ("leader_id", "B"),
 
                               ("status_byte_camera_0", "B"),
@@ -146,7 +146,7 @@ class ShortStatusLeader(ShortStatusBase):
 
 class ShortStatusCamera(ShortStatusBase):
     item_table = OrderedDict([("message_id", "B"),
-                              ("timestamp", "f"),
+                              ("timestamp", "d"),
                               ("leader_id", "B"),
 
                               ("free_disk_root_mb", "I"),
