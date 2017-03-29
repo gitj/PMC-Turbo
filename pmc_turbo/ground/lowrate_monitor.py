@@ -9,13 +9,13 @@ from pmc_turbo.ground.ground_configuration import GroundConfiguration
 
 
 class LowrateMonitor(GroundConfiguration):
-    def __init__(self,**kwargs):
+    def __init__(self,max_initial_files=100,**kwargs):
         super(LowrateMonitor,self).__init__(**kwargs)
         self.gse_root_dir = self.find_latest_gse_dir()
         self.lowrate_data = OrderedDict()
         self.by_message_id = {}
         self.bad_files = set()
-        self.update()
+        self.update(max_initial_files)
 
     def find_latest_gse_dir(self):
         dirs = glob.glob(os.path.join(self.root_data_path,'2*'))
@@ -32,9 +32,13 @@ class LowrateMonitor(GroundConfiguration):
         logger.debug("latest file for message id %d is %s" % (message_id, self.by_message_id[message_id][-1]))
         return latest
 
-    def update(self):
+    def update(self, max_files=0):
         filenames = glob.glob(os.path.join(self.gse_root_dir,'*/lowrate/*'))
         filenames.sort()
+        if max_files:
+            skipped_files = filenames[:-max_files]
+            self.lowrate_data.update(zip(skipped_files,[{} for _ in range(len(skipped_files))]))
+            filenames = filenames[-max_files:]
         logger.debug("Found %d total filenames" % len(filenames))
         added = 0
         for filename in filenames[::-1]:

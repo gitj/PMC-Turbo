@@ -26,15 +26,18 @@ class LowrateMonitorWidget(QtGui.QLabel):
         else:
             result = ''
             end = ''
-        result = result + '<table>'
+        result = result + '<table cellspacing=5>'
         end =  '</table>' +end
         items = values.items()
         while items:
-            row = ''.join([('<td>%s</td><td>%s</td>' % item) for item in items[:self.num_columns]])
+            row = ''.join([('<td>%s</td><td align="right">%s</td>' % item) for item in items[:self.num_columns]])
             row = '<tr>'+ row + '</tr>'
             result = result + row
             items = items[self.num_columns:]
         self.setText(result+end)
+        font = self.font()
+        font.setPointSize(6)
+        self.setFont(font)
         logger.debug("Updated %d" % self.message_id)
 
 if __name__ == "__main__":
