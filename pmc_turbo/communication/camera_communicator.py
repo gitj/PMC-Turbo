@@ -673,9 +673,8 @@ class Communicator(GlobalConfiguration):
         ss.last_outstanding_sequence = sequence_skip
         ss.total_commands_received = self.command_logger.total_commands_received
         result = self.command_logger.get_latest_result()
-        if result is None:
-            last_failed_sequence = np.nan
-        else:
+        last_failed_sequence = np.nan
+        if result and result[2]:
             last_failed_sequence = result[1]
         ss.last_failed_sequence = last_failed_sequence
 
