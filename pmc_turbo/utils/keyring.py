@@ -1,5 +1,5 @@
 def setup_simple_supergroup():
-    import housekeeping_classes
+    from pmc_turbo.communication import housekeeping_classes
     # For use during testing
     ccpath = '/home/pmc/pmchome/pmc-turbo/status_item_params/charge_controller_register_items.json'
     cpath = '/home/pmc/pmchome/pmc-turbo/status_item_params/camera_items.json'
@@ -8,6 +8,10 @@ def setup_simple_supergroup():
 
 
 class KeyRing():
+    '''
+    Simple util to find 1 level above last keys in dict and give the path to those items.
+    Can be used to find all items in a
+    '''
     def __init__(self, dict_):
         self.key_dict = {}
         self.dict = dict_

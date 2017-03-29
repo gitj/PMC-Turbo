@@ -8,7 +8,6 @@ import numpy as np
 
 from pmc_turbo.communication import file_format_classes
 from pmc_turbo.utils import file_reading
-from pmc_turbo.communication import keyring
 
 logger = logging.getLogger(__name__)
 
@@ -118,10 +117,6 @@ class SuperStatusGroup():
             return None
         entries = {key: self.groups[key].get_status() for key in self.groups.keys()}
         return entries
-
-    def get_status_wrapped_in_keyring(self):
-        status = self.get_status()
-        return keyring.KeyRing(status)
 
     def get_three_column_data_set(self):
         data_set = {}

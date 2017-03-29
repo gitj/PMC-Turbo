@@ -17,6 +17,9 @@ import Pyro4
 import Pyro4.errors
 import Pyro4.socketutil
 import Pyro4.util
+import numpy as np
+from pymodbus.exceptions import ConnectionException
+from traitlets import Int, Unicode, Bool, List, Float, Tuple, TCPAddress, Enum
 
 from pmc_turbo.communication import housekeeping_classes
 from pmc_turbo.communication import command_table, command_classes
@@ -25,13 +28,12 @@ from pmc_turbo.communication import downlink_classes, uplink_classes, packet_cla
 from pmc_turbo.communication import file_format_classes
 from pmc_turbo.communication.command_table import command_manager
 from pmc_turbo.communication.command_classes import CommandStatus
-from pmc_turbo.communication.short_status import (ShortStatusLeader, ShortStatusCamera, 
+from pmc_turbo.communication.short_status import (ShortStatusLeader, ShortStatusCamera,
                                                   encode_one_byte_summary, decode_one_byte_summary,
                                                   no_response_one_byte_status)
 from pmc_turbo.housekeeping.charge_controller import ChargeControllerLogger
-from pmc_turbo.communication import keyring
-
 from pmc_turbo.utils import error_counter, camera_id
+from pmc_turbo.utils.configuration import GlobalConfiguration
 
 Pyro4.config.SERVERTYPE = "multiplex"
 Pyro4.config.SERIALIZER = 'pickle'
@@ -652,7 +654,7 @@ class Communicator(GlobalConfiguration):
                 status = no_response_one_byte_status
                 logger.warning("peer %d is not connected, setting status %02X" % (peer_id,status))
             setattr(ss,('status_byte_camera_%d' % peer_id), status)
-            
+
         ss.status_byte_lidar = no_response_one_byte_status
 
         result = self.command_logger.get_latest_result()
