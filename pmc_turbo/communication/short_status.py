@@ -215,6 +215,10 @@ no_response_one_byte_status = encode_one_byte_summary(is_leader=False, controlle
                                                       files_to_downlink=True, ptp_synced=False, time_synced=False,
                                                       taking_images=False, writing_images=False)  # this value should be impossible to achieve naturally
 
+def get_short_status_message_id(payload):
+    message_id, = struct.unpack('B',payload[0])
+    return message_id
+
 def load_short_status_from_file(filename):
     """
     Interpret file as GSE lowrate packet and convert payload to retrieve short status information
@@ -230,7 +234,7 @@ def load_short_status_from_file(filename):
     """
     gse_packet = pmc_turbo.communication.packet_classes.load_gse_packet_from_file(filename)
     payload = gse_packet.payload
-    message_id, = struct.unpack('B',payload[0])
+    message_id = get_short_status_message_id(payload)
     if message_id == ShortStatusLeader.LEADER_MESSAGE_ID:
         return ShortStatusLeader(payload)
     else:

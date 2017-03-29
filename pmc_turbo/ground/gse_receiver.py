@@ -7,6 +7,8 @@ import time
 
 import errno
 import serial
+
+from pmc_turbo.communication.short_status import get_short_status_message_id
 from pmc_turbo.communication import packet_classes
 
 from pmc_turbo.communication import file_format_classes
@@ -205,7 +207,9 @@ class GSEReceiver():
         f.close()
 
         for packet in gse_lowrate_packets:
-            with open(os.path.join(self.lowrate_path,time.strftime('%Y-%m-%d_%H%M%S')+('_%06d' % self.total_num_lowrate_packets)),'w') as fh:
+            message_id = get_short_status_message_id(packet.payload)
+            with open(os.path.join(self.lowrate_path,time.strftime('%Y-%m-%d_%H%M%S')+('_%06d_%02X' % (self.total_num_lowrate_packets,
+                                                                                                       message_id))),'w') as fh:
                 fh.write(packet.to_buffer())
                 self.total_num_lowrate_packets += 1
 
