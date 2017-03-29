@@ -735,7 +735,7 @@ class Communicator(GlobalConfiguration):
         ss.exposure_us = self.housekeeping.get_value('ExposureTimeAbs')
         ss.focus_step = self.housekeeping.get_value('EFLensFocusCurrent')
         ss.aperture_times_100 = self.housekeeping.get_value('EFLensFStopCurrent') * 100
-        ss.pressure = 101033.3  # labjack_items['???']
+        ss.pressure = self.housekeeping.get_value("Pressure")
         ss.lens_wall_temp = (self.housekeeping.get_value('Lens_Temperature') * 1000) - 273
         ss.dcdc_wall_temp = (self.housekeeping.get_value('DCDC_Temperature') * 1000) - 273
         ss.labjack_temp = self.housekeeping.get_value('Labjack_Temperature') - 273
