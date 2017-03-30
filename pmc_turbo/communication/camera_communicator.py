@@ -8,10 +8,6 @@ import struct
 import threading
 import time
 import traceback
-from pymodbus.exceptions import ConnectionException
-from pmc_turbo.utils.configuration import GlobalConfiguration
-from traitlets import Int, Unicode, Bool, List, Float, Tuple, Bytes, TCPAddress, Dict, Enum
-import numpy as np
 
 import Pyro4
 import Pyro4.errors
