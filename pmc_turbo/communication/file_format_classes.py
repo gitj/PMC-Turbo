@@ -4,7 +4,10 @@ import os
 import struct
 import zlib
 
+import numpy as np
+
 from pmc_turbo.utils.comparisons import equal_or_close
+from pmc_turbo.camera.image_processing.jpeg import image_from_string
 
 logger = logging.getLogger(__name__)
 
@@ -122,6 +125,13 @@ class JPEGFile(ImageFileBase):
                        [('1f', 'quality')])
     file_type = 1
     _preferred_extension = '.jpg'
+
+    def image_array(self):
+        try:
+            image = image_from_string(self.payload)
+        except Exception as e:
+            raise RuntimeError("Could not interpret payload as image %r" % e)
+        return np.array(image)
 
 
 class GeneralFile(FileBase):
