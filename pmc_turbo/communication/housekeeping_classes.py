@@ -21,7 +21,7 @@ CRITICAL = 4
 DELIMITER = ','
 
 
-def construct_status_group_from_json(json_path):
+def construct_status_group_from_json(json_path, filewatcher_threshhold_time):
     # print '#### json path:', json_path
     # group_name = json_path.strip('.json')
     group_name = os.path.split(json_path)[-1][:-5]
@@ -50,7 +50,8 @@ def construct_status_group_from_json(json_path):
         if value_dict['partial_glob'] not in status_group.filewatchers:
             try:
                 status_filewatcher = StatusFileWatcher(name=value_dict['partial_glob'], items=[],
-                                                       filename_glob=os.path.join(preamble, value_dict['partial_glob']))
+                                                       filename_glob=os.path.join(preamble, value_dict['partial_glob']),
+                                                       threshhold_time=filewatcher_threshhold_time)
             except ValueError:
                 logger.exception("Could not add StatusFileWatcher for glob '%r'" % value_dict['partial_glob'])
                 continue
@@ -68,13 +69,13 @@ def construct_status_group_from_json(json_path):
     return status_group
 
 
-def construct_super_group_from_json_list(json_paths):
+def construct_super_group_from_json_list(json_paths, filewatcher_threshhold_time):
     group_name = 'SuperGroup'
     super_group = SuperStatusGroup(group_name, groups=[])
     # print json_paths
     for i, json_path in enumerate(json_paths):
         try:
-            status_group = construct_status_group_from_json(json_path)
+            status_group = construct_status_group_from_json(json_path, filewatcher_threshhold_time)
             super_group.groups[status_group.name] = status_group
         except ValueError as e:
             logger.exception("Error processing json_path %s" % (json_path))
@@ -217,11 +218,11 @@ class MultiStatusFileWatcher():
 
 
 class StatusFileWatcher():
-    def __init__(self, name, items, filename_glob, threshhold_time=600):
+    def __init__(self, name, items, filename_glob, threshhold_time):
         # example, charge_controller.csv, charge_controller
 
         self.glob = filename_glob
-        self.threshhold_time = threshhold_time  # Default threshhold time is 10 minutes.
+        self.threshhold_time = threshhold_time
 
         self.assign_file(self.glob)
 

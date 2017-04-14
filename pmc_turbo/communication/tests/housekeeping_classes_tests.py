@@ -45,7 +45,7 @@ class StatusDictTest(unittest.TestCase):
         item1 = housekeeping_classes.FloatStatusItem(value_dict_1)
         items = [item0, item1]
         filewatcher = housekeeping_classes.StatusFileWatcher(name='test_filewatcher', items=items,
-                                                             filename_glob=tfile.name)
+                                                             filename_glob=tfile.name, threshhold_time=60)
         filewatcher.update()
 
         print item0.value
@@ -80,7 +80,7 @@ class StatusDictTest(unittest.TestCase):
         item1 = housekeeping_classes.FloatStatusItem(value_dict_1)
         items0 = [item0, item1]
         filewatcher0 = housekeeping_classes.StatusFileWatcher(name='test_filewatcher0', items=items0,
-                                                              filename_glob=tfile0.name)
+                                                              filename_glob=tfile0.name, threshhold_time=60)
 
         value_dict_2 = dict(name='data2', column_name='data2',
                             normal_range_low=0, normal_range_high=1,
@@ -94,7 +94,7 @@ class StatusDictTest(unittest.TestCase):
         item3 = housekeeping_classes.FloatStatusItem(value_dict_3)
         items1 = [item2, item3]
         filewatcher1 = housekeeping_classes.StatusFileWatcher(name='test_filewatcher1', items=items1,
-                                                              filename_glob=tfile1.name)
+                                                              filename_glob=tfile1.name, threshhold_time=60)
 
         status_group = housekeeping_classes.StatusGroup('test_group', [filewatcher0, filewatcher1])
         status_group.update()

@@ -73,6 +73,8 @@ class Communicator(GlobalConfiguration):
                       help='List of paths to json files that are used to construct housekeeping classes').tag(
         config=True)
 
+    filewatcher_threshhold_time = Float(default_value=60, allow_none=False)
+
     def __init__(self, cam_id, peers, controller, pyro_port, **kwargs):
         super(Communicator, self).__init__(**kwargs)
         self.port = pyro_port
@@ -82,7 +84,7 @@ class Communicator(GlobalConfiguration):
         self.become_leader = False
 
         self.peers = collections.OrderedDict()
-        for peer_id,peer in peers.items():
+        for peer_id, peer in peers.items():
             try:
                 peer = Pyro4.Proxy(peer)
             except TypeError as e:
@@ -111,7 +113,8 @@ class Communicator(GlobalConfiguration):
         self.short_status_order = [command_table.DESTINATION_LEADER, 0, 1, 2, 3, 4, 5, 6, 7,
                                    command_table.DESTINATION_LIDAR]
 
-        self.housekeeping = housekeeping_classes.construct_super_group_from_json_list(self.json_paths)
+        self.housekeeping = housekeeping_classes.construct_super_group_from_json_list(self.json_paths,
+                                                                                      self.filewatcher_threshhold_time)
 
         self.synchronize_image_time_across_cameras = False
         self.end_loop = False
@@ -136,7 +139,7 @@ class Communicator(GlobalConfiguration):
         self.command_logger = command_classes.CommandLogger()
 
         # TODO: Set up proper destination lists, including LIDAR, narrow field, wide field, and all
-        self.destination_lists = dict([(peer_id,[peer]) for (peer_id,peer) in self.peers.items()])
+        self.destination_lists = dict([(peer_id, [peer]) for (peer_id, peer) in self.peers.items()])
         self.destination_lists[command_table.DESTINATION_ALL_CAMERAS] = self.peers.values()
         self.destination_lists[command_table.DESTINATION_SUPER_COMMAND] = [self]
 
@@ -403,7 +406,6 @@ class Communicator(GlobalConfiguration):
             self.short_status_order_idx %= len(self.short_status_order)
         return result
 
-
     def ping(self):
         return True
 
@@ -445,11 +447,12 @@ class Communicator(GlobalConfiguration):
                                request_id=request_id)
         self.controller.add_file_to_downlink_queue(json_file.to_buffer())
 
-    def get_command_history(self,request_id):
+    def get_command_history(self, request_id):
         payload = json.dumps(self.command_logger.command_history)
         json_file = file_format_classes.CompressedJSONFile(payload=payload,
                                                            filename=(
-                                                           'status_summary_%s.json' % time.strftime('%Y-%m-%d_%H%M%S')),
+                                                               'status_summary_%s.json' % time.strftime(
+                                                                   '%Y-%m-%d_%H%M%S')),
                                                            timestamp=time.time(),
                                                            camera_id=camera_id.get_camera_id(),
                                                            request_id=request_id)
@@ -565,7 +568,7 @@ class Communicator(GlobalConfiguration):
 
     ###################################################################################################################
 
-    def one_byte_summary(self,timestamp):
+    def one_byte_summary(self, timestamp):
         clock_offset = time.time() - timestamp
         try:
             depth = self.controller.get_downlink_queue_depth()
@@ -589,22 +592,20 @@ class Communicator(GlobalConfiguration):
             writing_images = (write_enable and
                               (status['disk 0'] != 'exiting') and (status['disk 1'] != 'exiting') and
                               (status['disk 2'] != 'exiting') and (status['disk 3'] != 'exiting'))
-            taking_images = False # TODO: implement this
+            taking_images = False  # TODO: implement this
         else:
             ptp_synced = False
             writing_images = False
             taking_images = False
 
         return encode_one_byte_summary(is_leader=self.leader,
-                                         controller_alive=controller_alive,
-                                         pipeline_alive=pipeline_alive,
-                                         files_to_downlink=bool(depth),
-                                         ptp_synced=ptp_synced,
-                                         time_synced=time_synced,
-                                         taking_images=taking_images,
-                                         writing_images=writing_images)
-
-
+                                       controller_alive=controller_alive,
+                                       pipeline_alive=pipeline_alive,
+                                       files_to_downlink=bool(depth),
+                                       ptp_synced=ptp_synced,
+                                       time_synced=time_synced,
+                                       taking_images=taking_images,
+                                       writing_images=writing_images)
 
     def populate_short_status_leader(self):
         ss = ShortStatusLeader()
@@ -620,18 +621,19 @@ class Communicator(GlobalConfiguration):
         ss.status_byte_camera_6 = no_response_one_byte_status
         ss.status_byte_camera_7 = no_response_one_byte_status
 
-        for peer_id,peer in self.peers.items():
+        for peer_id, peer in self.peers.items():
             connected = self.check_peer_connection(peer)
             if connected:
                 try:
                     status = peer.one_byte_summary(time.time())
-                    logger.info("peer %d is connected and has status %02X:\n%r" % (peer_id, status, decode_one_byte_summary(status)))
+                    logger.info("peer %d is connected and has status %02X:\n%r" % (
+                        peer_id, status, decode_one_byte_summary(status)))
                 except Pyro4.errors.CommunicationError:
                     logger.exception("Failed to get one byte status from peer %d after successful ping" % peer_id)
                     status = no_response_one_byte_status
             else:
                 status = no_response_one_byte_status
-                logger.warning("peer %d is not connected, setting status %02X" % (peer_id,status))
+                logger.warning("peer %d is not connected, setting status %02X" % (peer_id, status))
             setattr(ss, ('status_byte_camera_%d' % peer_id), status)
 
         ss.status_byte_lidar = no_response_one_byte_status
@@ -689,7 +691,6 @@ class Communicator(GlobalConfiguration):
         ss.charge_cont_2_heatsink_temp = np.nan
 
         return ss.encode()
-
 
     def get_short_status_camera(self):
 

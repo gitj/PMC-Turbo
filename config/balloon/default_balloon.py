@@ -82,3 +82,4 @@ JSON_FILENAMES = [
 ]
 
 c.Communicator.json_paths = [os.path.join(os.path.split(root_dir)[0], 'status_item_params', json_fn) for json_fn in JSON_FILENAMES]
+c.Communicator.filewatcher_threshhold_time = 60.
