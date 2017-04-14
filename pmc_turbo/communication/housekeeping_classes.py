@@ -131,14 +131,14 @@ class SuperStatusGroup():
         try:
             return self.three_column_data_set[item_name][1]
         except KeyError as e:
-            logger.exception('Key %r missing from group %r' % (item_name, self.name))
+            logger.error('Key %r missing from group %r' % (item_name, self.name))
             return np.nan
 
     def get_epoch(self, item_name):
         try:
             return self.three_column_data_set[item_name][0]
         except KeyError as e:
-            logger.exception('Key %r missing from group %r' % (item_name, self.name))
+            logger.error('Key %r missing from group %r' % (item_name, self.name))
             return np.nan
 
 
