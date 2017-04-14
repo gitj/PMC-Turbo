@@ -22,10 +22,10 @@ DELIMITER = ','
 
 
 def construct_status_group_from_json(json_path):
-    #print '#### json path:', json_path
+    # print '#### json path:', json_path
     # group_name = json_path.strip('.json')
     group_name = os.path.split(json_path)[-1][:-5]
-    #print '#### group name:', group_name
+    # print '#### group name:', group_name
     status_group = StatusGroup(group_name, filewatchers=[])
 
     with open(json_path, 'r') as f:
@@ -71,7 +71,7 @@ def construct_status_group_from_json(json_path):
 def construct_super_group_from_json_list(json_paths):
     group_name = 'SuperGroup'
     super_group = SuperStatusGroup(group_name, groups=[])
-    #print json_paths
+    # print json_paths
     for i, json_path in enumerate(json_paths):
         try:
             status_group = construct_status_group_from_json(json_path)
@@ -217,10 +217,11 @@ class MultiStatusFileWatcher():
 
 
 class StatusFileWatcher():
-    def __init__(self, name, items, filename_glob):
+    def __init__(self, name, items, filename_glob, threshhold_time=600):
         # example, charge_controller.csv, charge_controller
 
         self.glob = filename_glob
+        self.threshhold_time = threshhold_time  # Default threshhold time is 10 minutes.
 
         self.assign_file(self.glob)
 
@@ -268,9 +269,15 @@ class StatusFileWatcher():
                     raise ValueError(
                         'First column of file %r is not epoch, it is %r' % (self.source_file, self.column_names[0]))
         last_update = os.path.getctime(self.source_file)
+
+        if time.time() - last_update > self.threshhold_time:  # check if the last update of the file is within some threshhold.
+            self.assign_file(self.glob)  # Get the newest file with the given glob (this glob should not change)
+            last_update = os.path.getctime(self.source_file)  # Find the last_update for the updated newest file.
+
         if last_update == self.last_update:  # if the file not has changed since last check
             # logger.debug('File %r up to date.' % self.name)
             return
+
         else:
             if self.last_update and not (
                         time.localtime(last_update).tm_mday == time.localtime(self.last_update).tm_mday):
