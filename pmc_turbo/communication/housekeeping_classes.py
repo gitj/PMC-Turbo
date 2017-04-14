@@ -231,6 +231,7 @@ class StatusFileWatcher():
         self.column_names = None
         self.items = {}
         for item in items:
+            print item
             self.items[item.name] = item
 
     def assign_file(self, filename_glob):
@@ -261,13 +262,14 @@ class StatusFileWatcher():
             with open(self.source_file, 'r') as f:
                 f.seek(0, 0)
                 name_line = f.readline()
-                if name_line.startswith('#'):
+                while name_line.startswith('#'):
                     # Ignore headers
                     name_line = f.readline()
                 self.column_names = (name_line.strip('\n')).split(DELIMITER)
                 if self.column_names[0] != 'epoch':
                     raise ValueError(
                         'First column of file %r is not epoch, it is %r' % (self.source_file, self.column_names[0]))
+
         last_update = os.path.getctime(self.source_file)
 
         if time.time() - last_update > self.threshhold_time:  # check if the last update of the file is within some threshhold.
@@ -277,14 +279,7 @@ class StatusFileWatcher():
         if last_update == self.last_update:  # if the file not has changed since last check
             # logger.debug('File %r up to date.' % self.name)
             return
-
         else:
-            if self.last_update and not (
-                        time.localtime(last_update).tm_mday == time.localtime(self.last_update).tm_mday):
-                # Flips over to new file for a new day.
-                logger.debug('Flip over filewatcher %r - New day, new file' % self.name)
-                self.assign_file(self.glob)
-
             last_line = file_reading.read_last_line(self.source_file)
             values = last_line.split(DELIMITER)
             self.last_update = last_update

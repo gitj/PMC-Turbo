@@ -1,7 +1,9 @@
 import tempfile
 import unittest
+import numpy as np
 
 from pmc_turbo.communication import housekeeping_classes
+import time
 
 
 class StatusDictTest(unittest.TestCase):
@@ -101,3 +103,34 @@ class StatusDictTest(unittest.TestCase):
 
         assert (status_summary[0] == housekeeping_classes.CRITICAL)
         assert (set(status_summary[1]) == set(['data1', 'data3', 'data2']))
+
+
+class FilewatcherFileUpdateTest(unittest.TestCase):
+    def test_file_flip(self):
+        value_dict = {'name': 'test_item', 'column_name': 'value',
+                      'normal_range_high': np.nan, 'normal_range_low': np.nan,
+                      'good_range_high': np.nan, 'good_range_low': np.nan,
+                      'warning_range_high': np.nan, 'warning_range_low': np.nan,
+                      'scaling': 1.0}
+        test_item = housekeeping_classes.FloatStatusItem(value_dict)
+
+        first_file = tempfile.NamedTemporaryFile()
+        with open(first_file.name, 'w') as f:
+            f.write('epoch,value\n'
+                    '1,2\n')
+
+        filewatcher = housekeeping_classes.StatusFileWatcher('test_filewatcher', [test_item],
+                                                             first_file.name, threshhold_time=1)
+        filewatcher.update()
+        print filewatcher.items
+        time.sleep(2)
+        second_file = tempfile.NamedTemporaryFile()
+        with open(second_file.name, 'w') as f:
+            f.write('#uselessheader1\n'
+                    '#uselessheader2\n'
+                    'epoch,value\n'
+                    '3,4\n')
+        filewatcher.glob = second_file.name
+        filewatcher.update()
+        print filewatcher.items
+        assert (filewatcher.items['test_item'].value == 4)
