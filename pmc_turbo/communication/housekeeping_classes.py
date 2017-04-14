@@ -41,8 +41,7 @@ def construct_status_group_from_json(json_path):
         try:
             items[key].update(range_result[key])
         except KeyError as e:
-            logger.debug(' Could not find key %r in results from json.' % key)
-            raise e
+            logger.error(' Could not find key %r in results from json.' % key)
 
     for value_key in items.keys():
         if value_key == 'PREAMBLE':  # This is not a file to watch.

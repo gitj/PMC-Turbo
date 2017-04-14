@@ -456,24 +456,6 @@
             "name": "df-data4_df_complex-used",
             "partial_glob": "df-data4/df_complex-used-*"
         },
-        "df-home-pmc-pmchome_df_complex-free": {
-            "class_type": "FloatStatusItem",
-            "column_name": "value",
-            "name": "df-home-pmc-pmchome_df_complex-free",
-            "partial_glob": "df-home-pmc-pmchome/df_complex-free-*"
-        },
-        "df-home-pmc-pmchome_df_complex-reserved": {
-            "class_type": "FloatStatusItem",
-            "column_name": "value",
-            "name": "df-home-pmc-pmchome_df_complex-reserved",
-            "partial_glob": "df-home-pmc-pmchome/df_complex-reserved-*"
-        },
-        "df-home-pmc-pmchome_df_complex-used": {
-            "class_type": "FloatStatusItem",
-            "column_name": "value",
-            "name": "df-home-pmc-pmchome_df_complex-used",
-            "partial_glob": "df-home-pmc-pmchome/df_complex-used-*"
-        },
         "df-root_df_complex-free": {
             "class_type": "FloatStatusItem",
             "column_name": "value",
@@ -491,6 +473,24 @@
             "column_name": "value",
             "name": "df-root_df_complex-used",
             "partial_glob": "df-root/df_complex-used-*"
+        },
+        "df-var_df_complex-free": {
+            "class_type": "FloatStatusItem",
+            "column_name": "value",
+            "name": "df-var_df_complex-free",
+            "partial_glob": "df-var/df_complex-free-*"
+        },
+        "df-var_df_complex-reserved": {
+            "class_type": "FloatStatusItem",
+            "column_name": "value",
+            "name": "df-var_df_complex-reserved",
+            "partial_glob": "df-var/df_complex-reserved-*"
+        },
+        "df-var_df_complex-used": {
+            "class_type": "FloatStatusItem",
+            "column_name": "value",
+            "name": "df-var_df_complex-used",
+            "partial_glob": "df-var/df_complex-used-*"
         },
         "disk-sda1_disk_merged_read": {
             "class_type": "FloatStatusItem",

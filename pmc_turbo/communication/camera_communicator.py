@@ -403,27 +403,6 @@ class Communicator(GlobalConfiguration):
             self.short_status_order_idx %= len(self.short_status_order)
         return result
 
-    # DEPRICATED - switching from self.status_groups to self.housekeeping.
-    # def get_full_status(self):
-    #     summary = {}
-    #     if self.cam_id is None:
-    #         raise ValueError('Camera does not know its cam_id.')
-    #     summary['cam_id'] = self.cam_id
-    #     for group in self.status_groups:
-    #         group.update()
-    #         summary[group.name] = group.get_status()
-    #     return summary
-    #
-    # def get_status_summary(self):
-    #     if len(self.status_groups) == 0:
-    #         raise RuntimeError('Communicator has no status_groups.')
-    #     summary = []
-    #     for group in self.status_groups:
-    #         group.update()
-    #         summary.append(group.get_status_summary())
-    #     # print summary
-    #     return summary
-
 
     def ping(self):
         return True
@@ -644,12 +623,16 @@ class Communicator(GlobalConfiguration):
         for peer_id,peer in self.peers.items():
             connected = self.check_peer_connection(peer)
             if connected:
-                status = peer.one_byte_summary(time.time())
-                logger.info("peer %d is connected and has status %02X:\n%r" % (peer_id, status, decode_one_byte_summary(status)))
+                try:
+                    status = peer.one_byte_summary(time.time())
+                    logger.info("peer %d is connected and has status %02X:\n%r" % (peer_id, status, decode_one_byte_summary(status)))
+                except Pyro4.errors.CommunicationError:
+                    logger.exception("Failed to get one byte status from peer %d after successful ping" % peer_id)
+                    status = no_response_one_byte_status
             else:
                 status = no_response_one_byte_status
                 logger.warning("peer %d is not connected, setting status %02X" % (peer_id,status))
-            setattr(ss,('status_byte_camera_%d' % peer_id), status)
+            setattr(ss, ('status_byte_camera_%d' % peer_id), status)
 
         ss.status_byte_lidar = no_response_one_byte_status
 
@@ -721,6 +704,7 @@ class Communicator(GlobalConfiguration):
         ss.timestamp = time.time()
         ss.leader_id = self.leader_id
         ss.free_disk_root_mb = self.housekeeping.get_value("df-root_df_complex-free") / 1e6
+        ss.free_disk_var_mb = self.housekeeping.get_value("df-var_df_complex-free") / 1e6
         ss.free_disk_data_1_mb = self.housekeeping.get_value("df-data1_df_complex-free") / 1e6
         ss.free_disk_data_2_mb = self.housekeeping.get_value("df-data2_df_complex-free") / 1e6
         ss.free_disk_data_3_mb = self.housekeeping.get_value("df-data3_df_complex-free") / 1e6

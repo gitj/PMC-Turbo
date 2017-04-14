@@ -13,6 +13,7 @@ def test_camera_encode():
     ss.timestamp = 123.133
     ss.leader_id =0
     ss.free_disk_root_mb = 123000
+    ss.free_disk_var_mb = 127000
     ss.free_disk_data_1_mb = 123000
     ss.free_disk_data_2_mb = 123000
     ss.free_disk_data_3_mb = 123000
@@ -51,7 +52,8 @@ def test_coerce():
     ss.message_id =0
     ss.timestamp = 123.133
     ss.leader_id =0
-    ss.free_disk_root_mb = 12300000000
+    ss.free_disk_root_mb = 12300000000 # intentionally > 2^32 to check clipping
+    ss.free_disk_var_mb = 16400
     ss.free_disk_data_1_mb = 123000
     ss.free_disk_data_2_mb = 123000
     ss.free_disk_data_3_mb = 123000

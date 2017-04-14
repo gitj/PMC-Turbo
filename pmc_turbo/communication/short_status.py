@@ -150,6 +150,7 @@ class ShortStatusCamera(ShortStatusBase):
                               ("leader_id", "B"),
 
                               ("free_disk_root_mb", "I"),
+                              ("free_disk_var_mb", "I"),
                               ("free_disk_data_1_mb", "I"),
                               ("free_disk_data_2_mb", "I"),
                               ("free_disk_data_3_mb", "I"),
