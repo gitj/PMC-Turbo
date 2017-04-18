@@ -134,3 +134,13 @@ class FilewatcherFileUpdateTest(unittest.TestCase):
         filewatcher.update()
         print filewatcher.items
         assert (filewatcher.items['test_item'].value == 4)
+
+
+class MissingFilesTest(unittest.TestCase):
+    def test_missing_json_file(self):
+        # Check to make sure trying to use a missing json file raises an IOError.
+        self.assertRaises(IOError, housekeeping_classes.construct_status_group_from_json, 'not_there.json', 60)
+
+    def test_missing_filewatcher_file(self):
+        # Check to make sure passing in a missing file into the filewatcher raises ValueError
+        self.assertRaises(ValueError, housekeeping_classes.StatusFileWatcher, 'myfilewatcher', [], 'not_there_glob', 60)

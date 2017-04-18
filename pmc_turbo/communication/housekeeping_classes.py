@@ -271,15 +271,16 @@ class StatusFileWatcher():
                     raise ValueError(
                         'First column of file %r is not epoch, it is %r' % (self.source_file, self.column_names[0]))
 
-        last_update = os.path.getctime(self.source_file)
+        last_update = os.path.getmtime(self.source_file)
 
         if time.time() - last_update > self.threshhold_time:  # check if the last update of the file is within some threshhold.
             self.assign_file(self.glob)  # Get the newest file with the given glob (this glob should not change)
-            last_update = os.path.getctime(self.source_file)  # Find the last_update for the updated newest file.
+            last_update = os.path.getmtime(self.source_file)  # Find the last_update for the updated newest file.
 
         if last_update == self.last_update:  # if the file not has changed since last check
             # logger.debug('File %r up to date.' % self.name)
             return
+
         else:
             last_line = file_reading.read_last_line(self.source_file)
             values = last_line.split(DELIMITER)
