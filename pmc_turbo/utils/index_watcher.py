@@ -50,6 +50,9 @@ class IndexWatcher(object):
 
     def update(self):
         fragment = self.get_fragment()
+        self.add_fragment(fragment)
+
+    def add_fragment(self,fragment):
         if self.df is None:
             self.df = fragment
         else:
