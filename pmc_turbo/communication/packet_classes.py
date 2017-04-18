@@ -434,13 +434,31 @@ class GSECommandPacket(CommandPacket):
                            enclosure_length)
 
     def _unpack_header(self, header):
-        start_byte, identifier, length = struct.unpack(self._header_format_string, header)
+        start_byte, link, routing, length = struct.unpack(self._header_format_string, header)
         if start_byte != self._valid_start_byte:
             raise PacketValidityError("Got invalid start byte 0x%02X" % start_byte)
-        if identifier != self._valid_identifier:
-            raise PacketValidityError("Got invalid identifier byte 0x%02X" % identifier)
+        if (link,routing) not in self._valid_link_tuples:
+            raise PacketValidityError("Got invalid link tuple 0x%02X,0x%02X" % (link,routing))
         return length
 
+
+def get_command_packet_from_buffer(buffer):
+    try:
+        gse_command = GSECommandPacket(buffer=buffer)
+    except PacketError:
+        gse_command = None
+    try:
+        command_packet = CommandPacket(buffer=buffer)
+    except PacketError:
+        command_packet = None
+
+    if gse_command is None and command_packet is None:
+        raise ValueError("The buffer does not seem to contain a valid command packet %r" % buffer)
+    if gse_command and command_packet:
+        raise ValueError("The buffer decodes as both a gse command and a command packet %r" % buffer)
+    if gse_command:
+        return gse_command
+    return command_packet
 
 gse_acknowledgment_length = 3
 
