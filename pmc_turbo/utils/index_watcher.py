@@ -1,8 +1,9 @@
 import os
+import logging
 
 import pandas as pd
 
-from pmc_turbo.camera.pipeline.indexer import logger
+logger = logging.getLogger(__name__)
 
 
 class IndexWatcher(object):
