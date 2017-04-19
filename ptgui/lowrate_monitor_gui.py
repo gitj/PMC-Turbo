@@ -6,11 +6,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 class LowrateMonitorWidget(QtGui.QLabel):
-    def __init__(self,lowrate_monitor,message_id,num_columns = 2, parent=None):
+    def __init__(self,lowrate_monitor,message_id,num_columns = 3, parent=None):
         super(LowrateMonitorWidget,self).__init__(parent)
         self.lowrate_monitor = lowrate_monitor
         self.message_id = message_id
         self.num_columns=num_columns
+        self.setFrameStyle(QtGui.QFrame.Box)
         self.update_display()
     def update_display(self):
         #self.lowrate_monitor.update()
@@ -55,9 +56,10 @@ if __name__ == "__main__":
     widgets = [leader]
     for row in range(4):
         for column in range(2):
-            w = LowrateMonitorWidget(lrm,row*2+column,parent=widget)
-            layout.addWidget(w,row+1,column)
-            widgets.append(w)
+            if row*2+column < 8:
+                w = LowrateMonitorWidget(lrm,row*2+column,parent=widget)
+                layout.addWidget(w,row+1,column)
+                widgets.append(w)
     def update():
         lrm.update()
         for w in widgets:
