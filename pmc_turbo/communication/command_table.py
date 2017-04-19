@@ -10,6 +10,23 @@ DESTINATION_LIDAR = 252
 DESTINATION_SUPER_COMMAND = 251 # use for sending commands to anyone listening, i.e for manually assigning leader
 DESTINATION_LEADER = 250
 
+def destination_to_string(destination):
+    if destination < 8:
+        return 'cam %d' % destination
+    if destination == DESTINATION_ALL_CAMERAS:
+        return 'all cameras'
+    if destination == DESTINATION_WIDEFIELD_CAMERAS:
+        return 'widefield'
+    if destination == DESTINATION_NARROWFIELD_CAMERAS:
+        return 'narrowfield'
+    if destination == DESTINATION_LIDAR:
+        return 'lidar'
+    if destination == DESTINATION_SUPER_COMMAND:
+        return 'super'
+    if destination == DESTINATION_LEADER:
+        return 'leader'
+    return "unknown: %d" % destination
+
 USE_BULLY_ELECTION = 254
 
 command_manager = CommandManager()
