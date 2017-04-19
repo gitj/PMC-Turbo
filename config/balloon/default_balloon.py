@@ -62,7 +62,12 @@ c.Communicator.charge_controller_settings = [(('pmc-charge-controller-0', 502), 
                                                 #(('pmc-charge-controller-1', 502), 10, 3600)
                                                 ]
 ##
-c.Communicator.initial_peer_polling_order = [0, 1, 2, 3]# , 4, 5, 6]
+c.Communicator.initial_peer_polling_order = [1, 2, 3, 4, 5, 6, 7]
+
+c.Communicator.peers_with_battery_monitors = [4]
+
+c.Communicator.narrowfield_cameras = [1,2,3]
+c.Communicator.widefield_cameras = [4,5,6,7]
 
 ##
 c.Communicator.loop_interval = 0.01

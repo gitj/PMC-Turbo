@@ -3,6 +3,7 @@ from __future__ import division
 import collections
 import json
 import logging
+import os
 import select
 import struct
 import threading
@@ -17,6 +18,7 @@ import numpy as np
 from pymodbus.exceptions import ConnectionException
 from traitlets import Int, Unicode, Bool, List, Float, Tuple, TCPAddress, Enum
 
+import pmc_turbo.housekeeping.bmon
 from pmc_turbo.communication import housekeeping_classes
 from pmc_turbo.communication import command_table, command_classes
 from pmc_turbo.communication import constants
@@ -49,6 +51,10 @@ END_BYTE = chr(constants.SIP_END_BYTE)
 @Pyro4.expose
 class Communicator(GlobalConfiguration):
     initial_peer_polling_order = List(trait=Int).tag(config=True)
+    peers_with_battery_monitors = List(trait=Int).tag(config=True)
+    widefield_cameras = List(trait=Int).tag(config=True)
+    narrowfield_cameras=List(trait=Int).tag(config=True)
+    battery_monitor_port = Unicode('/dev/ttyUSB0').tag(config=True)
     loop_interval = Float(default_value=0.01, allow_none=False, min=0).tag(config=True)
     lowrate_link_parameters = List(
         trait=Tuple(Enum(("comm1", "comm2")), TCPAddress(), Int(default_value=5001, min=1024, max=65535)),
@@ -82,6 +88,7 @@ class Communicator(GlobalConfiguration):
         self.cam_id = cam_id
         self.leader_id = 0  # this will be deprecated when the full election is in place.
         self.become_leader = False
+        self.battery_monitor = None
 
         self.peers = collections.OrderedDict()
         for peer_id, peer in peers.items():
@@ -129,6 +136,7 @@ class Communicator(GlobalConfiguration):
         self.error_counter.controller_communication_errors.reset()
         for charge_controller in self.charge_controllers:
             getattr(self.error_counter, (charge_controller.name + '_connection_error')).reset()
+        self.error_counter.battery_monitor_error.reset()
 
         self.pyro_daemon = None
         self.pyro_thread = None
@@ -140,10 +148,26 @@ class Communicator(GlobalConfiguration):
 
         # TODO: Set up proper destination lists, including LIDAR, narrow field, wide field, and all
         self.destination_lists = dict([(peer_id, [peer]) for (peer_id, peer) in self.peers.items()])
-        self.destination_lists[command_table.DESTINATION_ALL_CAMERAS] = self.peers.values()
         self.destination_lists[command_table.DESTINATION_SUPER_COMMAND] = [self]
+        self.destination_lists[command_table.DESTINATION_NARROWFIELD_CAMERAS] = [self.peers[index] for index in self.narrowfield_cameras]
+        self.destination_lists[command_table.DESTINATION_WIDEFIELD_CAMERAS] = [self.peers[index] for index in self.widefield_cameras]
+        self.destination_lists[command_table.DESTINATION_ALL_CAMERAS] = (self.destination_lists[command_table.DESTINATION_NARROWFIELD_CAMERAS]+
+                                                                         self.destination_lists[command_table.DESTINATION_WIDEFIELD_CAMERAS])
 
         self.setup_links()
+
+        if self.cam_id in self.peers_with_battery_monitors:
+            if os.path.exists(self.battery_monitor_port):
+                self.battery_monitor = pmc_turbo.housekeeping.bmon.Monitor(port=self.battery_monitor_port,
+                                                                       log_dir=os.path.join(self.housekeeping_dir,'battery'))
+                try:
+                    self.battery_monitor.create_files()
+                except Exception:
+                    logger.exception("Failure while creating battery monitor log files!")
+            else:
+                logger.exception("This camera is in the list of cameras with battery monitors, "
+                                 "but the specified battery monitor port does not exist!")
+
 
     @property
     def leader(self):
@@ -227,6 +251,12 @@ class Communicator(GlobalConfiguration):
                     except ConnectionException:
                         logger.exception("Failed to connect to %s" % charge_controller.name)
                         getattr(self.error_counter, (charge_controller.name + '_connection_error')).increment()
+            if self.battery_monitor:
+                try:
+                    self.battery_monitor.measure_and_log()
+                except Exception:
+                    logger.exception("Failure while monitoring battery")
+                    self.error_counter.battery_monitor_error.increment()
             time.sleep(self.loop_interval)
 
     def peer_loop(self):
@@ -342,10 +372,12 @@ class Communicator(GlobalConfiguration):
             logger.debug("I'm not leader and this is not a super command, so I'm ignoring it")
             return
         destinations = self.destination_lists[command_packet.destination]
+        alive_destinations = []
         for number, destination in enumerate(destinations):
             try:
                 logger.debug("pinging destination %d member %d" % (command_packet.destination, number))
                 destination.ping()
+                alive_destinations.append(destination)
             except Exception as e:
                 details = "Ping failure for destination %d, member %d\n" % (command_packet.destination, number)
                 details += traceback.format_exc()
@@ -355,18 +387,18 @@ class Communicator(GlobalConfiguration):
                                                        CommandStatus.failed_to_ping_destination,
                                                        details)
                 logger.warning(details)
-                return
+                continue
 
         command_name = "<Unknown>"
         number = 0
         kwargs = {}
         try:
             commands = command_manager.decode_commands(command_packet.payload)
-            for number, destination in enumerate(destinations):
+            for number, destination in enumerate(alive_destinations):
                 for command_name, kwargs in commands:
-                    logger.debug("Executing command %s at destination %d member %d with kwargs %r" % (command_name,
+                    logger.debug("Executing command %s at destination %d member %d peer %r with kwargs %r" % (command_name,
                                                                                                       command_packet.destination,
-                                                                                                      number, kwargs))
+                                                                                                      number, destination, kwargs))
                     function = getattr(destination, command_name)
                     function(**kwargs)
         except Exception as e:
