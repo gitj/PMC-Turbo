@@ -1,5 +1,6 @@
 import csv
 import matplotlib.pyplot as plt
+import glob
 
 
 # /var/pmclogs/housekeeping/camera/2017-02-17_160805.csv
@@ -89,5 +90,18 @@ if __name__ == "__main__":
     # graph_temps('/var/pmclogs/housekeeping/camera/2017-02-17_160805.csv',
     #            '/var/pmclogs/housekeeping/labjack/2017-02-17_160813.csv')
 
-    graph_temps('/var/pmclogs/housekeeping/camera/2017-02-18_132924.csv',
-                '/var/pmclogs/housekeeping/labjack/2017-02-17_160813.csv')
+    camera_logs = glob.glob('/var/pmclogs/housekeeping/camera/2017*')
+    if len(camera_logs) == 0:
+        raise ValueError('No files found with filename_glob %r' % '/var/pmclogs/housekeeping/camera/')
+    camera_logs.sort()
+    camera_log = camera_logs[-1]
+
+    labjack_logs = glob.glob('/var/pmclogs/housekeeping/labjack/2017*')
+    if len(labjack_logs) == 0:
+        raise ValueError('No files found with filename_glob %r' % '/var/pmclogs/housekeeping/labjack/')
+    labjack_logs.sort()
+    labjack_log = labjack_logs[-1]
+
+    graph_temps(camera_log, labjack_log)
+    # graph_temps('/var/pmclogs/housekeeping/camera/2017-02-18_132924.csv',
+    #             '/var/pmclogs/housekeeping/labjack/2017-02-17_160813.csv')
