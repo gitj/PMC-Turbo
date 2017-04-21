@@ -39,8 +39,8 @@ def get_labjack_temps(csv_file):
             try:
                 times.append(row[0])
                 labjack_temp.append(row[1])
-                lens_side_temp.append(row[7])
-                cable_side_temp.append(row[8])
+                lens_side_temp.append(row[8])
+                cable_side_temp.append(row[9])
             except IndexError:
                 pass
 
@@ -59,7 +59,7 @@ def graph_temps(csv_file0, csv_file1):
 
     fig, axes = plt.subplots(3, 2)
     axes[0][0].plot(times0, main_temp)
-    axes[0][0].set_title('Main temperature versus time')
+    axes[0][0].set_title('Main temperature versus time\n%s' % csv_file0)
     axes[0][0].set_xlabel('Timestamp (s)')
     axes[0][0].set_ylabel('Main temperature (C)')
 
@@ -69,7 +69,7 @@ def graph_temps(csv_file0, csv_file1):
     axes[1][0].set_ylabel('Sensor temperature (C)')
 
     axes[0][1].plot(times1, labjack_temp)
-    axes[0][1].set_title('Labjack temperature versus time')
+    axes[0][1].set_title('Labjack temperature versus time\n%s' % csv_file1)
     axes[0][1].set_xlabel('Timestamp (s)')
     axes[0][1].set_ylabel('Sensor temperature (C)')
 
@@ -82,6 +82,7 @@ def graph_temps(csv_file0, csv_file1):
     axes[2][1].set_title('Cable side temperature versus time')
     axes[2][1].set_xlabel('Timestamp (s)')
     axes[2][1].set_ylabel('Sensor temperature (C)')
+
 
     plt.show()
 
