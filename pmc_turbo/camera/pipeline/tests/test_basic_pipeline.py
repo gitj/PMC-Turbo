@@ -2,30 +2,19 @@ import shutil
 import tempfile
 import threading
 import time
-import os
-
-from traitlets.config.loader import load_pyconfig_files
 
 from nose.tools import timed
 
 from pmc_turbo.camera.pipeline import basic_pipeline
-from pmc_turbo.utils.configuration import default_config_dir
-
-print "default config dir",default_config_dir
-basic_config = load_pyconfig_files(['no_hardware.py'], default_config_dir)
+from pmc_turbo.utils.tests import test_config
+harness = test_config.BasicTestHarness()
+harness.setup()
+basic_config = harness.basic_config
 assert basic_config
 print "loaded config",basic_config
 
-def setup_module():
-    disk_dirs = [tempfile.mkdtemp() for k in range(4)]
-    basic_config.GlobalConfiguration.log_dir = tempfile.mkdtemp()
-
-    basic_config.GlobalConfiguration.housekeeping_dir = os.path.join(basic_config.GlobalConfiguration.log_dir,'housekeeping')
-    basic_config.GlobalConfiguration.counters_dir = os.path.join(basic_config.GlobalConfiguration.log_dir,'counters')
-    basic_config.GlobalConfiguration.data_directories = disk_dirs
-
 def teardown_module():
-    shutil.rmtree(basic_config.GlobalConfiguration.log_dir)
+    harness.teardown()
 
 @timed(20)
 def test_pipeline_runs():
