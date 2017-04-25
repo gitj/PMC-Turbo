@@ -17,6 +17,8 @@ class BasicTestHarness(object):
 
         self.basic_config.GlobalConfiguration.housekeeping_dir = os.path.join(
             self.basic_config.GlobalConfiguration.log_dir, 'housekeeping')
+        self.basic_config.GlobalConfiguration.camera_commands_dir = os.path.join(
+            self.basic_config.GlobalConfiguration.log_dir, 'camera_commands')
         self.basic_config.GlobalConfiguration.counters_dir = os.path.join(self.basic_config.GlobalConfiguration.log_dir,
                                                                           'counters')
         self.basic_config.GlobalConfiguration.data_directories = disk_dirs
