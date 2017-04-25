@@ -13,7 +13,7 @@ LOG_DIR = '/var/pmclogs'
 
 class GlobalConfiguration(Configurable):
     """
-    General configuraion parameters used throughot the balloon
+    General configuration parameters used throughout the balloon
     """
     data_directories = List(trait=Unicode, default_value=['/data1', '/data2', '/data3', '/data4']).tag(config=True)
     pipeline_pyro_port = Int(50000, min=1024, max=65535).tag(config=True)
