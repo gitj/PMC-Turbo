@@ -21,4 +21,5 @@ class GlobalConfiguration(Configurable):
     log_dir = Unicode('/var/pmclogs').tag(config=True)
     housekeeping_dir = Unicode('/var/pmclogs/housekeeping').tag(config=True)
     counters_dir = Unicode('/var/pmclogs/counters').tag(config=True)
+    camera_commands_dir = Unicode('/var/pmclogs/camera_commands').tag(config=True)
 

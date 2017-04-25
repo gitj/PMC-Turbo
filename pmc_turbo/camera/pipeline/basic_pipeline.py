@@ -21,6 +21,7 @@ In [9]: bpl.close() # cleanly shutdown the threads to exit (otherwise ipython wi
 import ctypes
 import logging
 import multiprocessing as mp
+import os
 import sys
 import time
 from Queue import Empty as EmptyException
@@ -121,6 +122,8 @@ class BasicPipeline(GlobalConfiguration):
                                                    uri=uri,
                                                    config=self.config)
 
+        self._setup_camera_command_log(output_dir)
+
         for writer in self.writers:
             writer.child.start()
         self.acquire_images.child.start()
@@ -149,6 +152,15 @@ class BasicPipeline(GlobalConfiguration):
         self.status_dict.update(process_status)
         return self.status_dict
 
+    def _setup_camera_command_log(self,output_dir):
+        self.camera_commands_filename = os.path.join(self.camera_commands_dir,output_dir+'.csv')
+        try:
+            os.makedirs(self.camera_commands_dir)
+        except OSError:
+            logger.exception("Failure making camera commands dir %r" % self.camera_commands_dir)
+        with open(self.camera_commands_filename,'w') as fh:
+            fh.write('tag,name,value,result,gate_time\n')
+
     def send_camera_command(self,name,value):
         tag = time.time()
         self.acquire_image_command_queue.put((name,value,tag))
@@ -166,6 +178,8 @@ class BasicPipeline(GlobalConfiguration):
         while not self.acquire_image_command_results_queue.empty():
             try:
                 tag,name,value,result,gate_time = self.acquire_image_command_results_queue.get_nowait()
+                with open(self.camera_commands_filename,'a') as fh:
+                    fh.write('%f,%s,%s,%s,%d\n' % (tag,name,value,result,gate_time))
                 self.acquire_image_command_results_dict[tag] = (name,value,result,gate_time)
                 self.counters.commands_completed.increment()
             except EmptyException: # pragma: no cover
