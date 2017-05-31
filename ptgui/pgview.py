@@ -7,12 +7,16 @@ import numpy as np
 pg.setConfigOptions(imageAxisOrder='row-major')
 from pmc_turbo.camera.image_processing import blosc_file
 from pmc_turbo.camera.pipeline.indexer import MergedIndex
-root_path = '/home/pmcroot/c2'
+#root_path = '/home/pmcroot/c2'
+root_path = '/'
 
 class MyImageView(pg.ImageView):
+    #def __init__(self,root_path=root_path,*args,**kwargs):
     def __init__(self,*args,**kwargs):
+        self.root_path = '/'
+        print self.root_path
         super(MyImageView,self).__init__(*args,**kwargs)
-        self.mi = MergedIndex('*',data_dirs=[os.path.join(root_path,('data%d' % k)) for k in range(1,5)])
+        self.mi = MergedIndex('*',data_dirs=[os.path.join(self.root_path,('data%d' % k)) for k in range(1,5)])
         self.last_index = 0
         self.update(-1, autoLevels=True, autoRange=True)
     def update(self,index,autoLevels=False,autoRange=False):
@@ -28,7 +32,7 @@ class MyImageView(pg.ImageView):
             return
         self.last_index=index
         filename = latest['filename']
-        filename = os.path.join(root_path,filename[1:])
+        filename = os.path.join(self.root_path,filename[1:])
         print filename
         img,chunk = blosc_file.load_blosc_image(filename)
         self.setImage(img,autoLevels=autoLevels,autoRange=autoRange)
