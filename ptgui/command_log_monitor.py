@@ -60,16 +60,18 @@ class CommandTableModel(QtCore.QAbstractTableModel):
         self.command_history = CommandHistory()
         self.command_history.set_directory()
         self.lowrate_monitor = LowrateMonitor()
-        latest_dirs = glob.glob(os.path.join(self.command_history.root_data_path,'2*'))
-        latest_dirs.sort()
-        latest_dirs = latest_dirs[-10:]
-        self.received_files = MergedIndex('*',data_dirs = latest_dirs, index_filename='file_index.csv')
+        self.received_files = MergedIndex('*/*',data_dirs = [self.command_history.root_data_path], index_filename='requested_file_index.csv')
+        self.received_files.update()
+        try:
+            print self.received_files.df.shape, self.received_files.df.request_id.value_counts()
+        except:
+            pass
         self.total_rows = 0
         self.update()
         self._viewers = []
 
     def update(self):
-        self.lowrate_monitor.update(500)
+        self.lowrate_monitor.update(100)
         self.received_files.update()
         new_rows = self.command_history.update()
         new_row_count = self.command_history.history.shape[0]
@@ -112,12 +114,15 @@ class CommandTableModel(QtCore.QAbstractTableModel):
             request_id = args['request_id']
         except KeyError:
             return None
-        rows = self.received_files.df[self.received_files.df.request_id == request_id]
-        if len(rows) == 0:
+        try:
+            rows = self.received_files.df[self.received_files.df.request_id == request_id]
+            if len(rows) == 0:
+                return None
+            #print "found", len(rows)
+            for k,row in rows.iterrows():
+                return row.filename
+        except AttributeError:
             return None
-        #print "found", len(rows)
-        for k,row in rows.iterrows():
-            return row.filename
 
     def cell_click(self,QModelIndex):
         print "cell click", QModelIndex.row(),QModelIndex.column()
@@ -159,6 +164,8 @@ class CommandTableModel(QtCore.QAbstractTableModel):
         except IndexError:
             return
         column = QModelIndex.column()
+        if column == 0 and ((int_role is None) or (int_role == QtCore.Qt.InitialSortOrderRole)):
+            return row[column]
         if (int_role == QtCore.Qt.DisplayRole) or (int_role is None) or (int_role == QtCore.Qt.InitialSortOrderRole):
             name,function,df_column = columns[column]
             if function:
@@ -233,7 +240,7 @@ if __name__ == "__main__":
     win.setCentralWidget(table_view)
     timer = QtCore.QTimer()
     timer.timeout.connect(model.update)
-    timer.start(1000)
+    timer.start(2000)
     win.show()
 #    embed()
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
