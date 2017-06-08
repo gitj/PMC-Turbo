@@ -207,7 +207,7 @@ def encode_one_byte_summary(is_leader,controller_alive,pipeline_alive,files_to_d
 def decode_one_byte_summary(one_byte):
     if one_byte > 255 or one_byte < 0:
         raise ValueError("Cannot decode value outside of range 0-255, got %r" % one_byte)
-    result = {}
+    result = OrderedDict()
     for k in range(len(one_byte_summary_bit_definitions)):
         result[one_byte_summary_bit_definitions[k]] = bool((1<<k) & one_byte)
     return result
