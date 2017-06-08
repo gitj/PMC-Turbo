@@ -1,8 +1,9 @@
-0 0c:c4:7a:a9:2a:d8 0c:c4:7a:ae:0d:96
+
 1 0c:c4:7a:ac:6a:de 0c:c4:7a:af:7c:03
 2 0c:c4:7a:ac:63:52 0c:c4:7a:af:76:c6
 3 0c:c4:7a:ac:63:86 0c:c4:7a:af:76:d2
 4 0c:c4:7a:da:0d:80 0c:c4:7a:dd:dc:df
 5 0c:c4:7a:da:13:00 0c:c4:7a:dd:de:3d
 # 6 2e:24 78:f7
+6 0c:c4:7a:a9:2a:d8 0c:c4:7a:ae:0d:96  # this was formerly pmc-camera-0
 7 0c:c4:7a:ac:63:7e 0c:c4:7a:af:76:d1
