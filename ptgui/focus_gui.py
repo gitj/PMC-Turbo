@@ -10,29 +10,33 @@ root_path = '/'
 proxy = Pyro4.Proxy('PYRO:controller@0.0.0.0:50001')
 
 
-def update(window):
-    # update both image viewer and realtimevalues.
-    return
-
-
 class GUIWrapper():
     def __init__(self, proxy=True):
         self.app = QtGui.QApplication([])
 
         if proxy:
-            self.proxy = Pyro4.Proxy('PYRO:controller@0.0.0.0:50000')
+            self.proxy = Pyro4.Proxy('PYRO:controller@0.0.0.0:50001')
+            initial_status = self.proxy.get_pipeline_status()
+            current_focus = initial_status['all_camera_parameters']['EFLensFocusCurrent']
+            #min_focus = initial_status['all_camera_parameters']['EFLensFocusMin']
+            max_focus = initial_status['all_camera_parameters']['EFLensFocusMax']
+            exposure = initial_status['all_camera_parameters']['ExposureTimeAbs']
         else:
             self.proxy = None
+            current_focus = '---'
+            max_focus = '---'
+            exposure = '---'
+        self.real_time_values = RealTimeValues(current_focus, max_focus, exposure)
         self.window = QtGui.QMainWindow()
         self.window.resize(800, 800)
-        imv = pgview.MyImageView()
-        self.window.setCentralWidget(imv)
 
-        self.toolbar = MyToolBar(self)
+        self.window.addDockWidget(QtCore.Qt.TopDockWidgetArea, self.real_time_values)
+
+        self.imv = pgview.MyImageView(real_time_values=self.real_time_values)
+        self.window.setCentralWidget(self.imv)
+
+        self.toolbar = MyToolBar(guiwrapper=self)
         self.window.addToolBar(QtCore.Qt.RightToolBarArea, self.toolbar)
-
-        self.mywidget = RealTimeValues()
-        self.window.addDockWidget(QtCore.Qt.TopDockWidgetArea, self.mywidget)
 
         self.focus_step = 10
         self.exposure_step = 10e3
@@ -43,9 +47,10 @@ class GUIWrapper():
         focus_step = self.focus + self.focus_step
         try:
             if self.proxy:
-                self.proxy.set_focus(self, focus_step)
+                self.proxy.set_focus(focus_step)
             self.focus = focus_step
             print 'Increased focus to %d' % self.focus
+            self.real_time_values.update_focus(self.focus)
         except Exception as e:
             print e
 
@@ -53,9 +58,10 @@ class GUIWrapper():
         focus_step = self.focus - self.focus_step
         try:
             if self.proxy:
-                self.proxy.set_focus(self, focus_step)
+                self.proxy.set_focus(focus_step)
             self.focus = focus_step
             print 'Decreased focus to %d' % self.focus
+            self.real_time_values.update_focus(self.focus)
         except Exception as e:
             print e
 
@@ -63,9 +69,10 @@ class GUIWrapper():
         exposure_us = self.exposure + self.exposure_step
         try:
             if self.proxy:
-                self.proxy.set_exposure(self, exposure_us)
+                self.proxy.set_exposure(exposure_us)
             self.exposure = exposure_us
             print 'Increased exposure to %d' % self.exposure
+            self.real_time_values.update_exposure(self.exposure)
         except Exception as e:
             print e
 
@@ -73,35 +80,42 @@ class GUIWrapper():
         exposure_us = self.exposure - self.exposure_step
         try:
             if self.proxy:
-                self.proxy.set_exposure(self, exposure_us)
+                self.proxy.set_exposure(exposure_us)
             self.exposure = exposure_us
             print 'Increased exposure to %d' % self.exposure
+            self.real_time_values.update_exposure(self.exposure)
         except Exception as e:
             print e
 
     def change_focus_step(self, focus_step):
+        focus_step = int(focus_step)
         self.focus_step = focus_step
         print 'Changed focus step to %d' % self.focus_step
 
     def change_exposure_step(self, exposure_step):
+        exposure_step = int(exposure_step)
         self.exposure_step = exposure_step
         print 'Changed exposure step to %d' % self.exposure_step
 
     def change_focus(self, focus):
+        focus = int(focus)
         try:
             if self.proxy:
-                self.proxy.set_focus(self, focus)
+                self.proxy.set_focus(focus)
             self.focus = focus
             print 'Changed focus to %d' % self.focus
+            self.real_time_values.update_focus(self.focus)
         except Exception as e:
             print e
 
     def change_exposure(self, exposure):
+        exposure = int(exposure)
         try:
             if self.proxy:
-                self.proxy.set_exposure(self, exposure)
+                self.proxy.set_exposure(exposure)
             self.exposure = exposure
             print 'Changed exposure to %d' % self.exposure
+            self.real_time_values.update_exposure(self.exposure)
         except Exception as e:
             print e
 
@@ -110,6 +124,7 @@ class MyToolBar(QtGui.QToolBar):
     def __init__(self, guiwrapper, *args, **kwargs):
         super(MyToolBar, self).__init__(*args, **kwargs)
         self.guiwrapper = guiwrapper
+        print self.guiwrapper
         self.setup_layout()
 
     def setup_layout(self):
@@ -180,16 +195,16 @@ class MyToolBar(QtGui.QToolBar):
         print self.exposure_step_edit.text()
 
     def change_focus(self):
-        self.guiwrapper.change_focus_step(self.focus_edit.text())
+        self.guiwrapper.change_focus(self.focus_edit.text())
         print self.focus_edit.text()
 
     def change_exposure(self):
-        self.guiwrapper.change_focus_step(self.exposure_edit.text())
+        self.guiwrapper.change_exposure(self.exposure_edit.text())
         print self.exposure_edit.text()
 
 
 class RealTimeValues(QtGui.QDockWidget):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, current_focus, max_focus, exposure, *args, **kwargs):
         # super(RealTimeValues,self).__init__("Status", *args,**kwargs)
         super(RealTimeValues, self).__init__(*args, **kwargs)
         multiwidget = QtGui.QWidget()
@@ -199,38 +214,43 @@ class RealTimeValues(QtGui.QDockWidget):
         layout.addWidget(filename_title, 0, 0)
         filename_title.setText('Filename:')
 
-        filename_value = QtGui.QLabel()
-        layout.addWidget(filename_value, 0, 1)
-        filename_value.setText('this_is_the_filename')
+        self.filename_value = QtGui.QLabel()
+        layout.addWidget(self.filename_value, 0, 1)
+        self.filename_value.setText('---')
 
         focus_title = QtGui.QLabel()
         layout.addWidget(focus_title, 1, 0)
-        focus_title.setText('Focus:')
+        focus_title.setText('Focus (max %s):' % max_focus)
 
         exposure_title = QtGui.QLabel()
         layout.addWidget(exposure_title, 2, 0)
         exposure_title.setText('Exposure: ')
 
-        focus_value = QtGui.QLabel()
-        layout.addWidget(focus_value, 1, 1)
-        focus_value.setText('4000')
+        self.focus_value = QtGui.QLabel()
+        layout.addWidget(self.focus_value, 1, 1)
 
-        exposure_value = QtGui.QLabel()
-        layout.addWidget(exposure_value, 2, 1)
-        exposure_value.setText('%d ms' % 100)
+        self.exposure_value = QtGui.QLabel()
+        layout.addWidget(self.exposure_value, 2, 1)
+
 
         multiwidget.setLayout(layout)
         self.setWidget(multiwidget)
 
-    def update_value(self, label_widget, new_text):
-        label_widget.setText(new_text)
+        self.update_focus(current_focus)
+        self.update_exposure(exposure)
 
-    def update(self):
-        return
+    def update_filename(self, filename):
+        self.filename_value.setText(str(filename))
+
+    def update_focus(self, focus):
+        self.focus_value.setText(str(focus))
+
+    def update_exposure(self, exposure):
+        self.exposure_value.setText(str(exposure))
 
 
 if __name__ == "__main__":
-    gw = GUIWrapper(proxy=False)
+    gw = GUIWrapper(proxy=True)
     gw.window.show()
 
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
