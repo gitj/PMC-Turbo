@@ -62,6 +62,7 @@ class GSEReceiver():
         self.loop_interval = loop_interval
         self.num_bytes_per_read = 10000
         self.total_num_lowrate_packets = 0
+        self.total_num_housekeeping_packets = 0
         self._exit = False
 
     def close(self):
@@ -91,9 +92,10 @@ class GSEReceiver():
                                                                                     packet_class=packet_classes.GSEPacket,
                                                                                     start_byte=packet_classes.GSEPacket.START_BYTE)
                 self.last_gse_remainder = gse_remainder
-                gse_hirate_packets, gse_lowrate_packets = packet_classes.separate_gse_packets_by_origin(gse_packets)
-
-                self.write_gse_lowrate_packets_to_disk(gse_lowrate_packets)
+                gse_hirate_packets, gse_lowrate_packets, other_gse_packets = packet_classes.separate_gse_packets_by_origin(gse_packets)
+                self.logger.debug("Found %d hirate, %d lowrate packets, %d other packets" % (len(gse_hirate_packets),len(gse_lowrate_packets),
+                                                                                             len(other_gse_packets)))
+                self.write_gse_lowrate_packets_to_disk(gse_lowrate_packets, other_gse_packets)
 
                 file_packet_buffer = ''
                 for packet in gse_hirate_packets:
@@ -121,8 +123,6 @@ class GSEReceiver():
                 try:
                     data = self.port.recv(self.num_bytes_per_read)
                 except socket.timeout:
-                    time.sleep(0.01)
-                    self.logger.debug('Timeout')
                     pass
             else:
                 data = self.port.read(self.num_bytes_per_read)
@@ -160,10 +160,17 @@ class GSEReceiver():
         with open(self.file_index_filename, 'a') as f:
             writer = csv.writer(f, quoting=csv.QUOTE_NONE, lineterminator='\n')
             writer.writerow(
-                [file_id, file_status['first_timestamp'],file_status['recent_timestamp'], time.time(), filename,
-                 file_class.file_type,file_class.request_id, file_class.camera_id, frame_timestamp_ns,
+                [file_id, file_status['first_timestamp'], file_status['recent_timestamp'], time.time(), filename,
+                 file_class.file_type, file_class.request_id, file_class.camera_id, frame_timestamp_ns,
+                 len(file_status['packets_received']), file_status['packets_expected']])
 
-                len(file_status['packets_received']), file_status['packets_expected'] ])
+        if file_class.request_id != file_format_classes.DEFAULT_REQUEST_ID:
+            with open(self.requested_file_index_filename, 'a') as f:
+                writer = csv.writer(f, quoting=csv.QUOTE_NONE, lineterminator='\n')
+                writer.writerow(
+                    [file_id, file_status['first_timestamp'], file_status['recent_timestamp'], time.time(), filename,
+                     file_class.file_type, file_class.request_id, file_class.camera_id, frame_timestamp_ns,
+                     len(file_status['packets_received']), file_status['packets_expected']])
 
     def setup_directory(self):
         path = os.path.join(self.root_path,self.name)
@@ -181,6 +188,9 @@ class GSEReceiver():
         self.lowrate_path = os.path.join(path,'lowrate')
         if not os.path.exists(self.lowrate_path):
             os.makedirs(self.lowrate_path)
+        self.housekeeping_path = os.path.join(path,'housekeeping')
+        if not os.path.exists(self.housekeeping_path):
+            os.makedirs(self.housekeeping_path)
 
 
         self.by_source_path = os.path.join(self.root_path,'by-source')
@@ -189,29 +199,43 @@ class GSEReceiver():
         self.lowrate_filename = os.path.join(logs_path, 'lowrate.log')
         self.packet_index_filename = os.path.join(path, 'packet_index.csv')
         self.file_index_filename = os.path.join(path, 'file_index.csv')
+        self.requested_file_index_filename = os.path.join(path, 'requested_file_index.csv')
 
         with open(self.packet_index_filename, 'w') as f:
             writer = csv.writer(f, quoting=csv.QUOTE_NONE, lineterminator='\n')
             writer.writerow(['epoch', 'current_file_id', 'packet_number', 'total_packets'])
 
-        with open(self.file_index_filename, 'a') as f:
-            writer = csv.writer(f, quoting=csv.QUOTE_NONE, lineterminator='\n')
-            writer.writerow(['file_id','first_timestamp', 'last_timestamp', 'file_write_timestamp', 'filename',
-                             'file_type','request_id', 'camera_id', 'frame_timestamp_ns',
-                             'packets_received', 'packets_expected'])
+        for file_index_filename in [self.file_index_filename, self.requested_file_index_filename]:
+            with open(file_index_filename, 'a') as f:
+                writer = csv.writer(f, quoting=csv.QUOTE_NONE, lineterminator='\n')
+                writer.writerow(['file_id','first_timestamp', 'last_timestamp', 'file_write_timestamp', 'filename',
+                                 'file_type','request_id', 'camera_id', 'frame_timestamp_ns',
+                                 'packets_received', 'packets_expected'])
 
-    def write_gse_lowrate_packets_to_disk(self, gse_lowrate_packets):
+    def write_gse_lowrate_packets_to_disk(self, gse_lowrate_packets, other_gse_packets):
         f = open(self.lowrate_filename, 'ab+')
-        for packet in gse_lowrate_packets:
+        for packet in gse_lowrate_packets + other_gse_packets:
             f.write(packet.to_buffer() + '\n')
         f.close()
 
         for packet in gse_lowrate_packets:
             message_id = get_short_status_message_id(packet.payload)
-            with open(os.path.join(self.lowrate_path,time.strftime('%Y-%m-%d_%H%M%S')+('_%06d_%02X' % (self.total_num_lowrate_packets,
-                                                                                                       message_id))),'w') as fh:
+            filename = os.path.join(self.lowrate_path,time.strftime('%Y-%m-%d_%H%M%S')+('_%06d_%02X' % (self.total_num_lowrate_packets,
+                                                                                                       message_id)))
+            with open(filename,'w') as fh:
                 fh.write(packet.to_buffer())
                 self.total_num_lowrate_packets += 1
+                self.logger.info("wrote lowrate message #%d, filename %s" % (self.total_num_lowrate_packets,filename))
+
+        for packet in other_gse_packets:
+            filename = os.path.join(self.housekeeping_path,time.strftime('%Y-%m-%d_%H%M%S')+('_%06d_%02X' % (self.total_num_housekeeping_packets,
+                                                                                                       packet.origin)))
+            with open(filename,'w') as fh:
+                fh.write(packet.to_buffer())
+                self.total_num_housekeeping_packets += 1
+                self.logger.info("wrote housekeeping message #%d, filename %s" % (self.total_num_housekeeping_packets,filename))
+
+
 
     def gather_files_from_file_packets(self, file_packets):
         for packet in file_packets:

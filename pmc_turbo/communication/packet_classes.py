@@ -518,13 +518,16 @@ def get_packets_from_buffer(buffer, packet_class, start_byte):
 def separate_gse_packets_by_origin(gse_packets):
     lowrate_gse_packets = []
     hirate_gse_packets = []
+    other_gse_packets = []
     for packet in gse_packets:
         origin = packet.origin & GSEPacket.ORIGIN_BITMASK
         if origin == GSEPacket.LOWRATE_ORIGIN:
             lowrate_gse_packets.append(packet)
-        if origin == GSEPacket.HIRATE_ORIGIN:
+        elif origin == GSEPacket.HIRATE_ORIGIN:
             hirate_gse_packets.append(packet)
-    return hirate_gse_packets, lowrate_gse_packets
+        else:
+            other_gse_packets.append(packet)
+    return hirate_gse_packets, lowrate_gse_packets, other_gse_packets
 
 
 class LidarTelemetryPacket(object):
