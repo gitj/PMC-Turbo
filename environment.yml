@@ -94,6 +94,7 @@ dependencies:
   - prompt-toolkit==1.0.9
   - pycrc==1.21
   - pymodbus==1.2.0
+  - pynmea2==1.7.1
   - pyro4==4.55
   - selectors34==1.1
   - serpent==1.18
