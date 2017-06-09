@@ -18,7 +18,7 @@ class GUIWrapper():
             self.proxy = Pyro4.Proxy('PYRO:controller@0.0.0.0:50001')
             initial_status = self.proxy.get_pipeline_status()
             current_focus = initial_status['all_camera_parameters']['EFLensFocusCurrent']
-            #min_focus = initial_status['all_camera_parameters']['EFLensFocusMin']
+            # min_focus = initial_status['all_camera_parameters']['EFLensFocusMin']
             max_focus = initial_status['all_camera_parameters']['EFLensFocusMax']
             exposure = initial_status['all_camera_parameters']['ExposureTimeAbs']
         else:
@@ -36,7 +36,7 @@ class GUIWrapper():
         self.window.setCentralWidget(self.imv)
 
         self.toolbar = MyToolBar(guiwrapper=self)
-        self.window.addToolBar(QtCore.Qt.RightToolBarArea, self.toolbar)
+        self.window.addToolBar(QtCore.Qt.BottomToolBarArea, self.toolbar)
 
         self.focus_step = 10
         self.exposure_step = 10e3
@@ -128,21 +128,33 @@ class MyToolBar(QtGui.QToolBar):
         self.setup_layout()
 
     def setup_layout(self):
-        increase_focus = QtGui.QAction("Increase Focus", self.guiwrapper.window)
-        decrease_focus = QtGui.QAction("Decrease Focus", self.guiwrapper.window)
-        increase_exposure_time = QtGui.QAction("Increase Exposure Time", self.guiwrapper.window)
-        decrease_exposure_time = QtGui.QAction("Decrease Exposure Time", self.guiwrapper.window)
+        increase_focus = QtGui.QPushButton("Increase Focus", self.guiwrapper.window)
+        decrease_focus = QtGui.QPushButton("Decrease Focus", self.guiwrapper.window)
+        increase_exposure_time = QtGui.QPushButton("Increase Exposure Time", self.guiwrapper.window)
+        decrease_exposure_time = QtGui.QPushButton("Decrease Exposure Time", self.guiwrapper.window)
 
-        increase_focus.triggered.connect(self.guiwrapper.increase_focus_button_press)
-        decrease_focus.triggered.connect(self.guiwrapper.decrease_focus_button_press)
-        increase_exposure_time.triggered.connect(self.guiwrapper.increase_exposure_button_press)
-        decrease_exposure_time.triggered.connect(self.guiwrapper.decrease_exposure_button_press)
+        increase_focus.clicked.connect(self.guiwrapper.increase_focus_button_press)
+        decrease_focus.clicked.connect(self.guiwrapper.decrease_focus_button_press)
+        increase_exposure_time.clicked.connect(self.guiwrapper.increase_exposure_button_press)
+        decrease_exposure_time.clicked.connect(self.guiwrapper.decrease_exposure_button_press)
 
         self.focus_step_edit = QtGui.QLineEdit()
         self.focus_step_edit.returnPressed.connect(self.change_focus_step)
 
         self.exposure_step_edit = QtGui.QLineEdit()
         self.exposure_step_edit.returnPressed.connect(self.change_exposure_step)
+
+        increase_decrease_focus_widget = QtGui.QWidget()
+        increase_decrease_focus_layout = QtGui.QGridLayout()
+        increase_decrease_focus_layout.addWidget(increase_focus, 0, 0)
+        increase_decrease_focus_layout.addWidget(decrease_focus, 1, 0)
+        increase_decrease_focus_widget.setLayout(increase_decrease_focus_layout)
+
+        increase_decrease_exposure_widget = QtGui.QWidget()
+        increase_decrease_exposure_layout = QtGui.QGridLayout()
+        increase_decrease_exposure_layout.addWidget(increase_exposure_time, 0, 0)
+        increase_decrease_exposure_layout.addWidget(decrease_exposure_time, 1, 0)
+        increase_decrease_exposure_widget.setLayout(increase_decrease_exposure_layout)
 
         step_increment_widget = QtGui.QWidget()
         step_increment_layout = QtGui.QGridLayout()
@@ -177,12 +189,8 @@ class MyToolBar(QtGui.QToolBar):
         absolute_layout.addWidget(self.exposure_edit, 1, 1)
         absolute_widget.setLayout(absolute_layout)
 
-        self.addAction(increase_focus)
-        self.addAction(decrease_focus)
-
-        self.addAction(increase_exposure_time)
-        self.addAction(decrease_exposure_time)
-
+        self.addWidget(increase_decrease_focus_widget)
+        self.addWidget(increase_decrease_exposure_widget)
         self.addWidget(step_increment_widget)
         self.addWidget(absolute_widget)
 
@@ -231,7 +239,6 @@ class RealTimeValues(QtGui.QDockWidget):
 
         self.exposure_value = QtGui.QLabel()
         layout.addWidget(self.exposure_value, 2, 1)
-
 
         multiwidget.setLayout(layout)
         self.setWidget(multiwidget)
