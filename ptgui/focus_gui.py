@@ -240,6 +240,7 @@ class RealTimeValues(QtGui.QDockWidget):
         self.update_exposure(exposure)
 
     def update_filename(self, filename):
+        filename = (filename.split('/')[-1]).split('f')[0][:-1]
         self.filename_value.setText(str(filename))
 
     def update_focus(self, focus):
