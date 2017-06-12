@@ -4,7 +4,7 @@ import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore, QtGui
 
 pg.setConfigOptions(imageAxisOrder='row-major')
-import pgview
+#import pgview
 
 root_path = '/'
 proxy = Pyro4.Proxy('PYRO:controller@0.0.0.0:50001')
@@ -32,7 +32,7 @@ class GUIWrapper():
 
         self.window.addDockWidget(QtCore.Qt.TopDockWidgetArea, self.real_time_values)
 
-        self.imv = pgview.MyImageView(real_time_values=self.real_time_values)
+        self.imv = MyImageView(real_time_values=self.real_time_values)
         self.window.setCentralWidget(self.imv)
 
         self.toolbar = MyToolBar(guiwrapper=self)
@@ -118,6 +118,51 @@ class GUIWrapper():
             self.real_time_values.update_exposure(self.exposure)
         except Exception as e:
             print e
+
+
+class MyImageView(pyqtgraph.ImageView):
+    # Autoupdates: add while loop to __main__, or add thread to start/stop autoupdating (too complicated?)
+    def __init__(self, real_time_values=None, *args, **kwargs):
+        self.root_path = '/'
+        print self.root_path
+        super(MyImageView, self).__init__(*args, **kwargs)
+        self.mi = MergedIndex('*', data_dirs=[os.path.join(self.root_path, ('data%d' % k)) for k in range(1, 5)])
+        self.last_index = 0
+        self.real_time_values = real_time_values
+        self.update(-1, autoLevels=True, autoRange=True)
+
+    def update(self, index, autoLevels=True, autoRange=False):
+        self.mi.update()
+        if index == -1:
+            index = self.mi.df.index.max()
+        try:
+            latest = self.mi.df.iloc[index]
+        except (IndexError, KeyError):
+            print "invalid index", index
+            return
+        if index == self.last_index:
+            return
+        self.last_index = index
+        filename = latest['filename']
+        filename = os.path.join(self.root_path, filename[1:])
+        print filename
+        if self.real_time_values:
+            self.real_time_values.update_filename(filename)
+        img, chunk = blosc_file.load_blosc_image(filename)
+        self.setImage(img, autoLevels=autoLevels, autoRange=autoRange)
+
+    def keyPressEvent(self, ev):
+        if ev.key() == QtCore.Qt.Key_N:
+            self.update(self.last_index + 1)
+            ev.accept()
+        elif ev.key() == QtCore.Qt.Key_P:
+            self.update(self.last_index - 1)
+            ev.accept()
+        elif ev.key() == QtCore.Qt.Key_L:
+            self.update(-1)
+            ev.accept()
+
+        super(MyImageView, self).keyPressEvent(ev)
 
 
 class MyToolBar(QtGui.QToolBar):
@@ -263,3 +308,6 @@ if __name__ == "__main__":
 
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
         QtGui.QApplication.instance().exec_()
+
+    while True:
+        gw.imv.update(-1)
