@@ -1,17 +1,23 @@
 import sys
+import os
 import Pyro4
+import threading
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore, QtGui
+from pmc_turbo.camera.pipeline.indexer import MergedIndex
+from pmc_turbo.camera.image_processing import blosc_file
+import time
 
 pg.setConfigOptions(imageAxisOrder='row-major')
 #import pgview
 
 root_path = '/'
 proxy = Pyro4.Proxy('PYRO:controller@0.0.0.0:50001')
+Pyro4.config.SERIALIZER = 'pickle'
 
 
 class GUIWrapper():
-    def __init__(self, proxy=True):
+    def __init__(self, proxy=True, autoupdate=False):
         self.app = QtGui.QApplication([])
 
         if proxy:
@@ -42,6 +48,9 @@ class GUIWrapper():
         self.exposure_step = 10e3
         self.focus = 2000
         self.exposure = 100e3
+
+        if autoupdate:
+            self.start_autoupdate_thread()
 
     def increase_focus_button_press(self):
         focus_step = self.focus + self.focus_step
@@ -119,8 +128,19 @@ class GUIWrapper():
         except Exception as e:
             print e
 
+    def autoupdate(self):
+        while True:
+            self.imv.update(-1)
+            time.sleep(1)
 
-class MyImageView(pyqtgraph.ImageView):
+    def start_autoupdate_thread(self):
+        self.update_thread = threading.Thread(target=self.autoupdate)
+        self.update_thread.daemon = True
+        print 'autoaupdate_started'
+        self.update_thread.start()
+
+
+class MyImageView(pg.ImageView):
     # Autoupdates: add while loop to __main__, or add thread to start/stop autoupdating (too complicated?)
     def __init__(self, real_time_values=None, *args, **kwargs):
         self.root_path = '/'
@@ -303,11 +323,9 @@ class RealTimeValues(QtGui.QDockWidget):
 
 
 if __name__ == "__main__":
-    gw = GUIWrapper(proxy=True)
+    gw = GUIWrapper(proxy=True, autoupdate=True)
+
     gw.window.show()
 
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
         QtGui.QApplication.instance().exec_()
-
-    while True:
-        gw.imv.update(-1)
