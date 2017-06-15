@@ -40,7 +40,7 @@ if __name__=="__main__":
             except RuntimeError, e:
                 print e
                 continue
-            state.update(dict(focus_step=focus_step,max_focus=max_focus))
+            state.update(dict(focus_step=focus_step, max_focus=max_focus))
             state['time'] = time.time()
             state['exposure_milliseconds'] = 100.
             timestamp = time.strftime('%Y-%m-%d_%H%M%S')

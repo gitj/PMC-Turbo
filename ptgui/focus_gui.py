@@ -9,7 +9,7 @@ from pmc_turbo.camera.image_processing import blosc_file
 import time
 
 pg.setConfigOptions(imageAxisOrder='row-major')
-#import pgview
+# import pgview
 
 root_path = '/'
 proxy = Pyro4.Proxy('PYRO:controller@0.0.0.0:50001')
@@ -36,12 +36,14 @@ class GUIWrapper():
         self.window = QtGui.QMainWindow()
         self.window.resize(800, 800)
 
+        self.real_time_values.setFeatures(QtGui.QDockWidget.NoDockWidgetFeatures)
         self.window.addDockWidget(QtCore.Qt.TopDockWidgetArea, self.real_time_values)
 
         self.imv = MyImageView(real_time_values=self.real_time_values)
         self.window.setCentralWidget(self.imv)
 
         self.toolbar = MyToolBar(guiwrapper=self)
+        self.toolbar.setMovable(False)
         self.window.addToolBar(QtCore.Qt.BottomToolBarArea, self.toolbar)
 
         self.focus_step = 10
@@ -130,7 +132,8 @@ class GUIWrapper():
 
     def autoupdate(self):
         while True:
-            self.imv.update(-1)
+            if self.toolbar.autoupdate_checkbox.isChecked():
+                self.imv.update(-1)
             time.sleep(1)
 
     def start_autoupdate_thread(self):
@@ -138,6 +141,10 @@ class GUIWrapper():
         self.update_thread.daemon = True
         print 'autoaupdate_started'
         self.update_thread.start()
+
+    def autolevel_button_state(self, button):
+        self.imv.autolevels = button.isChecked()
+        print 'Autolevel is %s' % str(button.isChecked())
 
 
 class MyImageView(pg.ImageView):
@@ -149,9 +156,10 @@ class MyImageView(pg.ImageView):
         self.mi = MergedIndex('*', data_dirs=[os.path.join(self.root_path, ('data%d' % k)) for k in range(1, 5)])
         self.last_index = 0
         self.real_time_values = real_time_values
-        self.update(-1, autoLevels=True, autoRange=True)
+        self.autolevels = True
+        self.update(-1, autoRange=True)
 
-    def update(self, index, autoLevels=True, autoRange=False):
+    def update(self, index, autoRange=False):
         self.mi.update()
         if index == -1:
             index = self.mi.df.index.max()
@@ -169,7 +177,7 @@ class MyImageView(pg.ImageView):
         if self.real_time_values:
             self.real_time_values.update_filename(filename)
         img, chunk = blosc_file.load_blosc_image(filename)
-        self.setImage(img, autoLevels=autoLevels, autoRange=autoRange)
+        self.setImage(img, autoLevels=self.autolevels, autoRange=autoRange)
 
     def keyPressEvent(self, ev):
         if ev.key() == QtCore.Qt.Key_N:
@@ -254,10 +262,31 @@ class MyToolBar(QtGui.QToolBar):
         absolute_layout.addWidget(self.exposure_edit, 1, 1)
         absolute_widget.setLayout(absolute_layout)
 
+        checkbox_widget = QtGui.QWidget()
+        checkbox_layout = QtGui.QGridLayout()
+        autoupdate_label = QtGui.QLabel()
+        autoupdate_label.setText('Autoupdate: ')
+        autolevel_label = QtGui.QLabel()
+        autolevel_label.setText('Autolevel: ')
+        self.autoupdate_checkbox = QtGui.QCheckBox()
+        self.autoupdate_checkbox.setChecked(False)
+        self.autolevel_checkbox = QtGui.QCheckBox()
+        self.autolevel_checkbox.setChecked(True)
+        checkbox_layout.addWidget(autoupdate_label, 0, 0)
+        checkbox_layout.addWidget(self.autoupdate_checkbox, 0, 1)
+        checkbox_layout.addWidget(autolevel_label, 1, 0)
+        checkbox_layout.addWidget(self.autolevel_checkbox, 1, 1)
+
+        self.autolevel_checkbox.stateChanged.connect(
+            lambda: self.guiwrapper.autolevel_button_state(self.autolevel_checkbox))
+
+        checkbox_widget.setLayout(checkbox_layout)
+
         self.addWidget(increase_decrease_focus_widget)
         self.addWidget(increase_decrease_exposure_widget)
         self.addWidget(step_increment_widget)
         self.addWidget(absolute_widget)
+        self.addWidget(checkbox_widget)
 
     def change_focus_step(self):
         self.guiwrapper.change_focus_step(self.focus_step_edit.text())
