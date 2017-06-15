@@ -39,12 +39,12 @@ class GUIWrapper():
         self.real_time_values.setFeatures(QtGui.QDockWidget.NoDockWidgetFeatures)
         self.window.addDockWidget(QtCore.Qt.TopDockWidgetArea, self.real_time_values)
 
-        self.imv = MyImageView(real_time_values=self.real_time_values)
-        self.window.setCentralWidget(self.imv)
-
         self.toolbar = MyToolBar(guiwrapper=self)
         self.toolbar.setMovable(False)
         self.window.addToolBar(QtCore.Qt.BottomToolBarArea, self.toolbar)
+
+        self.imv = MyImageView(guiwrapper=self, real_time_values=self.real_time_values)
+        self.window.setCentralWidget(self.imv)
 
         self.focus_step = 10
         self.exposure_step = 10e3
@@ -139,23 +139,19 @@ class GUIWrapper():
     def start_autoupdate_thread(self):
         self.update_thread = threading.Thread(target=self.autoupdate)
         self.update_thread.daemon = True
-        print 'autoaupdate_started'
+        print 'autoupdate_started'
         self.update_thread.start()
-
-    def autolevel_button_state(self, button):
-        self.imv.autolevels = button.isChecked()
-        print 'Autolevel is %s' % str(button.isChecked())
 
 
 class MyImageView(pg.ImageView):
-    # Autoupdates: add while loop to __main__, or add thread to start/stop autoupdating (too complicated?)
-    def __init__(self, real_time_values=None, *args, **kwargs):
+    def __init__(self, guiwrapper, real_time_values=None, *args, **kwargs):
         self.root_path = '/'
         print self.root_path
         super(MyImageView, self).__init__(*args, **kwargs)
         self.mi = MergedIndex('*', data_dirs=[os.path.join(self.root_path, ('data%d' % k)) for k in range(1, 5)])
         self.last_index = 0
         self.real_time_values = real_time_values
+        self.guiwrapper = guiwrapper
         self.autolevels = True
         self.update(-1, autoRange=True)
 
@@ -177,6 +173,8 @@ class MyImageView(pg.ImageView):
         if self.real_time_values:
             self.real_time_values.update_filename(filename)
         img, chunk = blosc_file.load_blosc_image(filename)
+        if self.guiwrapper:
+            self.autolevels = self.guiwrapper.toolbar.autolevel_checkbox.isChecked()
         self.setImage(img, autoLevels=self.autolevels, autoRange=autoRange)
 
     def keyPressEvent(self, ev):
@@ -212,9 +210,11 @@ class MyToolBar(QtGui.QToolBar):
         decrease_exposure_time.clicked.connect(self.guiwrapper.decrease_exposure_button_press)
 
         self.focus_step_edit = QtGui.QLineEdit()
+        self.focus_step_edit.setValidator(QtGui.QIntValidator())
         self.focus_step_edit.returnPressed.connect(self.change_focus_step)
 
         self.exposure_step_edit = QtGui.QLineEdit()
+        self.exposure_step_edit.setValidator(QtGui.QIntValidator())
         self.exposure_step_edit.returnPressed.connect(self.change_exposure_step)
 
         increase_decrease_focus_widget = QtGui.QWidget()
@@ -247,8 +247,10 @@ class MyToolBar(QtGui.QToolBar):
         absolute_layout = QtGui.QGridLayout()
 
         self.focus_edit = QtGui.QLineEdit()
+        self.focus_edit.setValidator(QtGui.QIntValidator())
         self.focus_edit.returnPressed.connect(self.change_focus)
         self.exposure_edit = QtGui.QLineEdit()
+        self.exposure_edit.setValidator(QtGui.QIntValidator())
         self.exposure_edit.returnPressed.connect(self.change_exposure)
 
         focus_label = QtGui.QLabel()
@@ -269,7 +271,7 @@ class MyToolBar(QtGui.QToolBar):
         autolevel_label = QtGui.QLabel()
         autolevel_label.setText('Autolevel: ')
         self.autoupdate_checkbox = QtGui.QCheckBox()
-        self.autoupdate_checkbox.setChecked(False)
+        self.autoupdate_checkbox.setChecked(True)
         self.autolevel_checkbox = QtGui.QCheckBox()
         self.autolevel_checkbox.setChecked(True)
         checkbox_layout.addWidget(autoupdate_label, 0, 0)
@@ -277,8 +279,9 @@ class MyToolBar(QtGui.QToolBar):
         checkbox_layout.addWidget(autolevel_label, 1, 0)
         checkbox_layout.addWidget(self.autolevel_checkbox, 1, 1)
 
-        self.autolevel_checkbox.stateChanged.connect(
-            lambda: self.guiwrapper.autolevel_button_state(self.autolevel_checkbox))
+        # self.autolevel_checkbox.stateChanged.connect(
+        #    lambda: self.guiwrapper.autolevel_button_state(self.autolevel_checkbox))
+        # Alternate way to do this.
 
         checkbox_widget.setLayout(checkbox_layout)
 
@@ -326,7 +329,7 @@ class RealTimeValues(QtGui.QDockWidget):
 
         exposure_title = QtGui.QLabel()
         layout.addWidget(exposure_title, 2, 0)
-        exposure_title.setText('Exposure: ')
+        exposure_title.setText('Exposure (microseconds): ')
 
         self.focus_value = QtGui.QLabel()
         layout.addWidget(self.focus_value, 1, 1)
