@@ -104,11 +104,13 @@ def display_status(stdscr,proxy):
 
 if __name__ == "__main__":
     import sys
+    import socket
     try:
         camera_id = int(sys.argv[1])
+        hostname = 'pmc-camera-%d' % camera_id
     except Exception:
-        camera_id = 2
-    proxy = Pyro4.Proxy('PYRO:pipeline@pmc-camera-%d:50000' % camera_id)
+        hostname = socket.gethostname()
+    proxy = Pyro4.Proxy('PYRO:pipeline@hostname:50000' % hostname)
     try:
         curses.wrapper(display_status,proxy)
     except KeyboardInterrupt:
