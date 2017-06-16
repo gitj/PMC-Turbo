@@ -110,7 +110,7 @@ if __name__ == "__main__":
         hostname = 'pmc-camera-%d' % camera_id
     except Exception:
         hostname = socket.gethostname()
-    proxy = Pyro4.Proxy('PYRO:pipeline@hostname:50000' % hostname)
+    proxy = Pyro4.Proxy('PYRO:pipeline@%s:50000' % hostname)
     try:
         curses.wrapper(display_status,proxy)
     except KeyboardInterrupt:
