@@ -292,6 +292,7 @@ class Communicator(GlobalConfiguration):
                                                                     request_id=file_format_classes.DEFAULT_REQUEST_ID,
                                                                     camera_id=self.cam_id).to_buffer()
                     logger.debug("Sending short status")
+                    self.last_autosend_timestamp = time.time()
                 else:
                     if self.synchronize_image_time_across_cameras and self.peer_polling_order_idx == 0:
                         self.request_synchronized_images()
