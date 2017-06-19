@@ -52,8 +52,10 @@ c.GlobalConfiguration.pipeline_pyro_port = 50000
 #  hirate downlink downlink speed in bytes per second. 0 means link is disabled.
 #  e.g. [("openport", ("192.168.1.70", 4501), 10000), ...]
 openport_destination_ip = '192.168.1.70'
-c.Communicator.hirate_link_parameters = [('openport', (openport_destination_ip, 4501), 100),
-                                         ]
+
+c.Communicator.hirate_link_parameters = [('highrate', ('pmc-serial-0', 5002), 0),
+                                         ('openport', (openport_destination_ip, 4501), 100),
+                                         ('los', ('pmc-serial-2', 5004), 0)]
 
 ## List of tuples - name, lowrate downlink address and lowrate uplink port.e.g.
 #  [("comm1", ("pmc-serial-1", 5001), 5001), ...]
