@@ -32,12 +32,15 @@ class GSEReceiverManager(GroundConfiguration):
         for link_name in self.downlinks_to_use:
             parameters = self.downlink_parameters[link_name]
             use_gse_packets = (link_name == GSE_SIP)
-            receiver = GSEReceiver(root_path=self.data_path,serial_port_or_socket_port=parameters['port'],
-                                                    baudrate=parameters['baudrate'], loop_interval=parameters['loop_interval'],
-                                                    use_gse_packets=use_gse_packets,name=link_name)
-            log.setup_file_handler(link_name,logger=receiver.logger)
-            self.receivers[link_name] = receiver
-            receiver.start_main_loop_thread()
+            try:
+                receiver = GSEReceiver(root_path=self.data_path,serial_port_or_socket_port=parameters['port'],
+                                                        baudrate=parameters['baudrate'], loop_interval=parameters['loop_interval'],
+                                                        use_gse_packets=use_gse_packets,name=link_name)
+                log.setup_file_handler(link_name,logger=receiver.logger)
+                self.receivers[link_name] = receiver
+                receiver.start_main_loop_thread()
+            except OSError:
+                logger.exception("Failed to setup link %s" % link_name)
 
     def get_file_status(self):
         result = {}

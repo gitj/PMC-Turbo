@@ -82,7 +82,7 @@ class GSEReceiver():
         while not self._exit:
             buffer = self.get_next_data()
             if not buffer:
-                self.logger.debug('Waiting for data')
+                self.logger.debug('%s: Waiting for data' % self.name)
                 continue
             with open(self.raw_filename, 'ab+') as f:
                 f.write(buffer)
