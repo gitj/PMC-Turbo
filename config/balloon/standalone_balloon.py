@@ -65,8 +65,8 @@ c.Communicator.initial_peer_polling_order = [get_camera_id()]
 
 c.Communicator.peers_with_battery_monitors = [4]
 
-c.Communicator.narrowfield_cameras = [1,2,3]
-c.Communicator.widefield_cameras = [4,5,6,7]
+c.Communicator.narrowfield_cameras = [4]
+c.Communicator.widefield_cameras = []
 
 ##
 c.Communicator.loop_interval = 0.01
