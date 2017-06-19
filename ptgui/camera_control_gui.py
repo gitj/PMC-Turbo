@@ -7,6 +7,7 @@ from pyqtgraph.Qt import QtCore, QtGui
 from pmc_turbo.camera.pipeline.indexer import MergedIndex
 from pmc_turbo.camera.image_processing import blosc_file
 import time
+import numpy as np
 
 pg.setConfigOptions(imageAxisOrder='row-major')
 # import pgview
@@ -32,16 +33,17 @@ class GUIWrapper():
             current_focus = '---'
             max_focus = '---'
             exposure = '---'
-        self.real_time_values = RealTimeValues(current_focus, max_focus, exposure)
+
         self.window = QtGui.QMainWindow()
         self.window.resize(800, 800)
 
+        self.real_time_values = RealTimeValues(current_focus, max_focus, exposure)
         self.real_time_values.setFeatures(QtGui.QDockWidget.NoDockWidgetFeatures)
         self.window.addDockWidget(QtCore.Qt.TopDockWidgetArea, self.real_time_values)
 
         self.toolbar = MyToolBar(guiwrapper=self)
-        self.toolbar.setMovable(False)
-        self.window.addToolBar(QtCore.Qt.BottomToolBarArea, self.toolbar)
+        self.toolbar.setFeatures(QtGui.QDockWidget.NoDockWidgetFeatures)
+        self.window.addDockWidget(QtCore.Qt.BottomDockWidgetArea, self.toolbar)
 
         self.imv = MyImageView(guiwrapper=self, real_time_values=self.real_time_values)
         self.window.setCentralWidget(self.imv)
@@ -119,6 +121,18 @@ class GUIWrapper():
         except Exception as e:
             print e
 
+    def change_aperture(self, fstop):
+        try:
+            fstop = float(fstop)
+            #if self.proxy:
+                #self.proxy.send_arbitrary_camera_command
+            # Find the command.
+            self.fstop = fstop
+            print 'Changed fstop to %f' % self.fstop
+            self.real_time_values.update_fstop(self.stop)
+        except Exception as e:
+            print e
+
     def change_exposure(self, exposure):
         exposure = int(exposure)
         try:
@@ -153,6 +167,7 @@ class MyImageView(pg.ImageView):
         self.real_time_values = real_time_values
         self.guiwrapper = guiwrapper
         self.autolevels = True
+        self.absolute_levels = False
         self.update(-1, autoRange=True)
 
     def update(self, index, autoRange=False):
@@ -175,7 +190,14 @@ class MyImageView(pg.ImageView):
         img, chunk = blosc_file.load_blosc_image(filename)
         if self.guiwrapper:
             self.autolevels = self.guiwrapper.toolbar.autolevel_checkbox.isChecked()
+            self.absolute_levels = self.guiwrapper.toolbar.absolute_level_checkbox.isChecked()
+
+        m = np.ma.masked_where(img > 16383, img)
+        print m.mask
+
         self.setImage(img, autoLevels=self.autolevels, autoRange=autoRange)
+        if self.absolute_levels:
+            self.setLevels(0, 16384)
 
     def keyPressEvent(self, ev):
         if ev.key() == QtCore.Qt.Key_N:
@@ -191,11 +213,13 @@ class MyImageView(pg.ImageView):
         super(MyImageView, self).keyPressEvent(ev)
 
 
-class MyToolBar(QtGui.QToolBar):
+class MyToolBar(QtGui.QDockWidget):
     def __init__(self, guiwrapper, *args, **kwargs):
         super(MyToolBar, self).__init__(*args, **kwargs)
         self.guiwrapper = guiwrapper
         print self.guiwrapper
+        self.tab_widget = QtGui.QTabWidget()
+        self.setWidget(self.tab_widget)
         self.setup_layout()
 
     def setup_layout(self):
@@ -279,17 +303,35 @@ class MyToolBar(QtGui.QToolBar):
         checkbox_layout.addWidget(autolevel_label, 1, 0)
         checkbox_layout.addWidget(self.autolevel_checkbox, 1, 1)
 
+        self.absolute_level_checkbox = QtGui.QCheckBox()
+        self.absolute_level_checkbox.setChecked(False)
+        absolute_level_label = QtGui.QLabel()
+        absolute_level_label.setText('Absolute level: ')
+        checkbox_layout.addWidget(absolute_level_label, 2, 0)
+        checkbox_layout.addWidget(self.absolute_level_checkbox, 2, 1)
+
         # self.autolevel_checkbox.stateChanged.connect(
         #    lambda: self.guiwrapper.autolevel_button_state(self.autolevel_checkbox))
         # Alternate way to do this.
 
         checkbox_widget.setLayout(checkbox_layout)
 
-        self.addWidget(increase_decrease_focus_widget)
-        self.addWidget(increase_decrease_exposure_widget)
-        self.addWidget(step_increment_widget)
-        self.addWidget(absolute_widget)
-        self.addWidget(checkbox_widget)
+        self.tab1 = increase_decrease_focus_widget
+        self.tab2 = increase_decrease_exposure_widget
+        self.tab3 = step_increment_widget
+        self.tab4 = absolute_widget
+        self.tab5 = checkbox_widget
+        self.tab_widget.addTab(self.tab1, "1")
+        self.tab_widget.addTab(self.tab2, "2")
+        self.tab_widget.addTab(self.tab3, "3")
+        self.tab_widget.addTab(self.tab4, "4")
+        self.tab_widget.addTab(self.tab5, "5")
+        #
+        #self.addWidget(increase_decrease_focus_widget)
+        #self.addWidget(increase_decrease_exposure_widget)
+        #self.addWidget(step_increment_widget)
+        #self.addWidget(absolute_widget)
+        #self.addWidget(checkbox_widget)
 
     def change_focus_step(self):
         self.guiwrapper.change_focus_step(self.focus_step_edit.text())
