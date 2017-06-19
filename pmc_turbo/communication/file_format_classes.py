@@ -212,6 +212,10 @@ class UnhandledExceptionFile(FileBase):
     file_type = 8
     _preferred_extension = '.exception'
 
+class ShortStatusFile(FileBase):
+    file_type = 9
+    _preferred_extension = '.short_status'
+
 try:
     file_classes = [eval(k) for k in dir() if k.endswith('File')]
     file_type_to_class = dict([(k.file_type, k) for k in file_classes])

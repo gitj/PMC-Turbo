@@ -56,6 +56,7 @@ class Communicator(GlobalConfiguration):
     narrowfield_cameras=List(trait=Int).tag(config=True)
     battery_monitor_port = Unicode('/dev/ttyUSB0').tag(config=True)
     loop_interval = Float(default_value=0.01, allow_none=False, min=0).tag(config=True)
+    autosend_short_status_interval = Float(default_value=30.0,min=0).tag(config=True)
     lowrate_link_parameters = List(
         trait=Tuple(Enum(("comm1", "comm2")), TCPAddress(), Int(default_value=5001, min=1024, max=65535)),
         help='List of tuples - link name, lowrate downlink address and lowrate uplink port.'
@@ -143,6 +144,8 @@ class Communicator(GlobalConfiguration):
         self.main_thread = None
         self.lowrate_uplink = None
         self.buffer_for_downlink = struct.pack('>255B', *([0] * 255))
+
+        self.last_autosend_timestamp = 0
 
         self.command_logger = command_classes.CommandLogger()
 
@@ -283,29 +286,35 @@ class Communicator(GlobalConfiguration):
                 'Communicator has no peers. This should never happen; leader at minimum has self as peer.')  # pragma: no cover
         for link in self.downlinks.values():
             if link.has_bandwidth():
-                if self.synchronize_image_time_across_cameras and self.peer_polling_order_idx == 0:
-                    self.request_synchronized_images()
-                logger.debug('Getting next data from camera %d' % self.peer_polling_order[self.peer_polling_order_idx])
-                next_data = None
-                active_peer = self.peers[self.peer_polling_order[self.peer_polling_order_idx]]
-                try:
-                    if self.check_peer_connection(active_peer):
-                        next_data = active_peer.get_next_data()  # pyro call
-                except Pyro4.errors.CommunicationError as e:
-                    active_peer_string = str(active_peer._pyroUri)
-                    error_counter_key = 'pmc_%d_communication_error_counts' % self.peer_polling_order[
-                        self.peer_polling_order_idx]
-                    self.error_counter.counters[error_counter_key].increment()
-                    logger.debug('Connection to peer at URI %s failed. Error counter - %r. Error message: %s' % (
-                        active_peer_string, self.error_counter.counters[error_counter_key], str(e)))
-                except Exception as e:
-                    payload = str(e)
-                    payload += "".join(Pyro4.util.getPyroTraceback())
-                    exception_file = file_format_classes.UnhandledExceptionFile(payload=payload,
-                                                                                request_id=file_format_classes.DEFAULT_REQUEST_ID,
-                                                                                camera_id=self.peer_polling_order[
-                                                                                    self.peer_polling_order_idx])
-                    next_data = exception_file.to_buffer()
+                if time.time() - self.last_autosend_timestamp > self.autosend_short_status_interval:
+                    next_data = file_format_classes.ShortStatusFile(payload=self.get_next_status_summary(),
+                                                                    request_id=file_format_classes.DEFAULT_REQUEST_ID,
+                                                                    camera_id=self.cam_id).to_buffer()
+                    logger.debug("Sending short status")
+                else:
+                    if self.synchronize_image_time_across_cameras and self.peer_polling_order_idx == 0:
+                        self.request_synchronized_images()
+                    logger.debug('Getting next data from camera %d' % self.peer_polling_order[self.peer_polling_order_idx])
+                    next_data = None
+                    active_peer = self.peers[self.peer_polling_order[self.peer_polling_order_idx]]
+                    try:
+                        if self.check_peer_connection(active_peer):
+                            next_data = active_peer.get_next_data()  # pyro call
+                    except Pyro4.errors.CommunicationError as e:
+                        active_peer_string = str(active_peer._pyroUri)
+                        error_counter_key = 'pmc_%d_communication_error_counts' % self.peer_polling_order[
+                            self.peer_polling_order_idx]
+                        self.error_counter.counters[error_counter_key].increment()
+                        logger.debug('Connection to peer at URI %s failed. Error counter - %r. Error message: %s' % (
+                            active_peer_string, self.error_counter.counters[error_counter_key], str(e)))
+                    except Exception as e:
+                        payload = str(e)
+                        payload += "".join(Pyro4.util.getPyroTraceback())
+                        exception_file = file_format_classes.UnhandledExceptionFile(payload=payload,
+                                                                                    request_id=file_format_classes.DEFAULT_REQUEST_ID,
+                                                                                    camera_id=self.peer_polling_order[
+                                                                                        self.peer_polling_order_idx])
+                        next_data = exception_file.to_buffer()
 
                 if not next_data:
                     logger.debug('No data was obtained.')
