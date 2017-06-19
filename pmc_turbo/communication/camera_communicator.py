@@ -51,6 +51,7 @@ END_BYTE = chr(constants.SIP_END_BYTE)
 @Pyro4.expose
 class Communicator(GlobalConfiguration):
     initial_peer_polling_order = List(trait=Int).tag(config=True)
+    initial_leader_id = Int(default_value=0,min=0,max=7).tag(config=True)
     peers_with_battery_monitors = List(trait=Int).tag(config=True)
     widefield_cameras = List(trait=Int).tag(config=True)
     narrowfield_cameras=List(trait=Int).tag(config=True)
@@ -87,7 +88,7 @@ class Communicator(GlobalConfiguration):
         self.port = pyro_port
         logger.debug('Communicator initialized')
         self.cam_id = cam_id
-        self.leader_id = 0  # this will be deprecated when the full election is in place.
+        self.leader_id = self.initial_leader_id
         self.become_leader = False
         self.battery_monitor = None
 

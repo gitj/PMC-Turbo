@@ -63,7 +63,9 @@ c.Communicator.charge_controller_settings = []
 
 c.Communicator.battery_monitor_port = ""
 ##
-c.Communicator.initial_peer_polling_order = [get_camera_id()]
+c.Communicator.initial_peer_polling_order = [camera_id]
+
+c.Communicator.initial_leader_id = camera_id
 
 c.Communicator.peers_with_battery_monitors = []
 
