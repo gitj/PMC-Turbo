@@ -28,30 +28,36 @@ class GUIWrapper():
             # min_focus = initial_status['all_camera_parameters']['EFLensFocusMin']
             max_focus = initial_status['all_camera_parameters']['EFLensFocusMax']
             exposure = initial_status['all_camera_parameters']['ExposureTimeAbs']
+            fstop = initial_status['all_camera_parameters']['EFLensFStopCurrent']
+            min_fstop = initial_status['all_camera_parameters']['EFLensFStopMin']
+            max_fstop = initial_status['all_camera_parameters']['EFLensFStopMax']
         else:
             self.proxy = None
             current_focus = '---'
             max_focus = '---'
             exposure = '---'
+            fstop = '---'
+            min_fstop = '---'
+            max_fstop = '---'
 
         self.window = QtGui.QMainWindow()
         self.window.resize(800, 800)
 
-        self.real_time_values = RealTimeValues(current_focus, max_focus, exposure)
-        self.real_time_values.setFeatures(QtGui.QDockWidget.NoDockWidgetFeatures)
-        self.window.addDockWidget(QtCore.Qt.TopDockWidgetArea, self.real_time_values)
+        self.focus_step = int(float(current_focus) / 50.)
+        self.exposure_step = int(float(exposure) / 50.)
+        self.focus = int(current_focus)
+        self.exposure = float(exposure)
+        self.fstop = fstop
+
+        self.status_bar = StatusBar(current_focus, max_focus, exposure, fstop, min_fstop, max_fstop)
+
+        self.window.addDockWidget(QtCore.Qt.TopDockWidgetArea, self.status_bar)
 
         self.toolbar = MyToolBar(guiwrapper=self)
-        self.toolbar.setFeatures(QtGui.QDockWidget.NoDockWidgetFeatures)
         self.window.addDockWidget(QtCore.Qt.BottomDockWidgetArea, self.toolbar)
 
-        self.imv = MyImageView(guiwrapper=self, real_time_values=self.real_time_values)
+        self.imv = MyImageView(guiwrapper=self, real_time_values=self.status_bar)
         self.window.setCentralWidget(self.imv)
-
-        self.focus_step = 10
-        self.exposure_step = 10e3
-        self.focus = 2000
-        self.exposure = 100e3
 
         if autoupdate:
             self.start_autoupdate_thread()
@@ -63,7 +69,7 @@ class GUIWrapper():
                 self.proxy.set_focus(focus_step)
             self.focus = focus_step
             print 'Increased focus to %d' % self.focus
-            self.real_time_values.update_focus(self.focus)
+            self.status_bar.update_focus(self.focus)
         except Exception as e:
             print e
 
@@ -74,7 +80,7 @@ class GUIWrapper():
                 self.proxy.set_focus(focus_step)
             self.focus = focus_step
             print 'Decreased focus to %d' % self.focus
-            self.real_time_values.update_focus(self.focus)
+            self.status_bar.update_focus(self.focus)
         except Exception as e:
             print e
 
@@ -85,7 +91,7 @@ class GUIWrapper():
                 self.proxy.set_exposure(exposure_us)
             self.exposure = exposure_us
             print 'Increased exposure to %d' % self.exposure
-            self.real_time_values.update_exposure(self.exposure)
+            self.status_bar.update_exposure(self.exposure)
         except Exception as e:
             print e
 
@@ -96,7 +102,7 @@ class GUIWrapper():
                 self.proxy.set_exposure(exposure_us)
             self.exposure = exposure_us
             print 'Increased exposure to %d' % self.exposure
-            self.real_time_values.update_exposure(self.exposure)
+            self.status_bar.update_exposure(self.exposure)
         except Exception as e:
             print e
 
@@ -117,19 +123,20 @@ class GUIWrapper():
                 self.proxy.set_focus(focus)
             self.focus = focus
             print 'Changed focus to %d' % self.focus
-            self.real_time_values.update_focus(self.focus)
+            self.status_bar.update_focus(self.focus)
         except Exception as e:
             print e
 
-    def change_aperture(self, fstop):
+    def change_fstop(self, fstop):
         try:
             fstop = float(fstop)
-            #if self.proxy:
-                #self.proxy.send_arbitrary_camera_command
-            # Find the command.
-            self.fstop = fstop
-            print 'Changed fstop to %f' % self.fstop
-            self.real_time_values.update_fstop(self.stop)
+            if self.proxy:
+                self.proxy.send_arbitrary_camera_command('EFLensFStopCurrent', fstop)
+            initial_status = self.proxy.get_pipeline_status()
+            current_fstop = initial_status['all_camera_parameters']['EFLensFStopCurrent']
+            self.fstop = current_fstop
+            print 'Changed fstop to %s' % self.fstop
+            self.status_bar.update_fstop(self.fstop)
         except Exception as e:
             print e
 
@@ -140,7 +147,7 @@ class GUIWrapper():
                 self.proxy.set_exposure(exposure)
             self.exposure = exposure
             print 'Changed exposure to %d' % self.exposure
-            self.real_time_values.update_exposure(self.exposure)
+            self.status_bar.update_exposure(self.exposure)
         except Exception as e:
             print e
 
@@ -164,13 +171,14 @@ class MyImageView(pg.ImageView):
         super(MyImageView, self).__init__(*args, **kwargs)
         self.mi = MergedIndex('*', data_dirs=[os.path.join(self.root_path, ('data%d' % k)) for k in range(1, 5)])
         self.last_index = 0
-        self.real_time_values = real_time_values
+        self.status_bar = real_time_values
         self.guiwrapper = guiwrapper
         self.autolevels = True
+        self.autorange = False
         self.absolute_levels = False
-        self.update(-1, autoRange=True)
+        self.update(-1)
 
-    def update(self, index, autoRange=False):
+    def update(self, index):
         self.mi.update()
         if index == -1:
             index = self.mi.df.index.max()
@@ -185,17 +193,18 @@ class MyImageView(pg.ImageView):
         filename = latest['filename']
         filename = os.path.join(self.root_path, filename[1:])
         print filename
-        if self.real_time_values:
-            self.real_time_values.update_filename(filename)
+        if self.status_bar:
+            self.status_bar.update_filename(filename)
         img, chunk = blosc_file.load_blosc_image(filename)
         if self.guiwrapper:
             self.autolevels = self.guiwrapper.toolbar.autolevel_checkbox.isChecked()
             self.absolute_levels = self.guiwrapper.toolbar.absolute_level_checkbox.isChecked()
+            self.autorange = self.guiwrapper.toolbar.autorange_checkbox.isChecked()
 
-        m = np.ma.masked_where(img > 16383, img)
-        print m.mask
+        # m = np.ma.masked_where(img > 16383, img)
+        # print m.mask
 
-        self.setImage(img, autoLevels=self.autolevels, autoRange=autoRange)
+        self.setImage(img, autoLevels=self.autolevels, autoRange=self.autorange)
         if self.absolute_levels:
             self.setLevels(0, 16384)
 
@@ -217,6 +226,9 @@ class MyToolBar(QtGui.QDockWidget):
     def __init__(self, guiwrapper, *args, **kwargs):
         super(MyToolBar, self).__init__(*args, **kwargs)
         self.guiwrapper = guiwrapper
+        self.setWindowTitle("Controls")
+        self.setFeatures(QtGui.QDockWidget.NoDockWidgetFeatures)
+        self.setFeatures(QtGui.QDockWidget.DockWidgetVerticalTitleBar)
         print self.guiwrapper
         self.tab_widget = QtGui.QTabWidget()
         self.setWidget(self.tab_widget)
@@ -241,34 +253,10 @@ class MyToolBar(QtGui.QDockWidget):
         self.exposure_step_edit.setValidator(QtGui.QIntValidator())
         self.exposure_step_edit.returnPressed.connect(self.change_exposure_step)
 
-        increase_decrease_focus_widget = QtGui.QWidget()
-        increase_decrease_focus_layout = QtGui.QGridLayout()
-        increase_decrease_focus_layout.addWidget(increase_focus, 0, 0)
-        increase_decrease_focus_layout.addWidget(decrease_focus, 1, 0)
-        increase_decrease_focus_widget.setLayout(increase_decrease_focus_layout)
-
-        increase_decrease_exposure_widget = QtGui.QWidget()
-        increase_decrease_exposure_layout = QtGui.QGridLayout()
-        increase_decrease_exposure_layout.addWidget(increase_exposure_time, 0, 0)
-        increase_decrease_exposure_layout.addWidget(decrease_exposure_time, 1, 0)
-        increase_decrease_exposure_widget.setLayout(increase_decrease_exposure_layout)
-
-        step_increment_widget = QtGui.QWidget()
-        step_increment_layout = QtGui.QGridLayout()
-
         focus_step_label = QtGui.QLabel()
         focus_step_label.setText('Focus Step: ')
-        step_increment_layout.addWidget(focus_step_label, 0, 0)
-        step_increment_layout.addWidget(self.focus_step_edit, 0, 1)
-
         exposure_step_label = QtGui.QLabel()
         exposure_step_label.setText('Exposure Step: ')
-        step_increment_layout.addWidget(exposure_step_label, 1, 0)
-        step_increment_layout.addWidget(self.exposure_step_edit, 1, 1)
-        step_increment_widget.setLayout(step_increment_layout)
-
-        absolute_widget = QtGui.QWidget()
-        absolute_layout = QtGui.QGridLayout()
 
         self.focus_edit = QtGui.QLineEdit()
         self.focus_edit.setValidator(QtGui.QIntValidator())
@@ -276,20 +264,19 @@ class MyToolBar(QtGui.QDockWidget):
         self.exposure_edit = QtGui.QLineEdit()
         self.exposure_edit.setValidator(QtGui.QIntValidator())
         self.exposure_edit.returnPressed.connect(self.change_exposure)
+        self.fstop_edit = QtGui.QLineEdit()
+        self.fstop_edit.setValidator(QtGui.QDoubleValidator())
+        self.fstop_edit.returnPressed.connect(self.change_fstop)
 
         focus_label = QtGui.QLabel()
         focus_label.setText('Set Focus: ')
-        absolute_layout.addWidget(focus_label, 0, 0)
-        absolute_layout.addWidget(self.focus_edit, 0, 1)
 
         exposure_label = QtGui.QLabel()
         exposure_label.setText('Set Exposure: ')
-        absolute_layout.addWidget(exposure_label, 1, 0)
-        absolute_layout.addWidget(self.exposure_edit, 1, 1)
-        absolute_widget.setLayout(absolute_layout)
 
-        checkbox_widget = QtGui.QWidget()
-        checkbox_layout = QtGui.QGridLayout()
+        fstop_label = QtGui.QLabel()
+        fstop_label.setText('Set FStop: ')
+
         autoupdate_label = QtGui.QLabel()
         autoupdate_label.setText('Autoupdate: ')
         autolevel_label = QtGui.QLabel()
@@ -298,40 +285,55 @@ class MyToolBar(QtGui.QDockWidget):
         self.autoupdate_checkbox.setChecked(True)
         self.autolevel_checkbox = QtGui.QCheckBox()
         self.autolevel_checkbox.setChecked(True)
-        checkbox_layout.addWidget(autoupdate_label, 0, 0)
-        checkbox_layout.addWidget(self.autoupdate_checkbox, 0, 1)
-        checkbox_layout.addWidget(autolevel_label, 1, 0)
-        checkbox_layout.addWidget(self.autolevel_checkbox, 1, 1)
-
         self.absolute_level_checkbox = QtGui.QCheckBox()
         self.absolute_level_checkbox.setChecked(False)
         absolute_level_label = QtGui.QLabel()
         absolute_level_label.setText('Absolute level: ')
-        checkbox_layout.addWidget(absolute_level_label, 2, 0)
-        checkbox_layout.addWidget(self.absolute_level_checkbox, 2, 1)
+        autorange_label = QtGui.QLabel()
+        autorange_label.setText('Autorange: ')
+        self.autorange_checkbox = QtGui.QCheckBox()
+        self.autorange_checkbox.setChecked(True)
 
         # self.autolevel_checkbox.stateChanged.connect(
         #    lambda: self.guiwrapper.autolevel_button_state(self.autolevel_checkbox))
         # Alternate way to do this.
 
-        checkbox_widget.setLayout(checkbox_layout)
+        basic_tab_widget = QtGui.QWidget()
+        basic_tab_layout = QtGui.QGridLayout()
+        basic_tab_widget.setLayout(basic_tab_layout)
 
-        self.tab1 = increase_decrease_focus_widget
-        self.tab2 = increase_decrease_exposure_widget
-        self.tab3 = step_increment_widget
-        self.tab4 = absolute_widget
-        self.tab5 = checkbox_widget
-        self.tab_widget.addTab(self.tab1, "1")
-        self.tab_widget.addTab(self.tab2, "2")
-        self.tab_widget.addTab(self.tab3, "3")
-        self.tab_widget.addTab(self.tab4, "4")
-        self.tab_widget.addTab(self.tab5, "5")
-        #
-        #self.addWidget(increase_decrease_focus_widget)
-        #self.addWidget(increase_decrease_exposure_widget)
-        #self.addWidget(step_increment_widget)
-        #self.addWidget(absolute_widget)
-        #self.addWidget(checkbox_widget)
+        basic_tab_layout.addWidget(increase_exposure_time, 0, 0)
+        basic_tab_layout.addWidget(decrease_exposure_time, 1, 0)
+
+        basic_tab_layout.addWidget(autoupdate_label, 0, 1)
+        basic_tab_layout.addWidget(self.autoupdate_checkbox, 0, 2)
+        basic_tab_layout.addWidget(autorange_label, 1, 1)
+        basic_tab_layout.addWidget(self.autorange_checkbox, 1, 2)
+        basic_tab_layout.addWidget(autolevel_label, 0, 3)
+        basic_tab_layout.addWidget(self.autolevel_checkbox, 0, 4)
+        basic_tab_layout.addWidget(absolute_level_label, 1, 3)
+        basic_tab_layout.addWidget(self.absolute_level_checkbox, 1, 4)
+
+        advanced_tab_widget = QtGui.QWidget()
+        advanced_tab_layout = QtGui.QGridLayout()
+        advanced_tab_widget.setLayout(advanced_tab_layout)
+        advanced_tab_layout.addWidget(focus_label, 0, 0)
+        advanced_tab_layout.addWidget(self.focus_edit, 0, 1)
+        advanced_tab_layout.addWidget(exposure_label, 1, 0)
+        advanced_tab_layout.addWidget(self.exposure_edit, 1, 1)
+        advanced_tab_layout.addWidget(increase_focus, 0, 2)
+        advanced_tab_layout.addWidget(decrease_focus, 1, 2)
+        advanced_tab_layout.addWidget(exposure_step_label, 0, 3)
+        advanced_tab_layout.addWidget(self.exposure_step_edit, 0, 4)
+        advanced_tab_layout.addWidget(focus_step_label, 1, 3)
+        advanced_tab_layout.addWidget(self.focus_step_edit, 1, 4)
+        advanced_tab_layout.addWidget(fstop_label, 1, 5)
+        advanced_tab_layout.addWidget(self.fstop_edit, 1, 6)
+
+        self.tab1 = basic_tab_widget
+        self.tab2 = advanced_tab_widget
+        self.tab_widget.addTab(self.tab1, "Basic")
+        self.tab_widget.addTab(self.tab2, "Advanced")
 
     def change_focus_step(self):
         self.guiwrapper.change_focus_step(self.focus_step_edit.text())
@@ -349,11 +351,18 @@ class MyToolBar(QtGui.QDockWidget):
         self.guiwrapper.change_exposure(self.exposure_edit.text())
         print self.exposure_edit.text()
 
+    def change_fstop(self):
+        self.guiwrapper.change_fstop(self.fstop_edit.text())
+        print self.fstop_edit.text()
 
-class RealTimeValues(QtGui.QDockWidget):
-    def __init__(self, current_focus, max_focus, exposure, *args, **kwargs):
+
+class StatusBar(QtGui.QDockWidget):
+    def __init__(self, current_focus, max_focus, exposure, fstop, min_fstop, max_fstop, *args, **kwargs):
         # super(RealTimeValues,self).__init__("Status", *args,**kwargs)
-        super(RealTimeValues, self).__init__(*args, **kwargs)
+        super(StatusBar, self).__init__(*args, **kwargs)
+        self.setWindowTitle("Status")
+        self.setFeatures(QtGui.QDockWidget.NoDockWidgetFeatures)
+        self.setFeatures(QtGui.QDockWidget.DockWidgetVerticalTitleBar)
         multiwidget = QtGui.QWidget()
         layout = QtGui.QGridLayout()
 
@@ -366,24 +375,33 @@ class RealTimeValues(QtGui.QDockWidget):
         self.filename_value.setText('---')
 
         focus_title = QtGui.QLabel()
-        layout.addWidget(focus_title, 1, 0)
+        layout.addWidget(focus_title, 0, 2)
         focus_title.setText('Focus (max %s):' % max_focus)
 
         exposure_title = QtGui.QLabel()
-        layout.addWidget(exposure_title, 2, 0)
+        layout.addWidget(exposure_title, 1, 0)
         exposure_title.setText('Exposure (microseconds): ')
 
         self.focus_value = QtGui.QLabel()
-        layout.addWidget(self.focus_value, 1, 1)
+        layout.addWidget(self.focus_value, 0, 3)
 
         self.exposure_value = QtGui.QLabel()
-        layout.addWidget(self.exposure_value, 2, 1)
+        layout.addWidget(self.exposure_value, 1, 1)
+
+        fstop_title = QtGui.QLabel()
+        layout.addWidget(fstop_title, 1, 2)
+        fstop_title.setText('Aperture (%s - %s): ' % (min_fstop, max_fstop))
+
+        self.fstop_value = QtGui.QLabel()
+        layout.addWidget(self.fstop_value, 1, 3)
+        self.fstop_value.setText('1.24')
 
         multiwidget.setLayout(layout)
         self.setWidget(multiwidget)
 
         self.update_focus(current_focus)
         self.update_exposure(exposure)
+        self.update_fstop(fstop)
 
     def update_filename(self, filename):
         filename = (filename.split('/')[-1]).split('f')[0][:-1]
@@ -394,6 +412,9 @@ class RealTimeValues(QtGui.QDockWidget):
 
     def update_exposure(self, exposure):
         self.exposure_value.setText(str(exposure))
+
+    def update_fstop(self, fstop):
+        self.fstop_value.setText(str(fstop))
 
 
 if __name__ == "__main__":
