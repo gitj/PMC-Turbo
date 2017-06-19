@@ -65,7 +65,7 @@ c.Communicator.battery_monitor_port = ""
 ##
 c.Communicator.initial_peer_polling_order = [get_camera_id()]
 
-c.Communicator.peers_with_battery_monitors = [4]
+c.Communicator.peers_with_battery_monitors = []
 
 c.Communicator.narrowfield_cameras = [4]
 c.Communicator.widefield_cameras = []
