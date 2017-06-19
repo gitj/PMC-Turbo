@@ -58,9 +58,9 @@ class Communicator(GlobalConfiguration):
     loop_interval = Float(default_value=0.01, allow_none=False, min=0).tag(config=True)
     autosend_short_status_interval = Float(default_value=30.0,min=0).tag(config=True)
     lowrate_link_parameters = List(
-        trait=Tuple(Enum(("comm1", "comm2")), TCPAddress(), Int(default_value=5001, min=1024, max=65535)),
+        trait=Tuple(Enum(("comm1", "comm2", "openport")), TCPAddress(), Int(default_value=5001, min=1024, max=65535)),
         help='List of tuples - link name, lowrate downlink address and lowrate uplink port.'
-             'e.g. [(("pmc-serial-1", 5001), 5001), ...]').tag(config=True)
+             'e.g. [("comm1",("pmc-serial-1", 5001), 5001), ...]').tag(config=True)
     hirate_link_parameters = List(trait=Tuple(Enum(("openport", "highrate", "los")), TCPAddress(), Int(min=0)),
                                   help='List of tuples - hirate downlink name, Enum(("openport", "highrate", "los"))'
                                        'hirate downlink address,'

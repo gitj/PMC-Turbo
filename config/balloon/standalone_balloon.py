@@ -56,8 +56,8 @@ c.Communicator.hirate_link_parameters = [('openport', (openport_destination_ip, 
                                          ]
 
 ## List of tuples - name, lowrate downlink address and lowrate uplink port.e.g.
-#  [(("pmc-serial-1", 5001), 5001), ...]
-c.Communicator.lowrate_link_parameters = [((openport_destination_ip,5001), 5001)]
+#  [("comm1", ("pmc-serial-1", 5001), 5001), ...]
+c.Communicator.lowrate_link_parameters = [("openport", (openport_destination_ip,5001), 5001)]
 
 c.Communicator.charge_controller_settings = []
 ##
