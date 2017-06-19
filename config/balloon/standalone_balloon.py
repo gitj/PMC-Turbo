@@ -60,6 +60,8 @@ c.Communicator.hirate_link_parameters = [('openport', (openport_destination_ip, 
 c.Communicator.lowrate_link_parameters = [("openport", (openport_destination_ip,5001), 5001)]
 
 c.Communicator.charge_controller_settings = []
+
+c.Communicator.battery_monitor_port = ""
 ##
 c.Communicator.initial_peer_polling_order = [get_camera_id()]
 
