@@ -35,6 +35,7 @@ class GUIWrapper():
             min_fstop = '---'
             max_fstop = '---'
 
+        self.autoupdate_interval = 3
         self.window = QtGui.QMainWindow()
         self.window.resize(800, 800)
 
@@ -150,7 +151,7 @@ class GUIWrapper():
         while True:
             if self.toolbar.autoupdate_checkbox.isChecked():
                 self.imv.update()
-            time.sleep(1)
+            time.sleep(self.autoupdate_interval)
 
     def start_autoupdate_thread(self):
         self.update_thread = threading.Thread(target=self.autoupdate)
