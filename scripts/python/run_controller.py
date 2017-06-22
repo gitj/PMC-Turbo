@@ -40,5 +40,5 @@ if __name__ == "__main__":
     pmc_turbo.utils.log.setup_stream_handler(level = pmc_turbo.utils.log.logging.DEBUG)
     pmc_turbo.utils.log.setup_file_handler('controller')
     app = ControllerApp()
-    app.initialize(unicode(sys.argv))
+    app.initialize(sys.argv)
     app.start()
