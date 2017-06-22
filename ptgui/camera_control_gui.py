@@ -107,6 +107,21 @@ class GUIWrapper():
         except Exception as e:
             print e
 
+    def restore_default_button_press(self):
+        try:
+            if self.proxy:
+                self.proxy.set_exposure(1000)
+            self.exposure = 1000
+            print 'Exposure set to %d' % self.exposure
+            self.status_bar.update_exposure(self.exposure)
+            if self.proxy:
+                self.proxy.set_focus(2050)
+            self.exposure = 2050
+            print 'Focus set to %d' % self.focus
+            self.status_bar.update_focus(self.focus)
+        except Exception as e:
+            print e
+
     def change_focus_step(self, focus_step):
         focus_step = int(focus_step)
         self.focus_step = focus_step
@@ -240,11 +255,13 @@ class MyToolBar(QtGui.QDockWidget):
         decrease_focus = QtGui.QPushButton("Decrease Focus", self.guiwrapper.window)
         increase_exposure_time = QtGui.QPushButton("Increase Exposure Time", self.guiwrapper.window)
         decrease_exposure_time = QtGui.QPushButton("Decrease Exposure Time", self.guiwrapper.window)
+        restore_default = QtGui.QPushButton("Restore Default", self.guiwrapper.window)
 
         increase_focus.clicked.connect(self.guiwrapper.increase_focus_button_press)
         decrease_focus.clicked.connect(self.guiwrapper.decrease_focus_button_press)
         increase_exposure_time.clicked.connect(self.guiwrapper.increase_exposure_button_press)
         decrease_exposure_time.clicked.connect(self.guiwrapper.decrease_exposure_button_press)
+        restore_default.clicked.connect(self.guiwrapper.restore_default_button_press)
 
         self.focus_step_edit = QtGui.QLineEdit()
         self.focus_step_edit.setValidator(QtGui.QIntValidator())
@@ -314,6 +331,8 @@ class MyToolBar(QtGui.QDockWidget):
         basic_tab_layout.addWidget(self.autolevel_checkbox, 0, 4)
         basic_tab_layout.addWidget(absolute_level_label, 1, 3)
         basic_tab_layout.addWidget(self.absolute_level_checkbox, 1, 4)
+
+        basic_tab_layout.addWidget(restore_default, 1,5)
 
         advanced_tab_widget = QtGui.QWidget()
         advanced_tab_layout = QtGui.QGridLayout()
