@@ -24,6 +24,7 @@ class ControllerApp(Application):
                 fh.write(self.generate_config_file())
                 self.exit()
         if self.config_file:
+            print 'Using config file %r' % self.config_file
             self.load_config_file(self.config_file)
         self.controller = Controller(config=self.config)
 
