@@ -116,7 +116,7 @@ class GUIWrapper():
             self.status_bar.update_exposure(self.exposure)
             if self.proxy:
                 self.proxy.set_focus(2050)
-            self.exposure = 2050
+            self.focus = 2050
             print 'Focus set to %d' % self.focus
             self.status_bar.update_focus(self.focus)
         except Exception as e:
