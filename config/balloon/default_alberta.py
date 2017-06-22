@@ -42,3 +42,13 @@ c.GlobalConfiguration.log_dir = '/var/pmclogs'
 c.GlobalConfiguration.pipeline_pyro_port = 50000
 
 c.Controller.main_loop_interval = 1.0
+
+c.AcquireImagesProcess.initial_camera_configuration = [("PtpMode", "Slave"),
+                                                       ("ChunkModeActive", "1"),
+                                                       ("AcquisitionFrameCount", "2"),
+                                                       ('AcquisitionMode', "MultiFrame"),
+                                                       ("StreamFrameRateConstrain", "0"),
+                                                       ('AcquisitionFrameRateAbs', "6.25"),
+                                                       ('TriggerSource', 'FixedRate'),
+                                                       ('ExposureTimeAbs', "1000"),
+                                                       ('EFLensFocusCurrent', "2030")]

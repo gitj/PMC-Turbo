@@ -26,6 +26,8 @@ class GUIWrapper():
             fstop = initial_status['all_camera_parameters']['EFLensFStopCurrent']
             min_fstop = initial_status['all_camera_parameters']['EFLensFStopMin']
             max_fstop = initial_status['all_camera_parameters']['EFLensFStopMax']
+
+            self.proxy.set_standard_image_parameters(scale_by=1, quality=100)
         else:
             self.proxy = None
             current_focus = '---'
