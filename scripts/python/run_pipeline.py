@@ -1,5 +1,6 @@
 import os
 import signal
+import sys
 from traitlets.config import Application
 from traitlets import Unicode,List
 
@@ -9,7 +10,7 @@ from pmc_turbo.utils.configuration import default_config_dir
 
 
 class PipelineApp(Application):
-    config_file = Unicode(os.path.join(default_config_dir,'default_baloon.py'), help="Load this config file").tag(config=True)
+    config_file = Unicode(os.path.join(default_config_dir,'default_balloon.py'), help="Load this config file").tag(config=True)
     write_default_config = Unicode(u'', help="Write template config file to this location").tag(config=True)
     classes = List([BasicPipeline, AcquireImagesProcess])
     aliases = dict(generate_config='PipelineApp.write_default_config')
@@ -34,7 +35,7 @@ if __name__ == "__main__":
     pmc_turbo.utils.log.setup_stream_handler(level = pmc_turbo.utils.log.logging.INFO)
     pmc_turbo.utils.log.setup_file_handler('pipeline')
     app = PipelineApp()
-    app.initialize()
+    app.initialize(sys.argv)
     app.start()
     #    bpl = BasicPipeline(disks_to_use=['/data1','/data2','/data3','/data4'],default_write_enable=1)
     #    signal.signal(signal.SIGTERM,bpl.exit)

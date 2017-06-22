@@ -1,5 +1,6 @@
 import os
 import signal
+import sys
 import pmc_turbo
 import Pyro4
 from traitlets.config import Application
@@ -12,7 +13,7 @@ from pmc_turbo.utils.configuration import default_config_dir
 
 
 class ControllerApp(Application):
-    config_file = Unicode(os.path.join(default_config_dir,'default_baloon.py'), help="Load this config file").tag(config=True)
+    config_file = Unicode(os.path.join(default_config_dir,'default_balloon.py'), help="Load this config file").tag(config=True)
     write_default_config = Unicode(u'', help="Write template config file to this location").tag(config=True)
     classes = List([Controller])
     aliases = dict(generate_config='ControllerApp.write_default_config')
@@ -39,5 +40,5 @@ if __name__ == "__main__":
     pmc_turbo.utils.log.setup_stream_handler(level = pmc_turbo.utils.log.logging.DEBUG)
     pmc_turbo.utils.log.setup_file_handler('controller')
     app = ControllerApp()
-    app.initialize()
+    app.initialize(sys.argv)
     app.start()
