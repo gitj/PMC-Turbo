@@ -42,7 +42,7 @@ class GUIWrapper():
 
         self.autoupdate_interval = 3
         self.window = QtGui.QMainWindow()
-        self.window.resize(800, 800)
+        self.window.resize(500, 500)
 
         self.focus_step = int(float(current_focus) / 50.)
         self.exposure_step = int(float(exposure) / 50.)
