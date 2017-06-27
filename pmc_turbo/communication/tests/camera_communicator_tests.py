@@ -207,6 +207,8 @@ class TestPeers(BasicTestHarness):
         self.c.start_pyro_thread()
 
         self.c.file_id = 0
+
+        self.c.autosend_short_status_interval = 1e200 # disable autosending short status for these tests
         config.Communicator.lowrate_link_parameters = []
         self.peer = camera_communicator.Communicator(cam_id=1, peers={}, controller=None,
                                                      pyro_port=(self.pyro_port + 1),
