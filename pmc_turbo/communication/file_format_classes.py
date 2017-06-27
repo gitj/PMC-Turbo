@@ -8,6 +8,9 @@ import numpy as np
 
 from pmc_turbo.utils.comparisons import equal_or_close
 from pmc_turbo.camera.image_processing.jpeg import image_from_string
+from pmc_turbo.camera.pipeline.write_images import percentile_keys
+
+percentile_table_entries = [('1H', key) for key in percentile_keys]
 
 logger = logging.getLogger(__name__)
 
@@ -116,7 +119,8 @@ class ImageFileBase(FileBase):
                         ('1H', 'num_rows'),
                         ('1H', 'num_columns'),
                         ('1f', 'scale_by'),
-                        ])
+                        ] +
+                       percentile_table_entries)
     _preferred_extension = '.raw_image'
 
 
