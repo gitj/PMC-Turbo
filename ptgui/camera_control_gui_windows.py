@@ -206,7 +206,7 @@ class MyImageView(pg.ImageView):
 
         self.setImage(img, autoLevels=self.autolevels, autoRange=self.autorange)
         if self.absolute_levels:
-            self.setLevels(0, 16384)
+            self.setLevels(0, 255)
 
 
 class MyToolBar(QtGui.QDockWidget):
