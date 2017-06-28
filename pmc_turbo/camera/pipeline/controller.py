@@ -113,13 +113,13 @@ class Controller(GlobalConfiguration):
         if argument_string == "None":
             argument_string = None
         tag = self.pipeline.send_camera_command(command_string, argument_string)
-        logger.debug("Set camera parameter %s to %r" % (command_string,argument_string))
+        logger.debug("Set camera parameter %s to %r" % (command_string, argument_string))
         self.counters.send_arbitrary_command.increment()
         return tag
 
     @require_pipeline
     def run_focus_sweep(self, request_params, start=1950, stop=2150, step=10):
-        logger.debug("Running focus sweep with start=%d, stop=%d, step=%d, request_params=%r" % (start,stop,step,
+        logger.debug("Running focus sweep with start=%d, stop=%d, step=%d, request_params=%r" % (start, stop, step,
                                                                                                  request_params))
         focus_steps = range(start, stop, step)
         tags = [self.set_focus(focus_step) for focus_step in focus_steps]
@@ -143,7 +143,7 @@ class Controller(GlobalConfiguration):
         if self.completed_command_tags:
             for tag in self.completed_command_tags.keys():
                 name, value, result, gate_time = self.completed_command_tags[tag]
-                index = self.merged_index.get_index_of_timestamp(gate_time) # this will update the merged index
+                index = self.merged_index.get_index_of_timestamp(gate_time)  # this will update the merged index
                 if index is None:
                     self.counters.no_index_available.increment()
                     logger.warning("No index available, is the pipeline writing? Looking for gate_time %d" % gate_time)
@@ -151,7 +151,8 @@ class Controller(GlobalConfiguration):
                     continue
                 if index == len(self.merged_index.df):
                     self.counters.command_complete_waiting_for_image_data.increment()
-                    logger.info("Command tag %f - %s:%s complete, but image data not yet available" % (tag, name, value))
+                    logger.info(
+                        "Command tag %f - %s:%s complete, but image data not yet available" % (tag, name, value))
                     self.update_current_image_dirs()
                     continue
                 row = self.merged_index.df.iloc[index]
@@ -176,12 +177,12 @@ class Controller(GlobalConfiguration):
             self.merged_index = MergedIndex('*', data_dirs=self.data_directories)
         self.merged_index.update()
 
-
     def get_latest_fileinfo(self):
         if self.merged_index is None:
             self.update_current_image_dirs()
         if self.merged_index is not None:
-            result = self.merged_index.get_latest(update=False)  #updating the index is now done in the controller main loop
+            result = self.merged_index.get_latest(
+                update=False)  # updating the index is now done in the controller main loop
             if result is None:
                 raise RuntimeError("No candidates for latest file!")
             else:
@@ -202,7 +203,7 @@ class Controller(GlobalConfiguration):
                                       **kwargs)
 
     def set_standard_image_parameters(self, row_offset=0, column_offset=0, num_rows=3232, num_columns=4864,
-                                     scale_by=1 / 8., quality=75, format='jpeg'):
+                                      scale_by=1 / 8., quality=75, format='jpeg'):
         self.standard_image_parameters = dict(row_offset=row_offset, column_offset=column_offset,
                                               num_rows=num_rows, num_columns=num_columns,
                                               scale_by=scale_by,
@@ -344,7 +345,8 @@ class Controller(GlobalConfiguration):
         if self.downlink_queue:
             result = self.downlink_queue[0]
             self.downlink_queue = self.downlink_queue[1:]
-            logger.debug("Sending item with length %d from queue. %d items remain in the queue" % (len(result),len(self.downlink_queue)))
+            logger.debug("Sending item with length %d from queue. %d items remain in the queue" % (
+            len(result), len(self.downlink_queue)))
         else:
             logger.debug("Sending latest standard image")
             result = self.get_latest_standard_image().to_buffer()

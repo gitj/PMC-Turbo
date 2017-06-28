@@ -17,7 +17,7 @@ class GUIWrapper():
         self.app = QtGui.QApplication([])
 
         if proxy:
-            self.proxy = Pyro4.Proxy('PYRO:controller@192.168.1.31:50001')
+            self.proxy = Pyro4.Proxy('PYRO:controller@192.168.1.32:50001')
             initial_status = self.proxy.get_pipeline_status()
             current_focus = initial_status['all_camera_parameters']['EFLensFocusCurrent']
             # min_focus = initial_status['all_camera_parameters']['EFLensFocusMin']
