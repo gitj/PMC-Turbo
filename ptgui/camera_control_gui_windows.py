@@ -17,7 +17,7 @@ class GUIWrapper():
         self.app = QtGui.QApplication([])
 
         if proxy:
-            self.proxy = Pyro4.Proxy('PYRO:controller@192.168.1.32:50001')
+            self.proxy = Pyro4.Proxy('PYRO:controller@192.168.1.31:50001')
             initial_status = self.proxy.get_pipeline_status()
             current_focus = initial_status['all_camera_parameters']['EFLensFocusCurrent']
             # min_focus = initial_status['all_camera_parameters']['EFLensFocusMin']
@@ -303,7 +303,7 @@ class MyToolBar(QtGui.QDockWidget):
         basic_tab_layout.addWidget(absolute_level_label, 1, 3)
         basic_tab_layout.addWidget(self.absolute_level_checkbox, 1, 4)
 
-        basic_tab_layout.addWidget(restore_default, 1,5)
+        basic_tab_layout.addWidget(restore_default, 1, 5)
 
         advanced_tab_widget = QtGui.QWidget()
         advanced_tab_layout = QtGui.QGridLayout()

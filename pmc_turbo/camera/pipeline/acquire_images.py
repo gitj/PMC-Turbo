@@ -55,7 +55,7 @@ class AcquireImagesProcess(GlobalConfiguration):
                                                        ("StreamFrameRateConstrain", "0"),
                                                        ('AcquisitionFrameRateAbs', "6.25"),
                                                        ('TriggerSource', 'FixedRate'),
-                                                       ('ExposureTimeAbs', "1000"),
+                                                       ('ExposureTimeAbs', "100000"),
                                                        ('EFLensFocusCurrent', "2050")]).tag(config=True)
 
     def __init__(self, raw_image_buffers, acquire_image_output_queue, acquire_image_input_queue,
