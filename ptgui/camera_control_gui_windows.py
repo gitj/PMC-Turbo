@@ -17,7 +17,7 @@ class GUIWrapper():
         self.app = QtGui.QApplication([])
 
         if proxy:
-            self.proxy = Pyro4.Proxy('PYRO:controller@192.168.1.31:50001')
+            self.proxy = Pyro4.Proxy('PYRO:controller@192.168.1.32:50001')
             initial_status = self.proxy.get_pipeline_status()
             current_focus = initial_status['all_camera_parameters']['EFLensFocusCurrent']
             # min_focus = initial_status['all_camera_parameters']['EFLensFocusMin']
@@ -196,17 +196,23 @@ class MyImageView(pg.ImageView):
 
         filename = str(latest_standard_image.frame_timestamp_ns)
         print filename
+        try:
+            percentile_90 = str(latest_standard_image.percentile_90)
+            print percentile_90
+        except Exception as e:
+            print e
         if self.status_bar:
             self.status_bar.update_filename(filename)
+            self.status_bar.update_percentile(percentile_90)
         img = latest_standard_image.image_array()
         if self.guiwrapper:
             self.autolevels = self.guiwrapper.toolbar.autolevel_checkbox.isChecked()
-            self.absolute_levels = self.guiwrapper.toolbar.absolute_level_checkbox.isChecked()
+            #self.absolute_levels = self.guiwrapper.toolbar.absolute_level_checkbox.isChecked()
             self.autorange = self.guiwrapper.toolbar.autorange_checkbox.isChecked()
 
         self.setImage(img, autoLevels=self.autolevels, autoRange=self.autorange)
-        if self.absolute_levels:
-            self.setLevels(0, 255)
+        #if self.absolute_levels:
+        #    self.setLevels(0, 255)
 
 
 class MyToolBar(QtGui.QDockWidget):
@@ -274,10 +280,10 @@ class MyToolBar(QtGui.QDockWidget):
         self.autoupdate_checkbox.setChecked(True)
         self.autolevel_checkbox = QtGui.QCheckBox()
         self.autolevel_checkbox.setChecked(True)
-        self.absolute_level_checkbox = QtGui.QCheckBox()
-        self.absolute_level_checkbox.setChecked(False)
-        absolute_level_label = QtGui.QLabel()
-        absolute_level_label.setText('Absolute level: ')
+        #self.absolute_level_checkbox = QtGui.QCheckBox()
+        #self.absolute_level_checkbox.setChecked(False)
+        #absolute_level_label = QtGui.QLabel()
+        #absolute_level_label.setText('Absolute level: ')
         autorange_label = QtGui.QLabel()
         autorange_label.setText('Autorange: ')
         self.autorange_checkbox = QtGui.QCheckBox()
@@ -300,10 +306,10 @@ class MyToolBar(QtGui.QDockWidget):
         basic_tab_layout.addWidget(self.autorange_checkbox, 1, 2)
         basic_tab_layout.addWidget(autolevel_label, 0, 3)
         basic_tab_layout.addWidget(self.autolevel_checkbox, 0, 4)
-        basic_tab_layout.addWidget(absolute_level_label, 1, 3)
-        basic_tab_layout.addWidget(self.absolute_level_checkbox, 1, 4)
+        #basic_tab_layout.addWidget(absolute_level_label, 1, 3)
+        #basic_tab_layout.addWidget(self.absolute_level_checkbox, 1, 4)
 
-        basic_tab_layout.addWidget(restore_default, 1, 5)
+        basic_tab_layout.addWidget(restore_default, 1, 3)
 
         advanced_tab_widget = QtGui.QWidget()
         advanced_tab_layout = QtGui.QGridLayout()
@@ -387,6 +393,14 @@ class StatusBar(QtGui.QDockWidget):
         layout.addWidget(self.fstop_value, 1, 3)
         self.fstop_value.setText('1.24')
 
+        percentile_title = QtGui.QLabel()
+        layout.addWidget(percentile_title, 0,4)
+        percentile_title.setText('90th percentile value: ')
+
+        self.percentile_value = QtGui.QLabel()
+        layout.addWidget(self.percentile_value, 0,5)
+        self.percentile_value.setText('---')
+
         multiwidget.setLayout(layout)
         self.setWidget(multiwidget)
 
@@ -406,6 +420,9 @@ class StatusBar(QtGui.QDockWidget):
 
     def update_fstop(self, fstop):
         self.fstop_value.setText(str(fstop))
+
+    def update_percentile(self, p):
+        self.percentile_value.setText(str(p))
 
 
 if __name__ == "__main__":
