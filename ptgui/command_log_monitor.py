@@ -28,7 +28,7 @@ def get_command_file_column(row,index):
     return os.path.split(row[index])[1]
 def get_arguments_column(row,index):
     args = row[index]
-    if args.keys()[0] == 'list_argument':
+    if args.keys() and (args.keys()[0] == 'list_argument'):
         return str(args['list_argument'])
     return '\n'.join([('%s : %r' % (name, value)) for (name,value) in args.items()])
 
