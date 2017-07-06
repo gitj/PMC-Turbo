@@ -34,6 +34,7 @@ class LowrateMonitor(GroundConfiguration):
 
     def update(self, max_files=0):
         filenames = glob.glob(os.path.join(self.gse_root_dir,'*/lowrate/*'))
+        filenames += glob.glob(os.path.join(self.gse_root_dir,'*/payloads/*.short_status'))
         filenames.sort()
         if max_files:
             skipped_files = filenames[:-max_files]
@@ -49,7 +50,12 @@ class LowrateMonitor(GroundConfiguration):
             if filename in self.bad_files:
                 continue
             try:
-                values = pmc_turbo.communication.short_status.load_short_status_from_file(filename).values
+                if filename.endswith('.short_status'):
+                    with open(filename,'r') as fh:
+                        payload = fh.read()
+                    values = pmc_turbo.communication.short_status.load_short_status_from_payload(payload).values
+                else:
+                    values = pmc_turbo.communication.short_status.load_short_status_from_file(filename).values
             except Exception:
                 logger.exception("Failed to open %s" % filename)
                 self.bad_files.add(filename)
