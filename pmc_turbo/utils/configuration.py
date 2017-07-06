@@ -5,6 +5,7 @@ from traitlets.config import Configurable
 from pmc_turbo import root_dir
 
 default_config_dir = os.path.abspath(os.path.join(root_dir, '../config/balloon'))
+default_ground_config_dir = os.path.abspath(os.path.join(root_dir, '../config/ground'))
 
 # Currently the logging system needs its directory set up separately so that logging can happen while the system
 # is being initialized

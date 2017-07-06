@@ -7,7 +7,7 @@ class GroundConfiguration(Configurable):
     root_data_path = Bytes('/data/gse_data').tag(config=True)
     command_history_subdir = Bytes('command_history').tag(config=True)
     command_index_filename = Bytes('index.csv').tag(config=True)
-    openport_uplink_address = TCPAddress(('pmc-camera-0',4501), help="(IP,port) tuple to send OpenPort commands to").tag(config=True)
+    openport_uplink_address = TCPAddress(('pmc-camera-4',5001), help="(IP,port) tuple to send OpenPort commands to").tag(config=True)
     command_port = Bytes('/dev/ttyUSB1', help="Serial device connected to GSE uplink").tag(config=True)
 
     downlink_parameters = Dict(default_value=dict(openport=dict(port=4501,baudrate=None,loop_interval=1.0),

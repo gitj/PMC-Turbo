@@ -4,7 +4,11 @@ import logging
 
 import serial
 import time
-from traitlets import Float
+
+from traitlets.config import Application
+from traitlets import Float, Unicode, List, Dict
+
+import pmc_turbo.utils.configuration
 from pmc_turbo.communication.command_table import command_manager
 
 from pmc_turbo.communication.packet_classes import (CommandPacket,
@@ -192,3 +196,26 @@ class CommandSender(GroundConfiguration):
         except Exception:
             logger.exception("Could not write next command sequence number %d to disk" % self.next_sequence_number)
         return result
+
+
+class CommandSenderApp(Application):
+    config_file = Unicode(u'default_ground_config.py', help="Load this config file").tag(config=True)
+    config_dir = Unicode(pmc_turbo.utils.configuration.default_ground_config_dir, help="Config file directory").tag(config=True)
+    write_default_config = Unicode(u'', help="Write template config file to this location").tag(config=True)
+    classes = List([CommandSender])
+    aliases = dict(generate_config='CommandSenderApp.write_default_config',
+                   config_file='CommandSenderApp.config_file')
+
+    def initialize(self, argv=None):
+        self.parse_command_line(argv)
+        if self.write_default_config:
+            with open(self.write_default_config, 'w') as fh:
+                fh.write(self.generate_config_file())
+                self.exit()
+        if self.config_file:
+            print 'loading config: ', self.config_dir, self.config_file
+            self.load_config_file(self.config_file, path=self.config_dir)
+        #self.update_config(basic_config)
+        print self.config
+
+        self.command_sender = CommandSender(config=self.config)
