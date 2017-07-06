@@ -89,6 +89,15 @@ command_manager.add_command(Command("set_leader", [("leader_id", "B")],
                                     "Typically used with destination SUPER_COMMAND to override"
                                     ))
 command_manager.add_command(Command("get_command_history", [("request_id", "I")]))
+command_manager.add_command(Command("enable_auto_exposure",[("enabled", "B")]))
+command_manager.add_command(Command("set_auto_exposure_parameters",
+                                    [("max_percentile_threshold_fraction","f"),
+                                     ("min_peak_threshold_fraction","f"),
+                                     ("min_percentile_threshold_fraction","f"),
+                                     ("adjustment_step_size_fraction","f"),
+                                     ("min_exposure","I"),
+                                     ("max_exposure","I")],
+                                    docstring="`min_exposure` and `max_exposure` are in microseconds"))
 
 # add command to set pyro comm timeout?
 

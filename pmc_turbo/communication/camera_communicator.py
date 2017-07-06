@@ -248,6 +248,7 @@ class Communicator(GlobalConfiguration):
             self.get_and_process_sip_bytes()
 
             if self.leader:
+                self.send_short_status_periodically_via_highrate()
                 self.send_data_on_downlinks()
                 for charge_controller in self.charge_controllers:
                     try:
@@ -281,42 +282,52 @@ class Communicator(GlobalConfiguration):
             if self.end_loop == True:
                 return
 
+    def send_short_status_periodically_via_highrate(self):
+        if time.time() - self.last_autosend_timestamp > self.autosend_short_status_interval:
+            short_status_approx_bytes_per_second = 100. / self.autosend_short_status_interval
+            for name,link in self.downlinks.items():
+                if link.downlink_speed_bytes_per_sec > short_status_approx_bytes_per_second:
+                    next_data = file_format_classes.ShortStatusFile(payload=self.get_next_status_summary(),
+                                                                    request_id=file_format_classes.DEFAULT_REQUEST_ID,
+                                                                    camera_id=self.cam_id).to_buffer()
+                    self.last_autosend_timestamp = time.time()
+                    logger.info("Sending short status via %s with file_id %d" % (name,self.file_id))
+                    link.put_data_into_queue(next_data,self.file_id,preempt=True)
+                    self.file_id += 1
+                else:
+                    logger.debug("Skipping sending short status on link %s because bandwidth %f bytes/s is insufficient"
+                                 % (name,link.downlink_speed_bytes_per_sec))
+
+
     def send_data_on_downlinks(self):
         if not self.peers:
             raise RuntimeError(
                 'Communicator has no peers. This should never happen; leader at minimum has self as peer.')  # pragma: no cover
         for link in self.downlinks.values():
             if link.has_bandwidth():
-                if time.time() - self.last_autosend_timestamp > self.autosend_short_status_interval:
-                    next_data = file_format_classes.ShortStatusFile(payload=self.get_next_status_summary(),
-                                                                    request_id=file_format_classes.DEFAULT_REQUEST_ID,
-                                                                    camera_id=self.cam_id).to_buffer()
-                    logger.debug("Sending short status")
-                    self.last_autosend_timestamp = time.time()
-                else:
-                    if self.synchronize_image_time_across_cameras and self.peer_polling_order_idx == 0:
-                        self.request_synchronized_images()
-                    logger.debug('Getting next data from camera %d' % self.peer_polling_order[self.peer_polling_order_idx])
-                    next_data = None
-                    active_peer = self.peers[self.peer_polling_order[self.peer_polling_order_idx]]
-                    try:
-                        if self.check_peer_connection(active_peer):
-                            next_data = active_peer.get_next_data()  # pyro call
-                    except Pyro4.errors.CommunicationError as e:
-                        active_peer_string = str(active_peer._pyroUri)
-                        error_counter_key = 'pmc_%d_communication_error_counts' % self.peer_polling_order[
-                            self.peer_polling_order_idx]
-                        self.error_counter.counters[error_counter_key].increment()
-                        logger.debug('Connection to peer at URI %s failed. Error counter - %r. Error message: %s' % (
-                            active_peer_string, self.error_counter.counters[error_counter_key], str(e)))
-                    except Exception as e:
-                        payload = str(e)
-                        payload += "".join(Pyro4.util.getPyroTraceback())
-                        exception_file = file_format_classes.UnhandledExceptionFile(payload=payload,
-                                                                                    request_id=file_format_classes.DEFAULT_REQUEST_ID,
-                                                                                    camera_id=self.peer_polling_order[
-                                                                                        self.peer_polling_order_idx])
-                        next_data = exception_file.to_buffer()
+                if self.synchronize_image_time_across_cameras and self.peer_polling_order_idx == 0:
+                    self.request_synchronized_images()
+                logger.debug('Getting next data from camera %d' % self.peer_polling_order[self.peer_polling_order_idx])
+                next_data = None
+                active_peer = self.peers[self.peer_polling_order[self.peer_polling_order_idx]]
+                try:
+                    if self.check_peer_connection(active_peer):
+                        next_data = active_peer.get_next_data()  # pyro call
+                except Pyro4.errors.CommunicationError as e:
+                    active_peer_string = str(active_peer._pyroUri)
+                    error_counter_key = 'pmc_%d_communication_error_counts' % self.peer_polling_order[
+                        self.peer_polling_order_idx]
+                    self.error_counter.counters[error_counter_key].increment()
+                    logger.debug('Connection to peer at URI %s failed. Error counter - %r. Error message: %s' % (
+                        active_peer_string, self.error_counter.counters[error_counter_key], str(e)))
+                except Exception as e:
+                    payload = str(e)
+                    payload += "".join(Pyro4.util.getPyroTraceback())
+                    exception_file = file_format_classes.UnhandledExceptionFile(payload=payload,
+                                                                                request_id=file_format_classes.DEFAULT_REQUEST_ID,
+                                                                                camera_id=self.peer_polling_order[
+                                                                                    self.peer_polling_order_idx])
+                    next_data = exception_file.to_buffer()
 
                 if not next_data:
                     logger.debug('No data was obtained.')
@@ -588,6 +599,22 @@ class Communicator(GlobalConfiguration):
             else:
                 logger.error("Unknown link %s found, so can't set its bandwidth" % name)
 
+    def set_auto_exposure_parameters(self,max_percentile_threshold_fraction,
+                                     min_peak_threshold_fraction,
+                                     min_percentile_threshold_fraction,
+                                     adjustment_step_size_fraction,
+                                     min_exposure,
+                                     max_exposure):
+        self.controller.set_auto_exposure_parameters(max_percentile_threshold_fraction=max_percentile_threshold_fraction,
+                                     min_peak_threshold_fraction=min_peak_threshold_fraction,
+                                     min_percentile_threshold_fraction=min_percentile_threshold_fraction,
+                                     adjustment_step_size_fraction=adjustment_step_size_fraction,
+                                     min_exposure=min_exposure,
+                                     max_exposure=max_exposure)
+
+    def enable_auto_exposure(self,enabled):
+        self.controller.enable_auto_exposure(enabled)
+
     # end command table methods
     ###################################################################################################################
 
@@ -698,11 +725,13 @@ class Communicator(GlobalConfiguration):
             sequence_skip = np.nan
         ss.last_outstanding_sequence = sequence_skip
         ss.total_commands_received = self.command_logger.total_commands_received
-        result = self.command_logger.get_latest_result()
+        result = self.command_logger.get_last_failed_result()
         last_failed_sequence = np.nan
         if result and result[2]:
             last_failed_sequence = result[1]
         ss.last_failed_sequence = last_failed_sequence
+
+        ss.current_file_id = self.file_id
 
         highrate_link = self.downlinks['highrate']
         ss.bytes_sent_highrate = highrate_link.total_bytes_sent

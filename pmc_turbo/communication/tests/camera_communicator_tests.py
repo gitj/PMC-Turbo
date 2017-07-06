@@ -92,6 +92,7 @@ class TestCommunicator(BasicTestHarness):
                     cm.set_peer_polling_order([0,1,2,3,4,5,6]),
                     cm.request_specific_file(max_num_bytes=2**20,request_id=123,filename='/data1/index.csv'),
                     cm.run_shell_command(max_num_bytes_returned=2**20,request_id=3488,timeout=30.0,command_line="ls -lhtr"),
+#                    cm.run_shell_command(max_num_bytes_returned=2**20,request_id=3489,timeout=30.0,command_line="dd of=/dev/stdout if=/dev/random count=200"),
                     cm.get_status_report(compress=1,request_id=344),
                     cm.flush_downlink_queues(),
                     cm.use_synchronized_images(synchronize=1),
@@ -99,7 +100,14 @@ class TestCommunicator(BasicTestHarness):
                     cm.request_specific_images(timestamp=123456789.123,request_id=1223,num_images=2,step=1,row_offset=1000,
                                                column_offset=1000, num_rows=256,num_columns=256,
                                        scale_by = 1.0, quality=90),
-                    cm.get_command_history(request_id=355)
+                    cm.get_command_history(request_id=355),
+                    cm.enable_auto_exposure(enabled=1),
+                    cm.set_auto_exposure_parameters(max_percentile_threshold_fraction=0.9,
+                                     min_peak_threshold_fraction=0.7,
+                                     min_percentile_threshold_fraction=0.1,
+                                     adjustment_step_size_fraction=0.05,
+                                     min_exposure=35,
+                                     max_exposure=1000000)
                     ]
         for command in commands:
             print cm.decode_commands(command)

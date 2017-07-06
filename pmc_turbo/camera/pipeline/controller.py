@@ -3,17 +3,19 @@ import os
 import select
 import signal
 import subprocess
+import tempfile
 import time
 from functools import wraps
 
 import Pyro4
 import Pyro4.errors
-from traitlets import (Float)
+from traitlets import (Float, Bool)
 
 from pmc_turbo.camera.image_processing.blosc_file import load_blosc_image
 from pmc_turbo.camera.image_processing.jpeg import simple_jpeg
 from pmc_turbo.camera.pipeline.indexer import MergedIndex
 from pmc_turbo.camera.pipeline.write_images import index_keys
+from pmc_turbo.camera.pipeline import exposure_manager
 from pmc_turbo.communication import file_format_classes
 from pmc_turbo.communication.file_format_classes import DEFAULT_REQUEST_ID
 from pmc_turbo.utils.camera_id import get_camera_id
@@ -47,6 +49,7 @@ def require_pipeline(func):
 class Controller(GlobalConfiguration):
     gate_time_error_threshold = Float(2e-3, min=0).tag(config=True)
     main_loop_interval = Float(3.0, min=0).tag(config=True)
+    auto_exposure_enabled = Bool(default_value=True).tag(config=True)
 
     def __init__(self, **kwargs):
         super(Controller, self).__init__(**kwargs)
@@ -59,6 +62,8 @@ class Controller(GlobalConfiguration):
         self.downlink_queue = []
         self.outstanding_command_tags = {}
         self.completed_command_tags = {}
+
+        self.exposure_manager = exposure_manager.ExposureManager(parent=self)
 
         self.counters = CounterCollection('controller', self.counters_dir)
         self.counters.set_focus.reset()
@@ -171,11 +176,42 @@ class Controller(GlobalConfiguration):
         else:
             logger.debug("Forcing update of index because no commands have been executed recently")
             self.update_current_image_dirs()
+        if self.enable_auto_exposure:
+            self.auto_exposure()
 
     def update_current_image_dirs(self):
         if self.merged_index is None or self.merged_index.df is None:
             self.merged_index = MergedIndex('*', data_dirs=self.data_directories)
         self.merged_index.update()
+
+    def auto_exposure(self):
+        try:
+            new_exposure = self.exposure_manager.check_exposure(self.get_pipeline_status(), self.get_latest_fileinfo())
+            if new_exposure is not None:
+                self.set_exposure(int(new_exposure))
+        except Exception:
+            logger.exception("Auto exposure failed")
+
+    def enable_auto_exposure(self,enabled):
+        if enabled:
+            self.auto_exposure_enabled = True
+            logger.info("Enabling auto exposure")
+        else:
+            self.auto_exposure_enabled = False
+            logger.info("Disabling auto exposure")
+
+    def set_auto_exposure_parameters(self,max_percentile_threshold_fraction,
+                                     min_peak_threshold_fraction,
+                                     min_percentile_threshold_fraction,
+                                     adjustment_step_size_fraction,
+                                     min_exposure,
+                                     max_exposure):
+        self.exposure_manager.min_peak_threshold_fraction=min_peak_threshold_fraction
+        self.exposure_manager.max_percentile_threshold_fraction=max_percentile_threshold_fraction
+        self.exposure_manager.min_exposure = min_exposure
+        self.exposure_manager.max_exposure=max_exposure
+        self.exposure_manager.adjustment_step_size_fraction=adjustment_step_size_fraction
+        self.exposure_manager.min_percentile_threshold_fraction=min_percentile_threshold_fraction
 
     def get_latest_fileinfo(self):
         if self.merged_index is None:
@@ -295,12 +331,20 @@ class Controller(GlobalConfiguration):
     def run_shell_command(self, command_line, max_num_bytes_returned, request_id, timeout):
         timestamp = time.time()
         # preexec_fn allows the process to be killed if needed, see http://stackoverflow.com/a/4791612
-        proc = subprocess.Popen(command_line, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE,
+        # Using stderr=subprocess.PIPE will fail for more than 64 KB of output, see:
+        #  https://thraxil.org/users/anders/posts/2008/03/13/Subprocess-Hanging-PIPE-is-your-enemy/
+        stderr_file = tempfile.TemporaryFile()
+        stdout_file = tempfile.TemporaryFile()
+        proc = subprocess.Popen(command_line, shell=True, stderr=stderr_file, stdout=stdout_file,
                                 preexec_fn=os.setsid)
         while time.time() - timestamp < timeout:
             returncode = proc.poll()
             if returncode is not None:
-                stdout, stderr = proc.communicate()
+                proc.communicate()
+                stderr_file.seek(0)
+                stderr = stdout_file.read()
+                stdout_file.seek(0)
+                stdout = stdout_file.read()
                 if len(stdout) > max_num_bytes_returned:
                     stdout = stdout[:max_num_bytes_returned]
                 stderr_bytes = max_num_bytes_returned - len(stdout)
@@ -325,7 +369,11 @@ class Controller(GlobalConfiguration):
         except OSError:
             logger.exception("Failed to kill command %r" % command_line)
         returncode = proc.wait()
-        stdout, stderr = proc.communicate()
+        proc.communicate()
+        stderr_file.seek(0)
+        stderr = stdout_file.read()
+        stdout_file.seek(0)
+        stdout = stdout_file.read()
         stderr_bytes = max_num_bytes_returned - len(stdout)
         if stderr_bytes > 0:
             stderr_return = stderr[:stderr_bytes]
