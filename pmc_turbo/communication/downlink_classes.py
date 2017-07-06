@@ -29,7 +29,7 @@ class HirateDownlink():
                                                                                  bytes_per_sec,
                                                                                  (bytes_per_sec/100.))) # 100 because 1000 bits / 10 bits per byte
 
-    def put_data_into_queue(self, buffer, file_id, packet_size=1000):
+    def put_data_into_queue(self, buffer, file_id, packet_size=1000, preempt=False):
         logger.debug('Buffer length: %d in downlink %s' % (len(buffer), self.name))
         packets = []
         num_packets = int(np.ceil(len(buffer) / packet_size))
@@ -40,7 +40,11 @@ class HirateDownlink():
             packets.append(packet)
         packet_length_debug_string = ','.join([str(packet.payload_length) for packet in packets])
         logger.debug('Packet payload lengths: %s for downlink %s' % (packet_length_debug_string, self.name))
-        self.packets_to_send += packets
+        if preempt:
+            self.packets_to_send = packets + self.packets_to_send
+        else:
+            self.packets_to_send = self.packets_to_send + packets
+
 
     def send_data(self):
         if not self.packets_to_send:
