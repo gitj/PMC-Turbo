@@ -5,6 +5,7 @@ import tempfile
 import threading
 import time
 import copy
+from nose.tools import assert_raises
 
 import numpy as np
 import pandas as pd
@@ -37,6 +38,9 @@ class TestMultiIndex(BasicTestHarness):
 
         self.subdir = '2016-12-20_100727'
 
+
+
+
         self.general_filename = os.path.join(self.top_dir, 'a_file.txt')
         self.general_file_contents = np.random.random_sample((1024,)).tostring()
         with open(self.general_filename, 'w') as fh:
@@ -44,7 +48,13 @@ class TestMultiIndex(BasicTestHarness):
 
         self.controller_no_pipeline = controller.Controller(pipeline=None, config=self.basic_config)
 
+    def use_prepared_indexes(self):
+        for k, data_dir in enumerate(self.basic_config.GlobalConfiguration.data_directories):
+            shutil.copy(os.path.join(test_data_path, ('index_%d.csv' % (k + 1))),
+                        os.path.join(data_dir, self.subdir, 'index.csv'))
+
     def teardown(self):
+        super(TestMultiIndex,self).teardown()
         shutil.rmtree(self.top_dir, ignore_errors=True)
 
     def test_all_data(self):
@@ -79,6 +89,19 @@ class TestMultiIndex(BasicTestHarness):
             open(os.path.join(data_dir, self.subdir, 'index.csv'), 'w').close()
 
         assert not np.any(mi.df.isnull())
+
+    def test_update_image_dirs(self):
+        self.use_prepared_indexes()
+        self.controller_no_pipeline.update_current_image_dirs()
+
+    def test_update_image_dirs_index_file_missing(self):
+        self.use_prepared_indexes()
+        self.controller_no_pipeline.update_current_image_dirs()
+        original_path = self.controller_no_pipeline.merged_index.index_filenames[0]
+        temp_path = original_path + '.moved'
+        shutil.move(original_path,temp_path)
+        self.controller_no_pipeline.update_current_image_dirs()
+        shutil.move(temp_path,original_path)
 
 
     def test_controller_basic_function(self):
@@ -118,12 +141,16 @@ class TestMultiIndex(BasicTestHarness):
         assert result.file_type == JPEGFile.file_type
         assert result.request_id == pmc_turbo.communication.file_format_classes.DEFAULT_REQUEST_ID
         time.sleep(1)
-        sis.request_image_by_index(2, request_id=128)
+
+        with assert_raises(IndexError):
+            sis.request_image_by_index(200, request_id=128)
+        sis.request_image_by_index(2,request_id=128)
         result = sis.get_next_data_for_downlink()
         result = decode_file_from_buffer(result)
         assert result.request_id == 128
 
-        sis.request_image_by_index(2, request_id=129)
+        #sis.request_image_by_index(2, request_id=129)
+        sis.request_image_by_index(2,request_id=129)
         result2 = sis.get_next_data_for_downlink()
         result2 = decode_file_from_buffer(result2)
         for attr in dir(result):
