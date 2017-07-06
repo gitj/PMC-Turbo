@@ -16,7 +16,8 @@ class ControllerApp(Application):
     config_file = Unicode(os.path.join(default_config_dir,'default_balloon.py'), help="Load this config file").tag(config=True)
     write_default_config = Unicode(u'', help="Write template config file to this location").tag(config=True)
     classes = List([Controller])
-    aliases = dict(generate_config='ControllerApp.write_default_config')
+    aliases = dict(generate_config='ControllerApp.write_default_config',
+                   config_file='ControllerApp.config_file')
     def initialize(self, argv=None):
         self.raise_config_file_errors = True
         self.parse_command_line(argv)

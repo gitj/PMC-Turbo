@@ -14,6 +14,7 @@ class PipelineApp(Application):
     write_default_config = Unicode(u'', help="Write template config file to this location").tag(config=True)
     classes = List([BasicPipeline, AcquireImagesProcess])
     aliases = dict(generate_config='PipelineApp.write_default_config')
+
     def initialize(self, argv=None):
         self.parse_command_line(argv)
         if self.write_default_config:
