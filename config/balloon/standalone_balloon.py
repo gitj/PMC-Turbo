@@ -51,7 +51,7 @@ c.GlobalConfiguration.pipeline_pyro_port = 50000
 #  hirate downlink address,
 #  hirate downlink downlink speed in bytes per second. 0 means link is disabled.
 #  e.g. [("openport", ("192.168.1.70", 4501), 10000), ...]
-openport_destination_ip = '192.168.1.70'
+openport_destination_ip = ('%d.%d.%d.%d' % (0x80,0x3b,0xa8,0x4e))  #slightly hidden to avoid scraping
 
 c.Communicator.hirate_link_parameters = [('highrate', ('pmc-serial-0', 5002), 0),
                                          ('openport', (openport_destination_ip, 4501), 100),
