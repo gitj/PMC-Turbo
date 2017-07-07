@@ -200,6 +200,9 @@ class Controller(GlobalConfiguration):
             self.auto_exposure_enabled = False
             logger.info("Disabling auto exposure")
 
+    def is_auto_exposure_enabled(self):
+        return self.auto_exposure_enabled
+
     def set_auto_exposure_parameters(self,max_percentile_threshold_fraction,
                                      min_peak_threshold_fraction,
                                      min_percentile_threshold_fraction,

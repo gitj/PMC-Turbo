@@ -167,6 +167,7 @@ class ShortStatusCamera(ShortStatusBase):
                               ("exposure_us", "I"),
                               ("focus_step", "H"),
                               ("aperture_times_100","H"),
+                              ("auto_exposure_enabled", "B"),
 
                               ("pressure", "f"),
                               ("lens_wall_temp", 'b'),
@@ -182,6 +183,7 @@ class ShortStatusCamera(ShortStatusBase):
                               ("sdd_temp", 'b'),
                               ("sde_temp", 'b'),
                               ("sdf_temp", 'b'),
+                              ("sdg_temp", 'b'),
 
                               ])
 

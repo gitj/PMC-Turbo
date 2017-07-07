@@ -790,6 +790,11 @@ class Communicator(GlobalConfiguration):
         ss.exposure_us = self.housekeeping.get_value('ExposureTimeAbs')
         ss.focus_step = self.housekeeping.get_value('EFLensFocusCurrent')
         ss.aperture_times_100 = self.housekeeping.get_value('EFLensFStopCurrent') * 100
+        try:
+            ss.auto_exposure_enabled = self.controller.is_auto_exposure_enabled()
+        except Exception:
+            logger.exception("Failed to get auto_exposure_enabled from controller")
+            ss.auto_exposure_enabled = np.nan
         ss.pressure = self.housekeeping.get_value("Pressure")
         ss.lens_wall_temp = (self.housekeeping.get_value('Lens_Temperature') * 1000) - 273
         ss.dcdc_wall_temp = (self.housekeeping.get_value('DCDC_Temperature') * 1000) - 273
@@ -804,4 +809,5 @@ class Communicator(GlobalConfiguration):
         ss.sdd_temp = self.housekeeping.get_value("hddtemp_temperature-sdd")
         ss.sde_temp = self.housekeeping.get_value("hddtemp_temperature-sde")
         ss.sdf_temp = self.housekeeping.get_value("hddtemp_temperature-sdf")
+        ss.sdg_temp = self.housekeeping.get_value("hddtemp_temperature-sdg")
         return ss.encode()
