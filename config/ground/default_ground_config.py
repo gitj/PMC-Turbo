@@ -1,5 +1,8 @@
 # Configuration file for application.
 
+# noinspection PyUnresolvedReferences
+c = get_config()
+
 #------------------------------------------------------------------------------
 # Application(SingletonConfigurable) configuration
 #------------------------------------------------------------------------------
@@ -44,7 +47,7 @@
 #c.GroundConfiguration.command_port = '/dev/ttyUSB1'
 
 ## (IP,port) tuple to send OpenPort commands to
-#c.GroundConfiguration.openport_uplink_address = ('pmc-camera-4', 4501)
+c.GroundConfiguration.openport_uplink_address = ('128.59.171.33', 4501)
 
 ## 
 #c.GroundConfiguration.root_data_path = '/data/gse_data'
