@@ -8,7 +8,7 @@ pg.setConfigOptions(imageAxisOrder='row-major')
 from pmc_turbo.camera.image_processing import blosc_file
 from pmc_turbo.camera.pipeline.indexer import MergedIndex
 from pmc_turbo.ground.ground_configuration import GroundConfiguration
-from pmc_turbo.communication.file_format_classes import load_and_decode_file
+from pmc_turbo.communication.file_format_classes import load_and_decode_file, JPEGFile
 
 class MyImageView(pg.ImageView):
     def __init__(self,camera_id,*args,**kwargs):
@@ -28,6 +28,7 @@ class MyImageView(pg.ImageView):
             df = self.mi.df[self.mi.df.camera_id==self.camera_id]
         else:
             df = self.mi.df
+        df = df[df.file_type==JPEGFile.file_type]
         if index == -1:
             index = df.index.max()
         try:
