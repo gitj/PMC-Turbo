@@ -26,6 +26,7 @@ def test_camera_encode():
     ss.exposure_us = 4774
     ss.focus_step = 2000
     ss.aperture_times_100 = 123
+    ss.auto_exposure_enabled = 1
     ss.pressure = 101033.3
     ss.lens_wall_temp = 30
     ss.dcdc_wall_temp = 25
@@ -40,6 +41,7 @@ def test_camera_encode():
     ss.sdd_temp = 47
     ss.sde_temp = 46
     ss.sdf_temp = 77
+    ss.sdg_temp = -12
     original_values = ss._values.copy()
     result = ss.encode()
     ss = ShortStatusCamera(result)
@@ -66,6 +68,7 @@ def test_coerce():
     ss.exposure_us = 4774
     ss.focus_step = 200000
     ss.aperture_times_100 = 123
+    ss.auto_exposure_enabled = 1
     ss.pressure = 101033.3
     ss.lens_wall_temp = 300
     ss.dcdc_wall_temp = -225
@@ -80,6 +83,7 @@ def test_coerce():
     ss.sdd_temp = 47
     ss.sde_temp = 46
     ss.sdf_temp = 77
+    ss.sdg_temp = -12
     values = ss._values.copy()
     ss2 = ShortStatusCamera(ss.encode())
     assert ss2.free_disk_root_mb == 2**32-2
