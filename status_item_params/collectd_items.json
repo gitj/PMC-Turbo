@@ -1974,6 +1974,12 @@
             "name": "hddtemp_temperature-sdf",
             "partial_glob": "hddtemp/temperature-sdf-*"
         },
+        "hddtemp_temperature-sdg": {
+            "class_type": "FloatStatusItem",
+            "column_name": "value",
+            "name": "hddtemp_temperature-sdg",
+            "partial_glob": "hddtemp/temperature-sdg-*"
+        },
         "interface-eth0_if_errors_rx": {
             "class_type": "FloatStatusItem",
             "column_name": "rx",
