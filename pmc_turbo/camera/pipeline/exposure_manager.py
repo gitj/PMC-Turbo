@@ -33,7 +33,7 @@ class ExposureManager(Configurable):
                         % (current_exposure, file_statistics.filename, file_exposure))
             return
         percentiles = get_percentiles_as_fractions(file_statistics,maximum_value=self.maximum_pixel_value)
-        logger.debug("current exposure %d, percentiles: %s" % (current_exposure, ','.join([('%.0f' % pct) for pct in percentiles])))
+        logger.debug("current exposure %d, percentiles: %s" % (current_exposure, ','.join([('%.3f' % pct) for pct in percentiles])))
         factor = 1
         number_too_high = 0
         for pct in percentiles:
