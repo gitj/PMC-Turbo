@@ -89,11 +89,11 @@ def ani_frame(files, output_name):
 # p = joblib.Parallel(n_jobs=3)
 def process_dir():
     # files = glob.glob(os.path.join('/data3',dirname,'*step*.npz'))
-    files = glob.glob(os.path.join('/data/home/bjorn/alberta_data/raw_2017-07-04_camera-1/2017-07-04_042010/*'))
+    files = glob.glob(os.path.join('/data/home/bjorn/alberta_data/raw_2017-07-01-camera-2/2017*'))
     files.sort()
     if len(files):
         print len(files[1::1]), files[14]
-        output_name = '/data/home/bjorn/movie_2017-07-04.mp4'
+        output_name = '/data/home/bjorn/movie_2017-07-01.mp4'
         ani_frame(files[1::1], output_name)
 
 
