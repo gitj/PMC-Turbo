@@ -70,7 +70,10 @@ def ani_frame(files, output_name):
 
     # legend(loc=0)
     ani = animation.FuncAnimation(fig, update_img, frames, interval=50)
-    writer = animation.writers['ffmpeg'](fps=20, codec='h264')  # , bitrate=2**20)
+    #writer = animation.writers['ffmpeg'](fps=20, codec='h264')  # , bitrate=2**20)
+    # ffmpeg not installed on clouds
+
+    writer = animation.writers['avconv'](fps=20, codec='h264')  # , bitrate=2**20)
 
     ani.save(output_name, writer=writer, dpi=dpi)
     return ani
