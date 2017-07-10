@@ -32,9 +32,9 @@ class MyImageView(pg.ImageView):
         if index == -1:
             index = df.index.max()
         try:
-            latest = df.ix[index]
-        except (IndexError,KeyError):
-            print "invalid index",index
+            latest = df.iloc[df.index.get_loc(index,method='pad')]
+        except (IndexError,KeyError) as e:
+            print "invalid index",index, e
             return
         if index == self.last_index:
             return
