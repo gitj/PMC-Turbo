@@ -58,7 +58,9 @@ def ani_frame(files, output_name):
         #        im.set_clim(mn-200,mn+200)
         im.set_clim(0, mx)
         try:
-             txt.set_text(files[n].split('/')[-1].split('_')[1])
+            time_string = files[n].split('/')[-1].split('_')[1]
+            time_string = time_string[0:2]+':'+time_string[2:4]+':'+time_string[4:]
+            txt.set_text(time_string)
         except Exception:
              pass
         print ("\r%d of %d %.1f minutes elapsed, %.1f minutes remaining, %d blobs" % (n, len(files), elapsed / 60,
@@ -88,12 +90,12 @@ def ani_frame(files, output_name):
 # import joblib
 # p = joblib.Parallel(n_jobs=3)
 def process_dir():
-    # files = glob.glob(os.path.join('/data3',dirname,'*step*.npz'))
-    files = glob.glob(os.path.join('/data/home/bjorn/alberta_data/raw_2017-07-01-camera-2/2017*'))
+    #files = glob.glob(os.path.join('/data/home/bjorn/alberta_data/raw_2017-07-01-camera-2/2017*'))
+    files = glob.glob(os.path.join('/data/home/bjorn/alberta_data/raw_2017-07-04_camera-1/2017-07-04_042010/2017*'))
     files.sort()
     if len(files):
         print len(files[1::1]), files[14]
-        output_name = '/data/home/bjorn/movie_2017-07-01.mp4'
+        output_name = '/data/home/bjorn/movie_2017-07-04.mp4'
         ani_frame(files[1::1], output_name)
 
 
