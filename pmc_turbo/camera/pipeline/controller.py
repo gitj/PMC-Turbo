@@ -220,8 +220,7 @@ class Controller(GlobalConfiguration):
         if self.merged_index is None:
             self.update_current_image_dirs()
         if self.merged_index is not None:
-            result = self.merged_index.get_latest(
-                update=False)  # updating the index is now done in the controller main loop
+            result = self.merged_index.get_latest(update=False)  # updating the index is done in the main loop
             if result is None:
                 raise RuntimeError("No candidates for latest file!")
             else:
