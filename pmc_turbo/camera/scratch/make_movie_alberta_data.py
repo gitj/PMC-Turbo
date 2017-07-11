@@ -57,10 +57,10 @@ def ani_frame(files, output_name):
             # mx = 14000
         #        im.set_clim(mn-200,mn+200)
         im.set_clim(0, mx)
-        # try:
-        #     txt.set_text(time.ctime(npz['state'][()]['time']))
-        # except Exception:
-        #     pass
+        try:
+             txt.set_text(files[n].split('_')[1])
+        except Exception:
+             pass
         print ("\r%d of %d %.1f minutes elapsed, %.1f minutes remaining, %d blobs" % (n, len(files), elapsed / 60,
                                                                                       (len(
                                                                                           files) - n) * time_per_frame / 60.,
