@@ -58,7 +58,7 @@ def ani_frame(files, output_name):
         #        im.set_clim(mn-200,mn+200)
         im.set_clim(0, mx)
         try:
-             txt.set_text(files[n].split('_')[1])
+             txt.set_text(files[n].split('/')[-1].split('_')[1])
         except Exception:
              pass
         print ("\r%d of %d %.1f minutes elapsed, %.1f minutes remaining, %d blobs" % (n, len(files), elapsed / 60,
