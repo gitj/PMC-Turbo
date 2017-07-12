@@ -1,8 +1,6 @@
 import os
-import signal
 import sys
 import pmc_turbo
-import Pyro4
 from traitlets.config import Application
 from traitlets import Unicode,List
 
