@@ -68,7 +68,7 @@ class MergedIndex(object):
         if update:
             self.update()
         if self.df is not None and self.df.shape[0]:
-            return self.df.iloc[-1]
+            return self.df.iloc[-1:].copy().iloc[0]
         else:
             return None
 
