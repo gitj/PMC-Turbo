@@ -19,7 +19,7 @@ class MyImageView(pg.ImageView):
         data_dirs = glob.glob(os.path.join(self.root_data_path,'2*'))
         data_dirs.sort()
         print data_dirs[-1]
-        self.mi = MergedIndex('*',data_dirs=[data_dirs[-1]],index_filename='file_index.csv')
+        self.mi = MergedIndex('*',data_dirs=[data_dirs[-1]],index_filename='file_index.csv', sort_on=None)
         self.last_index = 0
         self.update(-1, autoLevels=True, autoRange=True)
     def update(self,index=-1,autoLevels=True,autoRange=True):
@@ -87,9 +87,9 @@ if __name__ == "__main__":
             win.setMaximumWidth(w/4.0)
             win.move(h0,w0)
 
-    timer = QtCore.QTimer()
-    timer.timeout.connect(imv.update)
-    timer.start(1000)
+    #timer = QtCore.QTimer()
+    #timer.timeout.connect(imv.update)
+    ##timer.start(1000)
 
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
         QtGui.QApplication.instance().exec_()

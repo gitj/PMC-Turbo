@@ -13,13 +13,15 @@ INDEX_FILENAME = 'index.csv'
 
 
 class MergedIndex(object):
-    def __init__(self, subdirectory_name, data_dirs=DEFAULT_DATA_DIRS, index_filename=INDEX_FILENAME):
+    def __init__(self, subdirectory_name, data_dirs=DEFAULT_DATA_DIRS, index_filename=INDEX_FILENAME,
+                 sort_on = 'frame_timestamp_ns'):
         self.data_dirs = data_dirs
         self.subdirectory_name = subdirectory_name
         self.index_filename = index_filename
         self.index_filenames = []
         self.watchers = []
         self.df = None
+        self.sort_on = sort_on
         self.update()
 
     def get_index_filenames(self):
@@ -51,7 +53,8 @@ class MergedIndex(object):
                 else:
                     segment = pd.concat((segment, fragment), ignore_index=True)
         if new_rows:
-            segment.sort_values('frame_timestamp_ns', inplace=True)
+            if self.sort_on:
+                segment.sort_values(self.sort_on, inplace=True)
             if self.df is None:
                 self.df = segment
             else:
