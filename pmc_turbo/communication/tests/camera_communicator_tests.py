@@ -107,7 +107,10 @@ class TestCommunicator(BasicTestHarness):
                                      min_percentile_threshold_fraction=0.1,
                                      adjustment_step_size_fraction=0.05,
                                      min_exposure=35,
-                                     max_exposure=1000000)
+                                     max_exposure=1000000),
+                    cm.request_blobs_by_timestamp(timestamp=123456789.123,request_id=1223,num_images=2,step=1,
+                                                  stamp_size=20,blob_threshold=12, kernel_sigma=1, kernel_size=8,
+                                                  cell_size=128, max_num_blobs=10, quality=75)
                     ]
         for command in commands:
             print cm.decode_commands(command)

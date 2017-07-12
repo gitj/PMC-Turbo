@@ -615,6 +615,14 @@ class Communicator(GlobalConfiguration):
     def enable_auto_exposure(self,enabled):
         self.controller.enable_auto_exposure(enabled)
 
+    def request_blobs_by_timestamp(self, timestamp, request_id, num_images, step, stamp_size,
+                          blob_threshold, kernel_sigma, kernel_size, cell_size, max_num_blobs,
+                          quality):
+        self.controller.request_blobs_by_timestamp(timestamp=timestamp, request_id=request_id, num_images=num_images,
+                                                   step=step, stamp_size=stamp_size, blob_threshold=blob_threshold,
+                                                   kernel_sigma=kernel_sigma, kernel_size=kernel_size,
+                                                   cell_size=cell_size, max_num_blobs=max_num_blobs, quality=quality)
+
     # end command table methods
     ###################################################################################################################
 

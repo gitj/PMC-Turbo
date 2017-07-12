@@ -23,7 +23,8 @@ c.Communicator.hirate_link_parameters = [('highrate', ('localhost', 50002), 7000
                                          ('openport', ('localhost', 45001), 1000000),
                                          ('los', ('localhost', 50004), 100000)]
 
-
+c.Controller.hot_pixel_file_dictionary = {4:'hot_pixels_02-2636D-07229_000f3102fb57.npy',
+                                          }
 JSON_FILENAMES = [
     'camera_items.json',
     'charge_controller_register_items.json',

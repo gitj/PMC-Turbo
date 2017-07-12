@@ -98,6 +98,18 @@ command_manager.add_command(Command("set_auto_exposure_parameters",
                                      ("min_exposure","I"),
                                      ("max_exposure","I")],
                                     docstring="`min_exposure` and `max_exposure` are in microseconds"))
+command_manager.add_command(Command("request_blobs_by_timestamp",
+                                    [("timestamp", "d"),
+                                     ("request_id", "I"),
+                                     ("num_images", "H"),
+                                     ("step", "i"),
+                                     ("stamp_size", "H"),
+                                     ("blob_threshold", "f"),
+                                     ("kernel_sigma", "f"),
+                                     ("kernel_size", "B"),
+                                     ("cell_size","H"),
+                                     ("max_num_blobs", "H"),
+                                     ("quality","B")]))
 
 # add command to set pyro comm timeout?
 

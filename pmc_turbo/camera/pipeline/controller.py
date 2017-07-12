@@ -7,20 +7,25 @@ import tempfile
 import time
 from functools import wraps
 
+import numpy as np
 import Pyro4
 import Pyro4.errors
-from traitlets import (Float, Bool)
+from traitlets import (Float, Bool, Dict)
 
+from pmc_turbo.camera.star_finding.blobs import BlobFinder
 from pmc_turbo.camera.image_processing.blosc_file import load_blosc_image
 from pmc_turbo.camera.image_processing.jpeg import simple_jpeg
+from pmc_turbo.camera.image_processing.hot_pixels import HotPixelMasker
 from pmc_turbo.camera.pipeline.indexer import MergedIndex
 from pmc_turbo.camera.pipeline.write_images import index_keys
 from pmc_turbo.camera.pipeline import exposure_manager
+from pmc_turbo.camera.pycamera.dtypes import image_dimensions
 from pmc_turbo.communication import file_format_classes
 from pmc_turbo.communication.file_format_classes import DEFAULT_REQUEST_ID
 from pmc_turbo.utils.camera_id import get_camera_id
-from pmc_turbo.utils.configuration import GlobalConfiguration
+from pmc_turbo.utils.configuration import GlobalConfiguration, camera_data_dir
 from pmc_turbo.utils.error_counter import CounterCollection
+
 
 logger = logging.getLogger(__name__)
 
@@ -50,6 +55,7 @@ class Controller(GlobalConfiguration):
     gate_time_error_threshold = Float(2e-3, min=0).tag(config=True)
     main_loop_interval = Float(3.0, min=0).tag(config=True)
     auto_exposure_enabled = Bool(default_value=True).tag(config=True)
+    hot_pixel_file_dictionary = Dict().tag(config=True)
 
     def __init__(self, **kwargs):
         super(Controller, self).__init__(**kwargs)
@@ -77,6 +83,7 @@ class Controller(GlobalConfiguration):
         self.counters.gate_time_threshold_error.reset()
 
         self.camera_id = get_camera_id()
+        self.setup_hot_pixel_masker()
         self.update_current_image_dirs()
         self.set_standard_image_parameters()
 
@@ -84,6 +91,15 @@ class Controller(GlobalConfiguration):
         self.daemon = Pyro4.Daemon(host='0.0.0.0', port=self.controller_pyro_port)
         uri = self.daemon.register(self, "controller")
         print uri
+
+    def setup_hot_pixel_masker(self):
+        try:
+            self.hot_pixel_filename = os.path.join(camera_data_dir,'hot_pixels',self.hot_pixel_file_dictionary[self.camera_id])
+            hot_pixels = np.load(self.hot_pixel_filename)
+        except Exception:
+            logger.exception("Failed to load hot pixel file, proceeding without")
+            hot_pixels = []
+        self.hot_pixel_masker = HotPixelMasker(hot_pixels=hot_pixels,image_shape=image_dimensions)
 
     def main_loop(self):
         events, _, _ = select.select(self.daemon.sockets, [], [], self.main_loop_interval)
@@ -268,6 +284,15 @@ class Controller(GlobalConfiguration):
                                 num_rows=3232, num_columns=4864, scale_by=1 / 8.,
                                 quality=75,
                                 format='jpeg', step=-1):
+        selection = self.timestamp_selection(num_images, step, timestamp)
+        for _, index_row in selection.iterrows():
+            self.downlink_queue.append(self.get_image_by_info(index_row, row_offset=row_offset,
+                                                              column_offset=column_offset,
+                                                              num_rows=num_rows, num_columns=num_columns,
+                                                              scale_by=scale_by, quality=quality, format=format,
+                                                              request_id=request_id).to_buffer())
+
+    def timestamp_selection(self, num_images, step, timestamp):
         last_index = self.merged_index.get_index_of_timestamp(timestamp)
         if last_index is None:
             raise RuntimeError("No index available!")
@@ -278,12 +303,44 @@ class Controller(GlobalConfiguration):
             first_index, last_index = last_index, first_index
         selection = self.merged_index.df.iloc[first_index:last_index:abs(step)]
         logger.debug("selected %d rows" % selection.shape[0])
+        return selection
+
+    def request_blobs_by_timestamp(self, timestamp, request_id, num_images, step, stamp_size,
+                          blob_threshold, kernel_sigma, kernel_size, cell_size, max_num_blobs,
+                          quality=75,format='jpeg'):
+        selection = self.timestamp_selection(num_images, step, timestamp)
         for _, index_row in selection.iterrows():
-            self.downlink_queue.append(self.get_image_by_info(index_row, row_offset=row_offset,
-                                                              column_offset=column_offset,
-                                                              num_rows=num_rows, num_columns=num_columns,
-                                                              scale_by=scale_by, quality=quality, format=format,
-                                                              request_id=request_id).to_buffer())
+            blob_images = self.get_blobs_by_info(index_row=index_row, request_id=request_id, stamp_size=stamp_size,
+                                                 blob_threshold=blob_threshold, kernel_sigma=kernel_sigma,
+                                                 kernel_size=kernel_size, cell_size=cell_size,
+                                                 max_num_blobs=max_num_blobs, quality=quality, format=format)
+            for blob_image in blob_images:
+                self.downlink_queue.append(blob_image.to_buffer())
+
+
+    def get_blobs_by_info(self,index_row,request_id,stamp_size,
+                          blob_threshold, kernel_sigma, kernel_size, cell_size, max_num_blobs,
+                          quality=75,format='jpeg'):
+        image, chunk = load_blosc_image(index_row['filename'])
+        tic = time.time()
+        image = self.hot_pixel_masker.process(image)
+        blob_finder = BlobFinder(image,blob_threshold=blob_threshold, kernel_size=kernel_size, kernel_sigma=kernel_sigma,
+                                 cell_size=cell_size,fit_blobs=False)
+        logger.debug("Found %d blobs in %.2f seconds" % (len(blob_finder.blobs), (time.time()-tic)))
+        results = []
+        for blob in blob_finder.blobs:
+            if len(results) >= max_num_blobs:
+                break
+            row_offset = blob.x-stamp_size//2
+            column_offset = blob.y-stamp_size//2
+            stamp = image[row_offset:row_offset+stamp_size,column_offset:column_offset+stamp_size]
+            if stamp.size == 0: #the blob was too close to an edge of the image, so don't bother returning it
+                logger.debug("Skipping blob at (%d,%d) because it is too close to edge of image" %(blob.x,blob.y))
+                continue
+            results.append(self.make_image_file(stamp,index_row_data=index_row,request_id=request_id,
+                                                row_offset=row_offset,column_offset=column_offset,
+                                                num_rows=stamp.shape[0],num_columns=stamp.shape[1],scale_by=1,quality=quality,format=format))
+        return results
 
     def request_standard_image_at(self, timestamp):
         # use step=1 to ensure that we get the image closest to timestamp. Otherwise we'd get the image immediately before
@@ -293,6 +350,11 @@ class Controller(GlobalConfiguration):
                           num_columns=4864, scale_by=1 / 8., quality=75, format='jpeg'):
         image, chunk = load_blosc_image(index_row_data['filename'])
         image = image[row_offset:row_offset + num_rows + 1, column_offset:column_offset + num_columns + 1]
+        return self.make_image_file(image,index_row_data=index_row_data, request_id=request_id, row_offset=row_offset,
+                                    column_offset=column_offset,num_rows=num_rows,num_columns=num_columns,scale_by=scale_by,
+                                    quality=quality,format=format)
+
+    def make_image_file(self,image,index_row_data,request_id,row_offset,column_offset,num_rows,num_columns,scale_by,quality,format):
         params = dict()
         for key in index_keys:
             if key == 'filename':

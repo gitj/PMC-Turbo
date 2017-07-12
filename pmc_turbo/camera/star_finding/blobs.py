@@ -14,7 +14,7 @@ class Blob(object):
         self.peak = peak
         self.sigma = sigma
     def __repr__(self):
-        return 'Blob(x=%r,y=%r,peak=%r,sigma=%r' % (self.x, self.y, self.peak, self.sigma)
+        return 'Blob(x=%r,y=%r,peak=%r,sigma=%r)' % (self.x, self.y, self.peak, self.sigma)
 
 def find_blobs(image,threshold=1000,cell_size=32,max_blobs_per_cell=1):
     dilated_image = cv2.dilate(image,cv2.getStructuringElement(cv2.MORPH_DILATE,(3,3)))
