@@ -41,6 +41,10 @@ c.GlobalConfiguration.log_dir = '/var/pmclogs'
 ##
 c.GlobalConfiguration.pipeline_pyro_port = 50000
 
+c.Controller.hot_pixel_file_dictionary = {4:'hot_pixels_02-2636D-07229_000f3102fb57.npy',
+                                          }
+
+
 # ------------------------------------------------------------------------------
 # Communicator(GlobalConfiguration) configuration
 # ------------------------------------------------------------------------------
