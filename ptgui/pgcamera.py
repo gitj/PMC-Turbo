@@ -68,7 +68,7 @@ class InfoBar(QtGui.QDockWidget):
         super(InfoBar, self).__init__(*args, **kwargs)
         self.setWindowTitle("Info")
         self.setFeatures(QtGui.QDockWidget.AllDockWidgetFeatures)
-        self.setFeatures(QtGui.QDockWidget.DockWidgetVerticalTitleBar)
+        #self.setFeatures(QtGui.QDockWidget.DockWidgetVerticalTitleBar)
         nested_widget = QtGui.QWidget()
         layout = QtGui.QGridLayout()
 
