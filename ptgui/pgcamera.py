@@ -12,7 +12,7 @@ from pmc_turbo.communication.file_format_classes import load_and_decode_file, JP
 
 
 class MyImageView(pg.ImageView):
-    def __init__(self, camera_id, *args, **kwargs):
+    def __init__(self, camera_id, infobar, *args, **kwargs):
         # GroundConfiguration.__init__(**kwargs)
         super(MyImageView, self).__init__(*args, **kwargs)
         self.root_data_path = '/data/gse_data'
@@ -22,6 +22,7 @@ class MyImageView(pg.ImageView):
         print data_dirs[-1]
         self.mi = MergedIndex('*', data_dirs=[data_dirs[-1]], index_filename='file_index.csv', sort_on=None)
         self.last_index = 0
+        self.infobar = infobar
         self.update(-1, autoLevels=True, autoRange=True)
 
     def update(self, index=-1, autoLevels=True, autoRange=True):
@@ -44,6 +45,7 @@ class MyImageView(pg.ImageView):
         filename = latest['filename']
         print filename
         image_file = load_and_decode_file(filename)
+        self.infobar.update(image_file)
         image_data = image_file.image_array() / image_file.pixel_scale + image_file.pixel_offset
         self.setImage(image_data, autoLevels=autoLevels, autoRange=autoRange, transform=QtGui.QTransform().rotate(-90))
 
@@ -100,28 +102,104 @@ class InfoBar(QtGui.QDockWidget):
         layout.addWidget(frame_timestamp_ns, 2, 0)
         layout.addWidget(focus_step_label, 3, 0)
 
-        layout.addWidget(aperture_stop_label, 0, 3)
-        layout.addWidget(exposure_us_label, 1, 3)
-        layout.addWidget(file_index_label, 2, 3)
-        layout.addWidget(write_timestamp_label, 3, 3)
+        layout.addWidget(aperture_stop_label, 0, 2)
+        layout.addWidget(exposure_us_label, 1, 2)
+        layout.addWidget(file_index_label, 2, 2)
+        layout.addWidget(write_timestamp_label, 3, 2)
 
-        layout.addWidget(acquisition_count_label, 0, 5)
-        layout.addWidget(lens_status_label, 1, 5)
+        layout.addWidget(acquisition_count_label, 0, 4)
+        layout.addWidget(lens_status_label, 1, 4)
         layout.addWidget(gain_db_label, 2, 5)
-        layout.addWidget(focal_length_mm_label, 3, 5)
+        layout.addWidget(focal_length_mm_label, 3, 4)
 
-        layout.addWidget(row_offset_label, 0, 7)
-        layout.addWidget(column_offset_label, 1, 7)
+        layout.addWidget(row_offset_label, 0, 6)
+        layout.addWidget(column_offset_label, 1, 6)
         layout.addWidget(num_rows_label, 2, 7)
-        layout.addWidget(num_columns_label, 3, 7)
+        layout.addWidget(num_columns_label, 3, 6)
 
-        layout.addWidget(scale_by_label, 0, 5)
-        layout.addWidget(pixel_offset_label, 1, 5)
-        layout.addWidget(pixel_scale_label, 2, 5)
-        layout.addWidget(quality_label, 3, 5)
+        layout.addWidget(scale_by_label, 0, 8)
+        layout.addWidget(pixel_offset_label, 1, 8)
+        layout.addWidget(pixel_scale_label, 2, 8)
+        layout.addWidget(quality_label, 3, 8)
+
+        self.frame_status_value = QtGui.QLabel('---')
+        self.frame_id_value = QtGui.QLabel('---')
+        self.frame_timestamp_ns = QtGui.QLabel('---')
+        self.focus_step_value = QtGui.QLabel('---')
+
+        self.aperture_stop_value = QtGui.QLabel('---')
+        self.exposure_us_value = QtGui.QLabel('---')
+        self.file_index_value = QtGui.QLabel('---')
+        self.write_timestamp_value = QtGui.QLabel('---')
+
+        self.acquisition_count_value = QtGui.QLabel('---')
+        self.lens_status_value = QtGui.QLabel('---')
+        self.gain_db_value = QtGui.QLabel('---')
+        self.focal_length_mm_value = QtGui.QLabel('---')
+
+        self.row_offset_value = QtGui.QLabel('---')
+        self.column_offset_value = QtGui.QLabel('---')
+        self.num_rows_value = QtGui.QLabel('---')
+        self.num_columns_value = QtGui.QLabel('---')
+
+        self.scale_by_value = QtGui.QLabel('---')
+        self.pixel_offset_value = QtGui.QLabel('---')
+        self.pixel_scale_value = QtGui.QLabel('---')
+        self.quality_value = QtGui.QLabel('---')
+
+        layout.addWidget(self.frame_status_value, 0, 1)
+        layout.addWidget(self.frame_id_value, 1, 1)
+        layout.addWidget(self.frame_timestamp_ns, 2, 1)
+        layout.addWidget(self.focus_step_value, 3, 1)
+
+        layout.addWidget(self.aperture_stop_value, 0, 3)
+        layout.addWidget(self.exposure_us_value, 1, 3)
+        layout.addWidget(self.file_index_value, 2, 3)
+        layout.addWidget(self.write_timestamp_value, 3, 3)
+
+        layout.addWidget(self.acquisition_count_value, 0, 5)
+        layout.addWidget(self.lens_status_value, 1, 5)
+        layout.addWidget(self.gain_db_value, 2, 5)
+        layout.addWidget(self.focal_length_mm_value, 3, 5)
+
+        layout.addWidget(self.row_offset_value, 0, 7)
+        layout.addWidget(self.column_offset_value, 1, 7)
+        layout.addWidget(self.num_rows_value, 2, 7)
+        layout.addWidget(self.num_columns_value, 3, 7)
+
+        layout.addWidget(self.scale_by_value, 0, 9)
+        layout.addWidget(self.pixel_offset_value, 1, 9)
+        layout.addWidget(self.pixel_scale_value, 2, 9)
+        layout.addWidget(self.quality_value, 3, 9)
 
         nested_widget.setLayout(layout)
         self.setWidget(nested_widget)
+
+    def update(self, jpeg_file):
+        self.frame_status_value.setText(jpeg_file.frame_status)
+        self.frame_id_value.setText(jpeg_file.frame_id)
+        self.frame_timestamp_ns.setText(jpeg_file.frame_timestamp_ns)
+        self.focus_step_value.setText(jpeg_file.focus_step)
+
+        self.aperture_stop_value.setText(jpeg_file.aperture_stop)
+        self.exposure_us_value.setText(jpeg_file.exposure_us)
+        self.file_index_value.setText(jpeg_file.file_index)
+        self.write_timestamp_value.setText(jpeg_file.write_timestamp)
+
+        self.acquisition_count_value.setText(jpeg_file.acquisition_count)
+        self.lens_status_value.setText(jpeg_file.lens_status)
+        self.gain_db_value.setText(jpeg_file.gain_db)
+        self.focal_length_mm_value.setText(jpeg_file.focal_length)
+
+        self.row_offset_value.setText(jpeg_file.row_offset)
+        self.column_offset_value.setText(jpeg_file.column_offset)
+        self.num_rows_value.setText(jpeg_file.num_rows)
+        self.num_columns_value.setText(jpeg_file.num_columns)
+
+        self.scale_by_value.setText(jpeg_file.scale_by)
+        self.pixel_offset_value.setText(jpeg_file.pixel_offset)
+        self.pixel_scale_value.setText(jpeg_file.pixel_scale)
+        self.quality_value.setText(jpeg_file.quality)
 
 
 if __name__ == "__main__":
@@ -137,7 +215,7 @@ if __name__ == "__main__":
     iw = InfoBar()
     win = QtGui.QMainWindow()
     win.resize(800, 800)
-    imv = MyImageView(camera_id)
+    imv = MyImageView(camera_id, iw)
     win.setCentralWidget(imv)
     win.addDockWidget(QtCore.Qt.BottomDockWidgetArea, iw)
     win.show()
