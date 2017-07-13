@@ -62,7 +62,8 @@ class MyImageView(pg.ImageView):
 
 
 class InfoBar(QtGui.QDockWidget):
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super(InfoBar, self).__init__(*args, **kwargs)
         self.setWindowTitle("Info")
         # self.setFeatures(QtGui.QDockWidget.NoDockWidgetFeatures)
         self.setFeatures(QtGui.QDockWidget.DockWidgetVerticalTitleBar)
