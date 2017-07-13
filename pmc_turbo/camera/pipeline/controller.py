@@ -369,7 +369,9 @@ class Controller(GlobalConfiguration):
         params['scale_by'] = scale_by
         params['quality'] = quality
         if format == 'jpeg':
-            payload = simple_jpeg(image, scale_by=scale_by, quality=quality)
+            payload,offset,scale = simple_jpeg(image, scale_by=scale_by, quality=quality)
+            params['pixel_scale'] = scale
+            params['pixel_offset'] = offset
             file_obj = file_format_classes.JPEGFile(payload=payload, **params)
         else:
             raise ValueError("Unsupported format requested %r" % format)

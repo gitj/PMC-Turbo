@@ -119,6 +119,8 @@ class ImageFileBase(FileBase):
                         ('1H', 'num_rows'),
                         ('1H', 'num_columns'),
                         ('1f', 'scale_by'),
+                        ('1H', 'pixel_offset'),
+                        ('1f', 'pixel_scale')
                         ] +
                        percentile_table_entries)
     _preferred_extension = '.raw_image'

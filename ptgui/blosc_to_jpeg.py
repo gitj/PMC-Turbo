@@ -4,7 +4,7 @@ from pmc_turbo.camera.image_processing import jpeg
 
 def make_jpeg_from_blosc(filename, **kwargs):
     img, chunk = blosc_file.load_blosc_image(filename)
-    img_jpeg = jpeg.simple_jpeg(img, **kwargs)
+    img_jpeg,offset,scale = jpeg.simple_jpeg(img, **kwargs)
     image_name = filename.split('/')[-1]
     with open('/home/pmc/%s.jpeg' % image_name, 'wb') as f:
         f.write(img_jpeg)

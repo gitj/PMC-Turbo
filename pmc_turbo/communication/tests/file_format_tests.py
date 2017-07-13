@@ -55,7 +55,7 @@ def test_file_round_trips():
                                              write_timestamp=1233.3333, acquisition_count=2, lens_status=0x6523,
                                              gain_db=300, focal_length_mm=135, row_offset=1, column_offset=2,
                                              num_rows=3232, num_columns=4864, scale_by=1 / 8., quality=75, camera_id=2,
-                                             request_id=7766, **percentiles)
+                                             request_id=7766, pixel_scale=1.0,pixel_offset=3, **percentiles)
     for instance, from_file_method in [(general_file, file_format_classes.GeneralFile.from_file),
                                        (jpeg_file, file_format_classes.JPEGFile.from_file)]:
         yield check_file_round_trip, instance, from_file_method
@@ -86,7 +86,7 @@ def test_to_buffer_idempotent():
                                              write_timestamp=1233.3333, acquisition_count=2, lens_status=0x6523,
                                              gain_db=300, focal_length_mm=135, row_offset=1, column_offset=2,
                                              num_rows=3232, num_columns=4864, scale_by=1 / 8., quality=75, camera_id=2,
-                                             request_id=7766, **percentiles)
+                                             request_id=7766, pixel_scale=1.0,pixel_offset=3,  **percentiles)
     for instance in [general_file, jpeg_file]:
         yield check_same_attributes, instance
 
@@ -108,7 +108,7 @@ def test_from_buffer():
                                              write_timestamp=1233.3333, acquisition_count=2, lens_status=0x6523,
                                              gain_db=300, focal_length_mm=135, row_offset=1, column_offset=2,
                                              num_rows=3232, num_columns=4864, scale_by=1 / 8., quality=75, camera_id=2,
-                                             request_id=7766, **percentiles)
+                                             request_id=7766, pixel_scale=1.0,pixel_offset=3, **percentiles)
     compressed_file = file_format_classes.CompressedGeneralFile(payload='blah', filename='hello.txt', timestamp=123.1,
                                                                 camera_id=2, request_id=535)
     json_file = file_format_classes.JSONFile(payload='blah', filename='hello.txt', timestamp=123.1, camera_id=2,
