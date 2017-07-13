@@ -505,7 +505,7 @@ class Communicator(GlobalConfiguration):
         payload = json.dumps(self.command_logger.command_history)
         json_file = file_format_classes.CompressedJSONFile(payload=payload,
                                                            filename=(
-                                                               'status_summary_%s.json' % time.strftime(
+                                                               'command_history_%s.json' % time.strftime(
                                                                    '%Y-%m-%d_%H%M%S')),
                                                            timestamp=time.time(),
                                                            camera_id=camera_id.get_camera_id(),
