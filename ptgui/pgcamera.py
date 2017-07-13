@@ -42,7 +42,7 @@ class MyImageView(pg.ImageView):
         filename = latest['filename']
         print filename
         image_file = load_and_decode_file(filename)
-        image_data = image_file.image_array()
+        image_data = image_file.image_array()*image_file.pixel_scale + image_file.pixel_offset
         self.setImage(image_data,autoLevels=autoLevels,autoRange=autoRange, transform=QtGui.QTransform().rotate(-90))
 
     def keyPressEvent(self, ev):
