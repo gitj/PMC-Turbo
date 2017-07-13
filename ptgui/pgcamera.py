@@ -45,7 +45,7 @@ class MyImageView(pg.ImageView):
         filename = latest['filename']
         print filename
         image_file = load_and_decode_file(filename)
-        self.infobar.update(image_file)
+        self.infobar.update(image_file, latest)
         image_data = image_file.image_array() / image_file.pixel_scale + image_file.pixel_offset
         self.setImage(image_data, autoLevels=autoLevels, autoRange=autoRange, transform=QtGui.QTransform().rotate(-90))
 
@@ -67,7 +67,7 @@ class InfoBar(QtGui.QDockWidget):
     def __init__(self, *args, **kwargs):
         super(InfoBar, self).__init__(*args, **kwargs)
         self.setWindowTitle("Info")
-        # self.setFeatures(QtGui.QDockWidget.NoDockWidgetFeatures)
+        self.setFeatures(QtGui.QDockWidget.AllDockWidgetFeatures)
         self.setFeatures(QtGui.QDockWidget.DockWidgetVerticalTitleBar)
         nested_widget = QtGui.QWidget()
         layout = QtGui.QGridLayout()
@@ -147,6 +147,8 @@ class InfoBar(QtGui.QDockWidget):
         self.pixel_scale_value = QtGui.QLabel('---')
         self.quality_value = QtGui.QLabel('---')
 
+        self.scale_by_value.setTextInteractionFlags(QtCore.TextSelectableByMouse)
+
         layout.addWidget(self.frame_status_value, 0, 1)
         layout.addWidget(self.frame_id_value, 1, 1)
         layout.addWidget(self.frame_timestamp_ns, 2, 1)
@@ -175,7 +177,7 @@ class InfoBar(QtGui.QDockWidget):
         nested_widget.setLayout(layout)
         self.setWidget(nested_widget)
 
-    def update(self, jpeg_file):
+    def update(self, jpeg_file, data_row):
         self.frame_status_value.setText(str(jpeg_file.frame_status))
         self.frame_id_value.setText(str(jpeg_file.frame_id))
         self.frame_timestamp_ns.setText(str(jpeg_file.frame_timestamp_ns))
