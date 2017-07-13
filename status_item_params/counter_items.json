@@ -10,49 +10,49 @@
         "pmc_0_communication_error_counts": {
             "class_type": "FloatStatusItem",
             "column_name": "pmc_0_communication_error_counts",
-            "name": "controller_communicator_error_counts",
+            "name": "pmc_0_communication_error_counts",
             "partial_glob": "/var/pmclogs/counters/communication_errors_*.csv"
         },
         "pmc_1_communication_error_counts": {
             "class_type": "FloatStatusItem",
             "column_name": "pmc_1_communication_error_counts",
-            "name": "controller_communicator_error_counts",
+            "name": "pmc_1_communication_error_counts",
             "partial_glob": "/var/pmclogs/counters/communication_errors_*.csv"
         },
         "pmc_2_communication_error_counts": {
             "class_type": "FloatStatusItem",
             "column_name": "pmc_2_communication_error_counts",
-            "name": "controller_communicator_error_counts",
+            "name": "pmc_2_communication_error_counts",
             "partial_glob": "/var/pmclogs/counters/communication_errors_*.csv"
         },
         "pmc_3_communication_error_counts": {
             "class_type": "FloatStatusItem",
             "column_name": "pmc_3_communication_error_counts",
-            "name": "controller_communicator_error_counts",
+            "name": "pmc_3_communication_error_counts",
             "partial_glob": "/var/pmclogs/counters/communication_errors_*.csv"
         },
         "pmc_4_communication_error_counts": {
             "class_type": "FloatStatusItem",
             "column_name": "pmc_4_communication_error_counts",
-            "name": "controller_communicator_error_counts",
+            "name": "pmc_4_communication_error_counts",
             "partial_glob": "/var/pmclogs/counters/communication_errors_*.csv"
         },
         "pmc_5_communication_error_counts": {
             "class_type": "FloatStatusItem",
             "column_name": "pmc_5_communication_error_counts",
-            "name": "controller_communicator_error_counts",
+            "name": "pmc_5_communication_error_counts",
             "partial_glob": "/var/pmclogs/counters/communication_errors_*.csv"
         },
         "pmc_6_communication_error_counts": {
             "class_type": "FloatStatusItem",
             "column_name": "pmc_6_communication_error_counts",
-            "name": "controller_communicator_error_counts",
+            "name": "pmc_6_communication_error_counts",
             "partial_glob": "/var/pmclogs/counters/communication_errors_*.csv"
         },
         "pmc_7_communication_error_counts": {
             "class_type": "FloatStatusItem",
             "column_name": "pmc_7_communication_error_counts",
-            "name": "controller_communicator_error_counts",
+            "name": "pmc_7_communication_error_counts",
             "partial_glob": "/var/pmclogs/counters/communication_errors_*.csv"
         }
     }

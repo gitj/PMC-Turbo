@@ -272,7 +272,7 @@ class StatusFileWatcher():
                 while name_line.startswith('#'):
                     # Ignore headers
                     name_line = f.readline()
-                self.column_names = (name_line.strip('\n')).split(DELIMITER)
+                self.column_names = (name_line.strip()).split(DELIMITER)
                 if self.column_names[0] != 'epoch':
                     raise ValueError(
                         'First column of file %r is not epoch, it is %r' % (self.source_file, self.column_names[0]))
@@ -323,9 +323,8 @@ class FloatStatusItem():
             self.unscaled_value = float(value_dict[self.column_name])
             self.value = self.unscaled_value * self.scaling
         else:
-            raise ValueError('Column name for item %r, set to be %r, is not in value dict: %r' % (
-                self.name, self.column_name, value_dict))
-            # logger.warning('Column name for item %r, set to be %r, is not in value dict: %r' % (self.name, self.column_name, value_dict))
+            logger.warning('Column name %r for item %r not found in columns: %r' %
+                           (self.column_name, self.name, value_dict.keys()))
         self.epoch = float(value_dict['epoch'])
 
     def get_status_summary(self):
