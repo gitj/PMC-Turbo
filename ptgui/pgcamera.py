@@ -109,12 +109,12 @@ class InfoBar(QtGui.QDockWidget):
 
         layout.addWidget(acquisition_count_label, 0, 4)
         layout.addWidget(lens_status_label, 1, 4)
-        layout.addWidget(gain_db_label, 2, 5)
+        layout.addWidget(gain_db_label, 2, 4)
         layout.addWidget(focal_length_mm_label, 3, 4)
 
         layout.addWidget(row_offset_label, 0, 6)
         layout.addWidget(column_offset_label, 1, 6)
-        layout.addWidget(num_rows_label, 2, 7)
+        layout.addWidget(num_rows_label, 2, 6)
         layout.addWidget(num_columns_label, 3, 6)
 
         layout.addWidget(scale_by_label, 0, 8)
