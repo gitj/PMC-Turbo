@@ -1,9 +1,12 @@
-from nose.tools import timed, assert_raises
+from nose.tools import timed, assert_raises, assert_is_not_none
 from pmc_turbo.communication.command_classes import ListArgumentCommand,StringArgumentCommand
-from pmc_turbo.communication.command_table import command_manager
+from pmc_turbo.communication.command_table import command_manager, destination_to_string
 
 from pmc_turbo.communication.packet_classes import GSECommandPacket
 
+def test_destination_to_string():
+    for destination in range(10):
+        assert_is_not_none(destination_to_string(destination))
 
 def test_list_argument_command_round_trip():
     c = ListArgumentCommand("some_command",'1H')
