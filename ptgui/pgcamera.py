@@ -22,6 +22,12 @@ class MyImageView(pg.ImageView):
         print data_dirs[-1]
         self.mi = MergedIndex('*', data_dirs=[data_dirs[-1]], index_filename='file_index.csv', sort_on=None)
         self.last_index = 0
+
+        self.vLine = pg.InfiniteLine(angle=90, movable=False)
+        self.hLine = pg.InfiniteLine(angle=0, movable=False)
+        self.addItem(self.vLine, ignoreBounds=True)
+        self.addItem(self.hLine, ignoreBounds=True)
+
         self.infobar = infobar
         self.update(-1, autoLevels=True, autoRange=True)
 
@@ -62,15 +68,30 @@ class MyImageView(pg.ImageView):
 
         super(MyImageView, self).keyPressEvent(ev)
 
+    def mouseMoved(self, evt):
+        vb = self.getView()
+        pos = evt[0]  ## using signal proxy turns original arguments into a tuple
+        if self.imageItem.sceneBoundingRect().contains(pos):
+            mousePoint = vb.mapSceneToView(pos)
+            index = int(mousePoint.x())
+            # label.setText("<span style='font-size: 12pt'>x=%0.1f,   <span style='color: red'>y1=%0.1f</span>,   <span style='color: green'>y2=%0.1f</span>" % (mousePoint.x(), data1[index], data2[index]))
+            self.vLine.setPos(mousePoint.x())
+            self.hLine.setPos(mousePoint.y())
+            # print mousePoint.x(), mousePoint.y()
+            self.infobar.x_value.setText('%.0f' % mousePoint.x())
+            self.infobar.y_value.setText('%.0f' % mousePoint.y())
+
 
 class InfoBar(QtGui.QDockWidget):
     def __init__(self, *args, **kwargs):
         super(InfoBar, self).__init__(*args, **kwargs)
         self.setWindowTitle("Info")
         self.setFeatures(QtGui.QDockWidget.AllDockWidgetFeatures | QtGui.QDockWidget.DockWidgetVerticalTitleBar)
-        #self.setFeatures()
+        self.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
+        mywidget = QtGui.QWidget()
         nested_widget = QtGui.QWidget()
-        layout = QtGui.QGridLayout()
+        vlayout = QtGui.QVBoxLayout()
+        grid_layout = QtGui.QGridLayout()
 
         frame_status_label = QtGui.QLabel('frame_status')
         frame_id_label = QtGui.QLabel('frame_id')
@@ -97,30 +118,30 @@ class InfoBar(QtGui.QDockWidget):
         pixel_scale_label = QtGui.QLabel('pixel_scale')
         quality_label = QtGui.QLabel('quality')
 
-        layout.addWidget(frame_status_label, 0, 0)
-        layout.addWidget(frame_id_label, 1, 0)
-        layout.addWidget(frame_timestamp_ns, 2, 0)
-        layout.addWidget(focus_step_label, 3, 0)
+        grid_layout.addWidget(frame_status_label, 0, 0)
+        grid_layout.addWidget(frame_id_label, 1, 0)
+        grid_layout.addWidget(frame_timestamp_ns, 2, 0)
+        grid_layout.addWidget(focus_step_label, 3, 0)
 
-        layout.addWidget(aperture_stop_label, 0, 2)
-        layout.addWidget(exposure_us_label, 1, 2)
-        layout.addWidget(file_index_label, 2, 2)
-        layout.addWidget(write_timestamp_label, 3, 2)
+        grid_layout.addWidget(aperture_stop_label, 0, 2)
+        grid_layout.addWidget(exposure_us_label, 1, 2)
+        grid_layout.addWidget(file_index_label, 2, 2)
+        grid_layout.addWidget(write_timestamp_label, 3, 2)
 
-        layout.addWidget(acquisition_count_label, 0, 4)
-        layout.addWidget(lens_status_label, 1, 4)
-        layout.addWidget(gain_db_label, 2, 4)
-        layout.addWidget(focal_length_mm_label, 3, 4)
+        grid_layout.addWidget(acquisition_count_label, 0, 4)
+        grid_layout.addWidget(lens_status_label, 1, 4)
+        grid_layout.addWidget(gain_db_label, 2, 4)
+        grid_layout.addWidget(focal_length_mm_label, 3, 4)
 
-        layout.addWidget(row_offset_label, 0, 6)
-        layout.addWidget(column_offset_label, 1, 6)
-        layout.addWidget(num_rows_label, 2, 6)
-        layout.addWidget(num_columns_label, 3, 6)
+        grid_layout.addWidget(row_offset_label, 0, 6)
+        grid_layout.addWidget(column_offset_label, 1, 6)
+        grid_layout.addWidget(num_rows_label, 2, 6)
+        grid_layout.addWidget(num_columns_label, 3, 6)
 
-        layout.addWidget(scale_by_label, 0, 8)
-        layout.addWidget(pixel_offset_label, 1, 8)
-        layout.addWidget(pixel_scale_label, 2, 8)
-        layout.addWidget(quality_label, 3, 8)
+        grid_layout.addWidget(scale_by_label, 0, 8)
+        grid_layout.addWidget(pixel_offset_label, 1, 8)
+        grid_layout.addWidget(pixel_scale_label, 2, 8)
+        grid_layout.addWidget(quality_label, 3, 8)
 
         self.frame_status_value = QtGui.QLabel('---')
         self.frame_id_value = QtGui.QLabel('---')
@@ -172,44 +193,71 @@ class InfoBar(QtGui.QDockWidget):
         self.pixel_scale_value.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
         self.quality_value.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
 
-        layout.addWidget(self.frame_status_value, 0, 1)
-        layout.addWidget(self.frame_id_value, 1, 1)
-        layout.addWidget(self.frame_timestamp_ns, 2, 1)
-        layout.addWidget(self.focus_step_value, 3, 1)
+        grid_layout.addWidget(self.frame_status_value, 0, 1)
+        grid_layout.addWidget(self.frame_id_value, 1, 1)
+        grid_layout.addWidget(self.frame_timestamp_ns, 2, 1)
+        grid_layout.addWidget(self.focus_step_value, 3, 1)
 
-        layout.addWidget(self.aperture_stop_value, 0, 3)
-        layout.addWidget(self.exposure_us_value, 1, 3)
-        layout.addWidget(self.file_index_value, 2, 3)
-        layout.addWidget(self.write_timestamp_value, 3, 3)
+        grid_layout.addWidget(self.aperture_stop_value, 0, 3)
+        grid_layout.addWidget(self.exposure_us_value, 1, 3)
+        grid_layout.addWidget(self.file_index_value, 2, 3)
+        grid_layout.addWidget(self.write_timestamp_value, 3, 3)
 
-        layout.addWidget(self.acquisition_count_value, 0, 5)
-        layout.addWidget(self.lens_status_value, 1, 5)
-        layout.addWidget(self.gain_db_value, 2, 5)
-        layout.addWidget(self.focal_length_mm_value, 3, 5)
+        grid_layout.addWidget(self.acquisition_count_value, 0, 5)
+        grid_layout.addWidget(self.lens_status_value, 1, 5)
+        grid_layout.addWidget(self.gain_db_value, 2, 5)
+        grid_layout.addWidget(self.focal_length_mm_value, 3, 5)
 
-        layout.addWidget(self.row_offset_value, 0, 7)
-        layout.addWidget(self.column_offset_value, 1, 7)
-        layout.addWidget(self.num_rows_value, 2, 7)
-        layout.addWidget(self.num_columns_value, 3, 7)
+        grid_layout.addWidget(self.row_offset_value, 0, 7)
+        grid_layout.addWidget(self.column_offset_value, 1, 7)
+        grid_layout.addWidget(self.num_rows_value, 2, 7)
+        grid_layout.addWidget(self.num_columns_value, 3, 7)
 
-        layout.addWidget(self.scale_by_value, 0, 9)
-        layout.addWidget(self.pixel_offset_value, 1, 9)
-        layout.addWidget(self.pixel_scale_value, 2, 9)
-        layout.addWidget(self.quality_value, 3, 9)
+        grid_layout.addWidget(self.scale_by_value, 0, 9)
+        grid_layout.addWidget(self.pixel_offset_value, 1, 9)
+        grid_layout.addWidget(self.pixel_scale_value, 2, 9)
+        grid_layout.addWidget(self.quality_value, 3, 9)
 
-        nested_widget.setLayout(layout)
-        self.setWidget(nested_widget)
+        self.filename_label = QtGui.QLabel('---')
+        self.filename_label.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+
+        x_label = QtGui.QLabel('X: ')
+        y_label = QtGui.QLabel('Y: ')
+        self.x_value = QtGui.QLabel('---')
+        self.y_value = QtGui.QLabel('---')
+
+        crosshair_widget = QtGui.QWidget()
+        crosshair_layout = QtGui.QHBoxLayout()
+        crosshair_layout.addWidget(x_label)
+        crosshair_layout.addWidget(self.x_value)
+        crosshair_layout.addWidget(y_label)
+        crosshair_layout.addWidget(self.y_value)
+        crosshair_widget.setLayout(crosshair_layout)
+
+        nested_widget.setLayout(grid_layout)
+        vlayout.addWidget(self.filename_label)
+        vlayout.addWidget(crosshair_widget)
+        vlayout.addWidget(nested_widget)
+
+        mywidget.setLayout(vlayout)
+
+        self.setWidget(mywidget)
 
     def update(self, jpeg_file, data_row):
         self.frame_status_value.setText(str(jpeg_file.frame_status))
         self.frame_id_value.setText(str(jpeg_file.frame_id))
-        self.frame_timestamp_ns.setText(str(jpeg_file.frame_timestamp_ns))
+        self.frame_timestamp_ns.setText(str(jpeg_file.frame_timestamp_ns)[:3] + '...')
+        self.frame_timestamp_ns.setToolTip(
+            'frame_timestamp_ns: ' + str(jpeg_file.frame_timestamp_ns) + '\n' + 'human readable: ')
         self.focus_step_value.setText(str(jpeg_file.focus_step))
 
         self.aperture_stop_value.setText(str(jpeg_file.aperture_stop))
         self.exposure_us_value.setText(str(jpeg_file.exposure_us))
         self.file_index_value.setText(str(jpeg_file.file_index))
         self.write_timestamp_value.setText(str(jpeg_file.write_timestamp))
+        self.write_timestamp_value.setText(str(jpeg_file.write_timestamp)[:3] + '...')
+        self.write_timestamp_value.setToolTip(
+            'write_timestamp: ' + str(jpeg_file.write_timestamp) + '\n' + 'human readable: ')
 
         self.acquisition_count_value.setText(str(jpeg_file.acquisition_count))
         self.lens_status_value.setText(str(jpeg_file.lens_status))
@@ -223,8 +271,10 @@ class InfoBar(QtGui.QDockWidget):
 
         self.scale_by_value.setText(str(jpeg_file.scale_by))
         self.pixel_offset_value.setText(str(jpeg_file.pixel_offset))
-        self.pixel_scale_value.setText(str(jpeg_file.pixel_scale))
+        self.pixel_scale_value.setText('%.3f' % jpeg_file.pixel_scale)
         self.quality_value.setText(str(jpeg_file.quality))
+
+        self.filename_label.setText(str(data_row['filename']))
 
 
 if __name__ == "__main__":
@@ -241,6 +291,7 @@ if __name__ == "__main__":
     win = QtGui.QMainWindow()
     win.resize(800, 800)
     imv = MyImageView(camera_id, iw)
+    proxy = pg.SignalProxy(imv.imageItem.scene().sigMouseMoved, rateLimit=60, slot=imv.mouseMoved)
     win.setCentralWidget(imv)
     win.addDockWidget(QtCore.Qt.BottomDockWidgetArea, iw)
     win.show()
