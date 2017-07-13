@@ -157,6 +157,7 @@ class ShortStatusCamera(ShortStatusBase):
                               ("free_disk_data_2_mb", "I"),
                               ("free_disk_data_3_mb", "I"),
                               ("free_disk_data_4_mb", "I"),
+                              ("free_disk_data_5_mb", "I"),
 
                               ("total_images_captured", "I"),
                               ("camera_packet_resent", "I"),

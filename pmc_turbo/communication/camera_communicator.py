@@ -789,6 +789,7 @@ class Communicator(GlobalConfiguration):
         ss.free_disk_data_2_mb = self.housekeeping.get_recent_value("df-data2_df_complex-free") / 1e6
         ss.free_disk_data_3_mb = self.housekeeping.get_recent_value("df-data3_df_complex-free") / 1e6
         ss.free_disk_data_4_mb = self.housekeeping.get_recent_value("df-data4_df_complex-free") / 1e6
+        ss.free_disk_data_5_mb = self.housekeeping.get_recent_value("df-data5_df_complex-free") / 1e6
         ss.total_images_captured = self.housekeeping.get_recent_value('total_frames')
         ss.camera_packet_resent = self.housekeeping.get_recent_value("StatPacketResent")
         ss.camera_packet_missed = self.housekeeping.get_recent_value("StatPacketMissed")

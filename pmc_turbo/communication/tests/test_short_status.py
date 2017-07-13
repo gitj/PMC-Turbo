@@ -18,6 +18,7 @@ def test_camera_encode():
     ss.free_disk_data_2_mb = 123000
     ss.free_disk_data_3_mb = 123000
     ss.free_disk_data_4_mb = 123000
+    ss.free_disk_data_5_mb = 123000
     ss.total_images_captured = 49494
     ss.camera_packet_resent = 0
     ss.camera_packet_missed =0
@@ -60,6 +61,7 @@ def test_coerce():
     ss.free_disk_data_2_mb = 123000
     ss.free_disk_data_3_mb = 123000
     ss.free_disk_data_4_mb = 123000
+    ss.free_disk_data_5_mb = 123000
     ss.total_images_captured = 49494
     ss.camera_packet_resent = 0
     ss.camera_packet_missed =0

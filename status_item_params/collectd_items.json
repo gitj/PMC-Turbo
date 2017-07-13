@@ -3195,6 +3195,33 @@
             "warning_range_high": "nan",
             "warning_range_low": "nan"
         },
+        "df-data5_df_complex-free": {
+            "good_range_high": "nan",
+            "good_range_low": "nan",
+            "normal_range_high": "nan",
+            "normal_range_low": "nan",
+            "scaling": 1.0,
+            "warning_range_high": "nan",
+            "warning_range_low": "nan"
+        },
+        "df-data5_df_complex-reserved": {
+            "good_range_high": "nan",
+            "good_range_low": "nan",
+            "normal_range_high": "nan",
+            "normal_range_low": "nan",
+            "scaling": 1.0,
+            "warning_range_high": "nan",
+            "warning_range_low": "nan"
+        },
+        "df-data5_df_complex-used": {
+            "good_range_high": "nan",
+            "good_range_low": "nan",
+            "normal_range_high": "nan",
+            "normal_range_low": "nan",
+            "scaling": 1.0,
+            "warning_range_high": "nan",
+            "warning_range_low": "nan"
+        },
         "df-home-pmc-pmchome_df_complex-free": {
             "good_range_high": "nan",
             "good_range_low": "nan",
