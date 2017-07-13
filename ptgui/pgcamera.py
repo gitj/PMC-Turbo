@@ -147,7 +147,7 @@ class InfoBar(QtGui.QDockWidget):
         self.pixel_scale_value = QtGui.QLabel('---')
         self.quality_value = QtGui.QLabel('---')
 
-        self.scale_by_value.setTextInteractionFlags(QtCore.TextSelectableByMouse)
+        self.scale_by_value.setTextInteractionFlags(QtGui.Qt.TextSelectableByMouse)
 
         layout.addWidget(self.frame_status_value, 0, 1)
         layout.addWidget(self.frame_id_value, 1, 1)
