@@ -56,6 +56,7 @@ class Controller(GlobalConfiguration):
     main_loop_interval = Float(3.0, min=0).tag(config=True)
     auto_exposure_enabled = Bool(default_value=True).tag(config=True)
     hot_pixel_file_dictionary = Dict().tag(config=True)
+    minimum_update_interval = Float(10.0,min=0).tag(config=True)
 
     def __init__(self, **kwargs):
         super(Controller, self).__init__(**kwargs)
@@ -68,6 +69,7 @@ class Controller(GlobalConfiguration):
         self.downlink_queue = []
         self.outstanding_command_tags = {}
         self.completed_command_tags = {}
+        self.last_update_time = 0
 
         self.exposure_manager = exposure_manager.ExposureManager(parent=self)
 
@@ -103,11 +105,11 @@ class Controller(GlobalConfiguration):
 
     def main_loop(self):
         events, _, _ = select.select(self.daemon.sockets, [], [], self.main_loop_interval)
-        if events:
-            self.daemon.events(events)
-        else:
+        if (not events) or (time.time() - self.last_update_time) > self.minimum_update_interval:
             # check_for_completed_commands also updates the merged index
             self.check_for_completed_commands()
+        if events:
+            self.daemon.events(events)
 
     @require_pipeline
     def set_focus(self, focus_step):
