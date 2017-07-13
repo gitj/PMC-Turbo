@@ -37,6 +37,10 @@ def construct_status_group_from_json(json_path, filewatcher_threshhold_time):
     preamble = json_dict['PREAMBLE']
     items = json_dict["ITEMS"]
 
+    missing_ranges = list(set(items.keys()).difference(set(range_result.keys())))
+    if missing_ranges:
+        logger.error("Missing ranges for the following keys: %r" % missing_ranges)
+
     for key in range_result.keys():
         try:
             items[key].update(range_result[key])
@@ -52,8 +56,8 @@ def construct_status_group_from_json(json_path, filewatcher_threshhold_time):
                 status_filewatcher = StatusFileWatcher(name=value_dict['partial_glob'], items=[],
                                                        filename_glob=os.path.join(preamble, value_dict['partial_glob']),
                                                        threshhold_time=filewatcher_threshhold_time)
-            except ValueError:
-                logger.exception("Could not add StatusFileWatcher for glob '%r'" % value_dict['partial_glob'])
+            except ValueError as e:
+                logger.error("Could not add StatusFileWatcher for glob %r\n%s" % (value_dict['partial_glob'],e.message))
                 continue
             status_group.filewatchers[value_dict['partial_glob']] = status_filewatcher
         try:
@@ -176,17 +180,6 @@ class StatusGroup():
         logger.debug('Updating group with name %r' % self.name)
         for key in self.filewatchers.keys():
             self.filewatchers[key].update()
-
-    def convert_to_string(self):
-        buffer = ''
-        for file_key in self.filewatchers.keys():
-            for item_key in self.filewatchers[file_key].keys():
-                buffer += 'File: %s, item: %s, value: %0.2f, epoch: %0.0f' % (self[file_key].name,
-                                                                              self[file_key][item_key].name,
-                                                                              self[file_key][item_key].value,
-                                                                              self[file_key][item_key].epoch)
-                buffer += '\n'
-        return buffer
 
     def to_json_file(self):
         payload = json.dumps(self.get_status())

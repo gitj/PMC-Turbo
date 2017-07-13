@@ -683,6 +683,33 @@
         "warning_range_high": "nan",
         "warning_range_low": "nan"
     },
+    "df-data5_df_complex-free": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "df-data5_df_complex-reserved": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "df-data5_df_complex-used": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
     "df-root_df_complex-free": {
         "good_range_high": "nan",
         "good_range_low": "nan",
@@ -2952,6 +2979,15 @@
         "warning_range_low": "nan"
     },
     "hddtemp_temperature-sdf": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "hddtemp_temperature-sdg": {
         "good_range_high": "nan",
         "good_range_low": "nan",
         "normal_range_high": "nan",

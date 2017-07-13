@@ -87,8 +87,8 @@ c.Communicator.use_controller = True
 
 JSON_FILENAMES = [
     'camera_items.json',
-    'charge_controller_register_items.json',
-    'charge_controller_eeprom_items.json',
+#    'charge_controller_register_items.json',
+#    'charge_controller_eeprom_items.json',  # no charge controller for stand alone camera
     'counter_items.json',
     'collectd_items.json',
     'labjack_items.json'
