@@ -12,6 +12,7 @@ class IndexWatcher(object):
         self.last_position = 0
         self.last_modified = 0
         self.df = None
+        self.names = []
 
     def get_latest(self, update=True):
         if update:
@@ -22,7 +23,10 @@ class IndexWatcher(object):
             return None
 
     def get_fragment(self):
-        if self.df is not None:
+        if self.names:
+            names = self.names
+            header = None
+        elif self.df is not None:
             names = list(self.df.columns)
             header = None
         else:
@@ -41,8 +45,8 @@ class IndexWatcher(object):
                         num_rows_dropped = original_num_rows-fragment.shape[0]
                         if num_rows_dropped:
                             logger.warning("dropped %d rows that had NaNs from file %s" % (num_rows_dropped,self.filename))
-                        if self.df is None:
-                            self.df = fragment
+                        if not self.names:
+                            self.names = list(fragment.columns)
                     except ValueError:
                         pass
                     self.last_position = fh.tell()
