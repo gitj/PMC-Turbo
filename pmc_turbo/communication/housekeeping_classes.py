@@ -109,12 +109,6 @@ class SuperStatusGroup():
             self.groups[key].update()
         self.three_column_data_set = self.get_three_column_data_set()
 
-    def to_json_file(self):
-        payload = json.dumps(self.get_status())
-        json_file = file_format_classes.GeneralFile(payload=payload, filename='json_file.json', timestamp=time.time(),
-                                                    camera_id=0, request_id=000)
-        return json_file
-
     def get_status(self):
         if len(self.groups) == 0:
             logger.error('No keys for %s - filewatcher is empty.' % self.name)
@@ -180,12 +174,6 @@ class StatusGroup():
         logger.debug('Updating group with name %r' % self.name)
         for key in self.filewatchers.keys():
             self.filewatchers[key].update()
-
-    def to_json_file(self):
-        payload = json.dumps(self.get_status())
-        json_file = file_format_classes.GeneralFile(payload=payload, filename='json_file.json', timestamp=time.time(),
-                                                    camera_id=0, request_id=000)
-        return json_file
 
     def get_status(self):
         if len(self.filewatchers) == 0:
