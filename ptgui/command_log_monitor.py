@@ -95,7 +95,7 @@ class CommandTableModel(QtCore.QAbstractTableModel):
         return len(column_names)
 
     def check_command_received(self, sequence_number):
-        leader_statuses = [self.lowrate_monitor.lowrate_data[fn] for fn in self.lowrate_monitor.by_message_id[ShortStatusLeader.LEADER_MESSAGE_ID]]
+        leader_statuses = [self.lowrate_monitor.lowrate_data[fn] for fn in self.lowrate_monitor.by_message_id.get(ShortStatusLeader.LEADER_MESSAGE_ID,[])]
         failed_sequence_numbers = set([status.get('last_failed_sequence',-1) for status in leader_statuses])
         if sequence_number in failed_sequence_numbers:
             return 'recvd, ERRORED'
