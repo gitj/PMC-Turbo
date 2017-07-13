@@ -456,6 +456,24 @@
             "name": "df-data4_df_complex-used",
             "partial_glob": "df-data4/df_complex-used-*"
         },
+        "df-data5_df_complex-free": {
+            "class_type": "FloatStatusItem",
+            "column_name": "value",
+            "name": "df-data4_df_complex-free",
+            "partial_glob": "df-data4/df_complex-free-*"
+        },
+        "df-data5_df_complex-reserved": {
+            "class_type": "FloatStatusItem",
+            "column_name": "value",
+            "name": "df-data4_df_complex-reserved",
+            "partial_glob": "df-data4/df_complex-reserved-*"
+        },
+        "df-data5_df_complex-used": {
+            "class_type": "FloatStatusItem",
+            "column_name": "value",
+            "name": "df-data4_df_complex-used",
+            "partial_glob": "df-data4/df_complex-used-*"
+        },
         "df-root_df_complex-free": {
             "class_type": "FloatStatusItem",
             "column_name": "value",
