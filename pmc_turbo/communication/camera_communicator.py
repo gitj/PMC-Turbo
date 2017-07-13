@@ -778,44 +778,43 @@ class Communicator(GlobalConfiguration):
         ss.message_id = self.cam_id
 
         self.housekeeping.update()
-        data = self.housekeeping.get_three_column_data_set()
 
         # The 0th index of the tuple is the epoch, the 1st is the value
 
         ss.timestamp = time.time()
         ss.leader_id = self.leader_id
-        ss.free_disk_root_mb = self.housekeeping.get_value("df-root_df_complex-free") / 1e6
-        ss.free_disk_var_mb = self.housekeeping.get_value("df-var_df_complex-free") / 1e6
-        ss.free_disk_data_1_mb = self.housekeeping.get_value("df-data1_df_complex-free") / 1e6
-        ss.free_disk_data_2_mb = self.housekeeping.get_value("df-data2_df_complex-free") / 1e6
-        ss.free_disk_data_3_mb = self.housekeeping.get_value("df-data3_df_complex-free") / 1e6
-        ss.free_disk_data_4_mb = self.housekeeping.get_value("df-data4_df_complex-free") / 1e6
-        ss.total_images_captured = self.housekeeping.get_value('total_frames')
-        ss.camera_packet_resent = self.housekeeping.get_value("StatPacketResent")
-        ss.camera_packet_missed = self.housekeeping.get_value("StatPacketMissed")
-        ss.camera_frames_dropped = self.housekeeping.get_value("StatFrameDropped")
-        ss.camera_timestamp_offset_us = self.housekeeping.get_value('camera_timestamp_offset')
-        ss.exposure_us = self.housekeeping.get_value('ExposureTimeAbs')
-        ss.focus_step = self.housekeeping.get_value('EFLensFocusCurrent')
-        ss.aperture_times_100 = self.housekeeping.get_value('EFLensFStopCurrent') * 100
+        ss.free_disk_root_mb = self.housekeeping.get_recent_value("df-root_df_complex-free") / 1e6
+        ss.free_disk_var_mb = self.housekeeping.get_recent_value("df-var_df_complex-free") / 1e6
+        ss.free_disk_data_1_mb = self.housekeeping.get_recent_value("df-data1_df_complex-free") / 1e6
+        ss.free_disk_data_2_mb = self.housekeeping.get_recent_value("df-data2_df_complex-free") / 1e6
+        ss.free_disk_data_3_mb = self.housekeeping.get_recent_value("df-data3_df_complex-free") / 1e6
+        ss.free_disk_data_4_mb = self.housekeeping.get_recent_value("df-data4_df_complex-free") / 1e6
+        ss.total_images_captured = self.housekeeping.get_recent_value('total_frames')
+        ss.camera_packet_resent = self.housekeeping.get_recent_value("StatPacketResent")
+        ss.camera_packet_missed = self.housekeeping.get_recent_value("StatPacketMissed")
+        ss.camera_frames_dropped = self.housekeeping.get_recent_value("StatFrameDropped")
+        ss.camera_timestamp_offset_us = self.housekeeping.get_recent_value('camera_timestamp_offset')
+        ss.exposure_us = self.housekeeping.get_recent_value('ExposureTimeAbs')
+        ss.focus_step = self.housekeeping.get_recent_value('EFLensFocusCurrent')
+        ss.aperture_times_100 = self.housekeeping.get_recent_value('EFLensFStopCurrent') * 100
         try:
             ss.auto_exposure_enabled = self.controller.is_auto_exposure_enabled()
         except Exception:
             logger.exception("Failed to get auto_exposure_enabled from controller")
             ss.auto_exposure_enabled = np.nan
-        ss.pressure = self.housekeeping.get_value("Pressure")
-        ss.lens_wall_temp = (self.housekeeping.get_value('Lens_Temperature') * 1000) - 273
-        ss.dcdc_wall_temp = (self.housekeeping.get_value('DCDC_Temperature') * 1000) - 273
-        ss.labjack_temp = self.housekeeping.get_value('Labjack_Temperature') - 273
-        ss.camera_temp = self.housekeeping.get_value('main_temperature')
-        ss.ccd_temp = self.housekeeping.get_value('sensor_temperature')
-        ss.rail_12_mv = self.housekeeping.get_value("ipmi_voltage-12V system_board (7.17)") * 1000
-        ss.cpu_temp = self.housekeeping.get_value("ipmi_temperature-CPU Temp processor (3.1)")
-        ss.sda_temp = self.housekeeping.get_value("hddtemp_temperature-sda")
-        ss.sdb_temp = self.housekeeping.get_value("hddtemp_temperature-sdb")
-        ss.sdc_temp = self.housekeeping.get_value("hddtemp_temperature-sdc")
-        ss.sdd_temp = self.housekeeping.get_value("hddtemp_temperature-sdd")
-        ss.sde_temp = self.housekeeping.get_value("hddtemp_temperature-sde")
-        ss.sdf_temp = self.housekeeping.get_value("hddtemp_temperature-sdf")
-        ss.sdg_temp = self.housekeeping.get_value("hddtemp_temperature-sdg")
+        ss.pressure = self.housekeeping.get_recent_value("Pressure")
+        ss.lens_wall_temp = (self.housekeeping.get_recent_value('Lens_Temperature') * 1000) - 273
+        ss.dcdc_wall_temp = (self.housekeeping.get_recent_value('DCDC_Temperature') * 1000) - 273
+        ss.labjack_temp = self.housekeeping.get_recent_value('Labjack_Temperature') - 273
+        ss.camera_temp = self.housekeeping.get_recent_value('main_temperature')
+        ss.ccd_temp = self.housekeeping.get_recent_value('sensor_temperature')
+        ss.rail_12_mv = self.housekeeping.get_recent_value("ipmi_voltage-12V system_board (7.17)") * 1000
+        ss.cpu_temp = self.housekeeping.get_recent_value("ipmi_temperature-CPU Temp processor (3.1)")
+        ss.sda_temp = self.housekeeping.get_recent_value("hddtemp_temperature-sda")
+        ss.sdb_temp = self.housekeeping.get_recent_value("hddtemp_temperature-sdb")
+        ss.sdc_temp = self.housekeeping.get_recent_value("hddtemp_temperature-sdc")
+        ss.sdd_temp = self.housekeeping.get_recent_value("hddtemp_temperature-sdd")
+        ss.sde_temp = self.housekeeping.get_recent_value("hddtemp_temperature-sde")
+        ss.sdf_temp = self.housekeeping.get_recent_value("hddtemp_temperature-sdf")
+        ss.sdg_temp = self.housekeeping.get_recent_value("hddtemp_temperature-sdg")
         return ss.encode()

@@ -135,6 +135,19 @@ class SuperStatusGroup():
             logger.error('Key %r missing from group %r' % (item_name, self.name))
             return np.nan
 
+    def get_recent_value(self, item_name, max_age_seconds=60):
+        try:
+            epoch,value = self.three_column_data_set[item_name]
+        except KeyError as e:
+            logger.error('Key %r missing from group %r' % (item_name, self.name))
+            return np.nan
+        age = time.time() - epoch
+        if age > max_age_seconds:
+            logger.debug("Value %r for %r is too old, last updated %.1f seconds ago" %(value, item_name, age))
+            return np.nan
+        else:
+            return value
+
     def get_epoch(self, item_name):
         try:
             return self.three_column_data_set[item_name][0]
