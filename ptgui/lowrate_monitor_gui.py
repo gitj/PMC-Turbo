@@ -94,7 +94,10 @@ if __name__ == "__main__":
         lrm.update()
         for w in widgets:
             w.update_display()
-        sbs.set_values(lrm.latest(ShortStatusLeader.LEADER_MESSAGE_ID))
+        try:
+            sbs.set_values(lrm.latest(ShortStatusLeader.LEADER_MESSAGE_ID))
+        except KeyError:
+            pass
     timer = QtCore.QTimer()
     timer.timeout.connect(update)
     timer.start(1000)
