@@ -1,6 +1,7 @@
 import glob
 import logging
 import os
+import gc
 
 import pandas as pd
 
@@ -43,6 +44,7 @@ class MergedIndex(object):
         self.update_watchers()
         new_rows = False
         segment = None
+
         for watcher in self.watchers:
             fragment = watcher.get_fragment()
             if fragment is not None and fragment.shape[0] > 0:
@@ -66,6 +68,7 @@ class MergedIndex(object):
             else:
                 msg = "%d total rows" % self.df.shape[0]
             logger.debug("index updated, no new rows, "+ msg)
+        gc.collect()
 
     def get_latest(self, update=True):
         if update:
