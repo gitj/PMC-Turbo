@@ -488,7 +488,7 @@ class Communicator(GlobalConfiguration):
 
         # NOTE: When LIDAR and leader housekeeping is added, summary should also append those statuses.
         self.housekeeping.update()
-        summary.append(self.housekeeping.get_status())
+        summary.append(self.housekeeping.get_three_column_data_set())
         payload = json.dumps(summary)
         if compress:
             file_class = file_format_classes.CompressedJSONFile

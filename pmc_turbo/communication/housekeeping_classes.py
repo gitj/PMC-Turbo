@@ -6,7 +6,6 @@ import time
 import math
 import numpy as np
 
-from pmc_turbo.communication import file_format_classes
 from pmc_turbo.utils import file_reading
 
 logger = logging.getLogger(__name__)
