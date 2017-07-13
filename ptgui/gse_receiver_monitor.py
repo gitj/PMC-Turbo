@@ -27,7 +27,7 @@ class Model(QtCore.QAbstractTableModel):
                 if file_id in self.files:
                     this_file = self.files[file_id]
                     if ((len(status['packets_received']) == status['packets_expected'])
-                        and ((time.time() - status['recent_timestamp']) > 10)):
+                        and ((time.time() - status['recent_timestamp']) > 120)):
                         index = self.files.keys().index(file_id)
                         self.beginRemoveRows(QtCore.QModelIndex(), index, index + 1)
                         print "removing", index, file_id
@@ -45,15 +45,16 @@ class Model(QtCore.QAbstractTableModel):
                 packet = status['first_packet']
                 packets_received = len(status['packets_received'])
                 status['total_packets_received'] = packets_received
-                if status['first_timestamp'] == status['recent_timestamp']:
-                    status['bytes_per_second'] = 0
-                    status['time_remaining'] = 0
-                else:
+                status['bytes_per_second'] = 0
+                status['time_remaining'] = 0
+                if status['first_timestamp'] != status['recent_timestamp']:
                     bytes_per_packet = packet.total_packet_length
-                    status['bytes_per_second'] = bytes_per_packet * (packets_received) / (
+                    status['bytes_per_second'] = bytes_per_packet * (packets_received-1) / (
                         status['recent_timestamp'] - status['first_timestamp'])
-                    status['time_remaining'] = bytes_per_packet * (status['packets_expected'] - packets_received) / \
-                                               status['bytes_per_second']
+                    if status['bytes_per_second'] != 0:
+                        status['time_remaining'] = (bytes_per_packet * (status['packets_expected'] - packets_received) /
+                                               status['bytes_per_second'])
+
                 if new_row:
                     self.beginInsertRows(QtCore.QModelIndex(), self.rowCount(), self.rowCount())
                 self.files[file_id] = status
