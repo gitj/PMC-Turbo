@@ -176,30 +176,30 @@ class InfoBar(QtGui.QDockWidget):
         self.setWidget(nested_widget)
 
     def update(self, jpeg_file):
-        self.frame_status_value.setText(jpeg_file.frame_status)
-        self.frame_id_value.setText(jpeg_file.frame_id)
-        self.frame_timestamp_ns.setText(jpeg_file.frame_timestamp_ns)
-        self.focus_step_value.setText(jpeg_file.focus_step)
+        self.frame_status_value.setText(str(jpeg_file.frame_status))
+        self.frame_id_value.setText(str(jpeg_file.frame_id))
+        self.frame_timestamp_ns.setText(str(jpeg_file.frame_timestamp_ns))
+        self.focus_step_value.setText(str(jpeg_file.focus_step))
 
-        self.aperture_stop_value.setText(jpeg_file.aperture_stop)
-        self.exposure_us_value.setText(jpeg_file.exposure_us)
-        self.file_index_value.setText(jpeg_file.file_index)
-        self.write_timestamp_value.setText(jpeg_file.write_timestamp)
+        self.aperture_stop_value.setText(str(jpeg_file.aperture_stop))
+        self.exposure_us_value.setText(str(jpeg_file.exposure_us))
+        self.file_index_value.setText(str(jpeg_file.file_index))
+        self.write_timestamp_value.setText(str(jpeg_file.write_timestamp))
 
-        self.acquisition_count_value.setText(jpeg_file.acquisition_count)
-        self.lens_status_value.setText(jpeg_file.lens_status)
-        self.gain_db_value.setText(jpeg_file.gain_db)
-        self.focal_length_mm_value.setText(jpeg_file.focal_length)
+        self.acquisition_count_value.setText(str(jpeg_file.acquisition_count))
+        self.lens_status_value.setText(str(jpeg_file.lens_status))
+        self.gain_db_value.setText(str(jpeg_file.gain_db))
+        self.focal_length_mm_value.setText(str(jpeg_file.focal_length))
 
-        self.row_offset_value.setText(jpeg_file.row_offset)
-        self.column_offset_value.setText(jpeg_file.column_offset)
-        self.num_rows_value.setText(jpeg_file.num_rows)
-        self.num_columns_value.setText(jpeg_file.num_columns)
+        self.row_offset_value.setText(str(jpeg_file.row_offset))
+        self.column_offset_value.setText(str(jpeg_file.column_offset))
+        self.num_rows_value.setText(str(jpeg_file.num_rows))
+        self.num_columns_value.setText(str(jpeg_file.num_columns))
 
-        self.scale_by_value.setText(jpeg_file.scale_by)
-        self.pixel_offset_value.setText(jpeg_file.pixel_offset)
-        self.pixel_scale_value.setText(jpeg_file.pixel_scale)
-        self.quality_value.setText(jpeg_file.quality)
+        self.scale_by_value.setText(str(jpeg_file.scale_by))
+        self.pixel_offset_value.setText(str(jpeg_file.pixel_offset))
+        self.pixel_scale_value.setText(str(jpeg_file.pixel_scale))
+        self.quality_value.setText(str(jpeg_file.quality))
 
 
 if __name__ == "__main__":
