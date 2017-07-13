@@ -147,7 +147,30 @@ class InfoBar(QtGui.QDockWidget):
         self.pixel_scale_value = QtGui.QLabel('---')
         self.quality_value = QtGui.QLabel('---')
 
-        self.scale_by_value.setTextInteractionFlags(QtGui.Qt.TextSelectableByMouse)
+        self.frame_status_value.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+        self.frame_id_value.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+        self.frame_timestamp_ns.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+        self.focus_step_value.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+
+        self.aperture_stop_value.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+        self.exposure_us_value.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+        self.file_index_value.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+        self.write_timestamp_value.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+
+        self.acquisition_count_value.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+        self.lens_status_value.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+        self.gain_db_value.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+        self.focal_length_mm_value.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+
+        self.row_offset_value.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+        self.column_offset_value.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+        self.num_rows_value.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+        self.num_columns_value.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+
+        self.scale_by_value.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+        self.pixel_offset_value.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+        self.pixel_scale_value.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+        self.quality_value.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
 
         layout.addWidget(self.frame_status_value, 0, 1)
         layout.addWidget(self.frame_id_value, 1, 1)
