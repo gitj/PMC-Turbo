@@ -21,13 +21,18 @@ def simple_jpeg(array, scale_by=1, resample=0, **kwargs):
         size = (y, x)
         img = img.resize(size, resample=resample)
     img = np.asarray(img, dtype='int32')
+    min_ = img.min()
+    img = img - min_
     max_ = img.max()
-    img = img * (255. / max_)
+    scale = 1
+    if max_ > 255:
+        scale = (255. / max_)
+        img = img * scale
     img = Image.fromarray(img.astype('uint8'), mode='L')
     stream = cStringIO.StringIO()
     img.save(stream, format='jpeg', **kwargs)
     stream.seek(0)
-    return stream.read()
+    return stream.read(), min_, scale
 
 
 def image_from_string(data):
