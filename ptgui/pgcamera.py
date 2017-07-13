@@ -189,7 +189,7 @@ class InfoBar(QtGui.QDockWidget):
         self.acquisition_count_value.setText(str(jpeg_file.acquisition_count))
         self.lens_status_value.setText(str(jpeg_file.lens_status))
         self.gain_db_value.setText(str(jpeg_file.gain_db))
-        self.focal_length_mm_value.setText(str(jpeg_file.focal_length))
+        self.focal_length_mm_value.setText(str(jpeg_file.focal_length_mm))
 
         self.row_offset_value.setText(str(jpeg_file.row_offset))
         self.column_offset_value.setText(str(jpeg_file.column_offset))
