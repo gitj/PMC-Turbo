@@ -461,5 +461,14 @@
         "scaling": 1.0,
         "warning_range_high": "nan",
         "warning_range_low": "nan"
+    },
+    "trigger_interval": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
     }
 }

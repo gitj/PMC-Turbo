@@ -166,6 +166,9 @@ class ShortStatusCamera(ShortStatusBase):
                               ("camera_frames_dropped", "I"),
                               ("camera_timestamp_offset_us", "h"),
 
+                              ("trigger_interval", "B"),
+                              ("frame_rate_times_1000", "H"),
+                              ("frames_per_burst", "B"),
                               ("exposure_us", "I"),
                               ("focus_step", "H"),
                               ("aperture_times_100","H"),

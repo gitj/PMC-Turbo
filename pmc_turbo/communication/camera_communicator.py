@@ -800,6 +800,9 @@ class Communicator(GlobalConfiguration):
         ss.camera_packet_missed = self.housekeeping.get_recent_value("StatPacketMissed")
         ss.camera_frames_dropped = self.housekeeping.get_recent_value("StatFrameDropped")
         ss.camera_timestamp_offset_us = self.housekeeping.get_recent_value('camera_timestamp_offset')
+        ss.trigger_interval = self.housekeeping.get_recent_value('trigger_interval')
+        ss.frame_rate_times_1000 = self.housekeeping.get_recent_value("AcquisitionFrameRateAbs") * 1000
+        ss.frames_per_burst = self.housekeeping.get_recent_value("AcquisitionFrameCount")
         ss.exposure_us = self.housekeeping.get_recent_value('ExposureTimeAbs')
         ss.focus_step = self.housekeeping.get_recent_value('EFLensFocusCurrent')
         ss.aperture_times_100 = self.housekeeping.get_recent_value('EFLensFStopCurrent') * 100

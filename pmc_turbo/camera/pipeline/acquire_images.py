@@ -23,6 +23,7 @@ Pyro4.config.SERIALIZER = 'pickle'
 
 
 camera_status_columns = ["total_frames", "camera_timestamp_offset", "main_temperature", "sensor_temperature",
+                         "trigger_interval",
                          "AcquisitionFrameCount", "AcquisitionFrameRateAbs", "AcquisitionFrameRateLimit",
                          "AcquisitionMode", "ChunkModeActive",
                          "DeviceTemperature", "DeviceTemperatureSelector", "EFLensFStopCurrent",
@@ -245,6 +246,7 @@ class AcquireImagesProcess(GlobalConfiguration):
                                          camera_status_update_at=update_at,
                                          camera_timestamp_offset=timestamp_comparison,
                                          total_frames=frame_number,
+                                         trigger_interval=self.trigger_interval,
                                          )
                     status_update.update(temperatures)
                     self.log_status(status_update)

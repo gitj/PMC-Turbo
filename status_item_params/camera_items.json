@@ -353,6 +353,12 @@
             "column_name": "total_frames",
             "name": "total_frames",
             "partial_glob": "*"
+        },
+        "trigger_interval": {
+            "class_type": "FloatStatusItem",
+            "column_name": "trigger_interval",
+            "name": "trigger_interval",
+            "partial_glob": "*"
         }
     },
     "PREAMBLE": "/var/pmclogs/housekeeping/camera/"

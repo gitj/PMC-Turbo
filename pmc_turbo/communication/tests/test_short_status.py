@@ -25,6 +25,9 @@ def test_camera_encode():
     ss.camera_packet_missed =0
     ss.camera_frames_dropped = 0
     ss.camera_timestamp_offset_us = 65
+    ss.trigger_interval = 2
+    ss.frame_rate_times_1000 = 6250
+    ss.frames_per_burst = 2
     ss.exposure_us = 4774
     ss.focus_step = 2000
     ss.aperture_times_100 = 123
@@ -69,6 +72,9 @@ def test_coerce():
     ss.camera_packet_missed =0
     ss.camera_frames_dropped = 0
     ss.camera_timestamp_offset_us = 65
+    ss.trigger_interval = 2
+    ss.frame_rate_times_1000 = 6250
+    ss.frames_per_burst = 2
     ss.exposure_us = 4774
     ss.focus_step = 200000
     ss.aperture_times_100 = 123

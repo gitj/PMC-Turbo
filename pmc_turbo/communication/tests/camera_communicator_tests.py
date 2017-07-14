@@ -252,6 +252,9 @@ class TestPeers(BasicTestHarness):
 
     @timed(20)
     def test_short_status(self):
+        self.c.populate_short_status_leader()
+        self.c.get_short_status_camera()
+
         status = self.c.get_next_status_summary()
         ss = short_status.ShortStatusLeader(status)
         status = self.c.get_next_status_summary()
