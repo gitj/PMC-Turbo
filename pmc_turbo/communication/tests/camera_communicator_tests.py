@@ -110,7 +110,8 @@ class TestCommunicator(BasicTestHarness):
                                      max_exposure=1000000),
                     cm.request_blobs_by_timestamp(timestamp=123456789.123,request_id=1223,num_images=2,step=1,
                                                   stamp_size=20,blob_threshold=12, kernel_sigma=1, kernel_size=8,
-                                                  cell_size=128, max_num_blobs=10, quality=75)
+                                                  cell_size=128, max_num_blobs=10, quality=75),
+                    cm.set_trigger_interval(interval=4)
                     ]
         for command in commands:
             print cm.decode_commands(command)

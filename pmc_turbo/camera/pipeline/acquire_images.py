@@ -47,6 +47,7 @@ class AcquireImagesProcess(GlobalConfiguration):
     camera_housekeeping_subdir = Unicode('camera').tag(config=True)
     acquire_counters_name = Unicode('acquire_images').tag(config=True)
     camera_ip_address = Bytes("10.0.0.2").tag(config=True)
+    trigger_interval = Int(default_value=2,min=1).tag(config=True)
     initial_camera_configuration = List(trait=Tuple(Bytes(), Bytes()),
                                         default_value=[("PtpMode", "Slave"),
                                                        ("ChunkModeActive", "1"),
@@ -180,21 +181,29 @@ class AcquireImagesProcess(GlobalConfiguration):
                     self.counters.buffer_queued.increment()
             if exit_request:
                 break
-            if time.time() > last_trigger + 0.5:
-                gate_time = int(time.time() + 1)
+            if time.time() > last_trigger + (self.trigger_interval-0.5):
+                gate_time = int(time.time() + self.trigger_interval)
                 if not self.command_queue.empty():
                     name, value, tag = self.command_queue.get()
                     self.status.value = "sending command"
-                    if value is None:
-                        result = self.pc.run_feature_command(name)
-                        self.counters.command_sent.increment()
+                    if name == 'trigger_interval':
+                        try:
+                            self.trigger_interval = int(value)
+                            result = 0
+                        except Exception:
+                            logger.exception("Failed to set trigger_interval to %r" % value)
+                            result = -1
                     else:
-                        result = self.pc.set_parameter(name, value)
-                        self.counters.parameter_set.increment()
+                        if value is None:
+                            result = self.pc.run_feature_command(name)
+                            self.counters.command_sent.increment()
+                        else:
+                            result = self.pc.set_parameter(name, value)
+                            self.counters.parameter_set.increment()
                     if result:
                         logger.error("Errorcode %r while executing command %s:%r" % (result, name, value))
                         self.counters.command_non_zero_result.increment()
-                    gate_time = int(time.time() + 1)  # update gate time in case some time has elapsed while executing
+                    gate_time = int(time.time() + self.trigger_interval)  # update gate time in case some time has elapsed while executing
                     # command
                     self.command_result_queue.put((tag, name, value, result, gate_time))
                 self.status.value = "arming camera"

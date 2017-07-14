@@ -77,6 +77,7 @@ class Controller(GlobalConfiguration):
         self.counters.set_focus.reset()
         self.counters.set_exposure.reset()
         self.counters.set_fstop.reset()
+        self.counters.set_trigger_interval.reset()
         self.counters.send_arbitrary_command.reset()
         self.counters.run_focus_sweep.reset()
 
@@ -112,37 +113,45 @@ class Controller(GlobalConfiguration):
             self.daemon.events(events)
 
     @require_pipeline
+    def set_trigger_interval(self,interval):
+        tag = self.pipeline.send_camera_command("trigger_interval",str(interval))
+        logger.info("Set trigger interval to %s" % interval)
+        self.counters.set_trigger_interval.increment()
+        return tag
+
+    @require_pipeline
     def set_focus(self, focus_step):
         tag = self.pipeline.send_camera_command("EFLensFocusCurrent", str(focus_step))
-        logger.debug("Set focus to %s" % focus_step)
+        logger.info("Set focus to %s" % focus_step)
         self.counters.set_focus.increment()
         return tag
 
     @require_pipeline
     def set_exposure(self, exposure_time_us):
         tag = self.pipeline.send_camera_command("ExposureTimeAbs", str(exposure_time_us))
-        logger.debug("Set exposure to %s us" % exposure_time_us)
+        logger.info("Set exposure to %s us" % exposure_time_us)
         self.counters.set_exposure.increment()
         return tag
 
     @require_pipeline
     def set_fstop(self, fstop):
         tag = self.pipeline.send_camera_command("EFLensFStopCurrent", str(fstop))
-        logger.debug("Set fstop to %s" % fstop)
+        logger.info("Set fstop to %s" % fstop)
         self.counters.set_fstop.increment()
+        return tag
 
     @require_pipeline
     def send_arbitrary_camera_command(self, command_string, argument_string):
         if argument_string == "None":
             argument_string = None
         tag = self.pipeline.send_camera_command(command_string, argument_string)
-        logger.debug("Set camera parameter %s to %r" % (command_string, argument_string))
+        logger.info("Set camera parameter %s to %r" % (command_string, argument_string))
         self.counters.send_arbitrary_command.increment()
         return tag
 
     @require_pipeline
     def run_focus_sweep(self, request_params, start=1950, stop=2150, step=10):
-        logger.debug("Running focus sweep with start=%d, stop=%d, step=%d, request_params=%r" % (start, stop, step,
+        logger.info("Running focus sweep with start=%d, stop=%d, step=%d, request_params=%r" % (start, stop, step,
                                                                                                  request_params))
         focus_steps = range(start, stop, step)
         tags = [self.set_focus(focus_step) for focus_step in focus_steps]

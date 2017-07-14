@@ -516,6 +516,9 @@ class Communicator(GlobalConfiguration):
         self.peer_polling_order = list_argument
         self.peer_polling_order_idx = 0
 
+    def set_trigger_interval(self,interval):
+        self.controller.set_trigger_interval(interval)
+
     def set_focus(self, focus_step):
         self.controller.set_focus(focus_step)
 

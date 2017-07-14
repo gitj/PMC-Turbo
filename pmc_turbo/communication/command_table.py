@@ -111,6 +111,9 @@ command_manager.add_command(Command("request_blobs_by_timestamp",
                                      ("max_num_blobs", "H"),
                                      ("quality","B")]))
 
+command_manager.add_command(Command("set_trigger_interval",
+                                    [("interval", "B")]))
+
 # add command to set pyro comm timeout?
 
 logger.debug("Built command manager with %d total commands" % (command_manager.total_commands))
