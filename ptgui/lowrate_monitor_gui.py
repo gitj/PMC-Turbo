@@ -59,7 +59,7 @@ class LowrateMonitorWidget(QtGui.QLabel):
         end =  '</table>' +end
         items = values.items()
         while items:
-            row = ''.join([('<td>%s</td><td align="right">%s</td>' % item) for item in items[:self.num_columns]])
+            row = ''.join([('<td>%s</td><td align="right">%s</td>' % format_item(*item)) for item in items[:self.num_columns]])
             row = '<tr>'+ row + '</tr>'
             result = result + row
             items = items[self.num_columns:]
@@ -68,6 +68,21 @@ class LowrateMonitorWidget(QtGui.QLabel):
         font.setPointSize(6)
         self.setFont(font)
         logger.debug("Updated %d" % self.message_id)
+
+def format_item(name,value):
+    if name == 'timestamp':
+        result = time.strftime("%H:%M:%S",time.localtime(value))
+        ago = time.time() - value
+        result += '  -%d s' % ago
+        return name,result
+    if name == 'pressure':
+        kpa = (value/4.8+0.04)/0.004
+        return name,('%.2f' % kpa)
+    if name == 'rail_12_mv':
+        return '12V rail', ('%.3f' % (value/1000.))
+    if name == 'aperture_times_100':
+        return 'aperture', ('%.2f' % (value/100.))
+    return name,value
 
 if __name__ == "__main__":
     from pmc_turbo.utils import log
