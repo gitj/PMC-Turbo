@@ -1,6 +1,7 @@
 import os
 import time
 import logging
+import logging.handlers
 import subprocess
 
 try:
@@ -72,8 +73,10 @@ def file_handler(name, log_dir, level=logging.DEBUG):
     -------
     logging.FileHandler
     """
-    fh = logging.FileHandler(os.path.join(log_dir, '.'.join([name.replace('/', '.'), time.strftime('%Y-%m-%d_%H%M%S'),
-                                                             'log'])))
+    fh = logging.handlers.RotatingFileHandler(os.path.join(log_dir,
+                                                           '.'.join([name.replace('/', '.'),
+                                                                     time.strftime('%Y-%m-%d_%H%M%S'),'log'])),
+                                              maxBytes=512*1024*1024,backupCount=1)
     fh.setFormatter(long_formatter)
     fh.setLevel(level)
     return fh
