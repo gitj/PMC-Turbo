@@ -99,6 +99,18 @@ class FileBase(object):
         with open(filename, 'w') as fh:
             fh.write(self.to_buffer())
 
+class CompressedFileBase(FileBase):
+    def _from_buffer(self, buffer):
+        super(CompressedFileBase,self)._from_buffer(buffer)
+        self.payload = zlib.decompress(self.payload)
+    def to_buffer(self):
+        original_payload = self.payload
+        self.payload = zlib.compress(original_payload)
+        try:
+            result = super(CompressedFileBase, self).to_buffer()
+        finally:
+            self.payload = original_payload
+        return result
 
 class ImageFileBase(FileBase):
     _metadata_table = (FileBase._metadata_table +
@@ -175,8 +187,8 @@ class GeneralFile(FileBase):
         return result
 
 
-class ShellCommandFile(FileBase):
-    _metadata_table = (FileBase._metadata_table +
+class ShellCommandFile(CompressedFileBase):
+    _metadata_table = (CompressedFileBase._metadata_table +
                        [('1f', 'timestamp'),
                         ('1B', 'timed_out'),
                         ('1i', 'returncode')])
