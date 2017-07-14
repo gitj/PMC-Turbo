@@ -13,9 +13,11 @@ from pmc_turbo.communication.file_format_classes import load_and_decode_file, JP
 
 
 class MyImageView(pg.ImageView):
-    def __init__(self, camera_id, infobar, *args, **kwargs):
+    def __init__(self, camera_id, infobar, window, portrait_mode, *args, **kwargs):
         # GroundConfiguration.__init__(**kwargs)
         super(MyImageView, self).__init__(*args, **kwargs)
+        self.window = window
+        self.portrait_mode = portrait_mode
         self.root_data_path = '/data/gse_data'
         self.camera_id = camera_id
         data_dirs = glob.glob(os.path.join(self.root_data_path, '2*'))
@@ -23,15 +25,25 @@ class MyImageView(pg.ImageView):
         print data_dirs[-1]
         self.mi = MergedIndex('*', data_dirs=[data_dirs[-1]], index_filename='file_index.csv', sort_on=None)
         self.last_index = 0
+        #
+        # self.vLine = pg.InfiniteLine(angle=90, movable=False)
+        # self.hLine = pg.InfiniteLine(angle=0, movable=False)
+        # self.addItem(self.vLine, ignoreBounds=True)
+        # self.addItem(self.hLine, ignoreBounds=True)
 
-        self.vLine = pg.InfiniteLine(angle=90, movable=False)
-        self.hLine = pg.InfiniteLine(angle=0, movable=False)
-        self.addItem(self.vLine, ignoreBounds=True)
-        self.addItem(self.hLine, ignoreBounds=True)
+        self.selection_roi = pg.RectROI((0, 0), size=(20, 20))
+        self.selection_roi.sigRegionChanged.connect(self.roi_update)
+
+
+        self.addItem(self.selection_roi)
 
         self.infobar = infobar
 
         self.update(-1, autoLevels=True, autoRange=True)
+
+    def roi_update(self):
+        print self.selection_roi.pos()
+        print self.selection_roi.size()
 
     def update(self, index=-1, autoLevels=True, autoRange=True):
         self.mi.update()
@@ -52,21 +64,18 @@ class MyImageView(pg.ImageView):
             return
         self.last_index = index
         filename = latest['filename']
+        self.window.setWindowTitle(filename)
         print filename
         file_size = os.path.getsize(filename)
         image_file = load_and_decode_file(filename)
         self.infobar.update(image_file, latest, file_size)
         image_data = image_file.image_array() / image_file.pixel_scale + image_file.pixel_offset
-        if self.infobar.portrait_checkbox.isChecked():
+        if self.portrait_mode:
             self.setImage(image_data, autoLevels=autoLevels,
                           autoRange=autoRange, transform=QtGui.QTransform().rotate(-90))
         else:
             self.setImage(image_data, autoLevels=autoLevels,
                           autoRange=autoRange)
-
-            # print self.roi.angle()
-            # print self.roi.pos()
-            # print self.roi.size()
 
     def keyPressEvent(self, ev):
         if ev.key() == QtCore.Qt.Key_N:
@@ -109,13 +118,13 @@ class InfoBar(QtGui.QDockWidget):
 
         frame_status_label = QtGui.QLabel('frame_status')
         frame_id_label = QtGui.QLabel('frame_id')
-        frame_timestamp_s = QtGui.QLabel('frame_timestamp_s')
+        frame_timestamp_s = QtGui.QLabel('frame (s)')
         focus_step_label = QtGui.QLabel('focus_step')
 
         aperture_stop_label = QtGui.QLabel('aperture_stop')
         exposure_us_label = QtGui.QLabel('exposure_us')
         file_index_label = QtGui.QLabel('file_index')
-        write_timestamp_label = QtGui.QLabel('write_timestamp')
+        write_timestamp_label = QtGui.QLabel('write')
 
         acquisition_count_label = QtGui.QLabel('acquisition_count')
         lens_status_label = QtGui.QLabel('lens_status')
@@ -132,9 +141,9 @@ class InfoBar(QtGui.QDockWidget):
         pixel_scale_label = QtGui.QLabel('pixel_scale')
         quality_label = QtGui.QLabel('quality')
         file_size_label = QtGui.QLabel('file size (bytes)')
-        first_timestamp_label = QtGui.QLabel('first packet timestamp')
-        last_timestamp_label = QtGui.QLabel('last packet timestamp')
-        file_write_timestamp_label = QtGui.QLabel('file write timestamp')
+        first_timestamp_label = QtGui.QLabel('first packet')
+        last_timestamp_label = QtGui.QLabel('last packet')
+        file_write_timestamp_label = QtGui.QLabel('file write')
         camera_id_label = QtGui.QLabel('camera id')
 
         self.labels = [
@@ -170,7 +179,7 @@ class InfoBar(QtGui.QDockWidget):
         ]
 
         labelfont = frame_status_label.font()
-        labelfont.setPointSize(8)
+        labelfont.setPointSize(6)
         # labelfont.setBold(True)
         for label in self.labels:
             label.setFont(labelfont)
@@ -234,7 +243,7 @@ class InfoBar(QtGui.QDockWidget):
         ]
 
         valuefont = self.frame_status_value.font()
-        valuefont.setPointSize(8)
+        valuefont.setPointSize(6)
         for value in self.values:
             value.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
             value.setFont(valuefont)
@@ -301,45 +310,27 @@ class InfoBar(QtGui.QDockWidget):
         image_layout.addWidget(self.quality_value, 19, 1)
         image_layout.addWidget(self.file_size_value, 20, 1)
 
-        self.filename_label = QtGui.QLabel('---')
-        self.filename_label.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
-        filenamefont = self.filename_label.font()
-        filenamefont.setPointSize(5)
-        filenamefont.setBold(True)
-        self.filename_label.setFont(filenamefont)
-
-        x_label = QtGui.QLabel('X: ')
-        y_label = QtGui.QLabel('Y: ')
-        self.x_value = QtGui.QLabel('---')
-        self.y_value = QtGui.QLabel('---')
-
-        crosshair_widget = QtGui.QWidget()
-        crosshair_layout = QtGui.QHBoxLayout()
-        crosshair_layout.addWidget(x_label)
-        crosshair_layout.addWidget(self.x_value)
-        crosshair_layout.addWidget(y_label)
-        crosshair_layout.addWidget(self.y_value)
-        crosshair_widget.setLayout(crosshair_layout)
-
-        self.portrait_checkbox = QtGui.QCheckBox()
-        portrait_checkbox_label = QtGui.QLabel('Portrait:')
-        checkbox_widget = QtGui.QWidget()
-        checkbox_layout = QtGui.QHBoxLayout()
-        checkbox_layout.addWidget(portrait_checkbox_label)
-        checkbox_layout.addWidget(self.portrait_checkbox)
-        checkbox_widget.setLayout(checkbox_layout)
+        # x_label = QtGui.QLabel('X: ')
+        # y_label = QtGui.QLabel('Y: ')
+        # self.x_value = QtGui.QLabel('---')
+        # self.y_value = QtGui.QLabel('---')
+        #
+        # crosshair_widget = QtGui.QWidget()
+        # crosshair_layout = QtGui.QHBoxLayout()
+        # crosshair_layout.addWidget(x_label)
+        # crosshair_layout.addWidget(self.x_value)
+        # crosshair_layout.addWidget(y_label)
+        # crosshair_layout.addWidget(self.y_value)
+        # crosshair_widget.setLayout(crosshair_layout)
 
         vertical_spacer = QtGui.QSpacerItem(10, 10, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
 
-        vlayout.addWidget(self.filename_label)
-        vlayout.addWidget(crosshair_widget)
         vlayout.addWidget(QtGui.QLabel('Timestamps'))
         vlayout.addWidget(time_widget)
         vlayout.addWidget(QtGui.QLabel('Camera'))
         vlayout.addWidget(camera_widget)
         vlayout.addWidget(QtGui.QLabel('Image'))
         vlayout.addWidget(image_widget)
-        vlayout.addWidget(checkbox_widget)
         vlayout.addItem(vertical_spacer)
 
         mywidget.setLayout(vlayout)
@@ -357,8 +348,7 @@ class InfoBar(QtGui.QDockWidget):
         self.aperture_stop_value.setText(str(jpeg_file.aperture_stop))
         self.exposure_us_value.setText(str(jpeg_file.exposure_us))
         self.file_index_value.setText(str(jpeg_file.file_index))
-        self.write_timestamp_value.setText(str(jpeg_file.write_timestamp))
-        self.write_timestamp_value.setText(str(jpeg_file.write_timestamp))
+        self.write_timestamp_value.setText('%.0f' % jpeg_file.write_timestamp)
         self.write_timestamp_value.setToolTip(
             time.strftime("%Y.%m.%d_%H:%M:%S", time.localtime(jpeg_file.write_timestamp)))
 
@@ -374,21 +364,21 @@ class InfoBar(QtGui.QDockWidget):
 
         self.scale_by_value.setText(str(jpeg_file.scale_by))
         self.pixel_offset_value.setText(str(jpeg_file.pixel_offset))
-        self.pixel_scale_value.setText(str(jpeg_file.pixel_scale))
+        self.pixel_scale_value.setText('%.3f' % jpeg_file.pixel_scale)
         self.quality_value.setText(str(jpeg_file.quality))
         self.file_size_value.setText(str(file_size))
 
-        self.first_timestamp_value.setText(str(data_row['first_timestamp']))
+        self.first_timestamp_value.setText('%.0f' % data_row['first_timestamp'])
         self.first_timestamp_value.setToolTip(
             time.strftime("%Y.%m.%d_%H:%M:%S", time.localtime(float(data_row['first_timestamp']))))
-        self.last_timestamp_value.setText(str(data_row['last_timestamp']))
+        self.last_timestamp_value.setText('%.0f' % data_row['last_timestamp'])
         self.last_timestamp_value.setToolTip(
             time.strftime("%Y.%m.%d_%H:%M:%S", time.localtime(float(data_row['last_timestamp']))))
-        self.file_write_timestamp_value.setText(str(data_row['file_write_timestamp']))
+        self.file_write_timestamp_value.setText('%.0f' % data_row['file_write_timestamp'])
         self.file_write_timestamp_value.setToolTip(
             time.strftime("%Y.%m.%d_%H:%M:%S", time.localtime(float(data_row['file_write_timestamp']))))
 
-        self.filename_label.setText(str(data_row['filename']))
+        # self.filename_label.setText(str(data_row['filename']))
 
         self.camera_id_value.setText(str(data_row['camera_id']))
 
@@ -406,8 +396,8 @@ if __name__ == "__main__":
     iw = InfoBar()
     win = QtGui.QMainWindow()
     win.resize(800, 800)
-    imv = MyImageView(camera_id, iw)
-    proxy = pg.SignalProxy(imv.imageItem.scene().sigMouseMoved, rateLimit=60, slot=imv.mouseMoved)
+    imv = MyImageView(camera_id, iw, win,  portrait_mode=True)
+    # proxy = pg.SignalProxy(imv.imageItem.scene().sigMouseMoved, rateLimit=60, slot=imv.mouseMoved)
     win.setCentralWidget(imv)
     win.addDockWidget(QtCore.Qt.LeftDockWidgetArea, iw)
     win.show()
