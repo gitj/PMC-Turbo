@@ -2,16 +2,12 @@ import collections
 import logging
 import os
 from pmc_turbo.communication import camera_communicator
-from pmc_turbo.communication import housekeeping_classes
 from pmc_turbo.utils import log
 from pmc_turbo.utils import camera_id
-from pmc_turbo.utils import startup_script_constants
 from traitlets import Int, Unicode, Bool, List, Float, Tuple, Bytes, TCPAddress, Dict
 from traitlets.config import Application
-from traitlets.config.loader import load_pyconfig_files
 from pmc_turbo.utils.configuration import default_config_dir
 
-#basic_config = load_pyconfig_files(['default_balloon.py'], default_config_dir)
 
 class CommunicatorApp(Application):
     config_file = Unicode(u'default_balloon.py', help="Load this config file").tag(config=True)
