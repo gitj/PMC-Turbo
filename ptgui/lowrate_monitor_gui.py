@@ -82,6 +82,13 @@ def format_item(name,value):
         return '12V rail', ('%.3f' % (value/1000.))
     if name == 'aperture_times_100':
         return 'aperture', ('%.2f' % (value/100.))
+    if name == 'uptime':
+        days,seconds = divmod(value,86400)
+        hours,seconds = divmod(seconds,3600)
+        minutes,seconds = divmod(seconds,60)
+        return name, '%dd %02d:%02d:%02s' % (days,hours,minutes,seconds)
+    if value in [127, 32767, 65535]:
+        return name, '---'
     return name,value
 
 if __name__ == "__main__":
