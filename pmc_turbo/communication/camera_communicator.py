@@ -19,6 +19,7 @@ from pymodbus.exceptions import ConnectionException
 from traitlets import Int, Unicode, Bool, List, Float, Tuple, TCPAddress, Enum
 
 import pmc_turbo.housekeeping.bmon
+from pmc_turbo.utils.uptime import get_uptime
 from pmc_turbo.communication import housekeeping_classes
 from pmc_turbo.communication import command_table, command_classes
 from pmc_turbo.communication import constants
@@ -786,6 +787,7 @@ class Communicator(GlobalConfiguration):
 
         ss.timestamp = time.time()
         ss.leader_id = self.leader_id
+        ss.uptime = int(get_uptime())
         ss.free_disk_root_mb = self.housekeeping.get_recent_value("df-root_df_complex-free") / 1e6
         ss.free_disk_var_mb = self.housekeeping.get_recent_value("df-var_df_complex-free") / 1e6
         ss.free_disk_data_1_mb = self.housekeeping.get_recent_value("df-data1_df_complex-free") / 1e6

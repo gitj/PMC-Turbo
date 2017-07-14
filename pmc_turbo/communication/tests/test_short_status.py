@@ -12,6 +12,7 @@ def test_camera_encode():
     ss.message_id =0
     ss.timestamp = 123.133
     ss.leader_id =0
+    ss.uptime = 58858
     ss.free_disk_root_mb = 123000
     ss.free_disk_var_mb = 127000
     ss.free_disk_data_1_mb = 123000
@@ -54,6 +55,7 @@ def test_coerce():
     ss = ShortStatusCamera()
     ss.message_id =0
     ss.timestamp = 123.133
+    ss.uptime = 49383
     ss.leader_id =0
     ss.free_disk_root_mb = 12300000000 # intentionally > 2^32 to check clipping
     ss.free_disk_var_mb = 16400
