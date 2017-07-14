@@ -37,7 +37,7 @@ DISK_MIN_BYTES_AVAILABLE = 100*1024*1024 # 100 MiB
 
 class WriteImageProcess(object):
     def __init__(self, input_buffers, input_queue, output_queue, info_buffer, status, output_dir,
-                 available_disks, write_enable):
+                 available_disks, write_enable, rate_limit_interval):
         self.data_buffers = input_buffers
         self.input_queue = input_queue
         self.output_queue = output_queue
@@ -45,6 +45,10 @@ class WriteImageProcess(object):
         self.original_disks = available_disks
         self.available_disks = self.check_disk_space(self.original_disks)
         self.write_enable = write_enable
+        self.rate_limit_interval = rate_limit_interval
+        if rate_limit_interval:
+            logger.info("Rate limiting writer thread for disks %r to %d second intervals"
+                        % (self.available_disks, self.rate_limit_interval))
         self.output_dirs = [os.path.join(rpath,output_dir) for rpath in self.available_disks]
         for dname in self.output_dirs:
             try:
@@ -147,6 +151,9 @@ class WriteImageProcess(object):
                                       fname,
                                       percentiles_string
                                       ))
+                        if self.rate_limit_interval:
+                            self.status.value = "throttling"
+                            time.sleep(self.rate_limit_interval)
                     self.disk_to_use = (self.disk_to_use + 1) % len(self.output_dirs) # if this thread is cycling
                                                                                 # between disks, do the cycling here.
                     frame_indexes[dirname] = frame_indexes[dirname] + 1

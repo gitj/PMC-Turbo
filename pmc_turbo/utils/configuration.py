@@ -1,6 +1,6 @@
 import os
 
-from traitlets import (Bool, Int, CInt, List, Unicode)
+from traitlets import (Bool, Int, List, Unicode)
 from traitlets.config import Configurable
 from pmc_turbo import root_dir
 

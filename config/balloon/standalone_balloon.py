@@ -6,14 +6,7 @@ from pmc_turbo.utils.camera_id import get_camera_id
 # noinspection PyUnresolvedReferences
 c = get_config()
 
-c.GlobalConfiguration.data_directories = ['/data1', '/data2', '/data3', '/data4']
-
 c.BasicPipeline.num_data_buffers = 16
-
-housekeeping_dir = '/var/pmclogs/housekeeping'
-
-c.PipelineApp.housekeeping_dir = housekeeping_dir
-c.PipelineApp.counters_dir = os.path.join(housekeeping_dir, 'counters')
 
 # ------------------------------------------------------------------------------
 # CommunicatorApp(Application) configuration
@@ -39,6 +32,10 @@ c.GlobalConfiguration.housekeeping_dir = '/var/pmclogs/housekeeping'
 
 ##
 c.GlobalConfiguration.log_dir = '/var/pmclogs'
+
+c.GlobalConfiguration.data_directories = ['/data1', '/data2', '/data3', '/data4', '/data5']
+
+c.BasicPipeline.rate_limit_intervals = {'/data5': 120}
 
 ##
 c.GlobalConfiguration.pipeline_pyro_port = 50000
