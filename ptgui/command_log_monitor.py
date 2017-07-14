@@ -80,7 +80,7 @@ class CommandTableModel(QtCore.QAbstractTableModel):
             self.beginInsertRows(QtCore.QModelIndex(), old_row_count, new_row_count)
             self.total_rows = new_row_count
             self.endInsertRows()
-        self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(new_row_count, self.columnCount()))
+            self.dataChanged.emit(self.createIndex(0, 0), self.createIndex(new_row_count, self.columnCount()))
 
     def headerData(self, p_int, Qt_Orientation, int_role=None):
         if Qt_Orientation == QtCore.Qt.Vertical:
