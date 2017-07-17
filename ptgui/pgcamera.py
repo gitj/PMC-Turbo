@@ -44,13 +44,17 @@ class MyImageView(pg.ImageView):
     def roi_update(self):
         # print self.selection_roi.pos()
         # print self.selection_roi.size()
-        xmin = self.selection_roi.pos()[0] * self.scale_by
-        xmax = (self.selection_roi.pos()[0] + self.selection_roi.size()[0]) * self.scale_by
-        ymin = self.selection_roi.pos()[1] * self.scale_by
-        ymax = (self.selection_roi.pos()[1] + self.selection_roi.size()[1]) * self.scale_by
-        self.roi_x_value.setText('%f - %f' % (xmin, xmax))
-        self.roi_y_value.setText('%f - %f' % (ymin, ymax))
-        self.command_to_send.setText('---')
+        xmin = np.floor(self.selection_roi.pos()[0] * self.scale_by)
+        xmax = np.ceil((self.selection_roi.pos()[0] + self.selection_roi.size()[0]) * self.scale_by)
+        ymin = np.floor(self.selection_roi.pos()[1] * self.scale_by)
+        ymax = np.ceil((self.selection_roi.pos()[1] + self.selection_roi.size()[1]) * self.scale_by)
+        self.infobar.roi_x_value.setText('%.0f:%.0f' % (xmin, xmax))
+        self.infobar.roi_y_value.setText('%.0f:%.0f' % (ymin, ymax))
+        self.infobar.roi_column_offset.setText('%.0f' % xmin)
+        self.infobar.roi_row_offset.setText('%.0f' % ymin)
+        self.infobar.roi_num_columns.setText('%.0f' % (xmax-xmin))
+        self.infobar.roi_num_rows.setText('%.0f' % (ymax-ymin))
+        self.infobar.command_to_send.setText('---')
         # Update command to send here
 
     def update(self, index=-1, autoLevels=True, autoRange=True):
@@ -158,6 +162,10 @@ class InfoBar(QtGui.QDockWidget):
         roi_x_label = QtGui.QLabel('ROI x lims: ')
         roi_y_label = QtGui.QLabel('ROI y lims: ')
         command_to_send_label = QtGui.QLabel('Command to send: ')
+        roi_row_offset_label = QtGui.QLabel('Row offset')
+        roi_col_offset_label = QtGui.QLabel('Column offset')
+        roi_num_rows_label = QtGui.QLabel('Num rows')
+        roi_num_cols_label = QtGui.QLabel('Num columns')
 
         self.labels = [
             frame_status_label,
@@ -191,7 +199,12 @@ class InfoBar(QtGui.QDockWidget):
             camera_id_label,
             roi_x_label,
             roi_y_label,
-            command_to_send_label
+            command_to_send_label,
+            roi_row_offset_label,
+            roi_col_offset_label,
+            roi_num_rows_label,
+            roi_num_cols_label,
+
         ]
 
         labelfont = frame_status_label.font()
@@ -225,6 +238,10 @@ class InfoBar(QtGui.QDockWidget):
         self.last_timestamp_value = QtGui.QLabel('---')
         self.file_write_timestamp_value = QtGui.QLabel('---')
         self.camera_id_value = QtGui.QLabel('---')
+        self.roi_row_offset = QtGui.QLabel('---')
+        self.roi_column_offset = QtGui.QLabel('---')
+        self.roi_num_rows = QtGui.QLabel('---')
+        self.roi_num_columns = QtGui.QLabel('---')
         self.roi_x_value = QtGui.QLabel('---')
         self.roi_y_value = QtGui.QLabel('---')
         self.command_to_send = QtGui.QLabel('---')
@@ -261,7 +278,11 @@ class InfoBar(QtGui.QDockWidget):
             self.camera_id_value,
             self.roi_x_value,
             self.roi_y_value,
-            self.command_to_send
+            self.command_to_send,
+            self.roi_row_offset,
+            self.roi_column_offset,
+            self.roi_num_rows,
+            self.roi_num_columns
         ]
 
         valuefont = self.frame_status_value.font()
@@ -345,15 +366,30 @@ class InfoBar(QtGui.QDockWidget):
         # crosshair_layout.addWidget(self.y_value)
         # crosshair_widget.setLayout(crosshair_layout)
 
+
+
         roi_widget = QtGui.QWidget()
         roi_layout = QtGui.QGridLayout()
+        roi_widget.setLayout(roi_layout)
         roi_layout.addWidget(roi_x_label, 0, 0)
         roi_layout.addWidget(roi_y_label, 1, 0)
         roi_layout.addWidget(self.roi_x_value, 0, 1)
         roi_layout.addWidget(self.roi_y_value, 1, 1)
+        roi_layout.addWidget(roi_row_offset_label, 2, 0)
+        roi_layout.addWidget(self.roi_row_offset, 2, 1)
+        roi_layout.addWidget(roi_col_offset_label, 3, 0)
+        roi_layout.addWidget(self.roi_column_offset, 3, 1)
+        roi_layout.addWidget(roi_num_rows_label, 4, 0)
+        roi_layout.addWidget(self.roi_num_rows, 4, 1)
+        roi_layout.addWidget(roi_num_cols_label, 5, 0)
+        roi_layout.addWidget(self.roi_num_columns, 5, 1)
+        roi_layout.addWidget(command_to_send_label, 6, 0)
+        roi_layout.addWidget(self.command_to_send, 6, 1)
 
         vertical_spacer = QtGui.QSpacerItem(10, 10, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
 
+        vlayout.addWidget(QtGui.QLabel('ROI Coordinates'))
+        vlayout.addWidget(roi_widget)
         vlayout.addWidget(QtGui.QLabel('Timestamps'))
         vlayout.addWidget(time_widget)
         vlayout.addWidget(QtGui.QLabel('Camera'))
@@ -425,7 +461,7 @@ if __name__ == "__main__":
     iw = InfoBar()
     win = QtGui.QMainWindow()
     win.resize(800, 800)
-    imv = MyImageView(camera_id, iw, win, portrait_mode=True)
+    imv = MyImageView(camera_id, iw, win, portrait_mode=False)
     # proxy = pg.SignalProxy(imv.imageItem.scene().sigMouseMoved, rateLimit=60, slot=imv.mouseMoved)
     win.setCentralWidget(imv)
     win.addDockWidget(QtCore.Qt.LeftDockWidgetArea, iw)
