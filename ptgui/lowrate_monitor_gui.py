@@ -87,6 +87,10 @@ def format_item(name,value):
         hours,seconds = divmod(seconds,3600)
         minutes,seconds = divmod(seconds,60)
         return name, '%dd %02d:%02d:%02s' % (days,hours,minutes,seconds)
+    if name == 'frame_rate_times_1000':
+        frame_rate = value/1000.
+        interval_ms = 1000./frame_rate
+        return "frame rate", ("%.3f (%.1f ms)" % (frame_rate,interval_ms))
     if value in [127, 32767, 65535]:
         return name, '---'
     return name,value
