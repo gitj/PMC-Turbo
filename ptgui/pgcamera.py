@@ -25,6 +25,7 @@ class MyImageView(pg.ImageView):
         print data_dirs[-1]
         self.mi = MergedIndex('*', data_dirs=[data_dirs[-1]], index_filename='file_index.csv', sort_on=None)
         self.last_index = 0
+        self.scale_by = 1
         #
         # self.vLine = pg.InfiniteLine(angle=90, movable=False)
         # self.hLine = pg.InfiniteLine(angle=0, movable=False)
@@ -34,7 +35,6 @@ class MyImageView(pg.ImageView):
         self.selection_roi = pg.RectROI((0, 0), size=(20, 20))
         self.selection_roi.sigRegionChanged.connect(self.roi_update)
 
-
         self.addItem(self.selection_roi)
 
         self.infobar = infobar
@@ -42,8 +42,16 @@ class MyImageView(pg.ImageView):
         self.update(-1, autoLevels=True, autoRange=True)
 
     def roi_update(self):
-        print self.selection_roi.pos()
-        print self.selection_roi.size()
+        # print self.selection_roi.pos()
+        # print self.selection_roi.size()
+        xmin = self.selection_roi.pos()[0] * self.scale_by
+        xmax = (self.selection_roi.pos()[0] + self.selection_roi.size()[0]) * self.scale_by
+        ymin = self.selection_roi.pos()[1] * self.scale_by
+        ymax = (self.selection_roi.pos()[1] + self.selection_roi.size()[1]) * self.scale_by
+        self.roi_x_value.setText('%f - %f' % (xmin, xmax))
+        self.roi_y_value.setText('%f - %f' % (ymin, ymax))
+        self.command_to_send.setText('---')
+        # Update command to send here
 
     def update(self, index=-1, autoLevels=True, autoRange=True):
         self.mi.update()
@@ -69,6 +77,7 @@ class MyImageView(pg.ImageView):
         file_size = os.path.getsize(filename)
         image_file = load_and_decode_file(filename)
         self.infobar.update(image_file, latest, file_size)
+        self.scale_by = image_file.scale_by
         image_data = image_file.image_array() / image_file.pixel_scale + image_file.pixel_offset
         if self.portrait_mode:
             self.setImage(image_data, autoLevels=autoLevels,
@@ -146,6 +155,10 @@ class InfoBar(QtGui.QDockWidget):
         file_write_timestamp_label = QtGui.QLabel('file write')
         camera_id_label = QtGui.QLabel('camera id')
 
+        roi_x_label = QtGui.QLabel('ROI x lims: ')
+        roi_y_label = QtGui.QLabel('ROI y lims: ')
+        command_to_send_label = QtGui.QLabel('Command to send: ')
+
         self.labels = [
             frame_status_label,
             frame_id_label,
@@ -176,6 +189,9 @@ class InfoBar(QtGui.QDockWidget):
             last_timestamp_label,
             file_write_timestamp_label,
             camera_id_label,
+            roi_x_label,
+            roi_y_label,
+            command_to_send_label
         ]
 
         labelfont = frame_status_label.font()
@@ -209,6 +225,9 @@ class InfoBar(QtGui.QDockWidget):
         self.last_timestamp_value = QtGui.QLabel('---')
         self.file_write_timestamp_value = QtGui.QLabel('---')
         self.camera_id_value = QtGui.QLabel('---')
+        self.roi_x_value = QtGui.QLabel('---')
+        self.roi_y_value = QtGui.QLabel('---')
+        self.command_to_send = QtGui.QLabel('---')
 
         self.values = [
             self.frame_status_value,
@@ -240,6 +259,9 @@ class InfoBar(QtGui.QDockWidget):
             self.last_timestamp_value,
             self.file_write_timestamp_value,
             self.camera_id_value,
+            self.roi_x_value,
+            self.roi_y_value,
+            self.command_to_send
         ]
 
         valuefont = self.frame_status_value.font()
@@ -323,6 +345,13 @@ class InfoBar(QtGui.QDockWidget):
         # crosshair_layout.addWidget(self.y_value)
         # crosshair_widget.setLayout(crosshair_layout)
 
+        roi_widget = QtGui.QWidget()
+        roi_layout = QtGui.QGridLayout()
+        roi_layout.addWidget(roi_x_label, 0, 0)
+        roi_layout.addWidget(roi_y_label, 1, 0)
+        roi_layout.addWidget(self.roi_x_value, 0, 1)
+        roi_layout.addWidget(self.roi_y_value, 1, 1)
+
         vertical_spacer = QtGui.QSpacerItem(10, 10, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
 
         vlayout.addWidget(QtGui.QLabel('Timestamps'))
@@ -396,7 +425,7 @@ if __name__ == "__main__":
     iw = InfoBar()
     win = QtGui.QMainWindow()
     win.resize(800, 800)
-    imv = MyImageView(camera_id, iw, win,  portrait_mode=True)
+    imv = MyImageView(camera_id, iw, win, portrait_mode=True)
     # proxy = pg.SignalProxy(imv.imageItem.scene().sigMouseMoved, rateLimit=60, slot=imv.mouseMoved)
     win.setCentralWidget(imv)
     win.addDockWidget(QtCore.Qt.LeftDockWidgetArea, iw)
