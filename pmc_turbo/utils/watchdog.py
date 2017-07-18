@@ -23,7 +23,7 @@ def get_watchdog_raw_info():
 def get_watchdog_info():
     result = get_watchdog_raw_info()
     if result is not None:
-        return parse_watchdog_info(result)
+        return parse_watchdog_info(result) #pragma: no cover
     return None
 
 def parse_watchdog_info(raw_info_string):
@@ -46,11 +46,13 @@ def parse_watchdog_info(raw_info_string):
     if is_running_matches:
         try:
             is_running = is_running_matches[0]
-        except ValueError:
+        except Exception:
+            #pragma: no cover
             logger.warning("Couldn't parse raw_info_string %r" % is_running_matches)
     is_running = (is_running == "Running")
     return is_running, initial_countdown, current_countdown
 
+#pragma: no cover
 def setup_reset_watchdog(start=True,timeout=600, action=TIMEOUT_ACTION_POWER_CYCLE):
     if start:
         start_argument = '-w -x'
@@ -58,6 +60,7 @@ def setup_reset_watchdog(start=True,timeout=600, action=TIMEOUT_ACTION_POWER_CYC
         start_argument = ''
     return run_sudo_command_with_timeout("bmc-watchdog --set -a %d -i %d %s" % (action,timeout,start_argument))
 
+#pragma: no cover
 def just_reset_watchdog():
     return run_sudo_command_with_timeout("bmc-watchdog --reset")
 
