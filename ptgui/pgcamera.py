@@ -5,7 +5,6 @@ from pyqtgraph.Qt import QtCore, QtGui
 import numpy as np
 import time
 
-pg.setConfigOptions(imageAxisOrder='row-major')
 from pmc_turbo.camera.image_processing import blosc_file
 from pmc_turbo.camera.pipeline.indexer import MergedIndex
 from pmc_turbo.ground.ground_configuration import GroundConfiguration
@@ -32,7 +31,7 @@ class MyImageView(pg.ImageView):
         # self.addItem(self.vLine, ignoreBounds=True)
         # self.addItem(self.hLine, ignoreBounds=True)
 
-        self.selection_roi = pg.RectROI((0, 0), size=(20, 20))
+        self.selection_roi = pg.RectROI((0, 0), size=(20, 20), scaleSnap=True, translateSnap=True)
         self.selection_roi.sigRegionChanged.connect(self.roi_update)
 
         self.addItem(self.selection_roi)
@@ -44,18 +43,32 @@ class MyImageView(pg.ImageView):
     def roi_update(self):
         # print self.selection_roi.pos()
         # print self.selection_roi.size()
-        xmin = np.floor(self.selection_roi.pos()[0] * self.scale_by)
-        xmax = np.ceil((self.selection_roi.pos()[0] + self.selection_roi.size()[0]) * self.scale_by)
-        ymin = np.floor(self.selection_roi.pos()[1] * self.scale_by)
-        ymax = np.ceil((self.selection_roi.pos()[1] + self.selection_roi.size()[1]) * self.scale_by)
+        xmin, xmax, ymin, ymax = self.get_roi_coordinates()
         self.infobar.roi_x_value.setText('%.0f:%.0f' % (xmin, xmax))
         self.infobar.roi_y_value.setText('%.0f:%.0f' % (ymin, ymax))
         self.infobar.roi_column_offset.setText('%.0f' % xmin)
         self.infobar.roi_row_offset.setText('%.0f' % ymin)
-        self.infobar.roi_num_columns.setText('%.0f' % (xmax-xmin))
-        self.infobar.roi_num_rows.setText('%.0f' % (ymax-ymin))
+        self.infobar.roi_num_columns.setText('%.0f' % (xmax - xmin))
+        self.infobar.roi_num_rows.setText('%.0f' % (ymax - ymin))
         self.infobar.command_to_send.setText('---')
         # Update command to send here
+
+    def get_roi_coordinates(self):
+        if self.portrait_mode:
+            ymin = np.floor(self.selection_roi.pos()[0] / self.scale_by) + self.column_offset
+            ymax = np.ceil(
+                (self.selection_roi.pos()[0] + self.selection_roi.size()[0]) / self.scale_by) + self.column_offset
+            xmin = np.floor(self.selection_roi.pos()[1] / self.scale_by) + self.row_offset
+            xmax = np.ceil(
+                (self.selection_roi.pos()[1] + self.selection_roi.size()[1]) / self.scale_by) + self.row_offset
+        else:
+            xmin = np.floor(self.selection_roi.pos()[0] / self.scale_by) + self.row_offset
+            xmax = np.ceil(
+                (self.selection_roi.pos()[0] + self.selection_roi.size()[0]) / self.scale_by) + self.row_offset
+            ymin = np.floor(self.selection_roi.pos()[1] / self.scale_by) + self.column_offset
+            ymax = np.ceil(
+                (self.selection_roi.pos()[1] + self.selection_roi.size()[1]) / self.scale_by) + self.column_offset
+        return xmin, xmax, ymin, ymax
 
     def update(self, index=-1, autoLevels=True, autoRange=True):
         self.mi.update()
@@ -82,13 +95,35 @@ class MyImageView(pg.ImageView):
         image_file = load_and_decode_file(filename)
         self.infobar.update(image_file, latest, file_size)
         self.scale_by = image_file.scale_by
+        self.row_offset = image_file.row_offset
+        self.column_offset = image_file.column_offset
         image_data = image_file.image_array() / image_file.pixel_scale + image_file.pixel_offset
-        if self.portrait_mode:
-            self.setImage(image_data, autoLevels=autoLevels,
-                          autoRange=autoRange, transform=QtGui.QTransform().rotate(-90))
+        self.setImage(image_data, autoLevels=autoLevels, autoRange=autoRange)
+        print image_data.shape
+        print self.selection_roi.size()
+        print self.selection_roi.pos()
+
+        if (self.selection_roi.pos()[0] < 0) or (self.selection_roi.pos()[1] < 0):
+            self.selection_roi.setPos((0, 0))
+
+        xmax = self.selection_roi.pos()[0] + self.selection_roi.size()[0]
+        ymax = self.selection_roi.pos()[1] + self.selection_roi.size()[1]
+
+        if not self.portrait_mode:
+            xlim = image_data.shape[1]
+            ylim = image_data.shape[0]
         else:
-            self.setImage(image_data, autoLevels=autoLevels,
-                          autoRange=autoRange)
+            xlim = image_data.shape[0]
+            ylim = image_data.shape[1]
+
+        print xmax, ymax
+        if xmax > xlim:
+            self.selection_roi.setSize(
+                [xlim - self.selection_roi.pos()[0], self.selection_roi.size()[1]])
+
+        if ymax > ylim:
+            self.selection_roi.setSize(
+                [self.selection_roi.size()[0], ylim - self.selection_roi.pos()[1]])
 
     def keyPressEvent(self, ev):
         if ev.key() == QtCore.Qt.Key_N:
@@ -453,15 +488,22 @@ if __name__ == "__main__":
     import sys
 
     camera_id = None
+    portrait_mode = False
     if len(sys.argv) > 1:
-        camera_id = int(sys.argv[1])
+        # camera_id = int(sys.argv[1])
+        portrait_mode = int(sys.argv[1])
+
+    if not portrait_mode:
+        pg.setConfigOptions(imageAxisOrder='row-major')
+    else:
+        pg.setConfigOptions(imageAxisOrder='col-major')
     log.setup_stream_handler(log.logging.DEBUG)
     app = QtGui.QApplication([])
     dw = QtGui.QDesktopWidget()
     iw = InfoBar()
     win = QtGui.QMainWindow()
     win.resize(800, 800)
-    imv = MyImageView(camera_id, iw, win, portrait_mode=False)
+    imv = MyImageView(camera_id, iw, win, portrait_mode=portrait_mode)
     # proxy = pg.SignalProxy(imv.imageItem.scene().sigMouseMoved, rateLimit=60, slot=imv.mouseMoved)
     win.setCentralWidget(imv)
     win.addDockWidget(QtCore.Qt.LeftDockWidgetArea, iw)
