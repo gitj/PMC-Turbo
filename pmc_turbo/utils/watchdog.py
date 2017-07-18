@@ -22,7 +22,9 @@ def get_watchdog_raw_info():
 
 def get_watchdog_info():
     result = get_watchdog_raw_info()
-    return parse_watchdog_info(result)
+    if result is not None:
+        return parse_watchdog_info(result)
+    return None
 
 def parse_watchdog_info(raw_info_string):
     current_countdown_matches = re.findall("Current Countdown:\s*(\d+)",raw_info_string)
