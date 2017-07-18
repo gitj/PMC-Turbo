@@ -48,7 +48,7 @@ class LowrateMonitorWidget(QtGui.QLabel):
         except KeyError:
             logger.debug("No info for %d" % self.message_id)
             return
-        if (time.time() - values['timestamp']) < 60:
+        if (time.time() - values['timestamp']) < 90:
             logger.debug("data for %d is fresh" % self.message_id)
             result = '<b>'
             end = '</b>'
