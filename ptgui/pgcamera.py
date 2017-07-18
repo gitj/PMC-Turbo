@@ -78,7 +78,7 @@ class MyImageView(pg.ImageView):
             df = self.mi.df[self.mi.df.camera_id == self.camera_id]
         else:
             df = self.mi.df
-        df = df[df.file_type == JPEGFile.file_type]
+        df = df[df.file_type == JPEGFile.file_type].reset_index(drop=True)
         if index == -1:
             index = df.index.max()
         try:
