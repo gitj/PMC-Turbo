@@ -45,6 +45,8 @@ c.Communicator.json_paths = [os.path.join(os.path.split(root_dir)[0], 'status_it
 #  immediately
 c.BasicPipeline.default_write_enable = 0
 
+c.BasicPipeline.use_watchdog = False
+
 ##
 
 ##

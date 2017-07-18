@@ -102,7 +102,9 @@ class CommandSender(GroundConfiguration):
 
     def _get_next_request_id(self):
         next = self.next_request_id
-        logger.info("Using request_id %d" % next)
+        message = ("Using request_id %d" % next)
+        logger.info(message)
+        print message
         self.next_request_id += 1
         try:
             with open(self.request_id_filename, 'w') as fh:
@@ -178,11 +180,15 @@ class CommandSender(GroundConfiguration):
         if not message:
             message = gse_acknowledgment_codes.get(acknowledgement_code,'Unknown exception occurred while sending or decoding GSE response')
         if send_successful:
-            logger.info("Successfully sent command sequence %d via %s with destination %d"
+            message = ("Successfully sent command sequence %d via %s with destination %d"
                         % (self.next_sequence_number, link_ids[via], destination))
+            logger.info(message)
+            print message
         else:
-            logger.error("Failed to send command sequence %d via %s!\n\tMessage: %s"
+            message = ("Failed to send command sequence %d via %s!\n\tMessage: %s"
                              % (self.next_sequence_number, link_ids[via], message))
+            logger.error(message)
+            print message
 
         self.history_logger.write_row(send_timestamp=timestamp, sequence_number=self.next_sequence_number,
                                       num_commands=len(commands), destination=destination, link_id=link_ids[via],

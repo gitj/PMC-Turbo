@@ -36,6 +36,7 @@ c.GlobalConfiguration.log_dir = '/var/pmclogs'
 c.GlobalConfiguration.data_directories = ['/data1', '/data2', '/data3', '/data4', '/data5']
 
 c.BasicPipeline.rate_limit_intervals = {'/data5': 120}
+c.BasicPipeline.use_watchdog = True
 
 ##
 c.GlobalConfiguration.pipeline_pyro_port = 50000

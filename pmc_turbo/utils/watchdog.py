@@ -32,27 +32,25 @@ def parse_watchdog_info(raw_info_string):
     if current_countdown_matches:
         try:
             current_countdown = int(current_countdown_matches[0])
-        except ValueError:
-            logger.warning("Couldn't parse raw_info_string %r" % current_countdown_matches)
+        except ValueError: #pragma: no cover
+            logger.warning("Couldn't parse raw_info_string %r" % current_countdown_matches) #pragma: no cover
     initial_countdown = np.nan
     initial_countdown_matches = re.findall("Initial Countdown:\s*(\d+)",raw_info_string)
     if initial_countdown_matches:
         try:
             initial_countdown = int(initial_countdown_matches[0])
-        except ValueError:
-            logger.warning("Couldn't parse raw_info_string %r" % initial_countdown_matches)
+        except ValueError: #pragma: no cover
+            logger.warning("Couldn't parse raw_info_string %r" % initial_countdown_matches) #pragma: no cover
     is_running = False
     is_running_matches = re.findall("Timer:\s*(\w+)",raw_info_string)
     if is_running_matches:
         try:
             is_running = is_running_matches[0]
-        except Exception:
-            #pragma: no cover
-            logger.warning("Couldn't parse raw_info_string %r" % is_running_matches)
+        except Exception: #pragma: no cover
+            logger.warning("Couldn't parse raw_info_string %r" % is_running_matches) #pragma: no cover
     is_running = (is_running == "Running")
     return is_running, initial_countdown, current_countdown
 
-#pragma: no cover
 def setup_reset_watchdog(start=True,timeout=600, action=TIMEOUT_ACTION_POWER_CYCLE):
     if start:
         start_argument = '-w -x'
@@ -60,7 +58,7 @@ def setup_reset_watchdog(start=True,timeout=600, action=TIMEOUT_ACTION_POWER_CYC
         start_argument = ''
     return run_sudo_command_with_timeout("bmc-watchdog --set -a %d -i %d %s" % (action,timeout,start_argument))
 
-#pragma: no cover
+
 def just_reset_watchdog():
-    return run_sudo_command_with_timeout("bmc-watchdog --reset")
+    return run_sudo_command_with_timeout("bmc-watchdog --reset") #pragma: no cover
 

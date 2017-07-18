@@ -150,6 +150,8 @@ class ShortStatusCamera(ShortStatusBase):
     item_table = OrderedDict([("message_id", "B"),
                               ("timestamp", "d"),
                               ("uptime", "I"),
+                              ("load", "H"),
+                              ("watchdog_status","h"),
                               ("leader_id", "B"),
 
                               ("free_disk_root_mb", "I"),

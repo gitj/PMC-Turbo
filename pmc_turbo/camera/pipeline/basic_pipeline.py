@@ -50,6 +50,7 @@ class BasicPipeline(GlobalConfiguration):
     num_data_buffers = Int(16).tag(config=True)
     default_write_enable = Int(1, help="Initial value for disk write enable flag. If nonzero, start writing to disk immediately").tag(config=True)
     rate_limit_intervals = Dict(default_value={}).tag(config=True)
+    use_watchdog = Bool(default_value=False).tag(config=True)
 
     def initialize(self):
 
@@ -111,7 +112,8 @@ class BasicPipeline(GlobalConfiguration):
                               output_queue=self.acquire_image_input_queue, info_buffer=self.info_buffer,
                               status=self.disk_statuses[k], output_dir=output_dir,
                               available_disks=[self.data_directories[k]], write_enable=self.disk_write_enables[k],
-                              rate_limit_interval=dict(self.rate_limit_intervals).get(self.data_directories[k],0))
+                              rate_limit_interval=dict(self.rate_limit_intervals).get(self.data_directories[k],0),
+                              use_watchdog=self.use_watchdog)
             for k in range(num_writers)]
 
         self.acquire_images = AcquireImagesProcess(raw_image_buffers=self.raw_image_buffers,

@@ -11,6 +11,7 @@ import numpy as np
 
 from pmc_turbo.camera.image_processing.blosc_file import write_image_blosc
 from pmc_turbo.camera.pycamera.dtypes import frame_info_dtype, chunk_num_bytes, chunk_dtype
+from pmc_turbo.utils.watchdog import setup_reset_watchdog
 
 percentiles_to_compute = [0,1,10,20,30,40,50,60,70,80,90,99,100]
 percentile_keys = ['percentile_%d' % k for k in percentiles_to_compute]
@@ -37,7 +38,7 @@ DISK_MIN_BYTES_AVAILABLE = 100*1024*1024 # 100 MiB
 
 class WriteImageProcess(object):
     def __init__(self, input_buffers, input_queue, output_queue, info_buffer, status, output_dir,
-                 available_disks, write_enable, rate_limit_interval):
+                 available_disks, write_enable, rate_limit_interval, use_watchdog):
         self.data_buffers = input_buffers
         self.input_queue = input_queue
         self.output_queue = output_queue
@@ -46,6 +47,7 @@ class WriteImageProcess(object):
         self.available_disks = self.check_disk_space(self.original_disks)
         self.write_enable = write_enable
         self.rate_limit_interval = rate_limit_interval
+        self.use_watchdog=use_watchdog
         if rate_limit_interval:
             logger.info("Rate limiting writer thread for disks %r to %d second intervals"
                         % (self.available_disks, self.rate_limit_interval))
@@ -151,6 +153,8 @@ class WriteImageProcess(object):
                                       fname,
                                       percentiles_string
                                       ))
+                        if self.use_watchdog:
+                            setup_reset_watchdog()
                         if self.rate_limit_interval:
                             self.status.value = "throttling"
                             time.sleep(self.rate_limit_interval)
