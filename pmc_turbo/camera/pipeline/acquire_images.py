@@ -49,14 +49,16 @@ class AcquireImagesProcess(GlobalConfiguration):
     acquire_counters_name = Unicode('acquire_images').tag(config=True)
     camera_ip_address = Bytes("10.0.0.2").tag(config=True)
     trigger_interval = Int(default_value=2,min=1).tag(config=True)
-    initial_camera_configuration = List(trait=Tuple(Bytes(), Bytes()),
+    required_camera_configuration = List(trait=Tuple(Bytes(), Bytes()),
                                         default_value=[("PtpMode", "Slave"),
                                                        ("ChunkModeActive", "1"),
-                                                       ("AcquisitionFrameCount", "2"),
+                                                       ("AcquisitionFrameCount", "1"),
                                                        ('AcquisitionMode', "MultiFrame"),
                                                        ("StreamFrameRateConstrain", "0"),
-                                                       ('AcquisitionFrameRateAbs', "6.25"),
-                                                       ('TriggerSource', 'FixedRate'),
+                                                       ('TriggerSource', 'FixedRate'),]).tag(config=True)
+    initial_camera_configuration = List(trait=Tuple(Bytes(), Bytes()),
+                                        default_value=[("AcquisitionFrameCount", "1"),
+                                                       ('AcquisitionFrameRateAbs', "1.3"),
                                                        ('ExposureTimeAbs', "100000"),
                                                        ('EFLensFocusCurrent', "2050")]).tag(config=True)
 
@@ -143,6 +145,8 @@ class AcquireImagesProcess(GlobalConfiguration):
         from pmc_turbo import camera
         self.status.value = "initializing camera"
         self.pc = camera.PyCamera(self.camera_ip_address, use_simulated_camera=self.use_simulated_camera)
+        for name,value in self.required_camera_configuration:
+            self.pc.set_parameter(name,value)
         for name,value in self.initial_camera_configuration:
             self.pc.set_parameter(name,value)
 
