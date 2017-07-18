@@ -38,7 +38,7 @@ c.GlobalConfiguration.data_directories = ['/data1', '/data2', '/data3', '/data4'
 c.BasicPipeline.rate_limit_intervals = {'/data5': 120}
 c.BasicPipeline.use_watchdog = True
 
-c.AcquireImagesProcess.trigger_interval = 2.0
+c.AcquireImagesProcess.trigger_interval = 2
 c.AcquireImagesProcess.initial_camera_configuration = [("AcquisitionFrameCount", "1"),
                                                        ('AcquisitionFrameRateAbs', "1.3"),
                                                        ('ExposureTimeAbs', "100000"),
