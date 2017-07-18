@@ -24,7 +24,7 @@ def get_watchdog_info():
     result = get_watchdog_raw_info()
     if result is not None:
         return parse_watchdog_info(result) #pragma: no cover
-    return None
+    return np.nan, np.nan, np.nan
 
 def parse_watchdog_info(raw_info_string):
     current_countdown_matches = re.findall("Current Countdown:\s*(\d+)",raw_info_string)
