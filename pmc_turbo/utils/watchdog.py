@@ -12,7 +12,7 @@ def run_sudo_command_with_timeout(command,timeout=1):
     full_command = "sudo timeout %f %s" % (timeout, command)
     try:
         result = subprocess.check_output(shlex.split(full_command),stderr=subprocess.STDOUT)
-    except subprocess.CalledProcessError:
+    except (subprocess.CalledProcessError, OSError):
         logger.exception("failed to execute command %s" % full_command)
         result = None
     return result
