@@ -147,7 +147,7 @@ class AcquireImagesProcess(GlobalConfiguration):
             self.pc.set_parameter(name,value)
 
         self.payload_size = int(self.pc.get_parameter('PayloadSize'))
-        logger.debug("payload size: %d" % self.payload_size)
+        logger.info("payload size: %d" % self.payload_size)
 
         self.pc._pc.start_capture()
 
