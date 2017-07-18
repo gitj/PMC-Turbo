@@ -91,6 +91,10 @@ def format_item(name,value):
         frame_rate = value/1000.
         interval_ms = 1000./frame_rate
         return "frame rate", ("%.3f (%.1f ms)" % (frame_rate,interval_ms))
+    if name == 'focus_step':
+        if value < 900:
+            name = '<font color="red">' + name + '</font>'
+            value = '<font color="red">%d</font>' % value
     if value in [127, 32767, 65535]:
         return name, '---'
     return name,value
