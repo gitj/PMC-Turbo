@@ -789,7 +789,7 @@ class Communicator(GlobalConfiguration):
         ss.timestamp = time.time()
         ss.leader_id = self.leader_id
         ss.uptime = int(get_uptime())
-        ss.load = self.housekeeping.get_recent_value("load-load-shortterm") * 1000
+        ss.load = self.housekeeping.get_recent_value("load_load_shortterm") * 1000
         is_running,initial_countdown,current_countdown = get_watchdog_info()
         if not is_running:
             current_countdown = -current_countdown
