@@ -9,6 +9,21 @@ from pmc_turbo.camera.image_processing import blosc_file
 from pmc_turbo.camera.pipeline.indexer import MergedIndex
 from pmc_turbo.ground.ground_configuration import GroundConfiguration
 from pmc_turbo.communication.file_format_classes import load_and_decode_file, JPEGFile
+from pmc_turbo.camera.pycamera import dtypes
+
+
+def get_roi_coordinates(roi_pos, roi_size, scale_by, row_offset, column_offset, portrait_mode):
+    if portrait_mode:
+        x_idx = 1
+        y_idx = 0
+    else:
+        x_idx = 0
+        y_idx = 1
+    xmin = np.floor(roi_pos[x_idx] / scale_by) + row_offset
+    xmax = np.ceil((roi_pos[x_idx] + roi_size[x_idx]) / scale_by) + row_offset
+    ymin = np.floor(roi_pos[y_idx] / scale_by) + column_offset
+    ymax = np.ceil((roi_pos[y_idx] + roi_size[y_idx]) / scale_by) + column_offset
+    return xmin, xmax, ymin, ymax
 
 
 class MyImageView(pg.ImageView):
@@ -32,7 +47,7 @@ class MyImageView(pg.ImageView):
         # self.addItem(self.hLine, ignoreBounds=True)
 
         self.selection_roi = pg.RectROI((0, 0), size=(20, 20), scaleSnap=True, translateSnap=True)
-        self.selection_roi.sigRegionChanged.connect(self.roi_update)
+        self.selection_roi.sigRegionChangeFinished.connect(self.roi_update)
 
         self.addItem(self.selection_roi)
 
@@ -42,35 +57,25 @@ class MyImageView(pg.ImageView):
         self.update(-1, autoLevels=True, autoRange=True)
 
     def roi_update(self):
-        # print self.selection_roi.pos()
-        # print self.selection_roi.size()
-        xmin, xmax, ymin, ymax = self.get_roi_coordinates()
-        self.infobar.roi_x_value.setText('%.0f:%.0f' % (xmin, xmax))
-        self.infobar.roi_y_value.setText('%.0f:%.0f' % (ymin, ymax))
+        xmin, xmax, ymin, ymax = get_roi_coordinates(self.selection_roi.pos(), self.selection_roi.size(), self.scale_by,
+                                                     self.row_offset, self.column_offset, self.portrait_mode)
+        if self.portrait_mode:
+            x_idx = 1
+            y_idx = 0
+        else:
+            x_idx = 0
+            y_idx = 1
+        self.infobar.roi_x_value.setText('%.0f:%.0f' % (
+            self.selection_roi.pos()[x_idx], self.selection_roi.pos()[x_idx] + self.selection_roi.size()[x_idx]))
+        self.infobar.roi_y_value.setText('%.0f:%.0f' % (
+            self.selection_roi.pos()[y_idx], self.selection_roi.pos()[y_idx] + self.selection_roi.size()[y_idx]))
         self.infobar.roi_column_offset.setText('%.0f' % xmin)
         self.infobar.roi_row_offset.setText('%.0f' % ymin)
         self.infobar.roi_num_columns.setText('%.0f' % (xmax - xmin))
         self.infobar.roi_num_rows.setText('%.0f' % (ymax - ymin))
         self.commandbar.dynamic_command.setText(
-            'request_specific_images(%.0f, DEFAULT_REQUEST_ID, num_images=1, row_offset=%.0f, column_offset=%.0f, num_rows=%.0f, num_columns=%.0f, scale_by=1,quality=75, format="jpeg", step=-1)'
+            'request_specific_images(%f, row_offset=%d, column_offset=%d, num_rows=%d, num_columns=%d, num_images=1, scale_by=1, quality=75, step=-1)'
             % (self.timestamp, ymin, xmin, (ymax - ymin), (xmax - xmin)))
-
-    def get_roi_coordinates(self):
-        if self.portrait_mode:
-            ymin = np.floor(self.selection_roi.pos()[0] / self.scale_by) + self.column_offset
-            ymax = np.ceil(
-                (self.selection_roi.pos()[0] + self.selection_roi.size()[0]) / self.scale_by) + self.column_offset
-            xmin = np.floor(self.selection_roi.pos()[1] / self.scale_by) + self.row_offset
-            xmax = np.ceil(
-                (self.selection_roi.pos()[1] + self.selection_roi.size()[1]) / self.scale_by) + self.row_offset
-        else:
-            xmin = np.floor(self.selection_roi.pos()[0] / self.scale_by) + self.row_offset
-            xmax = np.ceil(
-                (self.selection_roi.pos()[0] + self.selection_roi.size()[0]) / self.scale_by) + self.row_offset
-            ymin = np.floor(self.selection_roi.pos()[1] / self.scale_by) + self.column_offset
-            ymax = np.ceil(
-                (self.selection_roi.pos()[1] + self.selection_roi.size()[1]) / self.scale_by) + self.column_offset
-        return xmin, xmax, ymin, ymax
 
     def update(self, index=-1, autoLevels=True, autoRange=True):
         self.mi.update()
@@ -144,10 +149,8 @@ class MyImageView(pg.ImageView):
         if self.imageItem.sceneBoundingRect().contains(pos):
             mousePoint = vb.mapSceneToView(pos)
             index = int(mousePoint.x())
-            # label.setText("<span style='font-size: 12pt'>x=%0.1f,   <span style='color: red'>y1=%0.1f</span>,   <span style='color: green'>y2=%0.1f</span>" % (mousePoint.x(), data1[index], data2[index]))
             self.vLine.setPos(mousePoint.x())
             self.hLine.setPos(mousePoint.y())
-            # print mousePoint.x(), mousePoint.y()
             self.infobar.x_value.setText('%.0f' % mousePoint.x())
             self.infobar.y_value.setText('%.0f' % mousePoint.y())
 
@@ -155,9 +158,6 @@ class MyImageView(pg.ImageView):
 class InfoBar(QtGui.QDockWidget):
     def __init__(self, *args, **kwargs):
         super(InfoBar, self).__init__(*args, **kwargs)
-        # self.setWindowTitle("Info: ---")
-        # self.setFeatures(QtGui.QDockWidget.AllDockWidgetFeatures | QtGui.QDockWidget.DockWidgetVerticalTitleBar)
-        # self.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.setFeatures(QtGui.QDockWidget.NoDockWidgetFeatures)
         mywidget = QtGui.QWidget()
@@ -174,7 +174,6 @@ class InfoBar(QtGui.QDockWidget):
         write_timestamp_label = QtGui.QLabel('write')
 
         acquisition_count_label = QtGui.QLabel('acquisition_count')
-        lens_status_label = QtGui.QLabel('lens_status')
         gain_db_label = QtGui.QLabel('gain_db')
         focal_length_mm_label = QtGui.QLabel('focal_length_mm')
 
@@ -195,11 +194,16 @@ class InfoBar(QtGui.QDockWidget):
 
         roi_x_label = QtGui.QLabel('ROI x lims: ')
         roi_y_label = QtGui.QLabel('ROI y lims: ')
-        command_to_send_label = QtGui.QLabel('Command to send: ')
         roi_row_offset_label = QtGui.QLabel('Row offset')
         roi_col_offset_label = QtGui.QLabel('Column offset')
         roi_num_rows_label = QtGui.QLabel('Num rows')
         roi_num_cols_label = QtGui.QLabel('Num columns')
+
+        last_error_message_label = QtGui.QLabel('last error msg')
+        auto_focus_label = QtGui.QLabel('auto focus')
+        last_error_label = QtGui.QLabel('last error')
+        lens_attached_label = QtGui.QLabel('lens attached')
+        lens_error_label = QtGui.QLabel('error')
 
         self.labels = [
             frame_status_label,
@@ -213,7 +217,6 @@ class InfoBar(QtGui.QDockWidget):
             write_timestamp_label,
 
             acquisition_count_label,
-            lens_status_label,
             gain_db_label,
             focal_length_mm_label,
 
@@ -233,11 +236,15 @@ class InfoBar(QtGui.QDockWidget):
             camera_id_label,
             roi_x_label,
             roi_y_label,
-            command_to_send_label,
             roi_row_offset_label,
             roi_col_offset_label,
             roi_num_rows_label,
             roi_num_cols_label,
+            last_error_message_label,
+            auto_focus_label,
+            last_error_label,
+            lens_attached_label,
+            lens_error_label
 
         ]
 
@@ -256,7 +263,6 @@ class InfoBar(QtGui.QDockWidget):
         self.file_index_value = QtGui.QLabel('---')
         self.write_timestamp_value = QtGui.QLabel('---')
         self.acquisition_count_value = QtGui.QLabel('---')
-        self.lens_status_value = QtGui.QLabel('---')
         self.gain_db_value = QtGui.QLabel('---')
         self.focal_length_mm_value = QtGui.QLabel('---')
         self.row_offset_value = QtGui.QLabel('---')
@@ -278,7 +284,12 @@ class InfoBar(QtGui.QDockWidget):
         self.roi_num_columns = QtGui.QLabel('---')
         self.roi_x_value = QtGui.QLabel('---')
         self.roi_y_value = QtGui.QLabel('---')
-        self.command_to_send = QtGui.QLabel('---')
+
+        self.last_error_message_value = QtGui.QLabel('---')
+        self.auto_focus_value = QtGui.QLabel('---')
+        self.last_error_value = QtGui.QLabel('---')
+        self.lens_attached_value = QtGui.QLabel('---')
+        self.lens_error_value = QtGui.QLabel('---')
 
         self.values = [
             self.frame_status_value,
@@ -292,7 +303,6 @@ class InfoBar(QtGui.QDockWidget):
             self.write_timestamp_value,
 
             self.acquisition_count_value,
-            self.lens_status_value,
             self.gain_db_value,
             self.focal_length_mm_value,
 
@@ -312,11 +322,16 @@ class InfoBar(QtGui.QDockWidget):
             self.camera_id_value,
             self.roi_x_value,
             self.roi_y_value,
-            self.command_to_send,
             self.roi_row_offset,
             self.roi_column_offset,
             self.roi_num_rows,
-            self.roi_num_columns
+            self.roi_num_columns,
+
+            self.last_error_message_value,
+            self.auto_focus_value,
+            self.last_error_value,
+            self.lens_attached_value,
+            self.lens_error_value
         ]
 
         valuefont = self.frame_status_value.font()
@@ -347,7 +362,6 @@ class InfoBar(QtGui.QDockWidget):
         camera_layout.addWidget(exposure_us_label, 5, 0)
         camera_layout.addWidget(frame_status_label, 2, 0)
         camera_layout.addWidget(focus_step_label, 3, 0)
-        camera_layout.addWidget(lens_status_label, 9, 0)
         camera_layout.addWidget(gain_db_label, 10, 0)
         camera_layout.addWidget(focal_length_mm_label, 11, 0)
         camera_layout.addWidget(frame_id_label, 1, 0)
@@ -358,12 +372,26 @@ class InfoBar(QtGui.QDockWidget):
         camera_layout.addWidget(self.exposure_us_value, 5, 1)
         camera_layout.addWidget(self.frame_status_value, 2, 1)
         camera_layout.addWidget(self.focus_step_value, 3, 1)
-        camera_layout.addWidget(self.lens_status_value, 9, 1)
         camera_layout.addWidget(self.gain_db_value, 10, 1)
         camera_layout.addWidget(self.focal_length_mm_value, 11, 1)
         camera_layout.addWidget(self.frame_id_value, 1, 1)
         camera_layout.addWidget(self.file_index_value, 6, 1)
         camera_layout.addWidget(self.acquisition_count_value, 8, 1)
+
+        lens_status_widget = QtGui.QWidget()
+        lens_status_layout = QtGui.QGridLayout()
+
+        lens_status_layout.addWidget(last_error_message_label, 0, 0)
+        lens_status_layout.addWidget(auto_focus_label, 1, 0)
+        lens_status_layout.addWidget(last_error_label, 2, 0)
+        lens_status_layout.addWidget(lens_attached_label, 3, 0)
+        lens_status_layout.addWidget(lens_error_label, 4, 0)
+        lens_status_layout.addWidget(self.last_error_message_value, 0, 1)
+        lens_status_layout.addWidget(self.auto_focus_value, 1, 1)
+        lens_status_layout.addWidget(self.last_error_value, 2, 1)
+        lens_status_layout.addWidget(self.lens_attached_value, 3, 1)
+        lens_status_layout.addWidget(self.lens_error_value, 4, 1)
+        lens_status_widget.setLayout(lens_status_layout)
 
         image_widget = QtGui.QWidget()
         image_layout = QtGui.QGridLayout()
@@ -417,8 +445,6 @@ class InfoBar(QtGui.QDockWidget):
         roi_layout.addWidget(self.roi_num_rows, 4, 1)
         roi_layout.addWidget(roi_num_cols_label, 5, 0)
         roi_layout.addWidget(self.roi_num_columns, 5, 1)
-        roi_layout.addWidget(command_to_send_label, 6, 0)
-        roi_layout.addWidget(self.command_to_send, 6, 1)
 
         vertical_spacer = QtGui.QSpacerItem(10, 10, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
 
@@ -428,6 +454,8 @@ class InfoBar(QtGui.QDockWidget):
         vlayout.addWidget(time_widget)
         vlayout.addWidget(QtGui.QLabel('Camera'))
         vlayout.addWidget(camera_widget)
+        vlayout.addWidget(QtGui.QLabel('Lens Status'))
+        vlayout.addWidget(lens_status_widget)
         vlayout.addWidget(QtGui.QLabel('Image'))
         vlayout.addWidget(image_widget)
         vlayout.addItem(vertical_spacer)
@@ -444,7 +472,7 @@ class InfoBar(QtGui.QDockWidget):
         self.frame_timestamp_s.setToolTip(time.strftime("%Y.%m.%d_%H:%M:%S", time.localtime(time_s)))
         self.focus_step_value.setText(str(jpeg_file.focus_step))
 
-        self.aperture_stop_value.setText(str(jpeg_file.aperture_stop))
+        self.aperture_stop_value.setText(str(dtypes.decode_aperture_chunk_data(jpeg_file.aperture_stop)))
         self.exposure_us_value.setText(str(jpeg_file.exposure_us))
         self.file_index_value.setText(str(jpeg_file.file_index))
         self.write_timestamp_value.setText('%.0f' % jpeg_file.write_timestamp)
@@ -452,7 +480,6 @@ class InfoBar(QtGui.QDockWidget):
             time.strftime("%Y.%m.%d_%H:%M:%S", time.localtime(jpeg_file.write_timestamp)))
 
         self.acquisition_count_value.setText(str(jpeg_file.acquisition_count))
-        self.lens_status_value.setText(str(jpeg_file.lens_status))
         self.gain_db_value.setText(str(jpeg_file.gain_db))
         self.focal_length_mm_value.setText(str(jpeg_file.focal_length_mm))
 
@@ -481,6 +508,13 @@ class InfoBar(QtGui.QDockWidget):
 
         self.camera_id_value.setText(str(data_row['camera_id']))
 
+        lens_status_dict = dtypes.decode_lens_status_chunk_data(jpeg_file.lens_status)
+        self.last_error_message_value.setText(str(lens_status_dict['last_error_message']))
+        self.auto_focus_value.setText(str(lens_status_dict['auto_focus']))
+        self.last_error_value.setText(str(lens_status_dict['last_error']))
+        self.lens_attached_value.setText(str(lens_status_dict['lens_attached']))
+        self.lens_error_value.setText(str(lens_status_dict['error']))
+
 
 class CommandBar(QtGui.QDockWidget):
     def __init__(self, *args, **kwargs):
@@ -490,12 +524,11 @@ class CommandBar(QtGui.QDockWidget):
         mywidget = QtGui.QWidget()
         layout = QtGui.QHBoxLayout()
         layout.addWidget(QtGui.QLabel('Command:'))
-        self.dynamic_command = QtGui.QLabel('---')
-        self.dynamic_command.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+        self.dynamic_command = QtGui.QLineEdit('---')
         layout.addWidget(self.dynamic_command)
-        horizontal_spacer = QtGui.QSpacerItem(5, 5, hPolicy=QtGui.QSizePolicy.Expanding,
-                                              vPolicy=QtGui.QSizePolicy.Minimum)
-        layout.addItem(horizontal_spacer)
+        # horizontal_spacer = QtGui.QSpacerItem(5, 5, hPolicy=QtGui.QSizePolicy.Expanding,
+        #                                       vPolicy=QtGui.QSizePolicy.Minimum)
+        # layout.addItem(horizontal_spacer)
         mywidget.setLayout(layout)
         self.setWidget(mywidget)
 
@@ -507,9 +540,9 @@ if __name__ == "__main__":
     camera_id = None
     portrait_mode = False
     if len(sys.argv) > 1:
-        # camera_id = int(sys.argv[1])
         portrait_mode = int(sys.argv[1])
-
+    if len(sys.argv) > 2:
+        camera_id = int(sys.argv[1])
     if not portrait_mode:
         pg.setConfigOptions(imageAxisOrder='row-major')
     else:
