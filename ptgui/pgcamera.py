@@ -12,7 +12,7 @@ from pmc_turbo.communication.file_format_classes import load_and_decode_file, JP
 
 
 class MyImageView(pg.ImageView):
-    def __init__(self, camera_id, infobar, window, portrait_mode, *args, **kwargs):
+    def __init__(self, camera_id, infobar, commandbar, window, portrait_mode, *args, **kwargs):
         # GroundConfiguration.__init__(**kwargs)
         super(MyImageView, self).__init__(*args, **kwargs)
         self.window = window
@@ -37,6 +37,7 @@ class MyImageView(pg.ImageView):
         self.addItem(self.selection_roi)
 
         self.infobar = infobar
+        self.commandbar = commandbar
 
         self.update(-1, autoLevels=True, autoRange=True)
 
@@ -50,8 +51,9 @@ class MyImageView(pg.ImageView):
         self.infobar.roi_row_offset.setText('%.0f' % ymin)
         self.infobar.roi_num_columns.setText('%.0f' % (xmax - xmin))
         self.infobar.roi_num_rows.setText('%.0f' % (ymax - ymin))
-        self.infobar.command_to_send.setText('---')
-        # Update command to send here
+        self.commandbar.dynamic_command.setText(
+            'request_specific_images(%.0f, DEFAULT_REQUEST_ID, num_images=1, row_offset=%.0f, column_offset=%.0f, num_rows=%.0f, num_columns=%.0f, scale_by=1,quality=75, format="jpeg", step=-1)'
+            % (self.timestamp, ymin, xmin, (ymax - ymin), (xmax - xmin)))
 
     def get_roi_coordinates(self):
         if self.portrait_mode:
@@ -94,14 +96,12 @@ class MyImageView(pg.ImageView):
         file_size = os.path.getsize(filename)
         image_file = load_and_decode_file(filename)
         self.infobar.update(image_file, latest, file_size)
+        self.timestamp = image_file.frame_timestamp_ns / 1e9
         self.scale_by = image_file.scale_by
         self.row_offset = image_file.row_offset
         self.column_offset = image_file.column_offset
         image_data = image_file.image_array() / image_file.pixel_scale + image_file.pixel_offset
         self.setImage(image_data, autoLevels=autoLevels, autoRange=autoRange)
-        print image_data.shape
-        print self.selection_roi.size()
-        print self.selection_roi.pos()
 
         if (self.selection_roi.pos()[0] < 0) or (self.selection_roi.pos()[1] < 0):
             self.selection_roi.setPos((0, 0))
@@ -116,7 +116,6 @@ class MyImageView(pg.ImageView):
             xlim = image_data.shape[0]
             ylim = image_data.shape[1]
 
-        print xmax, ymax
         if xmax > xlim:
             self.selection_roi.setSize(
                 [xlim - self.selection_roi.pos()[0], self.selection_roi.size()[1]])
@@ -124,6 +123,7 @@ class MyImageView(pg.ImageView):
         if ymax > ylim:
             self.selection_roi.setSize(
                 [self.selection_roi.size()[0], ylim - self.selection_roi.pos()[1]])
+        self.roi_update()
 
     def keyPressEvent(self, ev):
         if ev.key() == QtCore.Qt.Key_N:
@@ -161,7 +161,6 @@ class InfoBar(QtGui.QDockWidget):
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.setFeatures(QtGui.QDockWidget.NoDockWidgetFeatures)
         mywidget = QtGui.QWidget()
-        nested_widget = QtGui.QWidget()
         vlayout = QtGui.QVBoxLayout()
 
         frame_status_label = QtGui.QLabel('frame_status')
@@ -483,6 +482,24 @@ class InfoBar(QtGui.QDockWidget):
         self.camera_id_value.setText(str(data_row['camera_id']))
 
 
+class CommandBar(QtGui.QDockWidget):
+    def __init__(self, *args, **kwargs):
+        super(CommandBar, self).__init__(*args, **kwargs)
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        self.setFeatures(QtGui.QDockWidget.NoDockWidgetFeatures)
+        mywidget = QtGui.QWidget()
+        layout = QtGui.QHBoxLayout()
+        layout.addWidget(QtGui.QLabel('Command:'))
+        self.dynamic_command = QtGui.QLabel('---')
+        self.dynamic_command.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+        layout.addWidget(self.dynamic_command)
+        horizontal_spacer = QtGui.QSpacerItem(5, 5, hPolicy=QtGui.QSizePolicy.Expanding,
+                                              vPolicy=QtGui.QSizePolicy.Minimum)
+        layout.addItem(horizontal_spacer)
+        mywidget.setLayout(layout)
+        self.setWidget(mywidget)
+
+
 if __name__ == "__main__":
     from pmc_turbo.utils import log
     import sys
@@ -501,12 +518,14 @@ if __name__ == "__main__":
     app = QtGui.QApplication([])
     dw = QtGui.QDesktopWidget()
     iw = InfoBar()
+    cb = CommandBar()
     win = QtGui.QMainWindow()
     win.resize(800, 800)
-    imv = MyImageView(camera_id, iw, win, portrait_mode=portrait_mode)
+    imv = MyImageView(camera_id, iw, cb, win, portrait_mode=portrait_mode)
     # proxy = pg.SignalProxy(imv.imageItem.scene().sigMouseMoved, rateLimit=60, slot=imv.mouseMoved)
     win.setCentralWidget(imv)
     win.addDockWidget(QtCore.Qt.LeftDockWidgetArea, iw)
+    win.addDockWidget(QtCore.Qt.BottomDockWidgetArea, cb)
     win.show()
     if camera_id is not None:
         if dw.screenCount() > 1:
