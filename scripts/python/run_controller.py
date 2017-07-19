@@ -13,6 +13,7 @@ from pmc_turbo.utils.configuration import default_config_dir
 
 class ControllerApp(Application):
     config_file = Unicode(os.path.join(default_config_dir,'default_balloon.py'), help="Load this config file").tag(config=True)
+    config_dir = Unicode(default_config_dir, help="Config file directory").tag(config=True)
     write_default_config = Unicode(u'', help="Write template config file to this location").tag(config=True)
     classes = List([Controller])
     aliases = dict(generate_config='ControllerApp.write_default_config',
@@ -27,8 +28,8 @@ class ControllerApp(Application):
                 fh.write(self.generate_config_file())
                 self.exit()
         if self.config_file:
-            print 'Using config file %r' % self.config_file
-            self.load_config_file(self.config_file)
+            print 'loading config: ', self.config_dir, self.config_file
+            self.load_config_file(self.config_file, path=self.config_dir)
         print "configuration",self.config
         self.controller = Controller(config=self.config)
 
