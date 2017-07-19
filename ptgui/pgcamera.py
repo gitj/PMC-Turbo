@@ -606,6 +606,9 @@ if __name__ == "__main__":
     win.addDockWidget(QtCore.Qt.LeftDockWidgetArea, iw)
     win.addDockWidget(QtCore.Qt.BottomDockWidgetArea, cb)
     win.show()
+    print "main window width x height", win.frameGeometry().width(), win.frameGeometry().height()
+    if win.frameGeometry().height() > 875:
+        raise Exception("Window is too high, rearrange widgets to reduce height")
     if camera_id is not None:
         if dw.screenCount() > 1:
             pass
