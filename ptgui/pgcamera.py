@@ -167,6 +167,7 @@ class InfoBar(QtGui.QDockWidget):
         self.image_viewer = None
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.setFeatures(QtGui.QDockWidget.NoDockWidgetFeatures)
+        self.setTitleBarWidget(QtGui.QWidget(None))
         mywidget = QtGui.QWidget()
         vlayout = QtGui.QVBoxLayout()
 
@@ -262,7 +263,7 @@ class InfoBar(QtGui.QDockWidget):
         ]
 
         labelfont = frame_status_label.font()
-        labelfont.setPointSize(6)
+        labelfont.setPointSize(5)
         # labelfont.setBold(True)
         for label in self.labels:
             label.setFont(labelfont)
@@ -353,7 +354,7 @@ class InfoBar(QtGui.QDockWidget):
         ]
 
         valuefont = self.frame_status_value.font()
-        valuefont.setPointSize(6)
+        valuefont.setPointSize(5)
         for value in self.values:
             value.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
             value.setFont(valuefont)
@@ -481,21 +482,30 @@ class InfoBar(QtGui.QDockWidget):
 
         vertical_spacer = QtGui.QSpacerItem(10, 10, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
 
-        vlayout.addWidget(QtGui.QLabel('ROI Coordinates'))
+
+
+        headers = [
+            QtGui.QLabel('ROI Coordinates'),
+            QtGui.QLabel('Timestamps'),
+            QtGui.QLabel('Camera'),
+            QtGui.QLabel('Lens Status'),
+            QtGui.QLabel('Lens Status'),
+            QtGui.QLabel('Image')
+        ]
+
+        #vlayout.addWidget()
         vlayout.addWidget(roi_widget)
-        vlayout.addWidget(QtGui.QLabel('Timestamps'))
+        #vlayout.addWidget()
         vlayout.addWidget(time_widget)
-        vlayout.addWidget(QtGui.QLabel('Camera'))
+        #vlayout.addWidget()
         vlayout.addWidget(camera_widget)
-        vlayout.addWidget(QtGui.QLabel('Lens Status'))
+        #vlayout.addWidget()
         vlayout.addWidget(lens_status_widget)
-        vlayout.addWidget(QtGui.QLabel('Image'))
+        #vlayout.addWidget()
         vlayout.addWidget(image_widget)
         vlayout.addWidget(index_widget)
         vlayout.addItem(vertical_spacer)
-
         mywidget.setLayout(vlayout)
-
         self.setWidget(mywidget)
 
     def update(self, jpeg_file, data_row, file_size, index, max_index):
@@ -562,14 +572,18 @@ class CommandBar(QtGui.QDockWidget):
         super(CommandBar, self).__init__(*args, **kwargs)
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.setFeatures(QtGui.QDockWidget.NoDockWidgetFeatures)
+        self.setTitleBarWidget(QtGui.QWidget(None))
         mywidget = QtGui.QWidget()
         layout = QtGui.QHBoxLayout()
-        layout.addWidget(QtGui.QLabel('Command:'))
+        label = QtGui.QLabel('Command:')
+
         self.dynamic_command = QtGui.QLabel('---')
         dfont = self.dynamic_command.font()
-        dfont.setPointSize(6)
+        dfont.setPointSize(5)
+        label.setFont(dfont)
         dfont.setBold(True)
         self.dynamic_command.setFont(dfont)
+        layout.addWidget(label)
         layout.addWidget(self.dynamic_command)
         # horizontal_spacer = QtGui.QSpacerItem(5, 5, hPolicy=QtGui.QSizePolicy.Expanding,
         #                                       vPolicy=QtGui.QSizePolicy.Minimum)
@@ -598,16 +612,17 @@ if __name__ == "__main__":
     iw = InfoBar()
     cb = CommandBar()
     win = QtGui.QMainWindow()
-    win.resize(800, 800)
+
     imv = MyImageView(camera_id, iw, cb, win, portrait_mode=portrait_mode)
     iw.image_viewer = imv
     # proxy = pg.SignalProxy(imv.imageItem.scene().sigMouseMoved, rateLimit=60, slot=imv.mouseMoved)
     win.setCentralWidget(imv)
     win.addDockWidget(QtCore.Qt.LeftDockWidgetArea, iw)
     win.addDockWidget(QtCore.Qt.BottomDockWidgetArea, cb)
+    win.resize(600, 600)
     win.show()
     print "main window width x height", win.frameGeometry().width(), win.frameGeometry().height()
-    if win.frameGeometry().height() > 875:
+    if win.frameGeometry().height() > 870:
         raise Exception("Window is too high, rearrange widgets to reduce height")
     if camera_id is not None:
         if dw.screenCount() > 1:
