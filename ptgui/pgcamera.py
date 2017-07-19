@@ -40,6 +40,7 @@ class MyImageView(pg.ImageView):
         self.mi = MergedIndex('*', data_dirs=[data_dirs[-1]], index_filename='file_index.csv', sort_on=None)
         self.last_index = 0
         self.scale_by = 1
+        self.prev_shape = None
         #
         # self.vLine = pg.InfiniteLine(angle=90, movable=False)
         # self.hLine = pg.InfiniteLine(angle=0, movable=False)
@@ -100,7 +101,6 @@ class MyImageView(pg.ImageView):
         self.window.setWindowTitle(filename)
         print filename
         file_size = os.path.getsize(filename)
-        # length = df.shape[0]
         image_file = load_and_decode_file(filename)
         self.infobar.update(image_file, latest, file_size, index, df.index.max())
         self.timestamp = image_file.frame_timestamp_ns / 1e9
@@ -123,13 +123,18 @@ class MyImageView(pg.ImageView):
             xlim = image_data.shape[0]
             ylim = image_data.shape[1]
 
-        if xmax > xlim:
-            self.selection_roi.setSize(
-                [xlim - self.selection_roi.pos()[0], self.selection_roi.size()[1]])
+        if image_data.shape != self.prev_shape:
+            self.selection_roi.setSize([10, 10])
+            self.selection_roi.setPos([0, 0, ])
+            self.prev_shape = image_data.shape
+        else:
+            if xmax > xlim:
+                self.selection_roi.setSize(
+                    [xlim - self.selection_roi.pos()[0], self.selection_roi.size()[1]])
 
-        if ymax > ylim:
-            self.selection_roi.setSize(
-                [self.selection_roi.size()[0], ylim - self.selection_roi.pos()[1]])
+            if ymax > ylim:
+                self.selection_roi.setSize(
+                    [self.selection_roi.size()[0], ylim - self.selection_roi.pos()[1]])
         self.roi_update()
 
     def keyPressEvent(self, ev):
@@ -476,13 +481,17 @@ class InfoBar(QtGui.QDockWidget):
 
         self.go_to_index_edit = QtGui.QLineEdit()
         self.go_to_index_edit.setValidator(QtGui.QIntValidator())
+        f = self.go_to_index_edit.font()
+        f.setPointSize(5)
+        self.go_to_index_edit.setFont(f)
+        self.go_to_index_edit.setFixedWidth(25)
+        self.go_to_index_edit.setFixedHeight(13)
+        #self.go_to_index_edit.setSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Fixed)
         self.go_to_index_edit.returnPressed.connect(self.update_from_index_edit)
 
         index_layout.addWidget(self.go_to_index_edit, 2, 1)
 
         vertical_spacer = QtGui.QSpacerItem(10, 10, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-
-
 
         headers = [
             QtGui.QLabel('ROI Coordinates'),
@@ -493,15 +502,15 @@ class InfoBar(QtGui.QDockWidget):
             QtGui.QLabel('Image')
         ]
 
-        #vlayout.addWidget()
+        # vlayout.addWidget()
         vlayout.addWidget(roi_widget)
-        #vlayout.addWidget()
+        # vlayout.addWidget()
         vlayout.addWidget(time_widget)
-        #vlayout.addWidget()
+        # vlayout.addWidget()
         vlayout.addWidget(camera_widget)
-        #vlayout.addWidget()
+        # vlayout.addWidget()
         vlayout.addWidget(lens_status_widget)
-        #vlayout.addWidget()
+        # vlayout.addWidget()
         vlayout.addWidget(image_widget)
         vlayout.addWidget(index_widget)
         vlayout.addItem(vertical_spacer)
