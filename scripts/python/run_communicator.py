@@ -21,6 +21,7 @@ class CommunicatorApp(Application):
                              'e.g. {3: ("pmc-camera-3", 40000)}').tag(config=True)
 
     def initialize(self, argv=None):
+        print "initializing communicator with arguments:",argv
         self.parse_command_line(argv)
         if self.write_default_config:
             with open(self.write_default_config, 'w') as fh:

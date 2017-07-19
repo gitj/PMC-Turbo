@@ -60,6 +60,7 @@ class Controller(GlobalConfiguration):
 
     def __init__(self, **kwargs):
         super(Controller, self).__init__(**kwargs)
+        logger.info("Starting with configuration %r" % self.config)
         if 'pipeline' in kwargs:
             self.pipeline = kwargs['pipeline']
         else:
@@ -100,7 +101,7 @@ class Controller(GlobalConfiguration):
             self.hot_pixel_filename = os.path.join(camera_data_dir,'hot_pixels',self.hot_pixel_file_dictionary[self.camera_id])
             hot_pixels = np.load(self.hot_pixel_filename)
         except Exception:
-            logger.exception("Failed to load hot pixel file, proceeding without")
+            logger.exception("Failed to load hot pixel file from %s, dictionary of known files %r, proceeding without" % (camera_data_dir, self.hot_pixel_file_dictionary))
             hot_pixels = []
         self.hot_pixel_masker = HotPixelMasker(hot_pixels=hot_pixels,image_shape=image_dimensions)
 

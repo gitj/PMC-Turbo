@@ -53,6 +53,7 @@ class BasicPipeline(GlobalConfiguration):
     use_watchdog = Bool(default_value=False).tag(config=True)
 
     def initialize(self):
+        logger.info("Initializing with config %r", self.config)
 
         image_size_bytes = 31440952 # dimensions[0]*dimensions[1]*2  # Need to figure out how to not hard code this
 

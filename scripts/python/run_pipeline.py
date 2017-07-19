@@ -20,6 +20,7 @@ class PipelineApp(Application):
     log_level = logging.DEBUG
 
     def initialize(self, argv=None):
+        print "initializing pipeline with arguments:",argv
         self.parse_command_line(argv)
         if self.write_default_config:
             with open(self.write_default_config,'w') as fh:
@@ -30,7 +31,7 @@ class PipelineApp(Application):
             print 'loading config: ', self.config_dir, self.config_file
             self.load_config_file(self.config_file, path=self.config_dir)
         self.pipeline = BasicPipeline(config=self.config)
-        print self.pipeline.config
+        print "pipeline config", self.pipeline.config
         signal.signal(signal.SIGTERM, self.pipeline.exit)
         self.pipeline.initialize()
 

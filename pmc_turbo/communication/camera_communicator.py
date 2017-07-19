@@ -88,7 +88,7 @@ class Communicator(GlobalConfiguration):
     def __init__(self, cam_id, peers, controller, pyro_port, **kwargs):
         super(Communicator, self).__init__(**kwargs)
         self.port = pyro_port
-        logger.debug('Communicator initialized')
+        logger.debug('Communicator initializing with config %r' % self.config)
         self.cam_id = cam_id
         self.leader_id = self.initial_leader_id
         self.become_leader = False

@@ -3,6 +3,7 @@ import sys
 import pmc_turbo
 from traitlets.config import Application
 from traitlets import Unicode,List
+import logging
 
 from pmc_turbo.camera.pipeline.controller import Controller
 
@@ -16,7 +17,9 @@ class ControllerApp(Application):
     classes = List([Controller])
     aliases = dict(generate_config='ControllerApp.write_default_config',
                    config_file='ControllerApp.config_file')
+    log_level = logging.DEBUG
     def initialize(self, argv=None):
+        print "initializing controller with arguments:",argv
         self.raise_config_file_errors = True
         self.parse_command_line(argv)
         if self.write_default_config:
@@ -26,6 +29,7 @@ class ControllerApp(Application):
         if self.config_file:
             print 'Using config file %r' % self.config_file
             self.load_config_file(self.config_file)
+        print "configuration",self.config
         self.controller = Controller(config=self.config)
 
     def start(self):
