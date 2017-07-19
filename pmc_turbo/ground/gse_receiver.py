@@ -244,12 +244,13 @@ class GSEReceiver():
             else:
                 self.files[packet.file_id] = [packet]
 
-            if not self.file_status.has_key(packet.file_id):
+            if not self.file_status.has_key(packet.file_id) or self.file_status[packet.file_id]['complete']:
                 self.file_status[packet.file_id] = {'first_timestamp': time.time(),
                                                     'recent_timestamp': time.time(),
                                                     'packets_received': [packet.packet_number],
                                                     'packets_expected': packet.total_packet_number,
-                                                    'first_packet': packet}
+                                                    'first_packet': packet,
+                                                    'complete': False}
             else:
                 self.file_status[packet.file_id]['recent_timestamp'] = time.time()
                 self.file_status[packet.file_id]['packets_received'].append(packet.packet_number)
@@ -267,8 +268,16 @@ class GSEReceiver():
                 except RuntimeError:
                     self.logger.exception("Failed to assemble file id %d" % file_id)
                     continue
+                self.file_status[file_id]['complete'] = True
                 self.write_file(file_class,file_id=file_id)
                 del self.files[file_id]
+            else:
+                status = self.file_status[file_id]
+                if time.time() - status['recent_timestamp'] > 300:
+                    self.logger.warning("No packets have been received for file_id %d in the past %d seconds. Dropping from index"
+                                        % (file_id,(time.time()-status['recent_timestamp'])))
+                    del self.files[file_id]
+                    del self.file_status[file_id]
 
     def get_file_status(self):
         return self.file_status
