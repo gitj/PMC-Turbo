@@ -26,7 +26,6 @@ from pmc_turbo.utils.camera_id import get_camera_id
 from pmc_turbo.utils.configuration import GlobalConfiguration, camera_data_dir
 from pmc_turbo.utils.error_counter import CounterCollection
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -56,7 +55,7 @@ class Controller(GlobalConfiguration):
     main_loop_interval = Float(3.0, min=0).tag(config=True)
     auto_exposure_enabled = Bool(default_value=True).tag(config=True)
     hot_pixel_file_dictionary = Dict().tag(config=True)
-    minimum_update_interval = Float(10.0,min=0).tag(config=True)
+    minimum_update_interval = Float(10.0, min=0).tag(config=True)
 
     def __init__(self, **kwargs):
         super(Controller, self).__init__(**kwargs)
@@ -98,12 +97,13 @@ class Controller(GlobalConfiguration):
 
     def setup_hot_pixel_masker(self):
         try:
-            self.hot_pixel_filename = os.path.join(camera_data_dir,'hot_pixels',self.hot_pixel_file_dictionary[self.camera_id])
+            self.hot_pixel_filename = os.path.join(camera_data_dir, 'hot_pixels',
+                                                   self.hot_pixel_file_dictionary[self.camera_id])
             hot_pixels = np.load(self.hot_pixel_filename)
         except Exception:
             logger.exception("Failed to load hot pixel file from %s, dictionary of known files %r, proceeding without" % (camera_data_dir, self.hot_pixel_file_dictionary))
             hot_pixels = []
-        self.hot_pixel_masker = HotPixelMasker(hot_pixels=hot_pixels,image_shape=image_dimensions)
+        self.hot_pixel_masker = HotPixelMasker(hot_pixels=hot_pixels, image_shape=image_dimensions)
 
     def main_loop(self):
         events, _, _ = select.select(self.daemon.sockets, [], [], self.main_loop_interval)
@@ -114,8 +114,8 @@ class Controller(GlobalConfiguration):
             self.daemon.events(events)
 
     @require_pipeline
-    def set_trigger_interval(self,interval):
-        tag = self.pipeline.send_camera_command("trigger_interval",str(interval))
+    def set_trigger_interval(self, interval):
+        tag = self.pipeline.send_camera_command("trigger_interval", str(interval))
         logger.info("Set trigger interval to %s" % interval)
         self.counters.set_trigger_interval.increment()
         return tag
@@ -153,7 +153,7 @@ class Controller(GlobalConfiguration):
     @require_pipeline
     def run_focus_sweep(self, request_params, start=1950, stop=2150, step=10):
         logger.info("Running focus sweep with start=%d, stop=%d, step=%d, request_params=%r" % (start, stop, step,
-                                                                                                 request_params))
+                                                                                                request_params))
         focus_steps = range(start, stop, step)
         tags = [self.set_focus(focus_step) for focus_step in focus_steps]
         for tag in tags:
@@ -220,7 +220,7 @@ class Controller(GlobalConfiguration):
         except Exception:
             logger.exception("Auto exposure failed")
 
-    def enable_auto_exposure(self,enabled):
+    def enable_auto_exposure(self, enabled):
         if enabled:
             self.auto_exposure_enabled = True
             logger.info("Enabling auto exposure")
@@ -231,18 +231,18 @@ class Controller(GlobalConfiguration):
     def is_auto_exposure_enabled(self):
         return self.auto_exposure_enabled
 
-    def set_auto_exposure_parameters(self,max_percentile_threshold_fraction,
+    def set_auto_exposure_parameters(self, max_percentile_threshold_fraction,
                                      min_peak_threshold_fraction,
                                      min_percentile_threshold_fraction,
                                      adjustment_step_size_fraction,
                                      min_exposure,
                                      max_exposure):
-        self.exposure_manager.min_peak_threshold_fraction=min_peak_threshold_fraction
-        self.exposure_manager.max_percentile_threshold_fraction=max_percentile_threshold_fraction
+        self.exposure_manager.min_peak_threshold_fraction = min_peak_threshold_fraction
+        self.exposure_manager.max_percentile_threshold_fraction = max_percentile_threshold_fraction
         self.exposure_manager.min_exposure = min_exposure
-        self.exposure_manager.max_exposure=max_exposure
-        self.exposure_manager.adjustment_step_size_fraction=adjustment_step_size_fraction
-        self.exposure_manager.min_percentile_threshold_fraction=min_percentile_threshold_fraction
+        self.exposure_manager.max_exposure = max_exposure
+        self.exposure_manager.adjustment_step_size_fraction = adjustment_step_size_fraction
+        self.exposure_manager.min_percentile_threshold_fraction = min_percentile_threshold_fraction
 
     def get_latest_fileinfo(self):
         if self.merged_index is None:
@@ -293,9 +293,7 @@ class Controller(GlobalConfiguration):
         self.downlink_queue.append(self.get_image_by_info(index_row_data, **kwargs).to_buffer())
 
     def request_specific_images(self, timestamp, request_id, num_images=1, row_offset=0, column_offset=0,
-                                num_rows=3232, num_columns=4864, scale_by=1 / 8.,
-                                quality=75,
-                                format='jpeg', step=-1):
+                                num_rows=3232, num_columns=4864, scale_by=1 / 8., quality=75, format='jpeg', step=-1):
         selection = self.timestamp_selection(num_images, step, timestamp)
         for _, index_row in selection.iterrows():
             self.downlink_queue.append(self.get_image_by_info(index_row, row_offset=row_offset,
@@ -318,8 +316,8 @@ class Controller(GlobalConfiguration):
         return selection
 
     def request_blobs_by_timestamp(self, timestamp, request_id, num_images, step, stamp_size,
-                          blob_threshold, kernel_sigma, kernel_size, cell_size, max_num_blobs,
-                          quality=75,format='jpeg'):
+                                   blob_threshold, kernel_sigma, kernel_size, cell_size, max_num_blobs,
+                                   quality=75, format='jpeg'):
         selection = self.timestamp_selection(num_images, step, timestamp)
         for _, index_row in selection.iterrows():
             blob_images = self.get_blobs_by_info(index_row=index_row, request_id=request_id, stamp_size=stamp_size,
@@ -329,29 +327,30 @@ class Controller(GlobalConfiguration):
             for blob_image in blob_images:
                 self.downlink_queue.append(blob_image.to_buffer())
 
-
-    def get_blobs_by_info(self,index_row,request_id,stamp_size,
+    def get_blobs_by_info(self, index_row, request_id, stamp_size,
                           blob_threshold, kernel_sigma, kernel_size, cell_size, max_num_blobs,
-                          quality=75,format='jpeg'):
+                          quality=75, format='jpeg'):
         image, chunk = load_blosc_image(index_row['filename'])
         tic = time.time()
         image = self.hot_pixel_masker.process(image)
-        blob_finder = BlobFinder(image,blob_threshold=blob_threshold, kernel_size=kernel_size, kernel_sigma=kernel_sigma,
-                                 cell_size=cell_size,fit_blobs=False)
-        logger.debug("Found %d blobs in %.2f seconds" % (len(blob_finder.blobs), (time.time()-tic)))
+        blob_finder = BlobFinder(image, blob_threshold=blob_threshold, kernel_size=kernel_size,
+                                 kernel_sigma=kernel_sigma,
+                                 cell_size=cell_size, fit_blobs=False)
+        logger.debug("Found %d blobs in %.2f seconds" % (len(blob_finder.blobs), (time.time() - tic)))
         results = []
         for blob in blob_finder.blobs:
             if len(results) >= max_num_blobs:
                 break
-            row_offset = blob.x-stamp_size//2
-            column_offset = blob.y-stamp_size//2
-            stamp = image[row_offset:row_offset+stamp_size,column_offset:column_offset+stamp_size]
-            if stamp.size == 0: #the blob was too close to an edge of the image, so don't bother returning it
-                logger.debug("Skipping blob at (%d,%d) because it is too close to edge of image" %(blob.x,blob.y))
+            row_offset = blob.x - stamp_size // 2
+            column_offset = blob.y - stamp_size // 2
+            stamp = image[row_offset:row_offset + stamp_size, column_offset:column_offset + stamp_size]
+            if stamp.size == 0:  # the blob was too close to an edge of the image, so don't bother returning it
+                logger.debug("Skipping blob at (%d,%d) because it is too close to edge of image" % (blob.x, blob.y))
                 continue
-            results.append(self.make_image_file(stamp,index_row_data=index_row,request_id=request_id,
-                                                row_offset=row_offset,column_offset=column_offset,
-                                                num_rows=stamp.shape[0],num_columns=stamp.shape[1],scale_by=1,quality=quality,format=format))
+            results.append(self.make_image_file(stamp, index_row_data=index_row, request_id=request_id,
+                                                row_offset=row_offset, column_offset=column_offset,
+                                                num_rows=stamp.shape[0], num_columns=stamp.shape[1], scale_by=1,
+                                                quality=quality, format=format))
         return results
 
     def request_standard_image_at(self, timestamp):
@@ -362,11 +361,13 @@ class Controller(GlobalConfiguration):
                           num_columns=4864, scale_by=1 / 8., quality=75, format='jpeg'):
         image, chunk = load_blosc_image(index_row_data['filename'])
         image = image[row_offset:row_offset + num_rows + 1, column_offset:column_offset + num_columns + 1]
-        return self.make_image_file(image,index_row_data=index_row_data, request_id=request_id, row_offset=row_offset,
-                                    column_offset=column_offset,num_rows=num_rows,num_columns=num_columns,scale_by=scale_by,
-                                    quality=quality,format=format)
+        return self.make_image_file(image, index_row_data=index_row_data, request_id=request_id, row_offset=row_offset,
+                                    column_offset=column_offset, num_rows=num_rows, num_columns=num_columns,
+                                    scale_by=scale_by,
+                                    quality=quality, format=format)
 
-    def make_image_file(self,image,index_row_data,request_id,row_offset,column_offset,num_rows,num_columns,scale_by,quality,format):
+    def make_image_file(self, image, index_row_data, request_id, row_offset, column_offset, num_rows, num_columns,
+                        scale_by, quality, format):
         params = dict()
         for key in index_keys:
             if key == 'filename':
@@ -381,7 +382,7 @@ class Controller(GlobalConfiguration):
         params['scale_by'] = scale_by
         params['quality'] = quality
         if format == 'jpeg':
-            payload,offset,scale = simple_jpeg(image, scale_by=scale_by, quality=quality)
+            payload, offset, scale = simple_jpeg(image, scale_by=scale_by, quality=quality)
             params['pixel_scale'] = scale
             params['pixel_offset'] = offset
             file_obj = file_format_classes.JPEGFile(payload=payload, **params)
@@ -472,7 +473,7 @@ class Controller(GlobalConfiguration):
             result = self.downlink_queue[0]
             self.downlink_queue = self.downlink_queue[1:]
             logger.debug("Sending item with length %d from queue. %d items remain in the queue" % (
-            len(result), len(self.downlink_queue)))
+                len(result), len(self.downlink_queue)))
         else:
             logger.debug("Sending latest standard image")
             result = self.get_latest_standard_image().to_buffer()

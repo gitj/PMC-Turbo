@@ -74,8 +74,9 @@ class MyImageView(pg.ImageView):
         self.infobar.roi_num_columns.setText('%.0f' % (xmax - xmin))
         self.infobar.roi_num_rows.setText('%.0f' % (ymax - ymin))
         self.commandbar.dynamic_command.setText(
-            'request_specific_images(%f, row_offset=%d, column_offset=%d, num_rows=%d, num_columns=%d, num_images=1, scale_by=1, quality=75, step=-1)'
+            'request_specific_images(timestamp=%f, row_offset=%d, column_offset=%d, num_rows=%d, num_columns=%d, num_images=1, scale_by=1, quality=75, step=-1)'
             % (self.timestamp, ymin, xmin, (ymax - ymin), (xmax - xmin)))
+        self.commandbar.dynamic_command.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
 
     def update(self, index=-1, autoLevels=True, autoRange=True):
         self.mi.update()
@@ -99,8 +100,9 @@ class MyImageView(pg.ImageView):
         self.window.setWindowTitle(filename)
         print filename
         file_size = os.path.getsize(filename)
+        # length = df.shape[0]
         image_file = load_and_decode_file(filename)
-        self.infobar.update(image_file, latest, file_size)
+        self.infobar.update(image_file, latest, file_size, index, df.index.max())
         self.timestamp = image_file.frame_timestamp_ns / 1e9
         self.scale_by = image_file.scale_by
         self.row_offset = image_file.row_offset
@@ -154,10 +156,15 @@ class MyImageView(pg.ImageView):
             self.infobar.x_value.setText('%.0f' % mousePoint.x())
             self.infobar.y_value.setText('%.0f' % mousePoint.y())
 
+    def update_from_index_edit(self):
+        idx = int(self.infobar.go_to_index_edit.text())
+        self.update(idx)
+
 
 class InfoBar(QtGui.QDockWidget):
     def __init__(self, *args, **kwargs):
         super(InfoBar, self).__init__(*args, **kwargs)
+        self.image_viewer = None
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.setFeatures(QtGui.QDockWidget.NoDockWidgetFeatures)
         mywidget = QtGui.QWidget()
@@ -192,8 +199,8 @@ class InfoBar(QtGui.QDockWidget):
         file_write_timestamp_label = QtGui.QLabel('file write')
         camera_id_label = QtGui.QLabel('camera id')
 
-        roi_x_label = QtGui.QLabel('ROI x lims: ')
-        roi_y_label = QtGui.QLabel('ROI y lims: ')
+        roi_x_label = QtGui.QLabel('ROI x lims')
+        roi_y_label = QtGui.QLabel('ROI y lims')
         roi_row_offset_label = QtGui.QLabel('Row offset')
         roi_col_offset_label = QtGui.QLabel('Column offset')
         roi_num_rows_label = QtGui.QLabel('Num rows')
@@ -204,6 +211,10 @@ class InfoBar(QtGui.QDockWidget):
         last_error_label = QtGui.QLabel('last error')
         lens_attached_label = QtGui.QLabel('lens attached')
         lens_error_label = QtGui.QLabel('error')
+
+        ground_index_label = QtGui.QLabel('Index:')
+        total_index_label = QtGui.QLabel('Length:')
+        go_to_index_label = QtGui.QLabel('Go to:')
 
         self.labels = [
             frame_status_label,
@@ -244,8 +255,10 @@ class InfoBar(QtGui.QDockWidget):
             auto_focus_label,
             last_error_label,
             lens_attached_label,
-            lens_error_label
-
+            lens_error_label,
+            ground_index_label,
+            total_index_label,
+            go_to_index_label
         ]
 
         labelfont = frame_status_label.font()
@@ -291,6 +304,9 @@ class InfoBar(QtGui.QDockWidget):
         self.lens_attached_value = QtGui.QLabel('---')
         self.lens_error_value = QtGui.QLabel('---')
 
+        self.ground_index_value = QtGui.QLabel('---')
+        self.total_index_value = QtGui.QLabel('---')
+
         self.values = [
             self.frame_status_value,
             self.frame_id_value,
@@ -331,7 +347,9 @@ class InfoBar(QtGui.QDockWidget):
             self.auto_focus_value,
             self.last_error_value,
             self.lens_attached_value,
-            self.lens_error_value
+            self.lens_error_value,
+            self.ground_index_value,
+            self.total_index_value
         ]
 
         valuefont = self.frame_status_value.font()
@@ -415,8 +433,8 @@ class InfoBar(QtGui.QDockWidget):
         image_layout.addWidget(self.quality_value, 19, 1)
         image_layout.addWidget(self.file_size_value, 20, 1)
 
-        # x_label = QtGui.QLabel('X: ')
-        # y_label = QtGui.QLabel('Y: ')
+        # x_label = QtGui.QLabel('X')
+        # y_label = QtGui.QLabel('Y')
         # self.x_value = QtGui.QLabel('---')
         # self.y_value = QtGui.QLabel('---')
         #
@@ -446,6 +464,21 @@ class InfoBar(QtGui.QDockWidget):
         roi_layout.addWidget(roi_num_cols_label, 5, 0)
         roi_layout.addWidget(self.roi_num_columns, 5, 1)
 
+        index_widget = QtGui.QWidget()
+        index_layout = QtGui.QGridLayout()
+        index_widget.setLayout(index_layout)
+        index_layout.addWidget(ground_index_label, 0, 0)
+        index_layout.addWidget(total_index_label, 1, 0)
+        index_layout.addWidget(go_to_index_label, 2, 0)
+        index_layout.addWidget(self.ground_index_value, 0, 1)
+        index_layout.addWidget(self.total_index_value, 1, 1)
+
+        self.go_to_index_edit = QtGui.QLineEdit()
+        self.go_to_index_edit.setValidator(QtGui.QIntValidator())
+        self.go_to_index_edit.returnPressed.connect(self.update_from_index_edit)
+
+        index_layout.addWidget(self.go_to_index_edit, 2, 1)
+
         vertical_spacer = QtGui.QSpacerItem(10, 10, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
 
         vlayout.addWidget(QtGui.QLabel('ROI Coordinates'))
@@ -458,13 +491,14 @@ class InfoBar(QtGui.QDockWidget):
         vlayout.addWidget(lens_status_widget)
         vlayout.addWidget(QtGui.QLabel('Image'))
         vlayout.addWidget(image_widget)
+        vlayout.addWidget(index_widget)
         vlayout.addItem(vertical_spacer)
 
         mywidget.setLayout(vlayout)
 
         self.setWidget(mywidget)
 
-    def update(self, jpeg_file, data_row, file_size):
+    def update(self, jpeg_file, data_row, file_size, index, max_index):
         self.frame_status_value.setText(str(jpeg_file.frame_status))
         self.frame_id_value.setText(str(jpeg_file.frame_id))
         time_s = jpeg_file.frame_timestamp_ns / 1e9
@@ -515,6 +549,13 @@ class InfoBar(QtGui.QDockWidget):
         self.lens_attached_value.setText(str(lens_status_dict['lens_attached']))
         self.lens_error_value.setText(str(lens_status_dict['error']))
 
+        self.ground_index_value.setText(str(index))
+        self.total_index_value.setText(str(max_index))
+
+    def update_from_index_edit(self):
+        if self.image_viewer:
+            self.image_viewer.update_from_index_edit()
+
 
 class CommandBar(QtGui.QDockWidget):
     def __init__(self, *args, **kwargs):
@@ -524,7 +565,11 @@ class CommandBar(QtGui.QDockWidget):
         mywidget = QtGui.QWidget()
         layout = QtGui.QHBoxLayout()
         layout.addWidget(QtGui.QLabel('Command:'))
-        self.dynamic_command = QtGui.QLineEdit('---')
+        self.dynamic_command = QtGui.QLabel('---')
+        dfont = self.dynamic_command.font()
+        dfont.setPointSize(6)
+        dfont.setBold(True)
+        self.dynamic_command.setFont(dfont)
         layout.addWidget(self.dynamic_command)
         # horizontal_spacer = QtGui.QSpacerItem(5, 5, hPolicy=QtGui.QSizePolicy.Expanding,
         #                                       vPolicy=QtGui.QSizePolicy.Minimum)
@@ -555,6 +600,7 @@ if __name__ == "__main__":
     win = QtGui.QMainWindow()
     win.resize(800, 800)
     imv = MyImageView(camera_id, iw, cb, win, portrait_mode=portrait_mode)
+    iw.image_viewer = imv
     # proxy = pg.SignalProxy(imv.imageItem.scene().sigMouseMoved, rateLimit=60, slot=imv.mouseMoved)
     win.setCentralWidget(imv)
     win.addDockWidget(QtCore.Qt.LeftDockWidgetArea, iw)
