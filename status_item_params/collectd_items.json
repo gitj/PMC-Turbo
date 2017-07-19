@@ -2178,6 +2178,24 @@
             "name": "interface-lo_if_packets_tx",
             "partial_glob": "interface-lo/if_packets-*"
         },
+        "ipmi_fanspeed-FAN1 fan_cooling (29.1)": {
+            "class_type": "FloatStatusItem",
+            "column_name": "value",
+            "name": "ipmi_fanspeed-FAN1 fan_cooling (29.1)",
+            "partial_glob": "ipmi/fanspeed-FAN1 fan_cooling (29.1)-*"
+        },
+        "ipmi_fanspeed-FAN2 fan_cooling (29.2)": {
+            "class_type": "FloatStatusItem",
+            "column_name": "value",
+            "name": "ipmi_fanspeed-FAN2 fan_cooling (29.2)",
+            "partial_glob": "ipmi/fanspeed-FAN2 fan_cooling (29.2)-*"
+        },
+        "ipmi_fanspeed-FAN3 fan_cooling (29.3)": {
+            "class_type": "FloatStatusItem",
+            "column_name": "value",
+            "name": "ipmi_fanspeed-FAN3 fan_cooling (29.3)",
+            "partial_glob": "ipmi/fanspeed-FAN3 fan_cooling (29.3)-*"
+        },
         "ipmi_temperature-CPU Temp processor (3.1)": {
             "class_type": "FloatStatusItem",
             "column_name": "value",
