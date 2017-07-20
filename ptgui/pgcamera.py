@@ -41,6 +41,7 @@ class MyImageView(pg.ImageView):
         self.last_index = 0
         self.scale_by = 1
         self.prev_shape = None
+        self.hist = self.getHistogramWidget()
         #
         # self.vLine = pg.InfiniteLine(angle=90, movable=False)
         # self.hLine = pg.InfiniteLine(angle=0, movable=False)
@@ -137,6 +138,26 @@ class MyImageView(pg.ImageView):
                     [self.selection_roi.size()[0], ylim - self.selection_roi.pos()[1]])
         self.roi_update()
 
+
+        max_y = np.max(self.hist.plot.getData()[1])
+        x = [image_file.percentile_0,
+             image_file.percentile_1,
+             image_file.percentile_10,
+             image_file.percentile_20,
+             image_file.percentile_30,
+             image_file.percentile_40,
+             image_file.percentile_50,
+             image_file.percentile_60,
+             image_file.percentile_70,
+             image_file.percentile_80,
+             image_file.percentile_90,
+             image_file.percentile_99,
+             image_file.percentile_100]
+        # y1 = [max_y]* len(x)
+        y = [0] * len(x)
+        self.hist.plot.scatter.setData(x, y, symbol=('o'), brush='r')
+        self.hist.plot.scatter.show()
+
     def keyPressEvent(self, ev):
         if ev.key() == QtCore.Qt.Key_N:
             self.update(self.last_index + 1)
@@ -212,6 +233,7 @@ class InfoBar(QtGui.QDockWidget):
         roi_num_rows_label = QtGui.QLabel('Num rows')
         roi_num_cols_label = QtGui.QLabel('Num columns')
         lens_error_label = QtGui.QLabel('Lens Error')
+        percentile_label = QtGui.QLabel('percentiles')
 
         ground_index_label = QtGui.QLabel('Index:')
         total_index_label = QtGui.QLabel('Length:')
@@ -255,7 +277,8 @@ class InfoBar(QtGui.QDockWidget):
             lens_error_label,
             ground_index_label,
             total_index_label,
-            go_to_index_label
+            go_to_index_label,
+            percentile_label
         ]
 
         labelfont = frame_status_label.font()
@@ -303,6 +326,7 @@ class InfoBar(QtGui.QDockWidget):
 
         self.ground_index_value = QtGui.QLabel('---')
         self.total_index_value = QtGui.QLabel('---')
+        self.percentile_value = QtGui.QLabel('Tooltip')
 
         self.values = [
             self.frame_status_value,
@@ -342,7 +366,8 @@ class InfoBar(QtGui.QDockWidget):
 
             self.lens_error_value,
             self.ground_index_value,
-            self.total_index_value
+            self.total_index_value,
+            self.percentile_value
         ]
 
         valuefont = self.frame_status_value.font()
@@ -412,6 +437,8 @@ class InfoBar(QtGui.QDockWidget):
         image_layout.addWidget(self.pixel_scale_value, 18, 1)
         image_layout.addWidget(self.quality_value, 19, 1)
         image_layout.addWidget(self.file_size_value, 20, 1)
+        image_layout.addWidget(percentile_label, 21, 0)
+        image_layout.addWidget(self.percentile_value, 21, 1)
 
         # x_label = QtGui.QLabel('X')
         # y_label = QtGui.QLabel('Y')
@@ -519,6 +546,21 @@ class InfoBar(QtGui.QDockWidget):
         self.pixel_scale_value.setText('%.3f' % jpeg_file.pixel_scale)
         self.quality_value.setText(str(jpeg_file.quality))
         self.file_size_value.setText(str(file_size))
+        self.percentile_value.setToolTip(
+            '0: %0.f\n1: %0.f\n10: %0.f\n20: %0.f\n30: %0.f\n40: %0.f\n50: %0.f\n60: %0.f\n70: %0.f\n80: %0.f\n90: %0.f\n99: %0.f\n100: %0.f\n' %
+            (jpeg_file.percentile_0,
+             jpeg_file.percentile_1,
+             jpeg_file.percentile_10,
+             jpeg_file.percentile_20,
+             jpeg_file.percentile_30,
+             jpeg_file.percentile_40,
+             jpeg_file.percentile_50,
+             jpeg_file.percentile_60,
+             jpeg_file.percentile_70,
+             jpeg_file.percentile_80,
+             jpeg_file.percentile_90,
+             jpeg_file.percentile_99,
+             jpeg_file.percentile_100))
 
         self.first_timestamp_value.setText('%.0f' % data_row['first_timestamp'])
         self.first_timestamp_value.setToolTip(
@@ -576,7 +618,7 @@ class CommandBar(QtGui.QDockWidget):
         layout.addWidget(label)
         layout.addWidget(self.dynamic_command)
         horizontal_spacer = QtGui.QSpacerItem(5, 5, hPolicy=QtGui.QSizePolicy.Expanding,
-                                               vPolicy=QtGui.QSizePolicy.Minimum)
+                                              vPolicy=QtGui.QSizePolicy.Minimum)
         layout.addItem(horizontal_spacer)
         mywidget.setLayout(layout)
         self.setWidget(mywidget)
