@@ -129,6 +129,7 @@ class SortingModel(QtCore.QSortFilterProxyModel):
 if __name__ == "__main__":
     app = QtGui.QApplication([])
     win = QtGui.QMainWindow()
+    win.setWindowTitle("Receiver Monitor")
     win.resize(800, 400)
     table_view = QtGui.QTableView()
     model = Model()

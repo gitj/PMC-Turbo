@@ -55,6 +55,7 @@ class ExampleWidget(QWidget):
     """ Main GUI Widget including a button and IPython Console widget inside vertical layout """
     def __init__(self, command_sender_app, parent=None):
         super(ExampleWidget, self).__init__(parent)
+        self.setWindowTitle("Command Terminal")
         layout = QVBoxLayout(self)
         self.button = QPushButton('Another widget')
         self.command_sender_app = command_sender_app

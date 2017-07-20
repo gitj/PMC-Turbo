@@ -226,6 +226,7 @@ if __name__ == "__main__":
 #    log.setup_stream_handler(log.logging.DEBUG)
     app = QtGui.QApplication([])
     win = MyMainWindow()
+    win.setWindowTitle("Command Log Monitor")
     win.resize(1200,800)
     table_view = QtGui.QTableView()
     model = CommandTableModel()
