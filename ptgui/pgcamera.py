@@ -211,12 +211,7 @@ class InfoBar(QtGui.QDockWidget):
         roi_col_offset_label = QtGui.QLabel('Column offset')
         roi_num_rows_label = QtGui.QLabel('Num rows')
         roi_num_cols_label = QtGui.QLabel('Num columns')
-
-        last_error_message_label = QtGui.QLabel('last error msg')
-        auto_focus_label = QtGui.QLabel('auto focus')
-        last_error_label = QtGui.QLabel('last error')
-        lens_attached_label = QtGui.QLabel('lens attached')
-        lens_error_label = QtGui.QLabel('error')
+        lens_error_label = QtGui.QLabel('Lens Error')
 
         ground_index_label = QtGui.QLabel('Index:')
         total_index_label = QtGui.QLabel('Length:')
@@ -257,10 +252,6 @@ class InfoBar(QtGui.QDockWidget):
             roi_col_offset_label,
             roi_num_rows_label,
             roi_num_cols_label,
-            last_error_message_label,
-            auto_focus_label,
-            last_error_label,
-            lens_attached_label,
             lens_error_label,
             ground_index_label,
             total_index_label,
@@ -349,10 +340,6 @@ class InfoBar(QtGui.QDockWidget):
             self.roi_num_rows,
             self.roi_num_columns,
 
-            self.last_error_message_value,
-            self.auto_focus_value,
-            self.last_error_value,
-            self.lens_attached_value,
             self.lens_error_value,
             self.ground_index_value,
             self.total_index_value
@@ -401,21 +388,8 @@ class InfoBar(QtGui.QDockWidget):
         camera_layout.addWidget(self.frame_id_value, 1, 1)
         camera_layout.addWidget(self.file_index_value, 6, 1)
         camera_layout.addWidget(self.acquisition_count_value, 8, 1)
-
-        lens_status_widget = QtGui.QWidget()
-        lens_status_layout = QtGui.QGridLayout()
-
-        lens_status_layout.addWidget(last_error_message_label, 0, 0)
-        lens_status_layout.addWidget(auto_focus_label, 1, 0)
-        lens_status_layout.addWidget(last_error_label, 2, 0)
-        lens_status_layout.addWidget(lens_attached_label, 3, 0)
-        lens_status_layout.addWidget(lens_error_label, 4, 0)
-        lens_status_layout.addWidget(self.last_error_message_value, 0, 1)
-        lens_status_layout.addWidget(self.auto_focus_value, 1, 1)
-        lens_status_layout.addWidget(self.last_error_value, 2, 1)
-        lens_status_layout.addWidget(self.lens_attached_value, 3, 1)
-        lens_status_layout.addWidget(self.lens_error_value, 4, 1)
-        lens_status_widget.setLayout(lens_status_layout)
+        camera_layout.addWidget(lens_error_label, 12, 0)
+        camera_layout.addWidget(self.lens_error_value, 12, 1)
 
         image_widget = QtGui.QWidget()
         image_layout = QtGui.QGridLayout()
@@ -486,7 +460,7 @@ class InfoBar(QtGui.QDockWidget):
         self.go_to_index_edit.setFont(f)
         self.go_to_index_edit.setFixedWidth(25)
         self.go_to_index_edit.setFixedHeight(13)
-        #self.go_to_index_edit.setSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Fixed)
+        # self.go_to_index_edit.setSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Fixed)
         self.go_to_index_edit.returnPressed.connect(self.update_from_index_edit)
 
         index_layout.addWidget(self.go_to_index_edit, 2, 1)
@@ -509,7 +483,6 @@ class InfoBar(QtGui.QDockWidget):
         # vlayout.addWidget()
         vlayout.addWidget(camera_widget)
         # vlayout.addWidget()
-        vlayout.addWidget(lens_status_widget)
         # vlayout.addWidget()
         vlayout.addWidget(image_widget)
         vlayout.addWidget(index_widget)
@@ -567,6 +540,14 @@ class InfoBar(QtGui.QDockWidget):
         self.last_error_value.setText(str(lens_status_dict['last_error']))
         self.lens_attached_value.setText(str(lens_status_dict['lens_attached']))
         self.lens_error_value.setText(str(lens_status_dict['error']))
+        self.lens_error_value.setToolTip(
+            "Lens error: %s\nAuto Focus: %s\nLens Attached: %s\nLast Error: %s\nLast Error Msg: %s" %
+            (str(lens_status_dict['error']),
+             str(lens_status_dict['auto_focus']),
+             str(lens_status_dict['lens_attached']),
+             str(lens_status_dict['last_error']),
+             str(lens_status_dict['last_error_message'])
+             ))
 
         self.ground_index_value.setText(str(index))
         self.total_index_value.setText(str(max_index))
