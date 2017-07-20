@@ -259,7 +259,7 @@ class InfoBar(QtGui.QDockWidget):
         ]
 
         labelfont = frame_status_label.font()
-        labelfont.setPointSize(5)
+        labelfont.setPointSize(6)
         # labelfont.setBold(True)
         for label in self.labels:
             label.setFont(labelfont)
@@ -346,7 +346,7 @@ class InfoBar(QtGui.QDockWidget):
         ]
 
         valuefont = self.frame_status_value.font()
-        valuefont.setPointSize(5)
+        valuefont.setPointSize(6)
         for value in self.values:
             value.setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
             value.setFont(valuefont)
@@ -456,7 +456,7 @@ class InfoBar(QtGui.QDockWidget):
         self.go_to_index_edit = QtGui.QLineEdit()
         self.go_to_index_edit.setValidator(QtGui.QIntValidator())
         f = self.go_to_index_edit.font()
-        f.setPointSize(5)
+        f.setPointSize(6)
         self.go_to_index_edit.setFont(f)
         self.go_to_index_edit.setFixedWidth(25)
         self.go_to_index_edit.setFixedHeight(13)
@@ -569,15 +569,15 @@ class CommandBar(QtGui.QDockWidget):
 
         self.dynamic_command = QtGui.QLabel('---')
         dfont = self.dynamic_command.font()
-        dfont.setPointSize(5)
+        dfont.setPointSize(6)
         label.setFont(dfont)
         dfont.setBold(True)
         self.dynamic_command.setFont(dfont)
         layout.addWidget(label)
         layout.addWidget(self.dynamic_command)
-        # horizontal_spacer = QtGui.QSpacerItem(5, 5, hPolicy=QtGui.QSizePolicy.Expanding,
-        #                                       vPolicy=QtGui.QSizePolicy.Minimum)
-        # layout.addItem(horizontal_spacer)
+        horizontal_spacer = QtGui.QSpacerItem(5, 5, hPolicy=QtGui.QSizePolicy.Expanding,
+                                               vPolicy=QtGui.QSizePolicy.Minimum)
+        layout.addItem(horizontal_spacer)
         mywidget.setLayout(layout)
         self.setWidget(mywidget)
 
