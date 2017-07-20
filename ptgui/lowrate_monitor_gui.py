@@ -95,8 +95,15 @@ def format_item(name,value):
         if value < 900:
             name = '<font color="red">' + name + '</font>'
             value = '<font color="red">%d</font>' % value
-    if value in [127, 32767, 65535]:
-        return name, '---'
+    if name == 'watchdog_status':
+        if value < 500:
+            name = '<font color="red">' + name + '</font>'
+            value = '<font color="red">%d</font>' % value
+    if value in [127, 32767, 65535, 2**32-1]:
+        if 'charge' in name or name in ['last_outstanding_sequence', 'sda_temp']:
+            return name, '---'
+        name = '<font color="red">' + name + '</font>'
+        value = '<font color="red">---</font>'
     return name,value
 
 if __name__ == "__main__":
@@ -106,6 +113,7 @@ if __name__ == "__main__":
     logger.addHandler(log.default_handler)
     app  = QtGui.QApplication([])
     widget = QtGui.QWidget()
+    widget.setWindowTitle("Low Rate Monitor")
     layout = QtGui.QGridLayout()
     widget.setLayout(layout)
     lrm = LowrateMonitor()
