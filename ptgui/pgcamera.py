@@ -154,7 +154,7 @@ class MyImageView(pg.ImageView):
              image_file.percentile_99,
              image_file.percentile_100]
         # y1 = [max_y]* len(x)
-        y = [0] * len(x)
+        y = np.zeros(len(x))
         self.hist.plot.scatter.setData(x, y, symbol=('o'), brush='r')
         self.hist.plot.scatter.show()
 
