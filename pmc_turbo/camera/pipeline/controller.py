@@ -360,6 +360,7 @@ class Controller(GlobalConfiguration):
     def get_image_by_info(self, index_row_data, request_id, row_offset=0, column_offset=0, num_rows=3232,
                           num_columns=4864, scale_by=1 / 8., quality=75, format='jpeg'):
         image, chunk = load_blosc_image(index_row_data['filename'])
+        image = self.hot_pixel_masker.process(image)
         image = image[row_offset:row_offset + num_rows + 1, column_offset:column_offset + num_columns + 1]
         return self.make_image_file(image, index_row_data=index_row_data, request_id=request_id, row_offset=row_offset,
                                     column_offset=column_offset, num_rows=num_rows, num_columns=num_columns,
