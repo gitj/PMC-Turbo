@@ -26,8 +26,9 @@ class Model(QtCore.QAbstractTableModel):
                 new_row = False
                 if file_id in self.files:
                     this_file = self.files[file_id]
-                    if ((len(status['packets_received']) == status['packets_expected'])
-                        and ((time.time() - status['recent_timestamp']) > 120)):
+                    if (((len(status['packets_received']) == status['packets_expected'])
+                        and ((time.time() - status['recent_timestamp']) > 120)) or
+                            (time.time()-status['recent_timestamp']) > 900):
                         index = self.files.keys().index(file_id)
                         self.beginRemoveRows(QtCore.QModelIndex(), index, index + 1)
                         print "removing", index, file_id
