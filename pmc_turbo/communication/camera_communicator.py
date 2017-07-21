@@ -491,6 +491,11 @@ class Communicator(GlobalConfiguration):
         # NOTE: When LIDAR and leader housekeeping is added, summary should also append those statuses.
         self.housekeeping.update()
         summary.append(self.housekeeping.get_three_column_data_set())
+        try:
+            pipeline_status=self.controller.get_pipeline_status()
+            summary.append(pipeline_status)
+        except Exception:
+            logger.exception("Failed to get pipeline status from controller")
         payload = json.dumps(summary)
         if compress:
             file_class = file_format_classes.CompressedJSONFile
