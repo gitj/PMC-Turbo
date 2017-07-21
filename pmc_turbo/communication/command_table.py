@@ -76,7 +76,8 @@ command_manager.add_command(StringArgumentCommand("run_shell_command", [("max_nu
                                                             "`command_line` is shell command to execute"))
 command_manager.add_command(Command("get_status_report", [("compress", "B"),
                                                           ("request_id", 'I')],
-                                    docstring="if `compress` is non-zero, result will be compressed for downlink"))
+                                    docstring="if LSB of`compress` is non-zero, result will be compressed for downlink\n"
+                                              "if `compress` & 0x02 is true, pipeline status will be excluded"))
 command_manager.add_command(Command("flush_downlink_queues", []))
 command_manager.add_command(Command("use_synchronized_images", [("synchronize", "B")],
                                     docstring="non-zero argument means images should be synchronized"))
