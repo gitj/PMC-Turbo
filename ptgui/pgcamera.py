@@ -169,7 +169,7 @@ class MyImageView(pg.ImageView):
             self.update(-1)
             ev.accept()
 
-        super(MyImageView, self).keyPressEvent(ev)
+        #super(MyImageView, self).keyPressEvent(ev)
 
     def mouseMoved(self, evt):
         vb = self.getView()
