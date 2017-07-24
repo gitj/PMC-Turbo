@@ -153,6 +153,7 @@ class ShortStatusCamera(ShortStatusBase):
                               ("load", "H"),
                               ("watchdog_status","h"),
                               ("leader_id", "B"),
+                              ("downlink_queue_depth", "H"),
 
                               ("free_disk_root_mb", "I"),
                               ("free_disk_var_mb", "I"),

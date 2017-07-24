@@ -800,6 +800,11 @@ class Communicator(GlobalConfiguration):
         if not is_running:
             current_countdown = -current_countdown
         ss.watchdog_status = current_countdown
+        try:
+            ss.downlink_queue_depth = self.controller.get_downlink_queue_depth()
+        except Exception:
+            logger.exception("Failed to get downlink_queue_depth from controller")
+            ss.downlink_queue_depth = np.nan
         ss.free_disk_root_mb = self.housekeeping.get_recent_value("df-root_df_complex-free") / 1e6
         ss.free_disk_var_mb = self.housekeeping.get_recent_value("df-var_df_complex-free") / 1e6
         ss.free_disk_data_1_mb = self.housekeeping.get_recent_value("df-data1_df_complex-free") / 1e6

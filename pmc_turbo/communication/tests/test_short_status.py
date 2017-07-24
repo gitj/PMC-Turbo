@@ -15,6 +15,7 @@ def test_camera_encode():
     ss.uptime = 58858
     ss.load = 1231
     ss.watchdog_status = -600
+    ss.downlink_queue_depth = 20
     ss.free_disk_root_mb = 123000
     ss.free_disk_var_mb = 127000
     ss.free_disk_data_1_mb = 123000
@@ -64,6 +65,7 @@ def test_coerce():
     ss.load = 1231.1
     ss.watchdog_status = -600
     ss.leader_id =0
+    ss.downlink_queue_depth = 20
     ss.free_disk_root_mb = 12300000000 # intentionally > 2^32 to check clipping
     ss.free_disk_var_mb = 16400
     ss.free_disk_data_1_mb = 123000
