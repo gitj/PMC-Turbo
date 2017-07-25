@@ -19,10 +19,10 @@ def get_roi_coordinates(roi_pos, roi_size, scale_by, row_offset, column_offset, 
     else:
         x_idx = 0
         y_idx = 1
-    xmin = np.floor(roi_pos[x_idx] / scale_by) + row_offset
-    xmax = np.ceil((roi_pos[x_idx] + roi_size[x_idx]) / scale_by) + row_offset
-    ymin = np.floor(roi_pos[y_idx] / scale_by) + column_offset
-    ymax = np.ceil((roi_pos[y_idx] + roi_size[y_idx]) / scale_by) + column_offset
+    xmin = np.floor(roi_pos[x_idx] / scale_by) + column_offset
+    xmax = np.ceil((roi_pos[x_idx] + roi_size[x_idx]) / scale_by) + column_offset
+    ymin = np.floor(roi_pos[y_idx] / scale_by) + row_offset
+    ymax = np.ceil((roi_pos[y_idx] + roi_size[y_idx]) / scale_by) + row_offset
     return xmin, xmax, ymin, ymax
 
 
