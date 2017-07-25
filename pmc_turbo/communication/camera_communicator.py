@@ -822,6 +822,7 @@ class Communicator(GlobalConfiguration):
         ss.frames_per_burst = self.housekeeping.get_recent_value("AcquisitionFrameCount")
         ss.exposure_us = self.housekeeping.get_recent_value('ExposureTimeAbs')
         ss.focus_step = self.housekeeping.get_recent_value('EFLensFocusCurrent')
+        ss.focus_max = self.housekeeping.get_recent_value('EFLensFocusMax')
         ss.aperture_times_100 = self.housekeeping.get_recent_value('EFLensFStopCurrent') * 100
         try:
             ss.auto_exposure_enabled = self.controller.is_auto_exposure_enabled()

@@ -174,6 +174,7 @@ class ShortStatusCamera(ShortStatusBase):
                               ("frames_per_burst", "B"),
                               ("exposure_us", "I"),
                               ("focus_step", "H"),
+                              ("focus_max", "H"),
                               ("aperture_times_100","H"),
                               ("auto_exposure_enabled", "B"),
 

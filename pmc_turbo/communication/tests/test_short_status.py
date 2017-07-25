@@ -33,6 +33,7 @@ def test_camera_encode():
     ss.frames_per_burst = 2
     ss.exposure_us = 4774
     ss.focus_step = 2000
+    ss.focus_max = 1034
     ss.aperture_times_100 = 123
     ss.auto_exposure_enabled = 1
     ss.pressure = 101033.3
@@ -83,6 +84,7 @@ def test_coerce():
     ss.frames_per_burst = 2
     ss.exposure_us = 4774
     ss.focus_step = 200000
+    ss.focus_max = 1034
     ss.aperture_times_100 = 123
     ss.auto_exposure_enabled = 1
     ss.pressure = 101033.3
