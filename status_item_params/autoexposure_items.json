@@ -1,0 +1,41 @@
+{
+    "ITEMS": {
+        "max_percentile_threshold_fraction": {
+            "class_type": "FloatStatusItem",
+            "column_name": "max_percentile_threshold_fraction",
+            "name": "max_percentile_threshold_fraction",
+            "partial_glob": "*"
+        },
+        "min_peak_threshold_fraction": {
+            "class_type": "FloatStatusItem",
+            "column_name": "min_peak_threshold_fraction",
+            "name": "min_peak_threshold_fraction",
+            "partial_glob": "*"
+        },
+        "min_percentile_threshold_fraction": {
+            "class_type": "FloatStatusItem",
+            "column_name": "min_percentile_threshold_fraction",
+            "name": "min_percentile_threshold_fraction",
+            "partial_glob": "*"
+        },        
+        "adjustment_step_size_fraction": {
+            "class_type": "FloatStatusItem",
+            "column_name": "adjustment_step_size_fraction",
+            "name": "adjustment_step_size_fraction",
+            "partial_glob": "*"
+        },
+        "min_exposure": {
+            "class_type": "FloatStatusItem",
+            "column_name": "min_exposure",
+            "name": "min_exposure",
+            "partial_glob": "*"
+        },
+        "max_exposure": {
+            "class_type": "FloatStatusItem",
+            "column_name": "max_exposure",
+            "name": "max_exposure",
+            "partial_glob": "*"
+        }
+    },
+    "PREAMBLE": "/var/pmclogs/housekeeping/autoexposure/"
+}

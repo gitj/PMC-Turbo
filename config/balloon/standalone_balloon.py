@@ -95,7 +95,8 @@ JSON_FILENAMES = [
 #    'charge_controller_eeprom_items.json',  # no charge controller for stand alone camera
     'counter_items.json',
     'collectd_items.json',
-    'labjack_items.json'
+    'labjack_items.json',
+    'autoexposure_items.json'
 ]
 
 c.Communicator.json_paths = [os.path.join(os.path.split(root_dir)[0], 'status_item_params', json_fn) for json_fn in JSON_FILENAMES]

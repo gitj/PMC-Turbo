@@ -1,0 +1,56 @@
+{
+    "max_percentile_threshold_fraction": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "min_peak_threshold_fraction": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "min_percentile_threshold_fraction": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "adjustment_step_size_fraction": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "min_exposure": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    },
+    "max_exposure": {
+        "good_range_high": "nan",
+        "good_range_low": "nan",
+        "normal_range_high": "nan",
+        "normal_range_low": "nan",
+        "scaling": 1.0,
+        "warning_range_high": "nan",
+        "warning_range_low": "nan"
+    }
+}
