@@ -20,6 +20,9 @@ class ExposureManager(Configurable):
     def __init__(self, **kwargs):
         super(ExposureManager,self).__init__(**kwargs)
         self.last_file_analyzed = None
+        self.columns = ['epoch', 'max_percentile_threshold_fraction', 'min_peak_threshold_fraction',
+                        'min_percentile_threshold_fraction', 'adjustment_step_size_fraction',
+                        'min_exposure', 'max_exposure']
 
     def check_exposure(self, pipeline_status, file_statistics):
         if file_statistics.filename == self.last_file_analyzed:

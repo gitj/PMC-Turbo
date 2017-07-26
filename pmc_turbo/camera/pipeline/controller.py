@@ -25,6 +25,7 @@ from pmc_turbo.communication.file_format_classes import DEFAULT_REQUEST_ID
 from pmc_turbo.utils.camera_id import get_camera_id
 from pmc_turbo.utils.configuration import GlobalConfiguration, camera_data_dir
 from pmc_turbo.utils.error_counter import CounterCollection
+from pmc_turbo.utils.housekeeping_logger import HousekeepingLogger
 
 logger = logging.getLogger(__name__)
 
@@ -72,6 +73,16 @@ class Controller(GlobalConfiguration):
         self.last_update_time = 0
 
         self.exposure_manager = exposure_manager.ExposureManager(parent=self)
+        self.exposure_manager_logger = HousekeepingLogger(columns=self.exposure_manager.columns,
+                                                          housekeeping_dir=os.path.join(self.housekeeping_dir, 'autoexposure'))
+        self.exposure_manager_logger.create_log_file()
+        # Write initial parameters to ensure log file has at least one entry
+        self.set_auto_exposure_parameters(max_percentile_threshold_fraction=self.exposure_manager.max_percentile_threshold_fraction,
+                                          min_peak_threshold_fraction=self.exposure_manager.min_peak_threshold_fraction,
+                                          min_percentile_threshold_fraction=self.exposure_manager.min_percentile_threshold_fraction,
+                                          adjustment_step_size_fraction=self.exposure_manager.adjustment_step_size_fraction,
+                                          min_exposure=self.exposure_manager.min_exposure,
+                                          max_exposure=self.exposure_manager.max_exposure)
 
         self.counters = CounterCollection('controller', self.counters_dir)
         self.counters.set_focus.reset()
@@ -243,6 +254,12 @@ class Controller(GlobalConfiguration):
         self.exposure_manager.max_exposure = max_exposure
         self.exposure_manager.adjustment_step_size_fraction = adjustment_step_size_fraction
         self.exposure_manager.min_percentile_threshold_fraction = min_percentile_threshold_fraction
+        self.exposure_manager_logger.write_log_entry(data=dict(epoch=time.time(),
+                                                               min_peak_threshold_fraction=min_peak_threshold_fraction,
+                                                               max_percentile_threshold_fraction=max_percentile_threshold_fraction,
+                                                               min_percentile_threshold_fraction=min_percentile_threshold_fraction,
+                                                               min_exposure=min_exposure, max_exposure=max_exposure,
+                                                               adjustment_step_size_fraction=adjustment_step_size_fraction))
 
     def get_latest_fileinfo(self):
         if self.merged_index is None:
