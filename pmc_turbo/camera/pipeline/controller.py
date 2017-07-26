@@ -74,6 +74,7 @@ class Controller(GlobalConfiguration):
 
         self.exposure_manager = exposure_manager.ExposureManager(parent=self)
         self.exposure_manager_logger = HousekeepingLogger(columns=self.exposure_manager.columns,
+                                                          formats = ['%f' for _ in self.exposure_manager.columns],
                                                           housekeeping_dir=os.path.join(self.housekeeping_dir, 'autoexposure'))
         self.exposure_manager_logger.create_log_file()
         # Write initial parameters to ensure log file has at least one entry
