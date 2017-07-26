@@ -36,6 +36,12 @@ def test_camera_encode():
     ss.focus_max = 1034
     ss.aperture_times_100 = 123
     ss.auto_exposure_enabled = 1
+    ss.max_percentile_threshold=7000
+    ss.min_peak_threshold=8000
+    ss.min_percentile_threshold=1000
+    ss.adjustment_step_size = 500
+    ss.min_auto_exposure = 35
+    ss.max_auto_exposure = 1000000
     ss.pressure = 101033.3
     ss.lens_wall_temp = 30
     ss.dcdc_wall_temp = 25
@@ -87,6 +93,12 @@ def test_coerce():
     ss.focus_max = 1034
     ss.aperture_times_100 = 123
     ss.auto_exposure_enabled = 1
+    ss.max_percentile_threshold=7000
+    ss.min_peak_threshold=8000
+    ss.min_percentile_threshold=1000
+    ss.adjustment_step_size = 500
+    ss.min_auto_exposure = 35
+    ss.max_auto_exposure = 1000000
     ss.pressure = 101033.3
     ss.lens_wall_temp = 300
     ss.dcdc_wall_temp = -225

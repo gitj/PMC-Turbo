@@ -829,6 +829,12 @@ class Communicator(GlobalConfiguration):
         except Exception:
             logger.exception("Failed to get auto_exposure_enabled from controller")
             ss.auto_exposure_enabled = np.nan
+        ss.max_percentile_threshold=self.housekeeping.get_value("max_percentile_threshold_fraction") * 10000
+        ss.min_peak_threshold=self.housekeeping.get_value("min_peak_threshold_fraction") * 10000
+        ss.min_percentile_threshold=self.housekeeping.get_value("min_percentile_threshold_fraction") * 10000
+        ss.adjustment_step_size = self.housekeeping.get_value("adjustment_step_size_fraction") * 10000
+        ss.min_auto_exposure = self.housekeeping.get_value("min_exposure")
+        ss.max_auto_exposure = self.housekeeping.get_value("max_exposure")
         ss.pressure = self.housekeeping.get_recent_value("Pressure")
         ss.lens_wall_temp = (self.housekeeping.get_recent_value('Lens_Temperature') * 1000) - 273
         ss.dcdc_wall_temp = (self.housekeeping.get_recent_value('DCDC_Temperature') * 1000) - 273

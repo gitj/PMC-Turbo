@@ -176,7 +176,14 @@ class ShortStatusCamera(ShortStatusBase):
                               ("focus_step", "H"),
                               ("focus_max", "H"),
                               ("aperture_times_100","H"),
+
                               ("auto_exposure_enabled", "B"),
+                              ("max_percentile_threshold", "H"),
+                              ("min_peak_threshold", "H"),
+                              ("min_percentile_threshold", "H"),
+                              ("adjustment_step_size", "H"),
+                              ("min_auto_exposure","I"),
+                              ("max_auto_exposure","I"),
 
                               ("pressure", "f"),
                               ("lens_wall_temp", 'b'),
