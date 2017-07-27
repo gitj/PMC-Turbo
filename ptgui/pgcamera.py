@@ -521,7 +521,7 @@ class InfoBar(QtGui.QDockWidget):
         self.frame_status_value.setText(str(jpeg_file.frame_status))
         self.frame_id_value.setText(str(jpeg_file.frame_id))
         time_s = jpeg_file.frame_timestamp_ns / 1e9
-        self.frame_timestamp_s.setText('%.0f' % time_s)
+        self.frame_timestamp_s.setText('%.3f' % time_s)
         self.frame_timestamp_s.setToolTip(time.strftime("%Y.%m.%d_%H:%M:%S", time.localtime(time_s)))
         self.focus_step_value.setText(str(jpeg_file.focus_step))
 
