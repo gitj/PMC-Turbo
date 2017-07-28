@@ -187,7 +187,7 @@ class AcquireImagesProcess(GlobalConfiguration):
             if exit_request:
                 break
             if time.time() > last_trigger + (self.trigger_interval-0.5):
-                gate_time = int(time.time() + self.trigger_interval)
+                gate_time = int(time.time() + 1) # the amount of time since last trigger is already almost the trigger interval, so always advance to next second here.
                 if not self.command_queue.empty():
                     name, value, tag = self.command_queue.get()
                     self.status.value = "sending command"
@@ -208,7 +208,7 @@ class AcquireImagesProcess(GlobalConfiguration):
                     if result:
                         logger.error("Errorcode %r while executing command %s:%r" % (result, name, value))
                         self.counters.command_non_zero_result.increment()
-                    gate_time = int(time.time() + self.trigger_interval)  # update gate time in case some time has elapsed while executing
+                    gate_time = int(time.time() + 1)  # update gate time in case some time has elapsed while executing
                     # command
                     self.command_result_queue.put((tag, name, value, result, gate_time))
                 self.status.value = "arming camera"
