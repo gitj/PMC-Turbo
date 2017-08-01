@@ -13,10 +13,13 @@ install:
   - hash -r
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
+  - conda config --add channels conda-forge
   # Useful for debugging any issues with conda
   - conda info -a
+  - conda config --show
   - conda env create -q -n test-environment -f environment.yml
   - source activate test-environment
+  - conda install -c conda-forge opencv
   - pip install codecov
   - conda install qtconsole # needed for gui code
   - pip install pyqtgraph # needed for gui code
