@@ -61,7 +61,7 @@ c.Controller.hot_pixel_file_dictionary = {4:'hot_pixels_02-2636D-07229_000f3102f
 openport_destination_ip = ('%d.%d.%d.%d' % (0x80,0x3b,0xa8,0x4e))  #slightly hidden to avoid scraping
 
 c.Communicator.hirate_link_parameters = [('highrate', ('pmc-serial-0', 5002), 0),
-                                         ('openport', (openport_destination_ip, 4501), 100),
+                                         ('openport', (openport_destination_ip, 4501), 470),
                                          ('los', ('pmc-serial-2', 5004), 0)]
 
 ## List of tuples - name, lowrate downlink address and lowrate uplink port.e.g.
